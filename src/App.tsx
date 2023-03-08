@@ -8,16 +8,10 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-<<<<<<< Updated upstream
     <div className="App flex flex-col items-center">
       <LogoFull className="h-48 w-48 text-white" />
-      <div className="flex flex-row gap-x-2 justify-between px-12">
-        <a href="https://vitejs.dev" target="_blank">
-=======
-    <div className="App">
-      <div>
+      <div className="flex flex-row justify-between gap-x-2 px-12">
         <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
->>>>>>> Stashed changes
           <img src="/vite.svg" className="logo" alt="Vite logo" />
         </a>
 
