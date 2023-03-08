@@ -1,4 +1,5 @@
 import reactLogo from "./assets/react.svg"
+import LogoFull from "./components/LogoFull"
 import "./App.css"
 import { useState } from "react"
 
@@ -6,8 +7,9 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="App">
-      <div>
+    <div className="App flex flex-col items-center">
+      <LogoFull className="h-48 w-48 text-white" />
+      <div className="flex flex-row gap-x-2 justify-between px-12">
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />
         </a>
