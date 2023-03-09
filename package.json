@@ -8,7 +8,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint --fix src/**/*.tsx",
-    "format": "prettier --write src"
+    "format": "prettier --write src",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@aragon/sdk-client": "^1.0.2",
@@ -23,11 +25,18 @@
     "ethers": "^5.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
     "tailwind-merge": "^1.10.0",
     "wagmi": "^0.12.1"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^3.7.1",
+    "@storybook/addon-essentials": "^7.0.0-beta.64",
+    "@storybook/addon-interactions": "^7.0.0-beta.64",
+    "@storybook/addon-links": "^7.0.0-beta.64",
+    "@storybook/blocks": "^7.0.0-beta.64",
+    "@storybook/react": "^7.0.0-beta.64",
+    "@storybook/react-vite": "^7.0.0-beta.64",
+    "@storybook/testing-library": "^0.0.14-next.1",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.54.1",
@@ -36,10 +45,13 @@
     "autoprefixer": "^10.4.13",
     "eslint": "^8.35.0",
     "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-storybook": "^0.6.11",
     "eslint-plugin-tailwindcss": "^3.10.1",
     "postcss": "^8.4.21",
     "prettier": "2.8.4",
     "prettier-plugin-tailwindcss": "^0.2.4",
+    "prop-types": "^15.8.1",
+    "storybook": "^7.0.0-beta.64",
     "tailwindcss": "^3.2.7",
     "typescript": "^4.9.3",
     "vite": "^4.1.0"
