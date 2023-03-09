@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useState } from 'react'
 
-import reactLogo from "./assets/react.svg"
-import LogoFull from "./components/LogoFull"
-import "./App.css"
+import reactLogo from './assets/react.svg'
+import LogoFull from './components/LogoFull'
+import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
