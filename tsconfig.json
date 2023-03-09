@@ -17,5 +17,13 @@
     "jsx": "react-jsx"
   },
   "include": ["src"],
+  //path shortcut src to @/
+  "paths": {
+    "@/*": ["src/*"],
+    "@/components/*": ["src/components/*"],
+    "@/pages/*": ["src/pages/*"],
+    "@/styles/*": ["src/styles/*"],
+    "@/utils/*": ["src/utils/*"]
+  },
   "references": [{ "path": "./tsconfig.node.json" }]
 }
