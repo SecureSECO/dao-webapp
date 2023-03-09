@@ -1,5 +1,11 @@
+import ErrorPage from './pages/ErrorPage';
+import Governance from './pages/Governance';
+import Home from './pages/Home';
+import Layout from './pages/Layout';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import './index.css';
 
 import {
   EthereumClient,
@@ -31,13 +37,30 @@ const wagmiClient = createClient({
 // 3. Configure modal ethereum client
 const ethereumClient = new EthereumClient(wagmiClient, chains);
 
-import App from './App';
-import './index.css';
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    id: 'root',
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '',
+        element: <Home />,
+      },
+      {
+        path: '/governance',
+        element: <Governance />,
+      },
+    ],
+  },
+  // If you need a route without the layout, add another object here
+]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <WagmiConfig client={wagmiClient}>
-      <App />
+      <RouterProvider router={router} />
     </WagmiConfig>
 
     <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />

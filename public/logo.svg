@@ -1,10 +1,5 @@
-import React from 'react';
-
-const LogoFull = ({ className }: { className?: string }) => {
-  return (
-    <svg
+<svg
       version="1.0"
-      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width="2560.000000pt"
       height="2560.000000pt"
@@ -13,7 +8,7 @@ const LogoFull = ({ className }: { className?: string }) => {
     >
       <g
         transform="translate(0.000000,2560.000000) scale(0.100000,-0.100000)"
-        fill="currentColor"
+        fill="#000000"
         stroke="none"
       >
         <path
@@ -354,7 +349,3 @@ l-5 -120 -35 -6 c-45 -7 -75 -23 -94 -51 -14 -19 -16 -67 -16 -317 0 -277 1
         />
       </g>
     </svg>
-  );
-};
-
-export default LogoFull;
