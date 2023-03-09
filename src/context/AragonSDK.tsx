@@ -1,14 +1,14 @@
 // src/context/AragonSDK.tsx
 
-import { createContext, useContext, useEffect, useState } from 'react'
-import { Context, ContextParams } from '@aragon/sdk-client'
-import { useSigner } from 'wagmi'
+import { createContext, useContext, useEffect, useState } from 'react';
+import { Context, ContextParams } from '@aragon/sdk-client';
+import { useSigner } from 'wagmi';
 
-const AragonSDKContext = createContext({})
+const AragonSDKContext = createContext({});
 
 export function AragonSDKWrapper({ children }: any): JSX.Element {
-  const [context, setContext] = useState<Context | undefined>(undefined)
-  const signer = useSigner().data || undefined
+  const [context, setContext] = useState<Context | undefined>(undefined);
+  const signer = useSigner().data || undefined;
 
   useEffect(() => {
     const aragonSDKContextParams: ContextParams = {
@@ -27,18 +27,18 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
           url: 'https://subgraph.satsuma-prod.com/aragon/core-goerli/api', // this will change based on the chain you're using
         },
       ],
-    }
+    };
 
-    setContext(new Context(aragonSDKContextParams))
-  }, [signer])
+    setContext(new Context(aragonSDKContextParams));
+  }, [signer]);
 
   return (
     <AragonSDKContext.Provider value={{ context }}>
       {children}
     </AragonSDKContext.Provider>
-  )
+  );
 }
 
 export function useAragonSDKContext(): any {
-  return useContext(AragonSDKContext)
+  return useContext(AragonSDKContext);
 }

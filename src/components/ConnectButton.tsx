@@ -1,10 +1,10 @@
-import React from 'react'
+import React from 'react';
 
 const ConnectButton = () => {
-  return <div>ConnectButton</div>
-}
+  return <div>ConnectButton</div>;
+};
 
-export default ConnectButton
+export default ConnectButton;
 
 // import React, { Fragment, useEffect, useState } from 'react'
 // import { HiExclamationCircle, HiOutlineLogout } from 'react-icons/hi'
