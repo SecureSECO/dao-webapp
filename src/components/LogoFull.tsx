@@ -354,7 +354,7 @@ l-5 -120 -35 -6 c-45 -7 -75 -23 -94 -51 -14 -19 -16 -67 -16 -317 0 -277 1
         />
       </g>
     </svg>
-  )
-}
+  );
+};
 
-export default LogoFull
+export default LogoFull;
