@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    @apply text-gray-100 shadow-[inset_0_0_0_30px] shadow-gray-600;
+    -webkit-text-fill-color: #f3f4f6 !important;
+  }
+
+  html,
+  body,
+  #root {
+    @apply h-screen w-screen overflow-x-hidden scroll-smooth bg-white text-black dark:bg-black dark:text-white;
+  }
+
+  ::-webkit-scrollbar {
+    @apply h-2 w-2 sm:h-3 sm:w-3;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-black;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-[3px] border border-solid border-gray-300 sm:rounded sm:border-2;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-300 hover:bg-gray-100/75;
+  }
+
+  .scrollbar-light::-webkit-scrollbar-track {
+    @apply bg-gray-300;
+  }
+
+  ::-moz-selection {
+    /* Code for Firefox */
+    @apply bg-blue-500 text-gray-700;
+  }
+
+  ::selection {
+    @apply bg-blue-500 text-gray-700;
+  }
+}
