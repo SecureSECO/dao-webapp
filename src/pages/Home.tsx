@@ -3,8 +3,9 @@ import React from 'react';
 
 const Home = () => {
   return (
-    <div>
-      <LogoFull className="h-48 w-48 text-black" />
+    <div className="h-full w-full bg-black text-white">
+      <LogoFull className="h-48 w-48 " />
+      Hello
     </div>
   );
 };

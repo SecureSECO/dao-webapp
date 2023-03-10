@@ -17,10 +17,10 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { goerli, polygon } from 'wagmi/chains';
 
 // 1. Get projectID at https://cloud.walletconnect.com
-if (!process.env.REACT_APP_PROJECT_ID) {
-  throw new Error('You need to provide REACT_APP_PROJECT_ID env variable');
+if (!import.meta.env.VITE_APP_PROJECT_ID) {
+  throw new Error('You need to provide VITE_APP_PROJECT_ID env variable');
 }
-const projectId = process.env.REACT_APP_PROJECT_ID;
+const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 
 // 2. Configure wagmi client
 const chains = [polygon, goerli];
