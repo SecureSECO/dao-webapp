@@ -12,9 +12,12 @@
   }
 
   html,
-  body,
-  #root {
+  body {
     @apply h-screen w-screen overflow-x-hidden scroll-smooth bg-white text-black dark:bg-black dark:text-white;
+  }
+
+  #root {
+    @apply h-full w-full;
   }
 
   ::-webkit-scrollbar {
