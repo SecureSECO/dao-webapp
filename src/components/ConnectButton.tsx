@@ -1,10 +1,12 @@
-import React, { Fragment, useEffect, useState } from 'react';
+// import React, { Fragment, useEffect, useState } from 'react';
 import { HiExclamationCircle, HiOutlineLogout } from 'react-icons/hi';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 //import type { ethers } from 'ethers';
-import { cn } from '@/src/lib/utils';
+// import { cn } from '@/src/lib/utils';
 import { useWeb3Modal } from '@web3modal/react';
 import { useAccount, useNetwork, useDisconnect } from 'wagmi';
+
+const prefferedNetwork: number = 5; //137;
 
 import {
   DropdownMenu,
@@ -39,32 +41,36 @@ const ConnectButton = () => {
         <DropdownMenuTrigger className="relative flex rounded-full text-sm focus:outline-none">
           <span className="sr-only">Open wallet menu</span>
           <Jazzicon diameter={40} seed={jazznumber} />
-          {chain?.id !== 1 && (
-            <Tooltip>
-              <TooltipTrigger asChild className="absolute -top-2 -right-2">
-                <HiExclamationCircle className="text-primary text-xl drop-shadow-[0_0_8px_rgb(0,0,0)]" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Incorrect Network</p>
-              </TooltipContent>
-            </Tooltip>
+          {chain?.id !== prefferedNetwork && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild className="absolute -top-2 -right-2">
+                  <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgb(0,0,0)]" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Incorrect Network</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="border-dark-200 bg-dark-600 absolute right-0 mt-2 w-48 origin-top rounded-md border shadow-lg ring-1 ring-black/5 focus:outline-none">
+        <DropdownMenuContent className="">
           <DropdownMenuLabel>
-            <div className="border-dark-200 flex items-center gap-x-2 border-b px-4 py-3">
+            <div className="flex items-center gap-x-2 border-b border-gray-200 px-4 py-3">
               <Jazzicon diameter={24} seed={jazznumber} />
-              <Tooltip>
-                <TooltipTrigger asChild className="absolute -top-2 -right-2">
-                  <p className=" text-sm font-medium text-gray-200">
-                    {address?.slice(0, 5) + '...' + address?.slice(-4)}
-                  </p>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{address}</p>
-                </TooltipContent>
-              </Tooltip>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild className="absolute -top-2 -right-2">
+                    <p className=" text-sm font-medium text-gray-200">
+                      {address?.slice(0, 5) + '...' + address?.slice(-4)}
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{address}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -83,7 +89,7 @@ const ConnectButton = () => {
   ) : (
     <button
       onClick={() => open()}
-      className="bg-primary text-dark-400 hover:bg-primary-800 flex items-center gap-x-2 rounded-full px-3 py-1.5 lg:px-4"
+      className="flex grow-0 items-center gap-x-2 rounded-full bg-primary px-3 py-1.5 text-gray-400 hover:bg-primary-800 lg:rounded-md lg:px-4"
     >
       <svg
         className="h-4 w-4"

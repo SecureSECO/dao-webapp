@@ -23,7 +23,7 @@ if (!import.meta.env.VITE_APP_PROJECT_ID) {
 const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 
 // 2. Configure wagmi client
-const chains = [polygon, goerli];
+const chains = [goerli, polygon];
 
 const { provider } = configureChains(chains, [
   walletConnectProvider({ projectId }) as any,

@@ -3,6 +3,8 @@ import { cn } from '@/src/lib/utils';
 import LogoFull from '@/src/components/LogoFull';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { HiBars3, HiXMark } from 'react-icons/hi2';
+import ThemePicker from '@/src/components/ThemePicker';
+import ConnectButton from '@/src/components/ConnectButton';
 
 type NavItem = {
   label: string;
@@ -22,9 +24,9 @@ const navItems: NavItem[] = [
 
 const Navbar = () => {
   return (
-    <div className="flex w-full flex-row justify-between">
+    <div className="flex w-full flex-row items-center justify-between px-4">
       {/* Desktop logo */}
-      <LogoFull className="hidden h-40 w-40 sm:block" />
+      <LogoFull className="hidden h-fit w-40 sm:block" />
 
       {/* Mobile nav */}
       <nav className="sm:hidden">
@@ -34,10 +36,13 @@ const Navbar = () => {
             <HiXMark className="h-10 w-10 group-data-[state=closed]:hidden" />
           </DropdownMenu.Trigger>
 
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content>
+          <DropdownMenu.Portal className="absolute left-0 top-0">
+            <DropdownMenu.Content sideOffset={4}>
               {navItems.map((item) => (
-                <DropdownMenu.Item>
+                <DropdownMenu.Item
+                  key={item.label}
+                  className="hover:cursor-pointer"
+                >
                   <NavLink
                     key={item.label}
                     to={item.url}
@@ -55,7 +60,7 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile logo */}
-      <LogoFull className="h-40 w-40 sm:hidden" />
+      <LogoFull className="h-fit w-52 sm:hidden" />
 
       {/* Desktop nav */}
       <nav className="hidden gap-x-4 sm:flex sm:flex-row">
@@ -72,8 +77,11 @@ const Navbar = () => {
         ))}
       </nav>
 
-      {/* Wallet connection */}
-      <div></div>
+      {/* Wallet connection + dark mode toggler */}
+      <div className="flex flex-row gap-x-2">
+        <ThemePicker />
+        <ConnectButton />
+      </div>
     </div>
   );
 };

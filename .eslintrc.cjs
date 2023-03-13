@@ -28,6 +28,7 @@ module.exports = {
     'tailwindcss/no-custom-classname': 'off',
     'react/jsx-key': 'off',
     'react/prop-types': 'off',
+    'tailwindcss/classnames-order': 'off',
     'no-undef': 'off',
     'no-unused-vars': 'warn',
     'prettier/prettier': [
