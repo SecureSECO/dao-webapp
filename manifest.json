@@ -1,0 +1,13 @@
+{
+  "name": "Secure Seco DAO",
+  "short_name": "SecureDAO",
+  "icons": [
+    {
+      "src": "google-touch-icon.png",
+      "sizes": "512x512"
+    }
+  ],
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "display": "fullscreen"
+}
