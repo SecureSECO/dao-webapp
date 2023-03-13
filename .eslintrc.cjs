@@ -27,7 +27,9 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'tailwindcss/no-custom-classname': 'off',
     'react/jsx-key': 'off',
+    'react/prop-types': 'off',
     'no-undef': 'off',
+    'no-unused-vars': 'warn',
     'prettier/prettier': [
       'error',
       {

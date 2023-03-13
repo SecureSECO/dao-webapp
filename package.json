@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@aragon/sdk-client": "^1.0.2",
+    "@radix-ui/react-tooltip": "^1.0.5",
     "@types/react-router-dom": "^5.3.3",
     "@walletconnect/jsonrpc-types": "^1.0.2",
     "@walletconnect/types": "^2.4.7",
