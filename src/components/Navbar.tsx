@@ -22,6 +22,24 @@ const navItems: NavItem[] = [
   },
 ];
 
+const Navitem = ({ item }: { item: NavItem }) => {
+  return (
+    <NavLink
+      key={item.label}
+      to={item.url}
+      className={({ isActive, isPending }) =>
+        cn(
+          'py-1 px-4 text-lg font-semibold text-slate-500',
+          isActive && 'rounded-md bg-slate-100 text-blue-500',
+          isPending && ''
+        )
+      }
+    >
+      {item.label}
+    </NavLink>
+  );
+};
+
 const Navbar = () => {
   return (
     <div className="flex w-full flex-row items-center justify-between px-4">
@@ -43,15 +61,7 @@ const Navbar = () => {
                   key={item.label}
                   className="hover:cursor-pointer"
                 >
-                  <NavLink
-                    key={item.label}
-                    to={item.url}
-                    className={({ isActive, isPending }) =>
-                      cn('', isActive && '', isPending && '')
-                    }
-                  >
-                    {item.label}
-                  </NavLink>
+                  <Navitem item={item} />
                 </DropdownMenu.Item>
               ))}
             </DropdownMenu.Content>
@@ -63,17 +73,9 @@ const Navbar = () => {
       <LogoFull className="h-fit w-52 sm:hidden" />
 
       {/* Desktop nav */}
-      <nav className="hidden gap-x-4 sm:flex sm:flex-row">
+      <nav className="hidden sm:flex sm:flex-row">
         {navItems.map((item) => (
-          <NavLink
-            key={item.label}
-            to={item.url}
-            className={({ isActive, isPending }) =>
-              cn('', isActive && '', isPending && '')
-            }
-          >
-            {item.label}
-          </NavLink>
+          <Navitem key={item.label} item={item} />
         ))}
       </nav>
 

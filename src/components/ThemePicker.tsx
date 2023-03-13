@@ -35,21 +35,11 @@ const themes: ThemeOption[] = [
 ];
 
 const ThemePicker = () => {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('system');
 
-  // Initial mode
+  // If theme is set in localStorage, use that
   useEffect(() => {
-    if (
-      localStorage.theme === 'dark' ||
-      (!('theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark');
-      setTheme('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      setTheme('light');
-    }
+    if ('theme' in localStorage) setTheme(localStorage.theme);
   }, []);
 
   useEffect(() => {
@@ -75,17 +65,20 @@ const ThemePicker = () => {
     <Dropdown>
       <DropdownMenuTrigger asChild>
         <Button>
-          <HiMoon className="hidden h-10 w-10 dark:block" />
-          <HiSun className="h-10 w-10 dark:hidden" />
+          <HiMoon className="hidden h-6 w-6 dark:block" />
+          <HiSun className="h-6 w-6 dark:hidden" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent
+        sideOffset={8}
+        className="absolute -right-7 origin-top"
+      >
         <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
           {themes.map((theme) => (
             <DropdownMenuRadioItem
               key={theme.value}
               value={theme.value}
-              className="flex flex-row gap-x-2 hover:cursor-pointer"
+              className="flex flex-row justify-start gap-x-2 hover:cursor-pointer"
             >
               <theme.icon className="h-6 w-6" />
               {theme.label}

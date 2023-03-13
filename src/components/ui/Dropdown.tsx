@@ -115,23 +115,31 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 DropdownMenuCheckboxItem.displayName =
   DropdownMenuPrimitive.CheckboxItem.displayName;
 
+type CustomRadioItemProps = {
+  hasIndicator?: boolean;
+};
+
 const DropdownMenuRadioItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem> &
+    CustomRadioItemProps
+>(({ className, children, hasIndicator = false, ...props }, ref) => (
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm font-medium outline-none focus:bg-slate-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-slate-700',
-      className
+      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pr-2 text-sm font-medium outline-none focus:bg-slate-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-slate-700',
+      className,
+      hasIndicator ? 'pl-8' : 'pl-2'
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <DropdownMenuPrimitive.ItemIndicator>
-        <div className="h-2 w-2 rounded-full fill-current" />
-      </DropdownMenuPrimitive.ItemIndicator>
-    </span>
+    {hasIndicator && (
+      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+        <DropdownMenuPrimitive.ItemIndicator>
+          <div className="h-2 w-2 rounded-full bg-current" />
+        </DropdownMenuPrimitive.ItemIndicator>
+      </span>
+    )}
     {children}
   </DropdownMenuPrimitive.RadioItem>
 ));
