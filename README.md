@@ -10,7 +10,7 @@ Note on `.env` files:
 - `.env.development` for development-specific variables
 - `.env` for all other environment variables
 
-#When first setting up
+# When first setting up
 
 1. Copy the .env.example file to .env and fill in the values
 2. Optional: Install the *Prettier* and *ESlint* plugin in vscode (or your editor of choice), might have to restart your editor.
