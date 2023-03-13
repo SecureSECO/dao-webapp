@@ -3,7 +3,7 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 
 import { HiChevronRight, HiCheck } from 'react-icons/hi2';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/src/lib/utils';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
