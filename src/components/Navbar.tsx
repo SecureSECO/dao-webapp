@@ -4,6 +4,7 @@ import LogoFull from '@/src/components/LogoFull';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { HiBars3, HiXMark } from 'react-icons/hi2';
 import ThemePicker from '@/src/components/ThemePicker';
+import ConnectButton from '@/src/components/ConnectButton';
 
 type NavItem = {
   label: string;
@@ -79,6 +80,7 @@ const Navbar = () => {
       {/* Wallet connection + dark mode toggler */}
       <div className="flex flex-row gap-x-2">
         <ThemePicker />
+        <ConnectButton />
       </div>
     </div>
   );
