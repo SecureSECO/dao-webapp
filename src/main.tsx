@@ -9,8 +9,8 @@ import './index.css';
 
 import {
   EthereumClient,
-  modalConnectors,
-  walletConnectProvider,
+  w3mConnectors,
+  w3mProvider,
 } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
@@ -26,11 +26,11 @@ const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 const chains = [goerli, polygon];
 
 const { provider } = configureChains(chains, [
-  walletConnectProvider({ projectId }) as any,
+  w3mProvider({ projectId }) as any,
 ]);
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors: modalConnectors({ appName: 'SecureSecoDao', chains }) as any,
+  connectors: w3mConnectors({ version: 1, chains, projectId }),
   provider,
 });
 
@@ -63,6 +63,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <RouterProvider router={router} />
     </WagmiConfig>
 
-    <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
+    <Web3Modal
+      projectId={projectId}
+      ethereumClient={ethereumClient}
+      themeMode={'dark'}
+    />
   </React.StrictMode>
 );
