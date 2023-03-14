@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { userEvent, within } from '@storybook/testing-library';
 
 import { Button } from './Button';
 
@@ -57,5 +58,16 @@ export const Subtle: Story = {
     variant: 'subtle',
     label: 'Button',
     disabled: false,
+  },
+};
+
+// const Template: ComponentStory<typeof RegistrationForm> = (args) => <RegistrationForm {...args} />;
+
+export const Clicked: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    const canvas = await within(canvasElement);
+    await userEvent.hover(canvas.getByRole('button'));
+    await userEvent.click(canvas.getByRole('button'));
   },
 };
