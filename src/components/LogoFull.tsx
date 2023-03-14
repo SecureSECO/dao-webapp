@@ -1,10 +1,10 @@
 import React from 'react';
 
-const LogoFull = ({ className }: { className?: string }) => {
+const LogoFull = (props: React.BaseHTMLAttributes<SVGElement>) => {
   return (
     <svg
+      {...props}
       version="1.0"
-      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width="2560.000000pt"
       height="1000.000000pt"

@@ -36,7 +36,7 @@ const ConnectButton = () => {
   return address ? (
     <div className="flex items-center gap-x-3 text-slate-900">
       <div className="grid select-none gap-y-1.5 text-sm dark:text-gray-300">
-        test
+        {/* TODO: possibly put address here */}
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger className="relative flex rounded-full text-sm focus:outline-none">
