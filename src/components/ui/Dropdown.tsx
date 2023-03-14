@@ -7,20 +7,20 @@ import { cn } from '@/src/lib/utils';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
-const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
-// const DropdownMenuTrigger = React.forwardRef<
-//   React.ElementRef<typeof DropdownMenuPrimitive.Trigger>,
-//   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Trigger>
-// >(({ className, children, ...props }, ref) => (
-//   <DropdownMenuPrimitive.Trigger
-//     ref={ref}
-//     className={cn('group outline-none', className)}
-//     {...props}
-//   >
-//     {children}
-//   </DropdownMenuPrimitive.Trigger>
-// ));
-// DropdownMenuTrigger.displayName = DropdownMenuPrimitive.Trigger.displayName;
+//const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+const DropdownMenuTrigger = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <DropdownMenuPrimitive.Trigger
+    ref={ref}
+    className={cn('group', className)}
+    {...props}
+  >
+    {children}
+  </DropdownMenuPrimitive.Trigger>
+));
+DropdownMenuTrigger.displayName = DropdownMenuPrimitive.Trigger.displayName;
 
 const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 
@@ -59,7 +59,7 @@ const DropdownMenuSubContent = React.forwardRef<
   <DropdownMenuPrimitive.SubContent
     ref={ref}
     className={cn(
-      'animate-in slide-in-from-left-1 z-50 min-w-[8rem] overflow-hidden rounded-md border border-slate-100 bg-white p-1 text-slate-700 shadow-md dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400',
+      'animate-in slide-in-from-left-1 z-50 min-w-[8rem] overflow-hidden rounded-md border border-slate-100 bg-white p-1 text-slate-900 shadow-md dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400',
       className
     )}
     {...props}

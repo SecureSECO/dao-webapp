@@ -64,7 +64,7 @@ const ThemePicker = () => {
   return (
     <Dropdown>
       <DropdownMenuTrigger asChild>
-        <Button variant="subtle" size="sm">
+        <Button variant="outline" size="sm">
           <HiMoon className="hidden h-5 w-5 dark:block" />
           <HiSun className="h-5 w-5 dark:hidden" />
         </Button>

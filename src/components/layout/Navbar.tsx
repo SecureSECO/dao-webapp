@@ -61,7 +61,7 @@ const Navitem = ({ item }: { item: NavItem }) => {
 
 const Navbar = () => {
   return (
-    <div className="flex w-full flex-row items-center justify-between">
+    <div className="flex w-full flex-row items-center justify-between text-slate-700">
       {/* Desktop logo */}
       <LogoFull className="hidden h-fit w-40 lg:block" />
 
