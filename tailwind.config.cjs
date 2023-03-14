@@ -20,6 +20,6 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require.resolve('tailwindcss-animate')],
   darkMode: 'class',
 };
