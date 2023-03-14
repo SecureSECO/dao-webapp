@@ -1,7 +1,7 @@
 import ErrorPage from './pages/ErrorPage';
 import Governance from './pages/Governance';
 import Dashboard from './pages/Dashboard';
-import Layout from './pages/Layout';
+import Layout from './components/layout/Layout';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';

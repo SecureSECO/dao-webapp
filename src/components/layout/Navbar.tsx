@@ -61,7 +61,7 @@ const Navitem = ({ item }: { item: NavItem }) => {
 
 const Navbar = () => {
   return (
-    <div className="flex w-full flex-row items-center justify-between px-4 lg:px-52">
+    <div className="flex w-full max-w-6xl flex-row items-center justify-between px-4">
       {/* Desktop logo */}
       <LogoFull className="hidden h-fit w-40 lg:block" />
 
@@ -96,7 +96,7 @@ const Navbar = () => {
       <LogoFull className="h-fit w-40 lg:hidden" />
 
       {/* Desktop nav */}
-      <nav className="hidden lg:flex lg:flex-row">
+      <nav className="hidden p-2 lg:flex lg:flex-row">
         {navItems.map((item) => (
           <Navitem key={item.label} item={item} />
         ))}

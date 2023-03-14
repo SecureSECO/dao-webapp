@@ -89,7 +89,7 @@ const ConnectButton = () => {
   ) : (
     <button
       onClick={() => open()}
-      className="flex grow-0 items-center gap-x-2 rounded-full bg-primary px-3 py-1.5 text-gray-400 hover:bg-primary-800 lg:rounded-md lg:px-4"
+      className="flex shrink-0 grow-0 items-center gap-x-2 rounded-full bg-primary px-3 py-1.5 text-gray-400 hover:bg-primary-800 lg:rounded-md lg:px-4"
     >
       <svg
         className="h-4 w-4"
