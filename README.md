@@ -2,7 +2,7 @@
 
 ### Environment variables
 
-Some default env varialbes are provided by [Vite](https://vitejs.dev/guide/env-and-mode.html). Custom variables should be prefixed with `VITE_` to expose them to the code.
+Some default env varialbes are provided by [Vite](https://vitejs.dev/guide/env-and-mode.html) in the `import.meta.env` object. Custom variables should be prefixed with `VITE_` to expose them to the code.
 
 Note on `.env` files:
 
