@@ -3,12 +3,12 @@ import { Outlet } from 'react-router';
 
 const Layout = () => {
   return (
-    <div className="h-full w-full bg-slate-50 dark:bg-slate-900">
-      <div className="flex w-full items-center justify-center">
-        <Navbar />
-      </div>
+    <div className="flex h-full w-full justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="w-full max-w-7xl">
+        <div className="flex w-full items-center justify-center">
+          <Navbar />
+        </div>
 
-      <div>
         <Outlet />
       </div>
     </div>
