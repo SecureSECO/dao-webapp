@@ -4,16 +4,16 @@ import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'active:scale-95 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
+  'active:scale-95 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
   {
     variants: {
       variant: {
         default:
-          'bg-primary text-white hover:bg-primary-500 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 focus:ring-primary-400 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900', // for button that opens some menu: data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-slate-800
+          'bg-primary text-white hover:bg-primary-500 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 focus:ring-primary-400 dark:focus:ring-slate-400', // for button that opens some menu: data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-slate-800
         destructive:
           'bg-red-500 text-white hover:bg-red-600  focus:ring-red-400',
         outline:
-          'bg-transparent border border-slate-300 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800 dark:text-slate-100 focus:ring-primary-200',
+          'bg-transparent border border-slate-300 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800 dark:text-slate-100 focus:ring-primary-100 dark:focus:ring-primary-400',
         subtle:
           'bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-800 dark:text-slate-100 focus:ring-primary-200 dark:focus:ring-primary-400',
         ghost:

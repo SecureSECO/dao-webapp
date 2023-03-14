@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Governance = () => {
   return <div>Governance</div>;
 };
