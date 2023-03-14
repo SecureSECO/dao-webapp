@@ -55,13 +55,13 @@ const ConnectButton = () => {
           )}
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="">
+        <DropdownMenuContent className="mr-4">
           <DropdownMenuLabel>
-            <div className="flex items-center gap-x-2 border-b border-gray-200 px-4 py-3">
+            <div className="flex items-center justify-center gap-x-2">
               <Jazzicon diameter={24} seed={jazznumber} />
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild className="absolute -top-2 -right-2">
+                  <TooltipTrigger asChild>
                     <p className=" text-sm font-medium text-gray-200">
                       {address?.slice(0, 5) + '...' + address?.slice(-4)}
                     </p>
@@ -77,9 +77,9 @@ const ConnectButton = () => {
           <DropdownMenuItem className="group">
             <button
               onClick={() => disconnect()}
-              className="flex w-full items-center gap-x-2 px-4 py-2.5 text-sm text-gray-300"
+              className="flex w-full items-center gap-x-2 text-sm text-gray-300"
             >
-              <HiOutlineLogout className="text-lg" />
+              <HiOutlineLogout className="text-2xl" />
               <span>Sign Out</span>
             </button>
           </DropdownMenuItem>
