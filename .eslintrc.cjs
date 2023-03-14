@@ -32,7 +32,7 @@ module.exports = {
     'no-undef': 'off',
     'no-unused-vars': 'warn',
     'prettier/prettier': [
-      'error',
+      'warn',
       {
         endOfLine: 'auto',
         singleQuote: true,

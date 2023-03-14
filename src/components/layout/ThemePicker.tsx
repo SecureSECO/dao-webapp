@@ -9,6 +9,7 @@ import { Button } from '@/src/components/ui/Button';
 import { useEffect, useState } from 'react';
 import { HiComputerDesktop, HiMoon, HiSun } from 'react-icons/hi2';
 import { IconType } from 'react-icons/lib';
+import { cn } from '@/src/lib/utils';
 
 type Theme = 'dark' | 'light' | 'system';
 type ThemeOption = {
@@ -35,15 +36,15 @@ const themes: ThemeOption[] = [
 ];
 
 const ThemePicker = () => {
-  const [theme, setTheme] = useState('system');
+  const [currentTheme, setCurrentTheme] = useState('system');
 
   // If theme is set in localStorage, use that
   useEffect(() => {
-    if ('theme' in localStorage) setTheme(localStorage.theme);
+    if ('theme' in localStorage) setCurrentTheme(localStorage.theme);
   }, []);
 
   useEffect(() => {
-    switch (theme) {
+    switch (currentTheme) {
       case 'dark':
         document.documentElement.classList.add('dark');
         localStorage.theme = 'dark';
@@ -59,7 +60,7 @@ const ThemePicker = () => {
         localStorage.removeItem('theme');
         break;
     }
-  }, [theme]);
+  }, [currentTheme]);
 
   return (
     <Dropdown>
@@ -73,14 +74,20 @@ const ThemePicker = () => {
         sideOffset={8}
         className="absolute -right-5 origin-top"
       >
-        <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+        <DropdownMenuRadioGroup
+          value={currentTheme}
+          onValueChange={setCurrentTheme}
+        >
           {themes.map((theme) => (
             <DropdownMenuRadioItem
               key={theme.value}
               value={theme.value}
-              className="flex flex-row justify-start gap-x-2 hover:cursor-pointer"
+              className={cn(
+                'flex flex-row justify-start gap-x-2 hover:cursor-pointer',
+                theme.value == currentTheme && 'text-primary-400'
+              )}
             >
-              <theme.icon className="h-6 w-6" />
+              <theme.icon className="h-5 w-5" />
               {theme.label}
             </DropdownMenuRadioItem>
           ))}
