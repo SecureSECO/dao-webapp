@@ -64,14 +64,14 @@ const ThemePicker = () => {
   return (
     <Dropdown>
       <DropdownMenuTrigger asChild>
-        <Button>
-          <HiMoon className="hidden h-6 w-6 dark:block" />
-          <HiSun className="h-6 w-6 dark:hidden" />
+        <Button variant="subtle" size="sm">
+          <HiMoon className="hidden h-5 w-5 dark:block" />
+          <HiSun className="h-5 w-5 dark:hidden" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         sideOffset={8}
-        className="absolute -right-7 origin-top"
+        className="absolute -right-5 origin-top"
       >
         <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
           {themes.map((theme) => (

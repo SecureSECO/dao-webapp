@@ -1,6 +1,6 @@
 import ErrorPage from './pages/ErrorPage';
 import Governance from './pages/Governance';
-import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
 import Layout from './pages/Layout';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -15,6 +15,9 @@ import {
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { goerli, polygon } from 'wagmi/chains';
+import Finance from '@/src/pages/Finance';
+import Community from '@/src/pages/Community';
+import Settings from '@/src/pages/Settings';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -46,11 +49,23 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Home />,
+        element: <Dashboard />,
       },
       {
         path: '/governance',
         element: <Governance />,
+      },
+      {
+        path: '/finance',
+        element: <Finance />,
+      },
+      {
+        path: '/community',
+        element: <Community />,
+      },
+      {
+        path: '/settings',
+        element: <Settings />,
       },
     ],
   },

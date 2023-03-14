@@ -1,4 +1,4 @@
-const Home = () => {
+const Dashboard = () => {
   return (
     <div className="h-full w-full">
       <p className="h-[10000px]">Test</p>
@@ -6,4 +6,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
