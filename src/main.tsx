@@ -18,6 +18,7 @@ import { goerli, polygon } from 'wagmi/chains';
 import Finance from '@/src/pages/Finance';
 import Community from '@/src/pages/Community';
 import Settings from '@/src/pages/Settings';
+import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -75,7 +76,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <WagmiConfig client={wagmiClient}>
-      <RouterProvider router={router} />
+      <AragonSDKWrapper>
+        <RouterProvider router={router} />
+      </AragonSDKWrapper>
     </WagmiConfig>
 
     <Web3Modal
