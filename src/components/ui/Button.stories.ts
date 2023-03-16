@@ -4,7 +4,6 @@ import { userEvent, within } from '@storybook/testing-library';
 import { Button } from './Button';
 
 const meta = {
-  title: 'Button',
   component: Button,
   tags: ['autodocs'],
   argTypes: {},
