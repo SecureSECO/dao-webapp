@@ -40,14 +40,15 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  ({ className, variant, size, label, children, ...props }, ref) => {
     return (
       <button
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
       >
-        {props.label || props.children}
+        <span className="sr-only">{label}</span>
+        {label || children}
       </button>
     );
   }
