@@ -16,3 +16,26 @@ Note on `.env` files:
 2. Optional: Install the *Prettier* and *ESlint* plugin in vscode (or your editor of choice), might have to restart your editor.
 3. In case you haven't alread: Install *npm*
 4. run: `npm i`
+
+### Colors
+Below is a list of colors used for specific elements, both for light mode as well as dark mode. Colors are represented as tailwind classes here. The correpsonding hex codes can be found in the [tailwind.config.cjs](tailwind.config.cjs) file.
+
+Light mode:
+- Background colors:
+    - default: bg-slate-50
+    - highlight: bg-white
+    - subhighlight: bg-slate-100
+    - warning: bg-red-500/80
+- Text colors:
+    - default: text-slate-700
+    - subtext: text-slate-500
+
+Dark mode:
+- Background colors:
+    - default: bg-slate-950
+    - highlight: bg-slate-800
+    - subhighlight: bg-slate-700/50
+    - warning: bg-red-500/80
+- Text colors:
+    - default: text-slate-300
+    - subtext: text-slate-400
