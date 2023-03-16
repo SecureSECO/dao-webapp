@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 
 import { cn } from '@/src/lib/utils';
+import { cva, VariantProps } from 'class-variance-authority';
 
 const Tabs = TabsPrimitive.Root;
 
@@ -35,15 +36,39 @@ const TabsTrigger = React.forwardRef<
 ));
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
+const tabsContentVariants = cva(
+  'w-full h-fit rounded-lg font-medium shadow-md mt-2',
+  {
+    variants: {
+      variant: {
+        default: 'bg-white dark:bg-slate-800',
+        border: 'border border-slate-200 p-6 dark:border-slate-700',
+        light: 'bg-slate-100 dark:bg-slate-700/50',
+        none: '',
+      },
+      padding: {
+        default: 'px-6 py-4',
+        sm: 'px-4 py-2',
+        lg: 'px-10 py-8',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      padding: 'default',
+    },
+  }
+);
+
+export interface TabsContentProps
+  extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>,
+    VariantProps<typeof tabsContentVariants> {}
+
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
+  TabsContentProps
+>(({ className, variant, padding, ...props }, ref) => (
   <TabsPrimitive.Content
-    className={cn(
-      'mt-2 rounded-md border border-slate-200 p-6 dark:border-slate-700',
-      className
-    )}
+    className={cn(tabsContentVariants({ variant, padding, className }))}
     {...props}
     ref={ref}
   />

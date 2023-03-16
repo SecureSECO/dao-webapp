@@ -106,7 +106,7 @@ const fallbackProposals: ProposalsType = {
 
 const Governance = () => {
   return (
-    <div>
+    <div className="flex flex-col gap-6">
       <Card padding="lg" className="flex flex-col justify-between gap-y-8">
         <div className="flex w-full items-center justify-between gap-y-6">
           <Header>Proposals</Header>
@@ -116,8 +116,8 @@ const Governance = () => {
             onClick={() => console.log('New Proposal Clicked')}
           />
         </div>
-        <ProposalTabs />
       </Card>
+      <ProposalTabs />
     </div>
   );
 };
@@ -164,6 +164,16 @@ const ProposalTabs = () => {
         </p>
       </TabsContent>
     </Tabs>
+  );
+};
+
+import React from 'react';
+
+export const ProposalCard = () => {
+  return (
+    <Card padding="sm" variant="light">
+      ProposalCard
+    </Card>
   );
 };
 

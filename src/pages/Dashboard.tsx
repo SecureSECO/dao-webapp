@@ -10,6 +10,15 @@ import { useDao } from '@/src/hooks/useDao';
 const Dashboard = () => {
   const { dao, loading, error } = useDao({});
 
+  if (loading) {
+    return <Loader />;
+  }
+  if (error) {
+    console.log(error);
+
+    return <p>error: {error}</p>;
+  }
+
   // TODO: add handling for loading and error states
   return dao ? (
     <div className="grid grid-cols-3 gap-6">

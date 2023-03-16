@@ -14,7 +14,7 @@ export type DaoDetails = {
 export interface UseDaoData {
   dao: DaoDetails;
   loading: boolean;
-  error: boolean;
+  error: string | undefined;
 }
 
 export type UseDaoProps = {
@@ -24,13 +24,13 @@ export type UseDaoProps = {
 export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
   const [daoDetails, setDaoDetails] = useState<DaoDetails>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
+  const [error, setError] = useState<string | undefined>(undefined);
   const { context } = useAragonSDKContext();
 
   const fetchDaoDetails = async (client: Client) => {
     if (!import.meta.env.VITE_DAO_ADDRESS) {
       setLoading(false);
-      setError(true);
+      setError("DAO address env variable isn't set");
       return;
     }
 
@@ -48,19 +48,19 @@ export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
           creationDate: dao.creationDate,
         });
         if (loading) setLoading(false);
-        if (error) setError(false);
+        if (error) setError(undefined);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       setLoading(false);
-      setError(true);
+      setError(e.message);
     }
   };
 
   //** Set dummy data for development without querying Aragon API */
   const setDummyData = () => {
     if (loading) setLoading(false);
-    if (error) setError(false);
+    if (error) setError(undefined);
 
     setDaoDetails({
       name: 'SecureSECO Dummy DAO',
