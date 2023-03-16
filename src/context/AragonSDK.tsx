@@ -11,6 +11,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   // TODO: Add support for Polygon
   // e.g. for network: import.meta.env.DEV ? 'goerli' : 'polygon'
   useEffect(() => {
+    // TODO: remove this line, but somehow still handle the case where signer is undefined, but we do want to fetch basic info from the DAO
     if (!signer) return;
     const aragonSDKContextParams: ContextParams = {
       network: 'goerli',
@@ -25,7 +26,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
       ],
       graphqlNodes: [
         {
-          url: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/version/v1.0.0/api', // this will change based on the chain you're using
+          url: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/version/v1.0.0/api',
         },
       ],
     };
