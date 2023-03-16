@@ -8,7 +8,7 @@ import { MainCard } from '@/src/components/ui/MainCard';
 import { useDao } from '@/src/hooks/useDao';
 
 const Dashboard = () => {
-  const { dao, loading, error } = useDao({ useDummyData: true });
+  const { dao, loading, error } = useDao({});
 
   // TODO: add handling for loading and error states
   return dao ? (
@@ -26,15 +26,15 @@ const Dashboard = () => {
           </div>
           <div className="flex flex-row items-center gap-x-6 text-sm font-normal text-slate-500 dark:text-slate-400">
             <div className="flex flex-row items-center gap-x-1">
-              <HiCalendar className="h-5 w-5 text-primary" />
+              <HiCalendar className="h-5 w-5 text-primary dark:text-primary-500" />
               <p>{format(dao.creationDate, 'MMMM yyyy')}</p>
             </div>
             <div className="flex flex-row items-center gap-x-1">
-              <HiCube className="h-5 w-5 text-primary" />
+              <HiCube className="h-5 w-5 text-primary dark:text-primary-500" />
               <p>{import.meta.env.DEV ? 'Goerli' : 'Polygon'}</p>
             </div>
             <div className="flex flex-row items-center gap-x-1">
-              <HiHome className="h-5 w-5 text-primary" />
+              <HiHome className="h-5 w-5 text-primary dark:text-primary-500" />
               <p>{dao.address}</p>
             </div>
           </div>

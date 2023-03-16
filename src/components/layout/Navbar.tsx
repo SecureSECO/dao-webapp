@@ -50,7 +50,7 @@ const Navitem = ({ item }: { item: NavItem }) => {
         cn(
           'rounded-md py-2 px-4 text-lg font-semibold dark:text-slate-400',
           isActive &&
-            'bg-white text-primary-500 shadow-md dark:bg-slate-800 dark:text-primary-400',
+            'bg-white text-primary shadow-md dark:bg-slate-800 dark:text-primary-500',
           isPending && ''
         )
       }

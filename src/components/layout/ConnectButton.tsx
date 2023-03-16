@@ -46,7 +46,7 @@ const ConnectButton = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild className="absolute -top-2 -right-2">
-                  <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgb(0,0,0)]" />
+                  <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgb(0,0,0)] dark:text-primary-500" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Incorrect Network</p>

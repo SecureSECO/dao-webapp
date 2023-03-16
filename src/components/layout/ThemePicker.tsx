@@ -81,7 +81,8 @@ const ThemePicker = () => {
               value={theme.value}
               className={cn(
                 'flex flex-row justify-start gap-x-2 hover:cursor-pointer',
-                theme.value == currentTheme && 'text-primary-500'
+                theme.value == currentTheme &&
+                  'text-primary-500 dark:text-primary-400'
               )}
             >
               <theme.icon className="h-5 w-5" />

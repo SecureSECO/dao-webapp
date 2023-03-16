@@ -32,8 +32,9 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
       >
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-row items-center gap-x-6">
-            <div className="rounded-md bg-slate-100 p-2">
-              <IconWrapper.icon className="h-5 w-5 text-primary" />
+            {/* TODO: background color for darkmode */}
+            <div className="rounded-md bg-slate-100 p-2 dark:bg-slate-700/50">
+              <IconWrapper.icon className="h-5 w-5 text-primary dark:text-primary-500" />
             </div>
             {header}
           </div>
