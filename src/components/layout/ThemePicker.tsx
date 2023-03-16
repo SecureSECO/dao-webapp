@@ -70,10 +70,7 @@ const ThemePicker = () => {
           <HiSun className="h-5 w-5 dark:hidden" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        sideOffset={8}
-        className="absolute -right-5 origin-top"
-      >
+      <DropdownMenuContent className="absolute -right-5 origin-top">
         <DropdownMenuRadioGroup
           value={currentTheme}
           onValueChange={setCurrentTheme}

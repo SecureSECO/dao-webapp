@@ -75,10 +75,7 @@ const Navbar = () => {
               <HiXMark className="h-8 w-8 group-data-[state=closed]:hidden" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            sideOffset={8}
-            className="absolute -left-8 origin-top"
-          >
+          <DropdownMenuContent className="absolute -left-8 origin-top">
             <DropdownMenuGroup>
               {navItems.map((item) => (
                 <DropdownMenuItem

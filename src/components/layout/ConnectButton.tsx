@@ -80,7 +80,7 @@ const ConnectButton = () => {
               onClick={() => disconnect()}
               className="flex w-full items-center gap-x-2 text-sm dark:text-gray-300"
             >
-              <HiOutlineLogout className="text-2xl" />
+              <HiOutlineLogout className="text-xl" />
               <span>Sign Out</span>
             </button>
           </DropdownMenuItem>
