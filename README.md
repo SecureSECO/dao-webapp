@@ -29,6 +29,7 @@ Light mode:
 - Text colors:
     - default: text-slate-700
     - subtext: text-slate-500
+- Highlight color: text-primary
 
 Dark mode:
 - Background colors:
@@ -39,3 +40,4 @@ Dark mode:
 - Text colors:
     - default: text-slate-300
     - subtext: text-slate-400
+- Highlight color: text-primary-500
