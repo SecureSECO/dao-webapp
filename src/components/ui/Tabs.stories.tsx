@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { userEvent, within } from '@storybook/testing-library';
 
 import { Button } from './Button';
 import { Input } from './Input';
@@ -33,7 +34,7 @@ const tabsDemo = () => (
         </div>
       </div>
       <div className="flex">
-        <Button>Save changes</Button>
+        <Button id="saveChanges">Save changes</Button>
       </div>
     </TabsContent>
     <TabsContent value="password">
@@ -51,7 +52,7 @@ const tabsDemo = () => (
         </div>
       </div>
       <div className="flex">
-        <Button>Save password</Button>
+        <Button id="savePassword">Save password</Button>
       </div>
     </TabsContent>
   </Tabs>
@@ -59,4 +60,28 @@ const tabsDemo = () => (
 
 export const Primary: Story = {
   render: tabsDemo,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // For documentation on queries on the canvas, see: https://testing-library.com/docs/queries/byplaceholdertext
+    const name = canvas.getByText('Name').nextSibling as Element;
+    const username = canvas.getByText('Username').nextSibling as Element;
+    const d = 10;
+
+    await userEvent.clear(name);
+    await userEvent.type(name, 'Firstname2, Lastname2', { delay: d });
+    await userEvent.clear(username);
+    await userEvent.type(username, 'username', { delay: d });
+    await userEvent.click(canvas.getByText('Save changes'));
+
+    // move to next tab
+    await userEvent.click(canvas.getByText('Password'));
+    const curPass = canvas.getByText('Current password').nextSibling as Element;
+    const newPass = canvas.getByText('New password').nextSibling as Element;
+    await userEvent.clear(curPass);
+    await userEvent.type(curPass, 'Old Password', { delay: d });
+    await userEvent.clear(newPass);
+    await userEvent.type(newPass, 'New Password that is a lot longer', {
+      delay: d,
+    });
+  },
 };
