@@ -6,17 +6,24 @@ import { format } from 'date-fns';
 import { HiCalendar, HiCube, HiHome, HiInboxStack } from 'react-icons/hi2';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { useDao } from '@/src/hooks/useDao';
+import { useProposals } from '@/src/hooks/useProposals';
+import { useEffect } from 'react';
 
 const Dashboard = () => {
-  const { dao, loading, error } = useDao({});
+  const { dao, loading: daoLoading, error: daoError } = useDao({});
+  const {
+    proposals,
+    loading: proposalsLoading,
+    error: proposalsError,
+  } = useProposals({ useDummyData: true });
 
-  if (loading) {
+  if (daoLoading) {
     return <Loader />;
   }
-  if (error) {
-    console.log(error);
+  if (daoError) {
+    console.log(daoError);
 
-    return <p>error: {error}</p>;
+    return <p>error: {daoError}</p>;
   }
 
   // TODO: add handling for loading and error states

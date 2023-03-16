@@ -1,4 +1,5 @@
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { getErrorMessage } from '@/src/lib/utils';
 import { Client, DaoDetails as DaoApiData } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
 
@@ -9,13 +10,14 @@ export type DaoDetails = {
   description: string;
   links: { name: string; url: string }[];
   creationDate: Date;
+  plugins: { id: string; instanceAddress: string }[];
 } | null;
 
-export interface UseDaoData {
+export type UseDaoData = {
   dao: DaoDetails;
   loading: boolean;
-  error: string | undefined;
-}
+  error: string | null;
+};
 
 export type UseDaoProps = {
   useDummyData?: boolean;
@@ -24,8 +26,8 @@ export type UseDaoProps = {
 export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
   const [daoDetails, setDaoDetails] = useState<DaoDetails>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const { context } = useAragonSDKContext();
+  const [error, setError] = useState<string | null>(null);
+  const { client } = useAragonSDKContext();
 
   const fetchDaoDetails = async (client: Client) => {
     if (!import.meta.env.VITE_DAO_ADDRESS) {
@@ -46,21 +48,23 @@ export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
           description: dao.metadata.description,
           links: dao.metadata.links,
           creationDate: dao.creationDate,
+          plugins: dao.plugins,
         });
+
         if (loading) setLoading(false);
-        if (error) setError(undefined);
+        if (error) setError(null);
       }
-    } catch (e: any) {
+    } catch (e) {
       console.error(e);
       setLoading(false);
-      setError(e.message);
+      setError(getErrorMessage(e));
     }
   };
 
   //** Set dummy data for development without querying Aragon API */
   const setDummyData = () => {
     if (loading) setLoading(false);
-    if (error) setError(undefined);
+    if (error) setError(null);
 
     setDaoDetails({
       name: 'SecureSECO Dummy DAO',
@@ -69,15 +73,15 @@ export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
       description: 'This is dummy DAO data meant for development',
       links: [],
       creationDate: new Date(),
+      plugins: [],
     });
   };
 
   useEffect(() => {
+    if (!client) return;
     if (useDummyData) return setDummyData();
-    if (!context) return;
-    const client = new Client(context);
     fetchDaoDetails(client);
-  }, [context]);
+  }, [client]);
 
   return {
     loading,
