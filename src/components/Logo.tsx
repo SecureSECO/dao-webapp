@@ -6,8 +6,6 @@ const Logo = (props: React.BaseHTMLAttributes<SVGElement>) => {
       {...props}
       version="1.0"
       xmlns="http://www.w3.org/2000/svg"
-      width="1000.000000pt"
-      height="1000.000000pt"
       viewBox="0 0 1000.000000 1000.000000"
       preserveAspectRatio="xMidYMid meet"
     >
