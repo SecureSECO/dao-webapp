@@ -22,10 +22,11 @@ jobs:
       - run: npm ci
       - name: Cache node modules
         uses: actions/cache@v3
-        id: cache-node-modules
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          path: |
+            **/node_modules
+            **./eslintcache
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
   
@@ -38,11 +39,12 @@ jobs:
         uses: actions/cache@v3
         id: restore-node-modules
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.restore-node-modules.outputs.cache-hit != 'true'
-        run: npm install
+        run: npm ci
       - name: run tests
         run: npm run test
   
@@ -55,11 +57,12 @@ jobs:
         uses: actions/cache@v3
         id: restore-node-modules
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+          path: | 
+            **/node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.restore-node-modules.outputs.cache-hit != 'true'
-        run: npm install
+        run: npm ci
       - name: run tests
         run: npm run storybook
 
@@ -72,10 +75,11 @@ jobs:
         uses: actions/cache@v3
         id: restore-node-modules
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.restore-node-modules.outputs.cache-hit != 'true'
-        run: npm install
+        run: npm ci
       - name: run tests
         run: npm run test-storybook
