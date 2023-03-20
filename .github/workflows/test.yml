@@ -92,7 +92,7 @@ jobs:
         if: steps.restore-node_modules.outputs.cache-hit != 'true'
         run: npm ci
       - name: Restore storybook cache
-        uses: action/cache@v3
+        uses: actions/cache@v3
         id: restore-storybook
         with:
           path: |
