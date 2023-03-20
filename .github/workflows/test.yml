@@ -56,7 +56,6 @@ jobs:
   build-storybook:
     runs-on: ubuntu-latest
       needs: install-dependencies
-      if: github.event.inputs.run_notebook == 'true'
       steps:
         - uses: actions/checkout@v3
         - name: Restore cache
