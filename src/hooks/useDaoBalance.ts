@@ -10,7 +10,17 @@ export type UseDaoBalanceData = {
   error: string | null;
 };
 
-export type DaoBalances = AssetBalance[] | null;
+export type DaoBalances = DaoBalance[];
+
+export type DaoBalance = {
+  type: TokenType;
+  updateDate: Date;
+  balance: bigint | null;
+  decimals: number | null;
+  address: string | null;
+  name: string | null;
+  symbol: string | null;
+};
 
 export type UseDaoBalanceProps = {
   useDummyData?: boolean;
@@ -19,7 +29,7 @@ export type UseDaoBalanceProps = {
 export const useDaoBalance = ({
   useDummyData = false,
 }: UseDaoBalanceProps): UseDaoBalanceData => {
-  const [daoBalances, setDaoBalances] = useState<DaoBalances>(null);
+  const [daoBalances, setDaoBalances] = useState<DaoBalances>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,13 +46,14 @@ export const useDaoBalance = ({
       const daoBal: AssetBalance[] | null = await client.methods.getDaoBalances(
         { daoAddressOrEns }
       );
-      if (daoBal) {
-        //todo
-        setDaoBalances(daoBal);
-
-        if (loading) setLoading(false);
-        if (error) setError(null);
+      let balances: DaoBalances = [];
+      if (daoBal != null) {
+        balances = daoBal.map(assetBalanceToDaoBalance);
       }
+      setDaoBalances(balances);
+
+      if (loading) setLoading(false);
+      if (error) setError(null);
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -77,7 +88,11 @@ export const useDaoBalance = ({
     };
 
     //TODO
-    setDaoBalances([nativeBal, erc20Bal, erc721Bal]);
+    setDaoBalances([
+      assetBalanceToDaoBalance(nativeBal),
+      assetBalanceToDaoBalance(erc20Bal),
+      assetBalanceToDaoBalance(erc721Bal),
+    ]);
   };
 
   useEffect(() => {
@@ -92,3 +107,16 @@ export const useDaoBalance = ({
     daoBalances,
   };
 };
+
+function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
+  const x = assetBalance as any;
+  return {
+    type: assetBalance.type,
+    updateDate: assetBalance.updateDate,
+    balance: x.balance ?? null,
+    decimals: x.decimals ?? null,
+    address: x.address ?? null,
+    name: x.name ?? null,
+    symbol: x.symbol ?? null,
+  };
+}
