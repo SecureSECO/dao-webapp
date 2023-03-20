@@ -4,7 +4,6 @@ import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 import { Card, CardProps } from '@/src/components/ui/Card';
 import { IconType } from 'react-icons/lib';
-import { Button } from '@/src/components/ui/Button';
 
 const mainCardVariants = cva('w-full h-full flex flex-col gap-y-2', {
   variants: {},
@@ -16,12 +15,11 @@ export interface MainCardProps
     VariantProps<typeof mainCardVariants> {
   icon: IconType;
   header: ReactNode;
-  btnLabel: string;
-  btnOnClick: React.MouseEventHandler<HTMLButtonElement>;
+  aside: ReactNode;
 }
 
 const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
-  ({ className, header, btnLabel, btnOnClick, icon, ...props }, ref) => {
+  ({ className, header, aside, icon, ...props }, ref) => {
     const IconWrapper = { icon };
 
     return (
@@ -37,13 +35,13 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
             </div>
             {header}
           </div>
-          <Button variant="default" label={btnLabel} onClick={btnOnClick} />
+          <>{aside}</>
         </div>
         <div>{props.children}</div>
       </Card>
     );
   }
 );
-MainCard.displayName = 'Card';
+MainCard.displayName = 'MainCard';
 
 export { MainCard, mainCardVariants as cardVariants };
