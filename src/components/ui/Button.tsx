@@ -48,7 +48,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         <span className="sr-only">{label}</span>
-        {label || children}
+        <span className="leading-4">{label || children}</span>
       </button>
     );
   }
