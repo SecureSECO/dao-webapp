@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '../../lib/utils';
 import { Card, CardProps } from '@/src/components/ui/Card';
-import { Button } from '@/src/components/ui/Button';
 import Header from '@/src/components/ui/Header';
 
 const headerCardVariants = cva('w-full h-full flex flex-col gap-y-2', {
@@ -15,12 +14,11 @@ export interface HeaderCardProps
   extends CardProps,
     VariantProps<typeof headerCardVariants> {
   title: string;
-  btnLabel: string;
-  btnOnClick: React.MouseEventHandler<HTMLButtonElement>;
+  aside: ReactNode;
 }
 
 const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
-  ({ className, title, btnLabel, btnOnClick, ...props }, ref) => {
+  ({ className, title, aside: button, ...props }, ref) => {
     return (
       <Card
         ref={ref}
@@ -34,7 +32,7 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
       >
         <div className="flex w-full items-center justify-between gap-y-6">
           <Header>{title}</Header>
-          <Button variant="default" label={btnLabel} onClick={btnOnClick} />
+          <>{button}</>
         </div>
         {props.children}
       </Card>

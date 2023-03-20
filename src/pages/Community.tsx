@@ -1,3 +1,4 @@
+import { Button } from '@/src/components/ui/Button';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 
 const Community = () => {
@@ -5,8 +6,12 @@ const Community = () => {
     <div className="flex flex-col gap-6">
       <HeaderCard
         title="Community"
-        btnLabel="New members"
-        btnOnClick={() => console.log('New members Clicked')}
+        aside={
+          <Button
+            label="New members"
+            onClick={() => console.log('New members Clicked')}
+          />
+        }
       >
         <div>8 members</div>
       </HeaderCard>

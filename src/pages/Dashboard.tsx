@@ -14,8 +14,8 @@ import {
 import { MainCard } from '@/src/components/ui/MainCard';
 import { useDao } from '@/src/hooks/useDao';
 import { useProposals } from '@/src/hooks/useProposals';
-import { useEffect } from 'react';
 import { useMembers } from '@/src/hooks/useMembers';
+import { Button } from '@/src/components/ui/Button';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -94,8 +94,12 @@ const Dashboard = () => {
             <p>proposals created</p>
           </div>
         }
-        btnLabel="New proposal"
-        btnOnClick={(e) => console.log('Clicked!')}
+        aside={
+          <Button
+            label="New proposal"
+            onClick={() => console.log('New proposal click!')}
+          />
+        }
       ></MainCard>
 
       <div className="col-span-3 flex flex-col gap-y-6">
@@ -108,8 +112,12 @@ const Dashboard = () => {
               <p>treasury value</p>
             </div>
           }
-          btnLabel="New transfer"
-          btnOnClick={(e) => console.log('Clicked!')}
+          aside={
+            <Button
+              label="New trasnfer"
+              onClick={() => console.log('New transfer click!')}
+            />
+          }
         ></MainCard>
 
         <MainCard
@@ -121,8 +129,12 @@ const Dashboard = () => {
               <p>members</p>
             </div>
           }
-          btnLabel="Add members"
-          btnOnClick={(e) => console.log('Clicked!')}
+          aside={
+            <Button
+              label="Add members"
+              onClick={() => console.log('Add members click!')}
+            />
+          }
         ></MainCard>
       </div>
     </div>
