@@ -25,10 +25,9 @@ jobs:
         with:
           path: |
             **/node_modules
-            **./eslintcache
           key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-build-
   
   jest:
     runs-on: ubuntu-latest
