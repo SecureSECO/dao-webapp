@@ -114,7 +114,7 @@ const Dashboard = () => {
           }
           aside={
             <Button
-              label="New trasnfer"
+              label="New transfer"
               onClick={() => console.log('New transfer click!')}
             />
           }
