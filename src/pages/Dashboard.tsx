@@ -3,7 +3,14 @@ import Header from '@/src/components/ui/Header';
 import Loader from '@/src/components/ui/Loader';
 import { Card } from '@/src/components/ui/Card';
 import { format } from 'date-fns';
-import { HiCalendar, HiCube, HiHome, HiInboxStack } from 'react-icons/hi2';
+import {
+  HiCalendar,
+  HiCircleStack,
+  HiCube,
+  HiHome,
+  HiInboxStack,
+  HiUserGroup,
+} from 'react-icons/hi2';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { useDao } from '@/src/hooks/useDao';
 import { useProposals } from '@/src/hooks/useProposals';
@@ -28,8 +35,11 @@ const Dashboard = () => {
 
   // TODO: add handling for loading and error states
   return dao ? (
-    <div className="grid grid-cols-3 gap-6">
-      <Card padding="lg" className="col-span-3 flex flex-row justify-between">
+    <div className="grid grid-cols-7 gap-6">
+      <Card
+        padding="lg"
+        className="col-span-full flex shrink flex-row justify-between"
+      >
         <div className="flex flex-col justify-between gap-y-6">
           <div className="flex flex-col gap-y-2">
             <Header>{dao.name}</Header>
@@ -73,7 +83,7 @@ const Dashboard = () => {
       </Card>
 
       <MainCard
-        className="col-span-2"
+        className="col-span-4"
         icon={HiInboxStack}
         header={
           <div className="flex flex-row items-end gap-x-2">
@@ -84,6 +94,34 @@ const Dashboard = () => {
         btnLabel="New proposal"
         btnOnClick={(e) => console.log('Clicked!')}
       ></MainCard>
+
+      <div className="col-span-3 flex flex-col gap-y-6">
+        <MainCard
+          className=""
+          icon={HiCircleStack}
+          header={
+            <div className="flex flex-row items-end gap-x-2">
+              <span className="text-3xl">$6.99</span>
+              <p>treasury value</p>
+            </div>
+          }
+          btnLabel="New transfer"
+          btnOnClick={(e) => console.log('Clicked!')}
+        ></MainCard>
+
+        <MainCard
+          className=""
+          icon={HiUserGroup}
+          header={
+            <div className="flex flex-row items-end gap-x-2">
+              <span className="text-3xl">2</span>
+              <p>members</p>
+            </div>
+          }
+          btnLabel="Add members"
+          btnOnClick={(e) => console.log('Clicked!')}
+        ></MainCard>
+      </div>
     </div>
   ) : (
     <Loader />
