@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import {
+  useForm,
+  UseFormRegister,
+  UseFormSetValue,
+  Control,
+  FieldValues,
+  UseFormGetValues,
+} from 'react-hook-form';
 import Header from '@/src/components/ui/Header';
 import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '../components/ui/Button';
@@ -80,10 +87,10 @@ const StepContent = ({
   control,
 }: {
   step: number;
-  register: any;
-  setValue: any;
-  getValues: any;
-  control: any;
+  register: UseFormRegister<FieldValues>;
+  setValue: UseFormSetValue<FieldValues>;
+  getValues: UseFormGetValues<FieldValues>;
+  control: Control<FieldValues, any>;
 }) => {
   const [resources, setResources] = useState<
     Array<{ name: string; link: string }>

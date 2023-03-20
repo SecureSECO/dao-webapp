@@ -1,7 +1,6 @@
+//Taken from https://ui.shadcn.com/docs/primitives/input
 import * as React from 'react';
 import { cn } from '@/src/lib/utils';
-
-//Taken from https://ui.shadcn.com/docs/primitives/input
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
