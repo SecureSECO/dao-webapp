@@ -1,12 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
+import { HiPlus } from 'react-icons/hi2';
 
 import { Button } from './Button';
 
 const meta = {
   component: Button,
   tags: ['autodocs'],
-  argTypes: {},
+  argTypes: {
+    icon: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 } satisfies Meta<typeof Button>;
 
 export default meta;
@@ -60,13 +67,22 @@ export const Subtle: Story = {
   },
 };
 
+export const WithIcon: Story = {
+  args: {
+    variant: 'default',
+    label: 'Button',
+    disabled: false,
+    icon: HiPlus,
+  },
+};
+
 // const Template: ComponentStory<typeof RegistrationForm> = (args) => <RegistrationForm {...args} />;
 
 export const Clicked: Story = {
   ...Default,
   play: async ({ canvasElement }) => {
-    const canvas = await within(canvasElement);
-    await userEvent.hover(canvas.getByRole('button'));
-    await userEvent.click(canvas.getByRole('button'));
+    const canvas = within(canvasElement);
+    userEvent.hover(canvas.getByRole('button'));
+    userEvent.click(canvas.getByRole('button'));
   },
 };

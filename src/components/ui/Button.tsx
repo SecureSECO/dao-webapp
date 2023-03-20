@@ -2,6 +2,7 @@ import * as React from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '../../lib/utils';
+import { IconType } from 'react-icons/lib';
 
 const buttonVariants = cva(
   'active:scale-95 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
@@ -33,14 +34,30 @@ const buttonVariants = cva(
   }
 );
 
+const iconVariants = cva('', {
+  variants: {
+    size: {
+      default: 'h-5 w-5',
+      sm: 'h-4 w-4',
+      lg: 'h-6 w-6',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   label?: string;
+  icon?: IconType | null;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, label, children, ...props }, ref) => {
+  ({ className, icon, variant, size, label, children, ...props }, ref) => {
+    const IconWrapper = { icon };
+
     return (
       <button
         className={cn(buttonVariants({ variant, size, className }))}
@@ -48,7 +65,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         <span className="sr-only">{label}</span>
-        <span className="leading-4">{label || children}</span>
+        {icon && IconWrapper.icon ? (
+          <span className="flex flex-row items-center gap-x-1">
+            <IconWrapper.icon
+              className={cn(iconVariants({ size, className }))}
+            />
+            <span className="leading-4">{label || children}</span>
+          </span>
+        ) : (
+          <span className="leading-4">{label || children}</span>
+        )}
       </button>
     );
   }
