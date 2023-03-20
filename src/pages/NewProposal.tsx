@@ -12,6 +12,7 @@ import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { HiXMark } from 'react-icons/hi2';
+import { Input } from '@/src/components/ui/Input';
 
 const totalSteps = 4;
 
@@ -94,7 +95,7 @@ const StepContent = ({
 }) => {
   const [resources, setResources] = useState<
     Array<{ name: string; link: string }>
-  >([]);
+  >([{ name: '', link: '' }]);
 
   const handleAddResource = () => {
     setResources([...resources, { name: '', link: '' }]);
@@ -119,13 +120,13 @@ const StepContent = ({
   if (step === 1) {
     return (
       <div className="flex flex-col gap-4">
-        <input
+        <Input
           {...register('title')}
           type="text"
           placeholder="Title"
           className="..."
         />
-        <input
+        <Input
           {...register('summary')}
           type="text"
           placeholder="Summary"
@@ -172,7 +173,7 @@ const ResourceInput = ({
 }) => {
   return (
     <div className="flex items-center gap-4">
-      <input
+      <Input
         {...register(`${prefix}.name`)}
         type="text"
         value={resource.name}
@@ -180,7 +181,7 @@ const ResourceInput = ({
         placeholder="Resource name"
         className="..."
       />
-      <input
+      <Input
         {...register(`${prefix}.link`, {
           pattern: {
             value: /^(https?:\/\/)?[\w\-._~:/?#[\]@!$&'()*+,;=%]+$/,
@@ -193,7 +194,7 @@ const ResourceInput = ({
         placeholder="Resource link"
         className="..."
       />
-      <HiXMark className="cursor-pointer" onClick={onRemove} />
+      <HiXMark className="h-10 w-10 cursor-pointer" onClick={onRemove} />
     </div>
   );
 };
