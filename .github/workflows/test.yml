@@ -91,6 +91,8 @@ jobs:
       - name: Install dependencies
         if: steps.restore-node_modules.outputs.cache-hit != 'true'
         run: npm ci
+      - name: Install playwright
+        run: npm ci playwright
       - name: Restore storybook cache
         uses: actions/cache@v3
         id: restore-storybook
@@ -98,11 +100,14 @@ jobs:
           path: |
             **/storybook-static
           key: ${{ runner.os }}-storybook-${{ hashFiles('**/package-lock.json') }}
-      - name: Install playwright
-        run: npm i playwright
       - name: Build storybook
         if: steps.restore-storybook.outputs.cache-hit != 'true'
         run: npm run build-storybook
+      - name: Install miscellaneous dependencies
+        run: |
+          npm ci concurrently
+          npm ci http-server
+          npm ci wait-on
       - name: Serve Storybook and run tests
         run: npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --port 6006 --silent" \
