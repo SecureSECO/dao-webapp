@@ -1,16 +1,17 @@
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { getErrorMessage } from '@/src/lib/utils';
-import {
-  TokenVotingClient,
-  TokenVotingProposalListItem,
-} from '@aragon/sdk-client';
+import { TokenVotingClient } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
 
 type UseMembersProps = {
   useDummyData?: boolean;
 };
 
-type UseMembersData = {};
+type UseMembersData = {
+  loading: boolean;
+  error: string | null;
+  members: Member[];
+};
 
 type Member = {};
 
@@ -22,7 +23,7 @@ export const useMembers = ({
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { votingPluginAddress, contextPlugin } = useAragonSDKContext();
+  const { votingClient, votingPluginAddress } = useAragonSDKContext();
 
   const fetchMembers = async (client: TokenVotingClient) => {
     if (!votingPluginAddress) {
@@ -32,14 +33,14 @@ export const useMembers = ({
     }
 
     try {
-      // const daoProposals: TokenVotingProposalListItem[] | null =
-      //   await client.methods.getProposals(votingPluginAddress);
-      // if (daoProposals) {
-      //   // setProposals();
-      //   console.log(daoProposals);
-      //   if (loading) setLoading(false);
-      //   if (error) setError(null);
-      // }
+      const daoMembers: any | null = await client.methods.getMembers(
+        votingPluginAddress
+      );
+      if (daoMembers) {
+        console.log(daoMembers);
+        if (loading) setLoading(false);
+        if (error) setError(null);
+      }
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -57,10 +58,9 @@ export const useMembers = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!contextPlugin) return;
-    const client = new TokenVotingClient(contextPlugin);
-    fetchMembers(client);
-  }, [contextPlugin]);
+    if (!votingClient) return;
+    fetchMembers(votingClient);
+  }, [votingClient]);
 
   return {
     loading,

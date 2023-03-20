@@ -4,18 +4,26 @@ import {
   Context,
   ContextParams,
   ContextPlugin,
+  TokenVotingClient,
 } from '@aragon/sdk-client';
 import { useSigner } from 'wagmi';
 
-const AragonSDKContext = createContext({});
+type SDKContext = {
+  context?: Context;
+  client?: Client;
+  votingClient?: TokenVotingClient;
+  votingPluginAddress?: string;
+};
+
+const AragonSDKContext = createContext<SDKContext>({});
 const votingPluginAddress = '0xfc9ef7e0ea890e86864137e49282b21a0a1f6e5e';
 
 export function AragonSDKWrapper({ children }: any): JSX.Element {
   const [context, setContext] = useState<Context | undefined>(undefined);
   const [client, setClient] = useState<Client | undefined>(undefined);
-  const [contextPlugin, setContextPlugin] = useState<ContextPlugin | undefined>(
-    undefined
-  );
+  const [votingClient, setVotingClient] = useState<
+    TokenVotingClient | undefined
+  >(undefined);
   const signer = useSigner().data || undefined;
 
   // TODO: Add support for Polygon
@@ -47,18 +55,19 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   useEffect(() => {
     if (!context) return;
     setClient(new Client(context));
-    setContextPlugin(new ContextPlugin(context));
+    const contextPlugin = new ContextPlugin(context);
+    setVotingClient(new TokenVotingClient(contextPlugin));
   }, [context]);
 
   return (
     <AragonSDKContext.Provider
-      value={{ context, client, contextPlugin, votingPluginAddress }}
+      value={{ context, client, votingClient, votingPluginAddress }}
     >
       {children}
     </AragonSDKContext.Provider>
   );
 }
 
-export function useAragonSDKContext(): any {
+export function useAragonSDKContext(): SDKContext {
   return useContext(AragonSDKContext);
 }
