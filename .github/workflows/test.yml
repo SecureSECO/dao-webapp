@@ -2,6 +2,12 @@ name: UI Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      run_notebook:
+        description: Run interaction and accessibility tests
+        type: boolean
+        default: false
+        required: false 
   push:
     branches: [ "master" ]
   pull_request:
@@ -50,7 +56,7 @@ jobs:
   interaction-and-accessibility:
     runs-on: ubuntu-latest
     needs: install-dependencies
-    if: github.event.inputs
+    if: github.event.inputs.run_notebook == 'true'
     steps:
       - uses: actions/checkout@v3
       - name: Restore cache
