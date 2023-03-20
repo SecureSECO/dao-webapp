@@ -111,7 +111,7 @@ export const useProposals = ({
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { votingPluginAddress, contextPlugin } = useAragonSDKContext();
+  const { votingPluginAddress, votingClient } = useAragonSDKContext();
 
   const fetchProposals = async (client: TokenVotingClient) => {
     if (!votingPluginAddress) {
@@ -122,7 +122,9 @@ export const useProposals = ({
 
     try {
       const daoProposals: TokenVotingProposalListItem[] | null =
-        await client.methods.getProposals(votingPluginAddress);
+        await client.methods.getProposals({
+          daoAddressOrEns: import.meta.env.VITE_DAO_ADDRESS,
+        });
       if (daoProposals) {
         // setProposals();
         console.log(daoProposals);
@@ -147,10 +149,9 @@ export const useProposals = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!contextPlugin) return;
-    const client = new TokenVotingClient(contextPlugin);
-    fetchProposals(client);
-  }, [contextPlugin]);
+    if (!votingClient) return;
+    fetchProposals(votingClient);
+  }, [votingClient]);
 
   return {
     loading,

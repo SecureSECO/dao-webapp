@@ -15,6 +15,7 @@ import { MainCard } from '@/src/components/ui/MainCard';
 import { useDao } from '@/src/hooks/useDao';
 import { useProposals } from '@/src/hooks/useProposals';
 import { useEffect } from 'react';
+import { useMembers } from '@/src/hooks/useMembers';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -22,7 +23,9 @@ const Dashboard = () => {
     proposals,
     loading: proposalsLoading,
     error: proposalsError,
-  } = useProposals({ useDummyData: true });
+  } = useProposals({ useDummyData: false });
+
+  const { members } = useMembers({});
 
   if (daoLoading) {
     return <Loader />;

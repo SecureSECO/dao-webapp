@@ -78,8 +78,8 @@ export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
   };
 
   useEffect(() => {
-    if (!client) return;
     if (useDummyData) return setDummyData();
+    if (!client) return;
     fetchDaoDetails(client);
   }, [client]);
 
