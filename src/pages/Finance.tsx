@@ -1,10 +1,9 @@
-import { AssetBalance } from '@aragon/sdk-client';
-import React from 'react';
+import { HiPlus } from 'react-icons/hi2';
+import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { HeaderCard } from '../components/ui/HeaderCard';
 import Loader from '../components/ui/Loader';
-import { MainCard } from '../components/ui/MainCard';
-import { DaoBalances, useDaoBalance } from '../hooks/useDaoBalance';
+import { useDaoBalance } from '../hooks/useDaoBalance';
 
 const Finance = () => {
   const { daoBalances, loading, error } = useDaoBalance({});
@@ -38,8 +37,7 @@ const Finance = () => {
       <div className="flex flex-col gap-6">
         <HeaderCard
           title="Finance"
-          btnLabel="New transfer"
-          btnOnClick={() => console.log('New members Clicked')}
+          aside={<Button label="New transfer" icon={HiPlus}></Button>}
         ></HeaderCard>
       </div>
       <Card className="my-6">
