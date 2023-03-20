@@ -66,7 +66,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         <span className="sr-only">{label}</span>
         {icon && IconWrapper.icon ? (
-          <span className="flex flex-row items-center gap-x-1">
+          <span className="flex flex-row items-center gap-x-2">
             <IconWrapper.icon
               className={cn(iconVariants({ size, className }))}
             />
