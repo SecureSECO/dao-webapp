@@ -69,7 +69,7 @@ jobs:
         with:
           path: |
             **/storybook-static
-          key: ${{ runner.os }}-storybook-${{ hashFiles('**/src/components/ui/*.tsx') }}
+          key: ${{ runner.os }}-storybook-${{ hashFiles('storybook-static/assets/*.js') }}
           restore-keys: |
             ${{ runner.os }}-storybook-
 
@@ -96,7 +96,7 @@ jobs:
         with:
           path: |
             **/storybook-static
-          key: ${{ runner.os }}-storybook-${{ hashFiles('**/src/components/ui/*.tsx') }}
+          key: ${{ runner.os }}-storybook-${{ hashFiles('storybook-static/assets/*.js') }}
       - name: Build storybook
         if: steps.restore-storybook.outputs.cache-hit != 'true'
         run: npm run build-storybook
@@ -110,13 +110,23 @@ jobs:
     needs: build-storybook
     steps:
       - uses: actions/checkout@v3
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        id: restore-node_modules
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: steps.restore-node_modules.outputs.cache-hit != 'true'
+        run: npm ci
       - name: Restore storybook build cache
         uses: actions/cache@v3
         id: restore-storybook
         with:
           path: |
             storybook-static
-          key: ${{ runner.os }}-storybook-${{ hashFiles('**/src/components/ui/*.tsx') }}
+          key: ${{ runner.os }}-storybook-${{ hashFiles('storybook-static/assets/*.js') }}
       - name: Build storybook
         if: steps.restore-storybook.outputs.cache-hit != 'true'
         run: npm run build-storybook
