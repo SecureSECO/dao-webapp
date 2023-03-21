@@ -8,6 +8,8 @@ import { DaoBalance, useDaoBalance } from '../hooks/useDaoBalance';
 const Finance = () => {
   const { daoBalances, loading, error } = useDaoBalance({});
 
+  daoBalances.sort((a, b) => (a.updateDate < b.updateDate ? 1 : -1));
+
   console.log(daoBalances);
 
   const bigIntToFloat = (
@@ -21,14 +23,15 @@ const Finance = () => {
     if (loading) return <Loader></Loader>;
 
     return (
-      <div className="space-y-2">
+      <div className="mt-4 space-y-4">
         {daoBalances.map((balance: DaoBalance) => (
           <Card
             padding="sm"
             variant="light"
             className="p-4 dark:bg-slate-700/50"
           >
-            <div>{balance.name}</div>
+            <h2 className="font-bold">{balance.name}</h2>
+            <h3>{balance.address}</h3>
             <div>
               {bigIntToFloat(balance.balance, balance.decimals).toFixed(2)}
               &nbsp;{balance.symbol ?? ''}
