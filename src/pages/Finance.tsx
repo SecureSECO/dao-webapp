@@ -3,7 +3,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { HeaderCard } from '../components/ui/HeaderCard';
 import Loader from '../components/ui/Loader';
-import { useDaoBalance } from '../hooks/useDaoBalance';
+import { DaoBalance, useDaoBalance } from '../hooks/useDaoBalance';
 
 const Finance = () => {
   const { daoBalances, loading, error } = useDaoBalance({});
@@ -21,12 +21,19 @@ const Finance = () => {
     if (loading) return <Loader></Loader>;
 
     return (
-      <div>
-        {daoBalances.map((balance) => (
-          <div>
-            {bigIntToFloat(balance.balance, balance.decimals).toFixed(2)}
-            &nbsp;{balance.symbol ?? ''}
-          </div>
+      <div className="space-y-2">
+        {daoBalances.map((balance: DaoBalance) => (
+          <Card
+            padding="sm"
+            variant="light"
+            className="p-4 dark:bg-slate-700/50"
+          >
+            <div>{balance.name}</div>
+            <div>
+              {bigIntToFloat(balance.balance, balance.decimals).toFixed(2)}
+              &nbsp;{balance.symbol ?? ''}
+            </div>
+          </Card>
         ))}
       </div>
     );
