@@ -25,6 +25,7 @@ jobs:
         with:
           path: |
             **/node_modules
+            
           key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-
@@ -65,7 +66,7 @@ jobs:
         with:
           path: |
             **/storybook-static
-          key: ${{ runner.os }}-storybook-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-storybook-${{ hashFiles('**/src/components/ui/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-storybook-
 
@@ -92,7 +93,7 @@ jobs:
         with:
           path: |
             **/storybook-static
-          key: ${{ runner.os }}-storybook-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-storybook-${{ hashFiles('**/src/components/ui/*.tsx') }}
       - name: Build storybook
         if: steps.restore-storybook.outputs.cache-hit != 'true'
         run: npm run build-storybook
@@ -100,3 +101,25 @@ jobs:
         run: |
           npm i concurrently wait-on
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" "npm run storybook" "npx wait-on tcp:6006 && npm run test-storybook"
+
+  visual-and-composition-tests:
+    runs-on: ubuntu-latest
+    needs: build-storybook
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore storybook build cache
+        uses: actions/cache@v3
+        id: restore-storybook
+        with:
+          path: |
+            storybook-static
+          key: ${{ runner.os }}-storybook-${{ hashFiles('**/src/components/ui/*.tsx') }}
+      - name: Build storybook
+        if: steps.restore-storybook.outputs.cache-hit != 'true'
+        run: npm run build-storybook
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          storybookBuildDir: "storybook-static"
+
