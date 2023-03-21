@@ -69,7 +69,7 @@ jobs:
         with:
           path: |
             **/storybook-static
-          key: ${{ runner.os }}-storybook-${{ hashFiles('storybook-static/assets/*.js') }}
+          key: ${{ runner.os }}-storybook-${{ hashFiles('src/components/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-storybook-
 
@@ -78,6 +78,8 @@ jobs:
     needs: [ install-dependencies, build-storybook ]
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Restore npm cache
         uses: actions/cache@v3
         id: restore-node_modules
@@ -96,7 +98,7 @@ jobs:
         with:
           path: |
             **/storybook-static
-          key: ${{ runner.os }}-storybook-${{ hashFiles('storybook-static/assets/*.js') }}
+          key: ${{ runner.os }}-storybook-${{ hashFiles('src/components/*.tsx') }}
       - name: Build storybook
         if: steps.restore-storybook.outputs.cache-hit != 'true'
         run: npm run build-storybook
@@ -126,7 +128,7 @@ jobs:
         with:
           path: |
             storybook-static
-          key: ${{ runner.os }}-storybook-${{ hashFiles('storybook-static/assets/*.js') }}
+          key: ${{ runner.os }}-storybook-${{ hashFiles('src/components/*.tsx') }}
       - name: Build storybook
         if: steps.restore-storybook.outputs.cache-hit != 'true'
         run: npm run build-storybook
