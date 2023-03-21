@@ -13,9 +13,24 @@ import { useEffect, useState } from 'react';
 import { getErrorMessage } from '../lib/utils';
 
 export type UseDaoTransfersData = {
-  daoTransfers: Transfer[] | null;
+  daoTransfers: DaoTransfer[] | null;
   loading: boolean;
   error: string | null;
+};
+
+export type DaoTransfer = {
+  type: TransferType;
+  tokenType: TokenType;
+  creationDate: Date;
+  transactionId: string;
+  to: string;
+  from: string;
+  amount: BigInt | null;
+  decimals: number | null;
+  tokenAddress: String | null;
+  tokenName: String | null;
+  tokenSymbol: String | null;
+  proposalId: String | null;
 };
 
 export type UseDaoTransfersProps = {
@@ -27,7 +42,7 @@ export const useDaoTransfers = ({
   useDummyData = false,
   limit = 10,
 }: UseDaoTransfersProps): UseDaoTransfersData => {
-  const [daoTransfers, setDaoTransfers] = useState<Transfer[] | null>(null);
+  const [daoTransfers, setDaoTransfers] = useState<DaoTransfer[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { client } = useAragonSDKContext();
@@ -50,8 +65,10 @@ export const useDaoTransfers = ({
     };
 
     try {
-      const daoTransfers: Transfer[] | null =
-        await client.methods.getDaoTransfers(params);
+      const transfers: Transfer[] | null = await client.methods.getDaoTransfers(
+        params
+      );
+      const daoTransfers = transfers?.map(transferToDaoTransfer) ?? null;
       setDaoTransfers(daoTransfers);
       if (loading) setLoading(false);
       if (error) setError(null);
@@ -112,7 +129,7 @@ export const useDaoTransfers = ({
       },
     ];
 
-    setDaoTransfers(data);
+    setDaoTransfers(data.map(transferToDaoTransfer));
   };
 
   useEffect(() => {
@@ -125,5 +142,23 @@ export const useDaoTransfers = ({
     loading,
     error,
     daoTransfers,
+  };
+};
+
+const transferToDaoTransfer = (transfer: Transfer): DaoTransfer => {
+  const x = transfer as any;
+  return {
+    type: transfer.type,
+    tokenType: transfer.tokenType,
+    creationDate: transfer.creationDate,
+    transactionId: transfer.transactionId,
+    to: transfer.to,
+    from: transfer.from,
+    amount: x.amount ?? null,
+    decimals: x.token.decimals ?? null,
+    tokenAddress: x.token.address ?? null,
+    tokenName: x.token.name ?? null,
+    tokenSymbol: x.token.symbol ?? null,
+    proposalId: x.proposalId ?? null,
   };
 };
