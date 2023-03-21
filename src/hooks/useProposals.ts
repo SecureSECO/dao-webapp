@@ -78,7 +78,7 @@ const dummyProposals: Proposal[] = [
     },
   },
   {
-    id: '0x12345...',
+    id: '0x12346...',
     dao: {
       address: '0x1234567890123456789012345678901234567890',
       name: 'Cool DAO',

@@ -15,6 +15,7 @@ import {
 } from '@/src/components/ui/Tabs';
 import { Proposal, useProposals } from '@/src/hooks/useProposals';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { Link } from '@/src/components/ui/Link';
 
 const Governance = () => {
   return (
@@ -22,7 +23,8 @@ const Governance = () => {
       <HeaderCard
         title="Community"
         aside={
-          <Button
+          <Link
+            to="/governance/new-proposal"
             variant="default"
             label="New proposal"
             onClick={() => console.log('New Proposal Clicked')}
