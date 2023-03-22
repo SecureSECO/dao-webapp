@@ -12,8 +12,9 @@ import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { HiXMark } from 'react-icons/hi2';
+import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { Input } from '@/src/components/ui/Input';
-
+i
 const totalSteps = 4;
 
 const NewProposal = () => {
@@ -121,15 +122,15 @@ const StepContent = ({
     return (
       <div className="flex flex-col gap-4">
         <Input
-          {...register('title')}
+          {...register('title', { required: true })}
           type="text"
-          placeholder="Title"
+          placeholder="Title*"
           className="..."
         />
         <Input
-          {...register('summary')}
+          {...register('summary', { required: true })}
           type="text"
-          placeholder="Summary"
+          placeholder="Summary*"
           className="..."
         />
         <textarea
@@ -150,6 +151,90 @@ const StepContent = ({
         <Button onClick={handleAddResource} type="button">
           Add resource
         </Button>
+      </div>
+    );
+  }
+  if (step === 2) {
+    return (
+      <div className="flex flex-col gap-4">
+        <fieldset>
+          <legend>Options</legend>
+          <RadioGroup {...register('option')}>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="yes-no-abstain" id="yes-no-abstain" />
+              <h2>
+                Yes, no, or abstain (Members can vote for, against, or abstain)
+              </h2>
+            </div>
+          </RadioGroup>
+        </fieldset>
+        <fieldset>
+          <legend>Start time</legend>
+          <RadioGroup {...register('start_time_type')}>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="now" id="start-now" />
+              <h2>Now</h2>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="custom" id="start-custom" />
+              <h2>Custom</h2>
+            </div>
+          </RadioGroup>
+          {getValues('start_time_type') === 'custom' && (
+            <Input
+              {...register('start_time')}
+              type="datetime-local"
+              placeholder="Start time"
+            />
+          )}
+        </fieldset>
+        <fieldset>
+          <legend>End time</legend>
+          <RadioGroup {...register('end_time_type')}>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="duration" id="end-duration" />
+              <h2>Duration</h2>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="custom" id="end-custom" />
+              <h2>Custom</h2>
+            </div>
+          </RadioGroup>
+          {getValues('end_time_type') === 'duration' ? (
+            <div className="flex gap-2">
+              <Input
+                {...register('duration_minutes')}
+                type="number"
+                placeholder="Minutes"
+                min="0"
+                max="525600" // 365 days in minutes
+              />
+              <Input
+                {...register('duration_hours')}
+                type="number"
+                placeholder="Hours"
+                min="0"
+                max="8760" // 365 days in hours
+              />
+              <Input
+                {...register('duration_days')}
+                type="number"
+                placeholder="Days"
+                min="0"
+                max="365"
+              />
+            </div>
+          ) : (
+            getValues('end_time_type') === 'custom' && (
+              <input
+                {...register('end_time')}
+                type="datetime-local"
+                placeholder="End time"
+                min={getValues('start_time')}
+              />
+            )
+          )}
+        </fieldset>
       </div>
     );
   }
