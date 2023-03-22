@@ -29,3 +29,27 @@
     @apply bg-blue-500 text-gray-700;
   }
 }
+
+.markdown-editor .ProseMirror:focus {
+  outline: none;
+}
+
+.markdown-editor ul {
+  list-style-type: decimal;
+  padding: 0 1rem;
+}
+
+.markdown-editor ol {
+  list-style-type: disc;
+  padding: 0 1rem;
+}
+
+.markdown-editor a {
+  color: #003bf5;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.markdown-editor a:hover {
+  color: #0031ad;
+}
