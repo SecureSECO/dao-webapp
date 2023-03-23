@@ -74,7 +74,6 @@ const DaoTransfers = ({
   max_amount = daoTransfers.length,
 }: DaoTransfersProps): JSX.Element => {
   const transfers = daoTransfers.slice(0, max_amount);
-  console.log(transfers);
   return (
     <div className="mt-4 space-y-4">
       {transfers.map((transfer: DaoTransfer) => (
