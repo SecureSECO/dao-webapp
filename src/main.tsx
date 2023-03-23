@@ -23,6 +23,8 @@ import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import NewProposal from '@/src/pages/NewProposal';
 import Verification from './pages/Verification';
 import { Toaster } from 'react-hot-toast';
+import FinishVerification from './pages/FinishVerification';
+import { ganache } from './assets/GanacheChain';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -31,7 +33,7 @@ if (!import.meta.env.VITE_APP_PROJECT_ID) {
 const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 
 // 2. Configure wagmi client
-const chains = [goerli, polygon];
+const chains = [goerli, polygon, ganache];
 
 const { provider } = configureChains(chains, [
   import.meta.env.PROD
@@ -85,6 +87,10 @@ const router = createBrowserRouter([
         element: <Verification />,
       },
       {
+        path: '/verification/finish',
+        element: <FinishVerification />,
+      },
+      {
         path: '/settings',
         element: <Settings />,
       },
@@ -94,6 +100,7 @@ const router = createBrowserRouter([
 ]);
 
 export const apiUrl = import.meta.env.VITE_API_URL;
+export const verificationContractAddress = import.meta.env.VITE_VERIFY_CONTRACT;
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
-import { apiUrl } from '../main';
+import { apiUrl, verificationContractAddress } from '../main';
 import { Stamp } from '../types/Stamp';
 
 const availableStamps = ['proofofhumanity', 'github', 'twitter'];
@@ -14,7 +14,7 @@ const Verification = () => {
   const { address } = useAccount();
 
   const { data, isError, error, isLoading } = useContractRead({
-    address: '0xD547BC6bc09D8778a95F7dB378eA4b6E5b79885e',
+    address: verificationContractAddress,
     abi: verificationAbi,
     functionName: 'getStamps',
     args: [address],
