@@ -11,6 +11,7 @@ import { DaoTransfer, useDaoTransfers } from '../hooks/useDaoTransfers';
 import TokenAmount, {
   transfertypeToSign,
 } from '../components/ui/TokenAmount/TokenAmount';
+import { useState } from 'react';
 
 type DaoTokenProps = {
   daoBalances: DaoBalances;
@@ -60,9 +61,23 @@ const DaoTokens = ({
 
 const DaoTokensWrapped = (): JSX.Element => {
   const { daoBalances, loading, error } = useDaoBalance({});
+  const [maxAmount, setMaxAmount] = useState(3);
   if (loading) return <Loader></Loader>;
   if (error) return <h3>{error}</h3>;
-  return DaoTokens({ daoBalances: daoBalances, max_amount: 3 });
+  return (
+    <div>
+      {DaoTokens({ daoBalances: daoBalances, max_amount: maxAmount })}
+      {maxAmount < daoBalances.length && (
+        <Button
+          className="my-4"
+          variant="outline"
+          label="Show more tokens"
+          icon={HiArrowSmallRight}
+          onClick={() => setMaxAmount(maxAmount + Math.min(maxAmount, 25))}
+        />
+      )}
+    </div>
+  );
 };
 
 type DaoTransfersProps = {
@@ -123,17 +138,28 @@ const daoTransferAddress = (transfer: DaoTransfer): string => {
 
 const DaoTransfersWrapped = (): JSX.Element => {
   const { daoTransfers, loading, error } = useDaoTransfers({});
+  const [maxAmount, setMaxAmount] = useState(3);
   if (loading) return <Loader></Loader>;
   if (error) return <h3>{error}</h3>;
   if (!daoTransfers) return <h3>No transfers could be loaded</h3>;
-  return DaoTransfers({ daoTransfers, max_amount: 3 });
+  return (
+    <div>
+      {DaoTransfers({ daoTransfers, max_amount: maxAmount })}
+      {/* TODO make this button DO something */}
+      {maxAmount < daoTransfers.length && (
+        <Button
+          className="my-4"
+          variant="outline"
+          label="Show more transfers"
+          onClick={() => {
+            setMaxAmount(maxAmount + Math.min(maxAmount, 25));
+          }}
+          icon={HiArrowSmallRight}
+        />
+      )}
+    </div>
+  );
 };
-
-const bigIntToFloat = (
-  value: BigInt | null,
-  decimals: number | null,
-  onError: string = '-'
-): number => parseFloat(value && decimals ? `${value}E-${decimals}` : onError);
 
 const Finance = () => {
   return (
@@ -148,24 +174,10 @@ const Finance = () => {
         <Card>
           <h2 className="text-xl font-bold">Tokens</h2>
           <DaoTokensWrapped />
-          {/* //TODO make this button DO something */}
-          <Button
-            className="my-4"
-            variant="outline"
-            label="See all tokens"
-            icon={HiArrowSmallRight}
-          ></Button>
         </Card>
         <Card>
           <h2 className="text-xl font-bold">Latest transfers</h2>
           <DaoTransfersWrapped />
-          {/* TODO make this button DO something */}
-          <Button
-            className="my-4"
-            variant="outline"
-            label="See all transfers"
-            icon={HiArrowSmallRight}
-          />
         </Card>
       </div>
     </div>
