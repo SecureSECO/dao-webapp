@@ -27,9 +27,9 @@ export type DaoTransfer = {
   from: string;
   amount: BigInt | null;
   decimals: number | null;
-  tokenAddress: String | null;
-  tokenName: String | null;
-  tokenSymbol: String | null;
+  tokenAddress: string | null;
+  tokenName: string | null;
+  tokenSymbol: string | null;
   proposalId: String | null;
 };
 
