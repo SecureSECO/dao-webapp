@@ -8,6 +8,9 @@ import Loader from '../components/ui/Loader';
 import { DaoBalance, DaoBalances, useDaoBalance } from '../hooks/useDaoBalance';
 import { formatRelative } from 'date-fns';
 import { DaoTransfer, useDaoTransfers } from '../hooks/useDaoTransfers';
+import TokenAmount, {
+  transfertypeToSign,
+} from '../components/ui/TokenAmount/TokenAmount';
 
 type DaoTokenProps = {
   daoBalances: DaoBalances;
@@ -34,10 +37,11 @@ const DaoTokens = ({
         >
           <h2 className="font-bold">{balance.name}</h2>
           <div className="flex flex-row items-center">
-            <span>
-              {bigIntToFloat(balance.balance, balance.decimals).toFixed(2)}
-              &nbsp;{balance.symbol ?? ''}
-            </span>
+            <TokenAmount
+              amount={balance.balance}
+              tokenDecimals={balance.decimals}
+              symbol={balance.symbol}
+            />
             <span className="px-2">•</span>
             <span>
               <Address
@@ -86,14 +90,13 @@ const DaoTransfers = ({
               <span> {formatRelative(transfer.creationDate, new Date())} </span>
             </div>
             <div className="text-right">
-              <span className="font-bold">
-                {transfer.type === TransferType.WITHDRAW ? '-' : '+'}
-                {bigIntToFloat(
-                  transfer.amount ?? 1n,
-                  transfer.decimals ?? 0
-                ).toFixed(2)}{' '}
-                &nbsp;{transfer.tokenSymbol ?? ''}
-              </span>
+              <TokenAmount
+                className="font-bold"
+                amount={transfer.amount}
+                tokenDecimals={transfer.decimals}
+                symbol={transfer.tokenSymbol}
+                sign={transfertypeToSign(transfer.type)}
+              />
               <Address
                 address={daoTransferAddress(transfer)}
                 maxLength={10}
