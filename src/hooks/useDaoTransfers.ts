@@ -10,6 +10,7 @@ import {
   TransferType,
 } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
+import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
 import { getErrorMessage } from '../lib/utils';
 
 export type UseDaoTransfersData = {
@@ -147,18 +148,53 @@ export const useDaoTransfers = ({
 
 const transferToDaoTransfer = (transfer: Transfer): DaoTransfer => {
   const x = transfer as any;
-  return {
-    type: transfer.type,
-    tokenType: transfer.tokenType,
-    creationDate: transfer.creationDate,
-    transactionId: transfer.transactionId,
-    to: transfer.to,
-    from: transfer.from,
-    amount: x.amount ?? null,
-    decimals: x.token?.decimals ?? null,
-    tokenAddress: x.token?.address ?? null,
-    tokenName: x.token?.name ?? null,
-    tokenSymbol: x.token?.symbol ?? null,
-    proposalId: x.proposalId ?? null,
-  };
+  switch (transfer.tokenType) {
+    case TokenType.NATIVE:
+      // eslint-disable-next-line no-case-declarations
+      const meta = PREFERRED_NETWORK_METADATA;
+      return {
+        type: transfer.type,
+        tokenType: transfer.tokenType,
+        creationDate: transfer.creationDate,
+        transactionId: transfer.transactionId,
+        to: transfer.to,
+        from: transfer.from,
+        amount: x.amount ?? null,
+        decimals: meta.nativeCurrency.decimals,
+        tokenAddress: x.token?.address ?? null,
+        tokenName: meta.nativeCurrency.name,
+        tokenSymbol: meta.nativeCurrency.symbol,
+        proposalId: x.proposalId ?? null,
+      };
+    case TokenType.ERC721:
+      return {
+        type: transfer.type,
+        tokenType: transfer.tokenType,
+        creationDate: transfer.creationDate,
+        transactionId: transfer.transactionId,
+        to: transfer.to,
+        from: transfer.from,
+        amount: x.amount ?? 1,
+        decimals: x.token?.decimals ?? 0,
+        tokenAddress: x.token?.address ?? null,
+        tokenName: x.token?.name ?? null,
+        tokenSymbol: x.token?.symbol ?? null,
+        proposalId: x.proposalId ?? null,
+      };
+    case TokenType.ERC20:
+      return {
+        type: transfer.type,
+        tokenType: transfer.tokenType,
+        creationDate: transfer.creationDate,
+        transactionId: transfer.transactionId,
+        to: transfer.to,
+        from: transfer.from,
+        amount: x.amount ?? null,
+        decimals: x.token?.decimals ?? null,
+        tokenAddress: x.token?.address ?? null,
+        tokenName: x.token?.name ?? null,
+        tokenSymbol: x.token?.symbol ?? null,
+        proposalId: x.proposalId ?? null,
+      };
+  }
 };

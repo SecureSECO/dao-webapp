@@ -2,6 +2,7 @@ import { useAragonSDKContext } from '@/src/context/AragonSDK';
 
 import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
+import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
 import { getErrorMessage } from '../lib/utils';
 
 export type UseDaoBalanceData = {
@@ -110,13 +111,38 @@ export const useDaoBalance = ({
 
 function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
   const x = assetBalance as any;
-  return {
-    type: assetBalance.type,
-    updateDate: assetBalance.updateDate,
-    balance: x.balance ?? null,
-    decimals: x.decimals ?? null,
-    address: x.address ?? null,
-    name: x.name ?? null,
-    symbol: x.symbol ?? null,
-  };
+  switch (assetBalance.type) {
+    case TokenType.NATIVE:
+      // eslint-disable-next-line no-case-declarations
+      const metadata = PREFERRED_NETWORK_METADATA;
+      return {
+        type: assetBalance.type,
+        updateDate: assetBalance.updateDate,
+        balance: x.balance ?? null,
+        decimals: metadata.nativeCurrency.decimals,
+        address: import.meta.env.VITE_DAO_ADDRESS,
+        name: metadata.nativeCurrency.name,
+        symbol: metadata.nativeCurrency.symbol,
+      };
+    case TokenType.ERC721:
+      return {
+        type: assetBalance.type,
+        updateDate: assetBalance.updateDate,
+        balance: x.balance ?? 1,
+        decimals: x.decimals ?? 0,
+        address: x.address ?? null,
+        name: x.name ?? null,
+        symbol: x.symbol ?? null,
+      };
+    case TokenType.ERC20:
+      return {
+        type: assetBalance.type,
+        updateDate: assetBalance.updateDate,
+        balance: x.balance ?? null,
+        decimals: x.decimals ?? null,
+        address: x.address ?? null,
+        name: x.name ?? null,
+        symbol: x.symbol ?? null,
+      };
+  }
 }
