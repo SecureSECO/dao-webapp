@@ -170,12 +170,12 @@ const Finance = () => {
           aside={<Button label="New transfer" icon={HiPlus}></Button>}
         ></HeaderCard>
       </div>
-      <div className="my-6 grid grid-cols-2 gap-4">
-        <Card>
+      <div className="gap-4 md:grid md:grid-cols-2">
+        <Card className="my-6">
           <h2 className="text-xl font-bold">Tokens</h2>
           <DaoTokensWrapped />
         </Card>
-        <Card>
+        <Card className="my-6">
           <h2 className="text-xl font-bold">Latest transfers</h2>
           <DaoTransfersWrapped />
         </Card>
