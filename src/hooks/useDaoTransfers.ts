@@ -155,10 +155,10 @@ const transferToDaoTransfer = (transfer: Transfer): DaoTransfer => {
     to: transfer.to,
     from: transfer.from,
     amount: x.amount ?? null,
-    decimals: x.token.decimals ?? null,
-    tokenAddress: x.token.address ?? null,
-    tokenName: x.token.name ?? null,
-    tokenSymbol: x.token.symbol ?? null,
+    decimals: x.token?.decimals ?? null,
+    tokenAddress: x.token?.address ?? null,
+    tokenName: x.token?.name ?? null,
+    tokenSymbol: x.token?.symbol ?? null,
     proposalId: x.proposalId ?? null,
   };
 };
