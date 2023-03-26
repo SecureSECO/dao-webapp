@@ -18,6 +18,7 @@ import { Label } from '@/src/components/ui/Label';
 import TipTapLink from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 
 const totalSteps = 4;
 
@@ -182,7 +183,7 @@ export const StepOne = ({
           id="body"
           className="..."
         /> */}
-        <MarkdownEditor />
+        <TextareaWYSIWYG />
       </div>
       <div className="flex flex-col gap-1">
         <Label htmlFor="recources">Links and resources</Label>
@@ -241,25 +242,6 @@ const ResourceInput = ({
         className="..."
       />
       <HiXMark className="h-10 w-10 cursor-pointer" onClick={onRemove} />
-    </div>
-  );
-};
-
-export const MarkdownEditor = () => {
-  const editor = useEditor({
-    editable: true,
-    extensions: [
-      StarterKit,
-      TipTapLink.configure({
-        openOnClick: false,
-      }),
-    ],
-    content: 'test 123',
-  });
-
-  return (
-    <div className="">
-      <EditorContent editor={editor} />
     </div>
   );
 };

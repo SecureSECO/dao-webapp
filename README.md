@@ -53,29 +53,29 @@ Code that gives an error upon linting (using `npm run lint`) should not be commi
 
 Below is a list of colors used for specific elements, both for light mode and dark mode. Colors are represented as tailwind classes here. The corresponding hex codes can be found in the [tailwind.config.cjs](tailwind.config.cjs) file.
 
-#### Light mode:
-```
-- Background colors:
-  - default: bg-slate-50
-  - highlight: bg-white
-  - subhighlight: bg-slate-100
-  - warning: bg-red-500/80
-- Text colors:
-  - default: text-slate-700
-  - subtext: text-slate-500
-- Highlight color: text-primary
-```
+  #### Light mode:
+  ```
+  - Background colors:
+    - default: bg-slate-50
+    - highlight: bg-white
+    - subhighlight: bg-slate-100
+    - warning: bg-red-500/80
+  - Text colors:
+    - default: text-slate-700
+    - subtext: text-slate-500
+  - Highlight color: text-primary
+  ```
 
-#### Dark mode:
+  #### Dark mode:
 
-```
-- Background colors:
-  - default: bg-slate-950
-  - highlight: bg-slate-800
-  - subhighlight: bg-slate-700/50
-  - warning: bg-red-500/80
-- Text colors:
-  - default: text-slate-300
-  - subtext: text-slate-400
-- Highlight color: text-primary-500
-```
+  ```
+  - Background colors:
+    - default: bg-slate-950
+    - highlight: bg-slate-800
+    - subhighlight: bg-slate-700/50
+    - warning: bg-red-500/80
+  - Text colors:
+    - default: text-slate-300
+    - subtext: text-slate-400
+  - Highlight color: text-primary-500
+  ```
