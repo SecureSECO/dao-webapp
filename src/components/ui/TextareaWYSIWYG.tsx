@@ -3,6 +3,7 @@ import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import ReactDOM from 'react-dom';
 import {
@@ -69,7 +70,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
     <div
       className={`styled-menu-bar flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 ${
         fullScreen ? 'sticky top-0 z-10' : 'rounded-t-xl'
-      } ${disabled ? 'bg-ui-100' : ''} dark:bg-slate-800`}
+      } ${disabled ? 'bg-slate-100' : ''} dark:bg-slate-800`}
     >
       <div className="toolgroup flex flex-wrap space-x-1.5">
         <Toggle
@@ -190,14 +191,16 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
 
     const fullScreenEditor = (
       <div
-        className={`container fixed top-0 flex h-screen w-screen flex-col overflow-auto text-slate-700 dark:bg-slate-950 dark:text-slate-300 ${
-          disabled ? 'bg-ui-100 border-ui-200' : 'bg-white'
-        }`}
+        className={clsx(
+          'fixed top-0 flex h-screen w-screen flex-col overflow-auto text-slate-700 dark:bg-slate-950 dark:text-slate-300',
+          disabled ? 'border-slate-200 bg-slate-100' : 'bg-white'
+        )}
       >
         <div
-          className={`styled-menu-bar sticky top-0 z-10 flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 dark:bg-slate-800 ${
-            disabled ? 'bg-ui-100' : ''
-          }`}
+          className={clsx(
+            'styled-menu-bar sticky top-0 z-10 flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
+            disabled && 'bg-slate-100'
+          )}
         >
           <MenuBar
             disabled={disabled}
@@ -222,16 +225,18 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
 
   return (
     <div
-      className={`container w-full overflow-auto text-slate-700 dark:bg-slate-950 dark:text-slate-300 ${
+      className={clsx(
+        'container w-full overflow-auto text-slate-700 dark:bg-slate-950 dark:text-slate-300',
         disabled
-          ? 'bg-ui-100 border-ui-200'
-          : 'border-ui-100 hover:border-ui-300 rounded border-2 bg-white focus-within:ring-2 focus-within:ring-primary-500 active:border-primary-500 active:ring-0'
-      }`}
+          ? 'border-slate-200 bg-slate-100'
+          : 'rounded border border-slate-100 bg-white focus-within:ring focus-within:ring-primary-500 hover:border-slate-300 active:border-primary-500 active:ring-0'
+      )}
     >
       <div
-        className={`styled-menu-bar flex flex-wrap justify-between rounded-t-xl bg-slate-50 px-2 py-1.5 dark:bg-slate-800 ${
-          disabled ? 'bg-ui-100' : ''
-        }`}
+        className={clsx(
+          'styled-menu-bar flex flex-wrap justify-between rounded-t-xl bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
+          disabled && 'bg-slate-100'
+        )}
       >
         <MenuBar
           disabled={disabled}
@@ -254,11 +259,11 @@ type Props = {
 
 // const Container = styled.div.attrs(
 //   ({ disabled, fullScreen = false }: Props) => ({
-//     className: `w-full text-ui-600 overflow-auto ${
+//     className: `w-full text-slate-600 overflow-auto ${
 //       fullScreen
 //         ? 'h-screen flex flex-col fixed top-0'
-//         : 'rounded-xl border-2 border-ui-100 hover:border-ui-300 focus-within:ring-2 focus-within:ring-primary-500 active:border-primary-500 active:ring-0 '
-//     } ${disabled ? 'bg-ui-100 border-ui-200' : 'bg-white'}`,
+//         : 'rounded-xl border-2 border-slate-100 hover:border-slate-300 focus-within:ring-2 focus-within:ring-primary-500 active:border-primary-500 active:ring-0 '
+//     } ${disabled ? 'bg-slate-100 border-slate-200' : 'bg-white'}`,
 //   })
 // )<Props>`
 //   ::-webkit-input-placeholder {
@@ -276,9 +281,9 @@ type Props = {
 // `;
 
 // const StyledMenuBar = styled.div.attrs(({ disabled, fullScreen }: Props) => ({
-//   className: `bg-ui-50 px-2 py-1.5 flex flex-wrap justify-between ${
+//   className: `bg-slate-50 px-2 py-1.5 flex flex-wrap justify-between ${
 //     fullScreen ? 'sticky top-0 z-10' : 'rounded-t-xl'
-//   } ${disabled ? 'bg-ui-100' : ''}`,
+//   } ${disabled ? 'bg-slate-100' : ''}`,
 // }))<Props>``;
 
 // const Toolgroup = styled.div.attrs({
