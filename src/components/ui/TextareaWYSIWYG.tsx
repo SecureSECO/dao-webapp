@@ -69,8 +69,8 @@ const MenuBar: React.FC<MenuBarProps> = ({
   return (
     <div
       className={clsx(
-        'styled-menu-bar flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
-        fullScreen ? 'sticky top-0 z-10' : 'rounded-t-xl',
+        'flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
+        fullScreen && 'sticky top-0 z-10',
         disabled && 'bg-slate-100'
       )}
     >
@@ -228,15 +228,13 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
   return (
     <div
       className={clsx(
-        'w-full overflow-auto text-slate-700 dark:bg-slate-950 dark:text-slate-300',
-        disabled
-          ? 'border-slate-200 bg-slate-100'
-          : 'rounded border border-slate-100 bg-white focus-within:ring focus-within:ring-primary-500 hover:border-slate-300 active:border-primary-500 active:ring-0'
+        'w-full overflow-auto rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900',
+        disabled ? 'cursor-not-allowed opacity-50' : 'border border-slate-100'
       )}
     >
       <div
         className={clsx(
-          'styled-menu-bar flex flex-wrap justify-between rounded-t-xl bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
+          'styled-menu-bar flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
           disabled && 'bg-slate-100'
         )}
       >
