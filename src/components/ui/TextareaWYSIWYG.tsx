@@ -68,9 +68,11 @@ const MenuBar: React.FC<MenuBarProps> = ({
 
   return (
     <div
-      className={`styled-menu-bar flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 ${
-        fullScreen ? 'sticky top-0 z-10' : 'rounded-t-xl'
-      } ${disabled ? 'bg-slate-100' : ''} dark:bg-slate-800`}
+      className={clsx(
+        'styled-menu-bar flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
+        fullScreen ? 'sticky top-0 z-10' : 'rounded-t-xl',
+        disabled && 'bg-slate-100'
+      )}
     >
       <div className="toolgroup flex flex-wrap space-x-1.5">
         <Toggle
@@ -226,7 +228,7 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
   return (
     <div
       className={clsx(
-        'container w-full overflow-auto text-slate-700 dark:bg-slate-950 dark:text-slate-300',
+        'w-full overflow-auto text-slate-700 dark:bg-slate-950 dark:text-slate-300',
         disabled
           ? 'border-slate-200 bg-slate-100'
           : 'rounded border border-slate-100 bg-white focus-within:ring focus-within:ring-primary-500 hover:border-slate-300 active:border-primary-500 active:ring-0'
@@ -256,71 +258,3 @@ type Props = {
   disabled: boolean;
   fullScreen?: boolean;
 };
-
-// const Container = styled.div.attrs(
-//   ({ disabled, fullScreen = false }: Props) => ({
-//     className: `w-full text-slate-600 overflow-auto ${
-//       fullScreen
-//         ? 'h-screen flex flex-col fixed top-0'
-//         : 'rounded-xl border-2 border-slate-100 hover:border-slate-300 focus-within:ring-2 focus-within:ring-primary-500 active:border-primary-500 active:ring-0 '
-//     } ${disabled ? 'bg-slate-100 border-slate-200' : 'bg-white'}`,
-//   })
-// )<Props>`
-//   ::-webkit-input-placeholder {
-//     color: #9aa5b1;
-//   }
-//   ::-moz-placeholder {
-//     color: #9aa5b1;
-//   }
-//   :-ms-input-placeholder {
-//     color: #9aa5b1;
-//   }
-//   :-moz-placeholder {
-//     color: #9aa5b1;
-//   }
-// `;
-
-// const StyledMenuBar = styled.div.attrs(({ disabled, fullScreen }: Props) => ({
-//   className: `bg-slate-50 px-2 py-1.5 flex flex-wrap justify-between ${
-//     fullScreen ? 'sticky top-0 z-10' : 'rounded-t-xl'
-//   } ${disabled ? 'bg-slate-100' : ''}`,
-// }))<Props>``;
-
-// const Toolgroup = styled.div.attrs({
-//   className: 'flex flex-wrap space-x-1.5',
-// })``;
-
-// const StyledEditorContent = styled(EditorContent)`
-//   flex: 1;
-//   .ProseMirror {
-//     padding: 12px 16px;
-//     height: 100%;
-//     min-height: 112px;
-//     :focus {
-//       outline: none;
-//     }
-//     ul {
-//       list-style-type: decimal;
-//       padding: 0 1rem;
-//     }
-//     ol {
-//       list-style-type: disc;
-//       padding: 0 1rem;
-//     }
-//     a {
-//       color: #003bf5;
-//       cursor: pointer;
-//       font-weight: 700;
-//       :hover {
-//         color: #0031ad;
-//       }
-//     }
-//   }
-//   .ProseMirror p.is-editor-empty:first-child::before {
-//     color: #adb5bd;
-//     content: attr(data-placeholder);
-//     float: left;
-//     height: 0;
-//     pointer-events: none;
-//   }
-// `;
