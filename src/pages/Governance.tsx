@@ -15,7 +15,15 @@ import {
 import { Proposal, useProposals } from '@/src/hooks/useProposals';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useState } from 'react';
-import { ProposalStatus } from '@aragon/sdk-client';
+import {
+  ProposalSortBy,
+  ProposalStatus,
+  SortDirection,
+} from '@aragon/sdk-client';
+import SortSelector from '@/src/components/ui/SortSelector';
+import Header from '@/src/components/ui/Header';
+import { cn } from '@/src/lib/utils';
+import { cva } from 'class-variance-authority';
 
 const Governance = () => {
   return (
@@ -52,20 +60,22 @@ const statusStringToEnum = (
 
 const tabs: ProposalStatusString[] = [
   'ALL',
-  'PENDING',
-  'ACTIVE',
-  'SUCCEEDED',
-  'EXECUTED',
-  'DEFEATED',
+  ...Object.keys(ProposalStatus).map((k) => k as ProposalStatusString),
 ];
 
 const ProposalTabs = () => {
   const [currentTab, setCurrentTab] = useState<ProposalStatus | undefined>(
     undefined
   );
+  const [sortBy, setSortBy] = useState<ProposalSortBy>(
+    ProposalSortBy.CREATED_AT
+  );
+  const [direction, setDirection] = useState<SortDirection>(SortDirection.ASC);
   const { proposals, loading, error } = useProposals({
     useDummyData: false,
     status: currentTab,
+    sortBy,
+    direction,
   });
 
   return (
@@ -76,7 +86,7 @@ const ProposalTabs = () => {
       }
       variant="default"
     >
-      <div className="flex flex-row gap-x-5">
+      <div className="flex flex-row gap-x-3">
         <TabsList>
           {tabs.map((tab) => (
             <TabsTrigger key={tab} value={tab}>
@@ -84,7 +94,7 @@ const ProposalTabs = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        hi
+        <SortSelector setSortBy={setSortBy} setDirection={setDirection} />
       </div>
       {tabs.map((tab) => (
         <TabsContent key={tab} value={tab}>
@@ -123,7 +133,7 @@ export const ProposalCardList = ({
 }) => {
   if (loading)
     return (
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
         <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
       </div>
@@ -133,7 +143,7 @@ export const ProposalCardList = ({
   return (
     <div>
       {proposals.length > 0 ? (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           {proposals.map((proposal) => {
             return <ProposalCard key={proposal.id} proposal={proposal} />;
           })}
@@ -141,6 +151,40 @@ export const ProposalCardList = ({
       ) : (
         <p className="text-center font-normal">No proposals found!</p>
       )}
+    </div>
+  );
+};
+
+type StatusVariant =
+  | 'Pending'
+  | 'Active'
+  | 'Succeeded'
+  | 'Executed'
+  | 'Defeated';
+
+const statusVariants = cva('rounded-lg px-2 py-1', {
+  variants: {
+    status: {
+      Pending: 'bg-slate-200',
+      Active: 'bg-slate-200',
+      Succeeded: 'bg-green-200',
+      Executed: 'bg-green-200',
+      Defeated: 'bg-red-200',
+    },
+  },
+  defaultVariants: {
+    status: 'Pending',
+  },
+});
+
+export const ProposalStatusBadge = ({ status }: { status: ProposalStatus }) => {
+  return (
+    <div
+      className={cn(
+        statusVariants({ status: status.toString() as StatusVariant })
+      )}
+    >
+      <p className="text-sm">{status}</p>
     </div>
   );
 };
@@ -156,7 +200,10 @@ export const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
 
   return (
     <Card padding="sm" variant="light" className="space-y-2 p-4">
-      <h3 className="text-lg font-bold dark:text-slate-300">{title}</h3>
+      <div className="flex flex-row justify-between">
+        <Header level={3}>{title}</Header>
+        <ProposalStatusBadge status={status} />
+      </div>
       <p className="text-sm text-gray-500 dark:text-slate-400">{summary}</p>
       <p className="font-medium text-gray-800 dark:text-slate-300">
         Status: {status}

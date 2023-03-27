@@ -4,6 +4,8 @@ import {
   TokenVotingClient,
   ProposalStatus,
   TokenType,
+  ProposalSortBy,
+  SortDirection,
 } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
 
@@ -59,6 +61,8 @@ export type UseProposalsData = {
 export type UseProposalsProps = {
   useDummyData?: boolean;
   status?: ProposalStatus | undefined;
+  sortBy?: ProposalSortBy | undefined;
+  direction?: SortDirection | undefined;
 };
 
 const dummyProposals: Proposal[] = [
@@ -133,6 +137,8 @@ const dummyProposals: Proposal[] = [
 export const useProposals = ({
   useDummyData = false,
   status = undefined,
+  sortBy = ProposalSortBy.CREATED_AT,
+  direction = SortDirection.ASC,
 }: UseProposalsProps): UseProposalsData => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -151,6 +157,8 @@ export const useProposals = ({
         (await client.methods.getProposals({
           daoAddressOrEns: import.meta.env.VITE_DAO_ADDRESS,
           status,
+          sortBy,
+          direction,
         })) as Proposal[];
 
       if (daoProposals) {
@@ -177,7 +185,7 @@ export const useProposals = ({
     if (!votingClient) return;
     setLoading(true);
     fetchProposals(votingClient);
-  }, [votingClient, status]);
+  }, [votingClient, status, sortBy, direction]);
 
   return {
     loading,

@@ -34,7 +34,7 @@ const buttonVariants = cva(
   }
 );
 
-const iconVariants = cva('', {
+const iconVariants = cva('transition-all duration-200', {
   variants: {
     size: {
       default: 'h-5 w-5',
@@ -52,10 +52,14 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   label?: string;
   icon?: IconType | null;
+  iconRotation?: number;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, icon, variant, size, label, children, ...props }, ref) => {
+  (
+    { className, icon, iconRotation, variant, size, label, children, ...props },
+    ref
+  ) => {
     const IconWrapper = { icon };
 
     return (
@@ -69,8 +73,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <span className="flex flex-row items-center gap-x-2">
             <IconWrapper.icon
               className={cn(iconVariants({ size, className }))}
+              style={{ transform: `rotate(${iconRotation}deg)` }}
             />
-            <span className="leading-4">{label || children}</span>
+            {(label || children) && (
+              <span className="leading-4">{label || children}</span>
+            )}
           </span>
         ) : (
           <span className="leading-4">{label || children}</span>
