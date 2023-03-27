@@ -10,6 +10,7 @@ import {
   TransferType,
 } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
+import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
 import { getErrorMessage } from '../lib/utils';
 
 export type UseDaoTransfersData = {
@@ -27,9 +28,9 @@ export type DaoTransfer = {
   from: string;
   amount: BigInt | null;
   decimals: number | null;
-  tokenAddress: String | null;
-  tokenName: String | null;
-  tokenSymbol: String | null;
+  tokenAddress: string | null;
+  tokenName: string | null;
+  tokenSymbol: string | null;
   proposalId: String | null;
 };
 
@@ -59,7 +60,7 @@ export const useDaoTransfers = ({
     const params: ITransferQueryParams = {
       daoAddressOrEns: address,
       sortBy: TransferSortBy.CREATED_AT, // optional
-      limit: limit, // optional
+      limit, // optional
       skip: 0, // optional
       direction: SortDirection.DESC, // optional, options: DESC or ASC
     };
@@ -147,7 +148,7 @@ export const useDaoTransfers = ({
 
 const transferToDaoTransfer = (transfer: Transfer): DaoTransfer => {
   const x = transfer as any;
-  return {
+  let result = {
     type: transfer.type,
     tokenType: transfer.tokenType,
     creationDate: transfer.creationDate,
@@ -155,10 +156,32 @@ const transferToDaoTransfer = (transfer: Transfer): DaoTransfer => {
     to: transfer.to,
     from: transfer.from,
     amount: x.amount ?? null,
-    decimals: x.token.decimals ?? null,
-    tokenAddress: x.token.address ?? null,
-    tokenName: x.token.name ?? null,
-    tokenSymbol: x.token.symbol ?? null,
+    decimals: x.token?.decimals ?? null,
+    tokenAddress: x.token?.address ?? null,
+    tokenName: x.token?.name ?? null,
+    tokenSymbol: x.token?.symbol ?? null,
     proposalId: x.proposalId ?? null,
   };
+  switch (transfer.tokenType) {
+    case TokenType.NATIVE:
+      // eslint-disable-next-line no-case-declarations
+      const meta = PREFERRED_NETWORK_METADATA;
+      result.decimals = meta.nativeCurrency.decimals;
+      result.tokenName = meta.nativeCurrency.name;
+      result.tokenSymbol = meta.nativeCurrency.symbol;
+      break;
+    case TokenType.ERC721:
+      result.amount = x.amount ?? 1;
+      result.decimals = x.token?.decimals ?? 0;
+      break;
+    case TokenType.ERC20:
+      break;
+    default:
+      console.error(
+        'useDaoTransfers.ts ~ transferToDaoTransfer: Unexpected tokentype'
+      );
+      break;
+  }
+
+  return result;
 };
