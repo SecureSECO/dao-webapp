@@ -60,7 +60,7 @@ export const useDaoTransfers = ({
     const params: ITransferQueryParams = {
       daoAddressOrEns: address,
       sortBy: TransferSortBy.CREATED_AT, // optional
-      limit: limit, // optional
+      limit, // optional
       skip: 0, // optional
       direction: SortDirection.DESC, // optional, options: DESC or ASC
     };
