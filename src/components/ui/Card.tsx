@@ -3,7 +3,7 @@ import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '../../lib/utils';
 
-const cardVariants = cva('w-full h-full rounded-lg font-medium shadow-md', {
+const cardVariants = cva('w-full rounded-lg font-medium shadow-md', {
   variants: {
     variant: {
       default: 'bg-white dark:bg-slate-800',
