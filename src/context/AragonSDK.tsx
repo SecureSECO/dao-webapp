@@ -55,7 +55,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   useEffect(() => {
     if (!context) return;
     setClient(new Client(context));
-    const contextPlugin = new ContextPlugin(context);
+    const contextPlugin = ContextPlugin.fromContext(context);
     setVotingClient(new TokenVotingClient(contextPlugin));
   }, [context]);
 

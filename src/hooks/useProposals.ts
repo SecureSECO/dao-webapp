@@ -2,8 +2,12 @@ import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
   TokenVotingClient,
-  TokenVotingProposalListItem,
+  ProposalStatus,
+  Erc20TokenDetails,
+  TokenType,
 } from '@aragon/sdk-client';
+// TODO: fix
+import { Erc721TokenDetails } from '@aragon/sdk-client/dist/tokenVoting/interfaces';
 import { useEffect, useState } from 'react';
 
 type DAO = {
@@ -16,17 +20,18 @@ type Metadata = {
   summary: string;
 };
 
-type Token = {
-  address: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-};
+type Token = Erc20TokenDetails | Erc721TokenDetails | null;
 
-type Results = {
+type Result = {
   yes: bigint;
   no: bigint;
   abstain: bigint;
+};
+
+type Settings = {
+  supportThreshold: number;
+  duration: number;
+  minParticipation: number;
 };
 
 export type Proposal = {
@@ -36,9 +41,11 @@ export type Proposal = {
   metadata: Metadata;
   startDate: Date;
   endDate: Date;
-  status: 'Executed' | 'Pending';
+  status: ProposalStatus;
   token: Token;
-  results: Results;
+  result: Result;
+  settings: Settings;
+  totalVotingWeight: bigint;
 };
 
 export type UseProposalsData = {
@@ -52,7 +59,7 @@ export type UseProposalsProps = {
 
 const dummyProposals: Proposal[] = [
   {
-    id: '0x12345...',
+    id: '0x22345',
     dao: {
       address: '0x1234567890123456789012345678901234567890',
       name: 'Cool DAO',
@@ -64,23 +71,30 @@ const dummyProposals: Proposal[] = [
     },
     startDate: new Date('2023-03-16T00:00:00.000Z'),
     endDate: new Date('2023-03-23T00:00:00.000Z'),
-    status: 'Executed',
+    status: ProposalStatus.EXECUTED,
     token: {
       address: '0x1234567890123456789012345678901234567890',
       name: 'The Token',
       symbol: 'TOK',
       decimals: 18,
+      type: TokenType.ERC20,
     },
-    results: {
+    result: {
       yes: 100000n,
       no: 77777n,
       abstain: 0n,
     },
+    settings: {
+      supportThreshold: 0.5,
+      duration: 87000,
+      minParticipation: 0.15,
+    },
+    totalVotingWeight: 1000000000000000000n,
   },
   {
-    id: '0x12345...',
+    id: '0x12345',
     dao: {
-      address: '0x1234567890123456789012345678901234567890',
+      address: '0x123456789012345678901234567890123456789',
       name: 'Cool DAO',
     },
     creatorAddress: '0x1234567890123456789012345678901234567890',
@@ -90,18 +104,25 @@ const dummyProposals: Proposal[] = [
     },
     startDate: new Date('2023-03-16T00:00:00.000Z'),
     endDate: new Date('2023-03-23T00:00:00.000Z'),
-    status: 'Pending',
+    status: ProposalStatus.PENDING,
     token: {
       address: '0x1234567890123456789012345678901234567890',
       name: 'The Token',
       symbol: 'TOK',
       decimals: 18,
+      type: TokenType.ERC20,
     },
-    results: {
+    result: {
       yes: 100000n,
       no: 77777n,
       abstain: 0n,
     },
+    settings: {
+      supportThreshold: 0.5,
+      duration: 87000,
+      minParticipation: 0.15,
+    },
+    totalVotingWeight: 1000000000000000000n,
   },
 ];
 
@@ -121,13 +142,13 @@ export const useProposals = ({
     }
 
     try {
-      const daoProposals: TokenVotingProposalListItem[] | null =
-        await client.methods.getProposals({
+      const daoProposals: Proposal[] | null = await client.methods.getProposals(
+        {
           daoAddressOrEns: import.meta.env.VITE_DAO_ADDRESS,
-        });
+        }
+      );
       if (daoProposals) {
-        // setProposals();
-        console.log(daoProposals);
+        setProposals(daoProposals);
 
         if (loading) setLoading(false);
         if (error) setError(null);

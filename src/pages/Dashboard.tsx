@@ -16,6 +16,7 @@ import { useDao } from '@/src/hooks/useDao';
 import { useProposals } from '@/src/hooks/useProposals';
 import { useMembers } from '@/src/hooks/useMembers';
 import { Button } from '@/src/components/ui/Button';
+import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -24,8 +25,13 @@ const Dashboard = () => {
     loading: proposalsLoading,
     error: proposalsError,
   } = useProposals({ useDummyData: false });
+  const { daoTransfers } = useDaoTransfers({});
 
-  const { members } = useMembers({});
+  const {
+    members,
+    loading: membersLoading,
+    error: membersError,
+  } = useMembers({});
 
   if (daoLoading) {
     return <Loader />;
@@ -90,7 +96,7 @@ const Dashboard = () => {
         icon={HiInboxStack}
         header={
           <div className="flex flex-row items-end gap-x-2">
-            <span className="text-3xl">5</span>
+            <span className="text-3xl">{proposals.length}</span>
             <p>proposals created</p>
           </div>
         }
@@ -108,8 +114,8 @@ const Dashboard = () => {
           icon={HiCircleStack}
           header={
             <div className="flex flex-row items-end gap-x-2">
-              <span className="text-3xl">$6.99</span>
-              <p>treasury value</p>
+              <span className="text-3xl">{daoTransfers?.length}</span>
+              <p>transfers completed</p>
             </div>
           }
           aside={
@@ -125,7 +131,7 @@ const Dashboard = () => {
           icon={HiUserGroup}
           header={
             <div className="flex flex-row items-end gap-x-2">
-              <span className="text-3xl">2</span>
+              <span className="text-3xl">{members.length}</span>
               <p>members</p>
             </div>
           }

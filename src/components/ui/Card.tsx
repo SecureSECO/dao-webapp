@@ -8,7 +8,7 @@ const cardVariants = cva('w-full h-full rounded-lg font-medium shadow-md', {
     variant: {
       default: 'bg-white dark:bg-slate-800',
       warning: 'bg-red-500/80 text-slate-50 shadow-lg',
-      light: 'bg-slate-100 dark:bg-slate-700/50',
+      light: 'bg-slate-50 dark:bg-slate-700/50',
     },
     padding: {
       default: 'px-6 py-4',

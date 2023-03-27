@@ -1,4 +1,3 @@
-import Header from '@/src/components/ui/Header';
 import { Card } from '@/src/components/ui/Card';
 import { Button } from '@/src/components/ui/Button';
 import {
@@ -20,7 +19,7 @@ const Governance = () => {
   return (
     <div className="flex flex-col gap-6">
       <HeaderCard
-        title="Community"
+        title="Proposals"
         aside={
           <Button
             variant="default"
@@ -28,17 +27,17 @@ const Governance = () => {
             onClick={() => console.log('New Proposal Clicked')}
           />
         }
-      >
-        <ProposalTabs />
-      </HeaderCard>
+      ></HeaderCard>
+      <ProposalTabs />
     </div>
   );
 };
 
 const ProposalTabs = () => {
-  const { proposals, loading, error } = useProposals({ useDummyData: true });
+  const { proposals, loading, error } = useProposals({ useDummyData: false });
+
   return (
-    <Tabs defaultValue="all" className="w-full">
+    <Tabs defaultValue="all" variant="default">
       <TabsList>
         <TabsTrigger value="all">All</TabsTrigger>
         <TabsTrigger value="pending">Pending</TabsTrigger>
@@ -47,8 +46,9 @@ const ProposalTabs = () => {
         <TabsTrigger value="executed">Executed</TabsTrigger>
         <TabsTrigger value="defeated">Defeated</TabsTrigger>
       </TabsList>
+
       <TabsContent value="all" className="">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {proposals?.map((proposal) => {
             return <ProposalCard key={proposal.id} proposal={proposal} />;
           })}
@@ -84,12 +84,13 @@ const ProposalTabs = () => {
 };
 
 const countdownText = (endDate: Date) => {
-  if (differenceInHours(endDate, new Date()) > 24) {
+  const date = new Date();
+  if (differenceInHours(endDate, date) > 24) {
     return formatDistanceToNow(endDate, { addSuffix: true });
-  } else if (differenceInMinutes(endDate, new Date()) > 60) {
-    return `${differenceInHours(endDate, new Date())} hours left`;
-  } else if (differenceInMinutes(endDate, new Date()) > 1) {
-    return `${differenceInMinutes(endDate, new Date())} minutes left`;
+  } else if (differenceInMinutes(endDate, date) > 60) {
+    return `${differenceInHours(endDate, date)} hours left`;
+  } else if (differenceInMinutes(endDate, date) > 1) {
+    return `${differenceInMinutes(endDate, date)} minutes left`;
   } else {
     return 'Less than a minute left';
   }

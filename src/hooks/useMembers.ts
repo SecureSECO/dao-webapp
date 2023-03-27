@@ -13,7 +13,8 @@ type UseMembersData = {
   members: Member[];
 };
 
-type Member = {};
+// TODO: add REP balance to this, fetch it from somewhere..
+type Member = string;
 
 const dummyMembers: Member[] = [];
 
@@ -37,7 +38,7 @@ export const useMembers = ({
         votingPluginAddress
       );
       if (daoMembers) {
-        console.log(daoMembers);
+        setMembers(daoMembers);
         if (loading) setLoading(false);
         if (error) setError(null);
       }
