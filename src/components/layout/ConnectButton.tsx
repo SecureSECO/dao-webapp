@@ -7,7 +7,6 @@ import { useWeb3Modal } from '@web3modal/react';
 import { useAccount, useNetwork, useDisconnect } from 'wagmi';
 import { FaWallet } from 'react-icons/fa';
 
-const prefferedNetwork: number = 5; //137;
 
 import {
   DropdownMenu,
@@ -26,6 +25,7 @@ import {
 } from '@/src/components/ui/Tooltip';
 import { Button } from '@/src/components/ui/Button';
 
+const prefferedNetwork: number = import.meta.env.VITE_PREFERRED_NETWORK_ID; 
 const ConnectButton = () => {
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();

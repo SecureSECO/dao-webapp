@@ -8,6 +8,10 @@ import Loader from '../components/ui/Loader';
 import { DaoBalance, DaoBalances, useDaoBalance } from '../hooks/useDaoBalance';
 import { formatRelative } from 'date-fns';
 import { DaoTransfer, useDaoTransfers } from '../hooks/useDaoTransfers';
+import TokenAmount, {
+  transfertypeToSign,
+} from '../components/ui/TokenAmount/TokenAmount';
+import { useState } from 'react';
 
 type DaoTokenProps = {
   daoBalances: DaoBalances;
@@ -34,10 +38,11 @@ const DaoTokens = ({
         >
           <h2 className="font-bold">{balance.name}</h2>
           <div className="flex flex-row items-center">
-            <span>
-              {bigIntToFloat(balance.balance, balance.decimals).toFixed(2)}
-              &nbsp;{balance.symbol ?? ''}
-            </span>
+            <TokenAmount
+              amount={balance.balance}
+              tokenDecimals={balance.decimals}
+              symbol={balance.symbol}
+            />
             <span className="px-2">•</span>
             <span>
               <Address
@@ -56,9 +61,23 @@ const DaoTokens = ({
 
 const DaoTokensWrapped = (): JSX.Element => {
   const { daoBalances, loading, error } = useDaoBalance({});
-  if (loading) return <Loader></Loader>;
+  const [maxAmount, setMaxAmount] = useState(3);
+  if (loading) return <Loader />;
   if (error) return <h3>{error}</h3>;
-  return DaoTokens({ daoBalances: daoBalances, max_amount: 3 });
+  return (
+    <div>
+      {DaoTokens({ daoBalances: daoBalances, max_amount: maxAmount })}
+      {maxAmount < daoBalances.length && (
+        <Button
+          className="my-4"
+          variant="outline"
+          label="Show more tokens"
+          icon={HiArrowSmallRight}
+          onClick={() => setMaxAmount(maxAmount + Math.min(maxAmount, 25))}
+        />
+      )}
+    </div>
+  );
 };
 
 type DaoTransfersProps = {
@@ -70,7 +89,6 @@ const DaoTransfers = ({
   max_amount = daoTransfers.length,
 }: DaoTransfersProps): JSX.Element => {
   const transfers = daoTransfers.slice(0, max_amount);
-  console.log(transfers);
   return (
     <div className="mt-4 space-y-4">
       {transfers.map((transfer: DaoTransfer) => (
@@ -86,14 +104,13 @@ const DaoTransfers = ({
               <span> {formatRelative(transfer.creationDate, new Date())} </span>
             </div>
             <div className="text-right">
-              <span className="font-bold">
-                {transfer.type === TransferType.WITHDRAW ? '-' : '+'}
-                {bigIntToFloat(
-                  transfer.amount ?? 1n,
-                  transfer.decimals ?? 0
-                ).toFixed(2)}{' '}
-                &nbsp;{transfer.tokenSymbol ?? ''}
-              </span>
+              <TokenAmount
+                className="font-bold"
+                amount={transfer.amount}
+                tokenDecimals={transfer.decimals}
+                symbol={transfer.tokenSymbol}
+                sign={transfertypeToSign(transfer.type)}
+              />
               <Address
                 address={daoTransferAddress(transfer)}
                 maxLength={10}
@@ -121,17 +138,27 @@ const daoTransferAddress = (transfer: DaoTransfer): string => {
 
 const DaoTransfersWrapped = (): JSX.Element => {
   const { daoTransfers, loading, error } = useDaoTransfers({});
-  if (loading) return <Loader></Loader>;
+  const [maxAmount, setMaxAmount] = useState(3);
+  if (loading) return <Loader />;
   if (error) return <h3>{error}</h3>;
   if (!daoTransfers) return <h3>No transfers could be loaded</h3>;
-  return DaoTransfers({ daoTransfers, max_amount: 3 });
+  return (
+    <div>
+      {DaoTransfers({ daoTransfers, max_amount: maxAmount })}
+      {maxAmount < daoTransfers.length && (
+        <Button
+          className="my-4"
+          variant="outline"
+          label="Show more transfers"
+          onClick={() => {
+            setMaxAmount(maxAmount + Math.min(maxAmount, 25));
+          }}
+          icon={HiArrowSmallRight}
+        />
+      )}
+    </div>
+  );
 };
-
-const bigIntToFloat = (
-  value: BigInt | null,
-  decimals: number | null,
-  onError: string = '-'
-): number => parseFloat(value && decimals ? `${value}E-${decimals}` : onError);
 
 const Finance = () => {
   return (
@@ -139,31 +166,17 @@ const Finance = () => {
       <div className="flex flex-col gap-6">
         <HeaderCard
           title="Finance"
-          aside={<Button label="New transfer" icon={HiPlus}></Button>}
-        ></HeaderCard>
+          aside={<Button label="New transfer" icon={HiPlus} />}
+        />
       </div>
-      <div className="my-6 grid grid-cols-2 gap-4">
-        <Card>
+      <div className="gap-4 md:grid md:grid-cols-2">
+        <Card className="my-6">
           <h2 className="text-xl font-bold">Tokens</h2>
           <DaoTokensWrapped />
-          {/* //TODO make this button DO something */}
-          <Button
-            className="my-4"
-            variant="outline"
-            label="See all tokens"
-            icon={HiArrowSmallRight}
-          ></Button>
         </Card>
-        <Card>
+        <Card className="my-6">
           <h2 className="text-xl font-bold">Latest transfers</h2>
           <DaoTransfersWrapped />
-          {/* TODO make this button DO something */}
-          <Button
-            className="my-4"
-            variant="outline"
-            label="See all transfers"
-            icon={HiArrowSmallRight}
-          />
         </Card>
       </div>
     </div>
