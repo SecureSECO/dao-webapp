@@ -1,18 +1,25 @@
 // Address.tsx
+import { cva } from 'class-variance-authority';
 import React from 'react';
 import { HiClipboardCopy } from 'react-icons/hi';
 
 //TODO improve this (hidde will make it way better later)
+export enum AddressLength {
+  small = 10,
+  medium = 20,
+  large = 40,
+  full = -1, //Any negative number means no trunction
+}
 
 type AddressProps = {
   address: string;
-  maxLength: number;
+  maxLength: AddressLength;
   hasLink: boolean;
   showCopy: boolean;
 };
 
 const truncateMiddle = (address: string, maxLength: number) => {
-  if (address.length <= maxLength) return address;
+  if (address.length <= maxLength || maxLength < 0) return address;
   const lengthToKeep = maxLength - 2;
   const start = address.slice(0, lengthToKeep / 2);
   const end = address.slice(-lengthToKeep / 2);
