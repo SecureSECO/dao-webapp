@@ -1,16 +1,14 @@
 import { TransferType } from '@aragon/sdk-client';
 import React from 'react';
 
-/** */
-type TokenAmountProps = {
-  className?: string;
+interface TokenAmountProps extends HTMLSpanElement {
   amount?: BigInt | null;
   tokenDecimals?: number | null;
   symbol?: string | null;
   sign?: string;
   onError?: string;
   displayDecimals?: number;
-};
+}
 
 export const bigIntToFloat = (
   value: BigInt | null,
