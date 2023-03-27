@@ -19,3 +19,11 @@ export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);
 }
+
+export function isNullOrUndefined(value: any): boolean {
+  return value === null || value === undefined;
+}
+
+export function anyNullOrUndefined(...values: any[]): boolean {
+  return values.some(isNullOrUndefined);
+}

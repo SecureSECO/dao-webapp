@@ -1,3 +1,4 @@
+import { anyNullOrUndefined } from '@/src/lib/utils';
 import { TransferType } from '@aragon/sdk-client';
 import React from 'react';
 
@@ -6,15 +7,11 @@ interface TokenAmountProps extends React.HTMLAttributes<HTMLSpanElement> {
   tokenDecimals?: number | null;
   symbol?: string | null;
   sign?: string;
-  errorString?: string;
   displayDecimals?: number;
 }
 
-export const bigIntToFloat = (
-  value: BigInt | null,
-  decimals: number | null,
-  onError: string = '-'
-): number => parseFloat(value && decimals ? `${value}E-${decimals}` : onError);
+export const bigIntToFloat = (value: BigInt, decimals: number): number =>
+  parseFloat(`${value}E-${decimals}`);
 
 // Taken from Aragon App
 export function abbreviateTokenAmount(amount: string): string {
@@ -62,6 +59,17 @@ export function abbreviateTokenAmount(amount: string): string {
   return `${Number.parseInt(integers)}${symbol && ' ' + symbol}`;
 }
 
+export function toAbbreviatedTokenAmount(
+  value: BigInt | null | undefined,
+  decimals: number | null | undefined
+): string {
+  if (anyNullOrUndefined(value, decimals)) return 'N/A';
+  let asFloat = bigIntToFloat(value!, decimals!);
+  // Theoretically 'bigIntToFlot' never returns NaN, guaranteed by its type's preconditions. In practice, this might still happen.
+  if (isNaN(asFloat)) return 'N/A';
+  return abbreviateTokenAmount(asFloat.toFixed(2));
+}
+
 /**
  * @param className - ClassName to pass
  * @param amount - The amount of the given token, default value is 1
@@ -77,15 +85,12 @@ const TokenAmount = ({
   tokenDecimals,
   symbol,
   sign = '',
-  errorString = '-',
   ...props
 }: TokenAmountProps) => {
   return (
     <span className={className} {...props}>
       {sign}
-      {abbreviateTokenAmount(
-        bigIntToFloat(amount ?? 1n, tokenDecimals ?? 0, errorString).toFixed(2)
-      )}
+      {toAbbreviatedTokenAmount(amount, tokenDecimals)}
       &nbsp;
       {symbol ?? ''}
     </span>
