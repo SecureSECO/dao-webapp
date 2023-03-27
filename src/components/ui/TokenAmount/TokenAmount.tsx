@@ -1,12 +1,12 @@
 import { TransferType } from '@aragon/sdk-client';
 import React from 'react';
 
-interface TokenAmountProps extends HTMLSpanElement {
+interface TokenAmountProps extends React.HTMLAttributes<HTMLSpanElement> {
   amount?: BigInt | null;
   tokenDecimals?: number | null;
   symbol?: string | null;
   sign?: string;
-  onError?: string;
+  errorString?: string;
   displayDecimals?: number;
 }
 
@@ -77,13 +77,14 @@ const TokenAmount = ({
   tokenDecimals,
   symbol,
   sign = '',
-  onError = '-',
+  errorString = '-',
+  ...props
 }: TokenAmountProps) => {
   return (
-    <span className={className}>
+    <span className={className} {...props}>
       {sign}
       {abbreviateTokenAmount(
-        bigIntToFloat(amount ?? 1n, tokenDecimals ?? 0, onError).toFixed(2)
+        bigIntToFloat(amount ?? 1n, tokenDecimals ?? 0, errorString).toFixed(2)
       )}
       &nbsp;
       {symbol ?? ''}

@@ -62,7 +62,7 @@ const DaoTokens = ({
 const DaoTokensWrapped = (): JSX.Element => {
   const { daoBalances, loading, error } = useDaoBalance({});
   const [maxAmount, setMaxAmount] = useState(3);
-  if (loading) return <Loader></Loader>;
+  if (loading) return <Loader />;
   if (error) return <h3>{error}</h3>;
   return (
     <div>
@@ -139,13 +139,12 @@ const daoTransferAddress = (transfer: DaoTransfer): string => {
 const DaoTransfersWrapped = (): JSX.Element => {
   const { daoTransfers, loading, error } = useDaoTransfers({});
   const [maxAmount, setMaxAmount] = useState(3);
-  if (loading) return <Loader></Loader>;
+  if (loading) return <Loader />;
   if (error) return <h3>{error}</h3>;
   if (!daoTransfers) return <h3>No transfers could be loaded</h3>;
   return (
     <div>
       {DaoTransfers({ daoTransfers, max_amount: maxAmount })}
-      {/* TODO make this button DO something */}
       {maxAmount < daoTransfers.length && (
         <Button
           className="my-4"
@@ -167,8 +166,8 @@ const Finance = () => {
       <div className="flex flex-col gap-6">
         <HeaderCard
           title="Finance"
-          aside={<Button label="New transfer" icon={HiPlus}></Button>}
-        ></HeaderCard>
+          aside={<Button label="New transfer" icon={HiPlus} />}
+        />
       </div>
       <div className="gap-4 md:grid md:grid-cols-2">
         <Card className="my-6">
