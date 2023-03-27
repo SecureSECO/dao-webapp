@@ -6,7 +6,7 @@ import { cn } from '../../lib/utils';
 const cardVariants = cva('w-full rounded-lg font-medium shadow-md', {
   variants: {
     variant: {
-      default: 'bg-white dark:bg-slate-800',
+      default: 'bg-white dark:bg-slate-700/50',
       warning: 'bg-red-500/80 text-slate-50 shadow-lg',
       light: 'bg-slate-50 dark:bg-slate-700/50',
     },

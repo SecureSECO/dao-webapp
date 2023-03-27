@@ -3,11 +3,8 @@ import { getErrorMessage } from '@/src/lib/utils';
 import {
   TokenVotingClient,
   ProposalStatus,
-  Erc20TokenDetails,
   TokenType,
 } from '@aragon/sdk-client';
-// TODO: fix
-import { Erc721TokenDetails } from '@aragon/sdk-client/dist/tokenVoting/interfaces';
 import { useEffect, useState } from 'react';
 
 type DAO = {
@@ -20,7 +17,13 @@ type Metadata = {
   summary: string;
 };
 
-type Token = Erc20TokenDetails | Erc721TokenDetails | null;
+type Token = {
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  type: TokenType;
+};
 
 type Result = {
   yes: bigint;
@@ -55,6 +58,7 @@ export type UseProposalsData = {
 };
 export type UseProposalsProps = {
   useDummyData?: boolean;
+  status?: ProposalStatus | undefined;
 };
 
 const dummyProposals: Proposal[] = [
@@ -128,6 +132,7 @@ const dummyProposals: Proposal[] = [
 
 export const useProposals = ({
   useDummyData = false,
+  status = undefined,
 }: UseProposalsProps): UseProposalsData => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -142,16 +147,16 @@ export const useProposals = ({
     }
 
     try {
-      const daoProposals: Proposal[] | null = await client.methods.getProposals(
-        {
+      const daoProposals: Proposal[] | null =
+        (await client.methods.getProposals({
           daoAddressOrEns: import.meta.env.VITE_DAO_ADDRESS,
-        }
-      );
+          status,
+        })) as Proposal[];
+
       if (daoProposals) {
         setProposals(daoProposals);
-
-        if (loading) setLoading(false);
-        if (error) setError(null);
+        setLoading(false);
+        setError(null);
       }
     } catch (e) {
       console.error(e);
@@ -162,17 +167,17 @@ export const useProposals = ({
 
   //** Set dummy data for development without querying Aragon API */
   const setDummyData = () => {
-    if (loading) setLoading(false);
-    if (error) setError(null);
-
+    setLoading(false);
+    setError(null);
     setProposals(dummyProposals);
   };
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
     if (!votingClient) return;
+    setLoading(true);
     fetchProposals(votingClient);
-  }, [votingClient]);
+  }, [votingClient, status]);
 
   return {
     loading,

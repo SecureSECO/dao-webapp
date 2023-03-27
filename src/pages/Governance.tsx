@@ -14,6 +14,8 @@ import {
 } from '@/src/components/ui/Tabs';
 import { Proposal, useProposals } from '@/src/hooks/useProposals';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { useState } from 'react';
+import { ProposalStatus } from '@aragon/sdk-client';
 
 const Governance = () => {
   return (
@@ -33,52 +35,66 @@ const Governance = () => {
   );
 };
 
+export type ProposalStatusString =
+  | 'ALL'
+  | 'PENDING'
+  | 'ACTIVE'
+  | 'SUCCEEDED'
+  | 'EXECUTED'
+  | 'DEFEATED';
+
+const statusStringToEnum = (
+  status: ProposalStatusString
+): ProposalStatus | undefined => {
+  if (status === 'ALL') return undefined;
+  return ProposalStatus[status];
+};
+
+const tabs: ProposalStatusString[] = [
+  'ALL',
+  'PENDING',
+  'ACTIVE',
+  'SUCCEEDED',
+  'EXECUTED',
+  'DEFEATED',
+];
+
 const ProposalTabs = () => {
-  const { proposals, loading, error } = useProposals({ useDummyData: false });
+  const [currentTab, setCurrentTab] = useState<ProposalStatus | undefined>(
+    undefined
+  );
+  const { proposals, loading, error } = useProposals({
+    useDummyData: false,
+    status: currentTab,
+  });
 
   return (
-    <Tabs defaultValue="all" variant="default">
-      <TabsList>
-        <TabsTrigger value="all">All</TabsTrigger>
-        <TabsTrigger value="pending">Pending</TabsTrigger>
-        <TabsTrigger value="active">Active</TabsTrigger>
-        <TabsTrigger value="succeeded">Succeeded</TabsTrigger>
-        <TabsTrigger value="executed">Executed</TabsTrigger>
-        <TabsTrigger value="defeated">Defeated</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="all" className="">
-        <div className="grid grid-cols-2 gap-3">
-          {proposals?.map((proposal) => {
-            return <ProposalCard key={proposal.id} proposal={proposal} />;
-          })}
-        </div>
-      </TabsContent>
-      <TabsContent value="pending">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Pending proposals are displayed here.
-        </p>
-      </TabsContent>
-      <TabsContent value="active">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Active proposals are displayed here.
-        </p>
-      </TabsContent>
-      <TabsContent value="succeeded">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Succeeded proposals are displayed here.
-        </p>
-      </TabsContent>
-      <TabsContent value="executed">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Executed proposals are displayed here.
-        </p>
-      </TabsContent>
-      <TabsContent value="defeated">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Defeated proposals are displayed here.
-        </p>
-      </TabsContent>
+    <Tabs
+      defaultValue="ALL"
+      onValueChange={(v) =>
+        setCurrentTab(statusStringToEnum(v as ProposalStatusString))
+      }
+      variant="default"
+    >
+      <div className="flex flex-row gap-x-5">
+        <TabsList>
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab} value={tab}>
+              <span className="lowercase first-letter:uppercase">{tab}</span>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        hi
+      </div>
+      {tabs.map((tab) => (
+        <TabsContent key={tab} value={tab}>
+          <ProposalCardList
+            proposals={proposals}
+            loading={loading}
+            error={error}
+          />
+        </TabsContent>
+      ))}
     </Tabs>
   );
 };
@@ -96,6 +112,39 @@ const countdownText = (endDate: Date) => {
   }
 };
 
+export const ProposalCardList = ({
+  proposals,
+  loading,
+  error,
+}: {
+  proposals: Proposal[];
+  loading: boolean;
+  error: string | null;
+}) => {
+  if (loading)
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
+        <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
+      </div>
+    );
+  if (error)
+    return <p className="text-center font-normal">An error was encountered</p>;
+  return (
+    <div>
+      {proposals.length > 0 ? (
+        <div className="grid grid-cols-2 gap-3">
+          {proposals.map((proposal) => {
+            return <ProposalCard key={proposal.id} proposal={proposal} />;
+          })}
+        </div>
+      ) : (
+        <p className="text-center font-normal">No proposals found!</p>
+      )}
+    </div>
+  );
+};
+
 export const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
   const {
     metadata: { title, summary },
@@ -106,11 +155,7 @@ export const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
   } = proposal;
 
   return (
-    <Card
-      padding="sm"
-      variant="light"
-      className="space-y-2 p-4 dark:bg-slate-700/50"
-    >
+    <Card padding="sm" variant="light" className="space-y-2 p-4">
       <h3 className="text-lg font-bold dark:text-slate-300">{title}</h3>
       <p className="text-sm text-gray-500 dark:text-slate-400">{summary}</p>
       <p className="font-medium text-gray-800 dark:text-slate-300">
