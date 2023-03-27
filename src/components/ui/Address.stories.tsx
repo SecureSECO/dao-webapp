@@ -44,6 +44,7 @@ export const NoLink: Story = {
     />
   ),
 };
+
 export const NoCopy: Story = {
   render: () => (
     <Address
@@ -54,6 +55,7 @@ export const NoCopy: Story = {
     />
   ),
 };
+
 export const NoLinkNoCopy: Story = {
   render: () => (
     <Address
@@ -64,6 +66,7 @@ export const NoLinkNoCopy: Story = {
     />
   ),
 };
+
 export const HighMaxLength: Story = {
   render: () => (
     <Address
