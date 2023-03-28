@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 import { Card, CardProps } from '@/src/components/ui/Card';
 import { IconType } from 'react-icons/lib';
 
-const mainCardVariants = cva('w-full h-full flex flex-col gap-y-2', {
+const mainCardVariants = cva('w-full flex flex-col gap-y-2', {
   variants: {},
   defaultVariants: {},
 });

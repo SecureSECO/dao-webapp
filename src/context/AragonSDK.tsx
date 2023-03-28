@@ -6,17 +6,21 @@ import {
   ContextPlugin,
   TokenVotingClient,
 } from '@aragon/sdk-client';
-import { useSigner } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
+import { Contract } from 'ethers';
+import { erc20ABI } from 'wagmi';
 
 type SDKContext = {
   context?: Context;
   client?: Client;
   votingClient?: TokenVotingClient;
   votingPluginAddress?: string;
+  repTokenContract?: Contract;
 };
 
 const AragonSDKContext = createContext<SDKContext>({});
 const votingPluginAddress = '0xfc9ef7e0ea890e86864137e49282b21a0a1f6e5e';
+const repTokenAddress = '0xdAC85cFabEF4da96D426185Ea050d9A947bE1C5f';
 
 export function AragonSDKWrapper({ children }: any): JSX.Element {
   const [context, setContext] = useState<Context | undefined>(undefined);
@@ -24,7 +28,14 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   const [votingClient, setVotingClient] = useState<
     TokenVotingClient | undefined
   >(undefined);
+  const [repTokenContract, setRepTokenContract] = useState<
+    Contract | undefined
+  >(undefined);
+
   const signer = useSigner().data || undefined;
+  const provider = useProvider({
+    chainId: import.meta.env.VITE_PREFERRED_NETWORK_ID,
+  });
 
   // TODO: Add support for Polygon
   // e.g. for network: import.meta.env.DEV ? 'goerli' : 'polygon'
@@ -59,9 +70,19 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
     setVotingClient(new TokenVotingClient(contextPlugin));
   }, [context]);
 
+  useEffect(() => {
+    setRepTokenContract(new Contract(repTokenAddress, erc20ABI, provider));
+  }, [provider]);
+
   return (
     <AragonSDKContext.Provider
-      value={{ context, client, votingClient, votingPluginAddress }}
+      value={{
+        context,
+        client,
+        votingClient,
+        votingPluginAddress,
+        repTokenContract,
+      }}
     >
       {children}
     </AragonSDKContext.Provider>
