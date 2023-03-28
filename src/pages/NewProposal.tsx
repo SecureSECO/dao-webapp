@@ -6,12 +6,14 @@ import {
   Control,
   FieldValues,
   UseFormGetValues,
+  FormProvider,
+  useFormContext,
 } from 'react-hook-form';
 import Header from '@/src/components/ui/Header';
 import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { HiXMark } from 'react-icons/hi2';
+import { HiPlus, HiXMark } from 'react-icons/hi2';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
@@ -24,8 +26,10 @@ const totalSteps = 4;
 
 const NewProposal = () => {
   const [step, setStep] = useState<number>(1);
+  const [formError, setFormError] = useState<string>('');
 
-  const { register, handleSubmit, setValue, getValues, control } = useForm();
+  const formMethods = useForm({ mode: 'onChange' });
+  const { handleSubmit, formState } = formMethods;
   const isLastStep = step === totalSteps;
   const onSubmit = (data: any) => {
     console.log(data);
@@ -35,6 +39,11 @@ const NewProposal = () => {
   const handleNextStep = () => {
     if (step < totalSteps) {
       setStep(step + 1);
+      // if (step < totalSteps && formState.isValid) {
+      //   setStep(step + 1);
+      // } else if (!formState.isValid) {
+      //   setFormError('Please fill in all required fields');
+      //   console.log('error', formState.errors.title);
     }
   };
 
@@ -46,31 +55,30 @@ const NewProposal = () => {
   return (
     <div className="flex flex-col gap-6">
       <ProgressCard step={step}>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <StepContent
-            step={step}
-            register={register}
-            setValue={setValue}
-            getValues={getValues}
-            control={control}
-          />
-          <div className="flex items-center gap-4">
-            <Button
-              onClick={handlePrevStep}
-              type="button"
-              disabled={step === 1}
-            >
-              Back
-            </Button>
-            {isLastStep ? (
-              <Button type="submit">Submit</Button>
-            ) : (
-              <Button onClick={handleNextStep} type="button">
-                Next
+        <FormProvider {...formMethods}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
+            <StepContent step={step} />
+            <div className="flex items-center gap-4">
+              <Button
+                onClick={handlePrevStep}
+                type="button"
+                disabled={step === 1}
+              >
+                Back
               </Button>
-            )}
-          </div>
-        </form>
+              {isLastStep ? (
+                <Button type="submit">Submit</Button>
+              ) : (
+                <Button onClick={handleNextStep} type="button">
+                  Next
+                </Button>
+              )}
+            </div>
+          </form>
+        </FormProvider>
       </ProgressCard>
     </div>
   );
@@ -100,38 +108,24 @@ export const ProgressCard = ({
   );
 };
 
-const StepContent = ({
-  step,
-  register,
-  setValue,
-  getValues,
-  control,
-}: {
-  step: number;
-  register: UseFormRegister<FieldValues>;
-  setValue: UseFormSetValue<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
-  control: Control<FieldValues, any>;
-}) => {
+const StepContent = ({ step }: { step: number }) => {
   if (step === 1) {
-    return <StepOne register={register} />;
+    return <StepOne />;
   }
   if (step === 2) {
-    return <StepTwo register={register} getValues={getValues} />;
+    return <StepTwo />;
   }
 
   // Other steps will go here
   return null;
 };
 
-export const StepOne = ({
-  register,
-}: {
-  register: UseFormRegister<FieldValues>;
-}) => {
+export const StepOne = () => {
   const [resources, setResources] = useState<
     Array<{ name: string; link: string }>
   >([{ name: '', link: '' }]);
+
+  const { register, getValues } = useFormContext();
 
   const handleAddResource = () => {
     setResources([...resources, { name: '', link: '' }]);
@@ -158,7 +152,7 @@ export const StepOne = ({
       <div className="flex flex-col gap-1">
         <Label htmlFor="title">Title of the proposal</Label>
         <Input
-          {...register('title', { required: true })}
+          {...register('title', { required: true, maxLength: 2 })}
           type="text"
           placeholder="Title"
           id="title"
@@ -177,15 +171,9 @@ export const StepOne = ({
       </div>
       <div className="flex flex-col gap-1">
         <Label htmlFor="body">Body</Label>
-        {/* <textarea
-          {...register('body')}
-          placeholder="Body (markdown)"
-          id="body"
-          className="..."
-        /> */}
-        <TextareaWYSIWYG />
+        <TextareaWYSIWYG name="body" value={getValues('body') ?? ''} />
       </div>
-      <div className="flex flex-col gap-1">
+      <fieldset className="flex flex-col gap-1">
         <Label htmlFor="recources">Links and resources</Label>
         {resources.map((resource, index) => (
           <ResourceInput
@@ -197,10 +185,16 @@ export const StepOne = ({
             prefix={`resources[${index}]`}
           />
         ))}
-        <Button onClick={handleAddResource} type="button">
+        <Button
+          onClick={handleAddResource}
+          type="button"
+          variant={'outline'}
+          className="w-fit"
+          icon={HiPlus}
+        >
           Add resource
         </Button>
-      </div>
+      </fieldset>
     </div>
   );
 };
@@ -246,27 +240,19 @@ const ResourceInput = ({
   );
 };
 
-export const StepTwo = ({
-  register,
-  getValues,
-}: {
-  register: UseFormRegister<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
-}) => {
+export const StepTwo = () => {
   return (
     <div className="flex flex-col gap-4">
-      <VotingOption register={register} />
-      <StartTime register={register} getValues={getValues} />
-      <EndTime register={register} getValues={getValues} />
+      <VotingOption />
+      <StartTime />
+      <EndTime />
     </div>
   );
 };
 
-export const VotingOption = ({
-  register,
-}: {
-  register: UseFormRegister<FieldValues>;
-}) => {
+export const VotingOption = () => {
+  const { register } = useFormContext();
+
   return (
     <fieldset>
       <legend>Options</legend>
@@ -282,13 +268,9 @@ export const VotingOption = ({
   );
 };
 
-export const StartTime = ({
-  register,
-  getValues,
-}: {
-  register: UseFormRegister<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
-}) => {
+export const StartTime = () => {
+  const { register, getValues } = useFormContext();
+
   return (
     <fieldset>
       <legend>Start time</legend>
@@ -313,13 +295,9 @@ export const StartTime = ({
   );
 };
 
-export const EndTime = ({
-  register,
-  getValues,
-}: {
-  register: UseFormRegister<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
-}) => {
+export const EndTime = () => {
+  const { register, getValues } = useFormContext();
+
   return (
     <fieldset>
       <legend>End time</legend>
