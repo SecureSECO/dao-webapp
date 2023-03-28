@@ -8,6 +8,7 @@ import {
   UseFormGetValues,
   FormProvider,
   useFormContext,
+  Controller,
 } from 'react-hook-form';
 import Header from '@/src/components/ui/Header';
 import { Progress } from '@/src/components/ui/Progress';
@@ -21,6 +22,7 @@ import TipTapLink from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
+import { Textarea } from '@/src/components/ui/Textarea';
 
 const totalSteps = 4;
 
@@ -31,20 +33,25 @@ const NewProposal = () => {
   const formMethods = useForm({ mode: 'onChange' });
   const { handleSubmit, formState } = formMethods;
   const isLastStep = step === totalSteps;
+
   const onSubmit = (data: any) => {
-    console.log(data);
-    // Handle submission
+    if (isLastStep) {
+      console.log(data);
+      // Handle submission
+    }
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (step < totalSteps) {
       setStep(step + 1);
-      // if (step < totalSteps && formState.isValid) {
-      //   setStep(step + 1);
-      // } else if (!formState.isValid) {
-      //   setFormError('Please fill in all required fields');
-      //   console.log('error', formState.errors.title);
     }
+    // if (step < totalSteps && formState.isValid) {
+    //   setStep(step + 1);
+    // } else if (!formState.isValid) {
+    //   setFormError('Please fill in all required fields');
+    //   console.log('error', formState.errors.title);
+    // }
   };
 
   const handlePrevStep = () => {
@@ -52,6 +59,8 @@ const NewProposal = () => {
       setStep(step - 1);
     }
   };
+
+  console.log('current step', step);
   return (
     <div className="flex flex-col gap-6">
       <ProgressCard step={step}>
@@ -125,7 +134,7 @@ export const StepOne = () => {
     Array<{ name: string; link: string }>
   >([{ name: '', link: '' }]);
 
-  const { register, getValues } = useFormContext();
+  const { register, getValues, setValue, control } = useFormContext();
 
   const handleAddResource = () => {
     setResources([...resources, { name: '', link: '' }]);
@@ -161,9 +170,8 @@ export const StepOne = () => {
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="summary">Summary</Label>
-        <Input
+        <Textarea
           {...register('summary', { required: true })}
-          type="text"
           placeholder="Summary*"
           id="summary"
           className="..."
@@ -171,7 +179,21 @@ export const StepOne = () => {
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="body">Body</Label>
-        <TextareaWYSIWYG name="body" value={getValues('body') ?? ''} />
+        <Controller
+          control={control}
+          name="body" // Replace this with the name of the field you want to store the WYSIWYG content
+          rules={{ required: false }} // Add any validation rules you need
+          defaultValue=""
+          render={({ field }) => (
+            <TextareaWYSIWYG
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={() => field.onBlur()}
+              name={field.name}
+              placeholder="Enter your content"
+            />
+          )}
+        />
       </div>
       <fieldset className="flex flex-col gap-2">
         <Label htmlFor="recources">Links and resources</Label>

@@ -15,6 +15,7 @@ import {
   FaListOl,
   FaListUl,
   FaExpandAlt,
+  FaCompressAlt,
 } from 'react-icons/fa';
 
 type MenuBarProps = {
@@ -124,7 +125,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
       </div>
 
       <Toggle disabled={disabled} onClick={() => setIsExpanded(!isExpanded)}>
-        <FaExpandAlt />
+        {isExpanded ? <FaCompressAlt /> : <FaExpandAlt />}
       </Toggle>
     </div>
   );
@@ -147,7 +148,6 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
   name = 'editor',
   value = '',
 }) => {
-  const { setValue } = useFormContext();
   const [isExpanded, setIsExpanded] = useState(false);
   const editor = useEditor(
     {
@@ -169,7 +169,6 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
         if (onChange) {
           onChange(editor.getHTML());
         }
-        setValue(name, editor.getHTML());
       },
     },
     [disabled]
@@ -243,7 +242,7 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
   return (
     <div
       className={clsx(
-        'w-full overflow-auto rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2  dark:bg-slate-950 dark:text-slate-300 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900',
+        'w-full overflow-auto rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2  dark:bg-slate-900/60 dark:text-slate-300 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900',
         disabled
           ? 'cursor-not-allowed opacity-50'
           : 'border border-slate-300 dark:border-slate-700'
