@@ -149,7 +149,7 @@ export const StepOne = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="title">Title of the proposal</Label>
         <Input
           {...register('title', { required: true, maxLength: 2 })}
@@ -159,7 +159,7 @@ export const StepOne = () => {
           className="..."
         />
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="summary">Summary</Label>
         <Input
           {...register('summary', { required: true })}
@@ -169,11 +169,11 @@ export const StepOne = () => {
           className="..."
         />
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="body">Body</Label>
         <TextareaWYSIWYG name="body" value={getValues('body') ?? ''} />
       </div>
-      <fieldset className="flex flex-col gap-1">
+      <fieldset className="flex flex-col gap-2">
         <Label htmlFor="recources">Links and resources</Label>
         {resources.map((resource, index) => (
           <ResourceInput
@@ -213,7 +213,7 @@ const ResourceInput = ({
   prefix: string;
 }) => {
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
       <Input
         {...register(`${prefix}.name`)}
         type="text"
