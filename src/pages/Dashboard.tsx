@@ -47,7 +47,7 @@ const Dashboard = () => {
     <div className="grid grid-cols-7 gap-6">
       <Card
         padding="lg"
-        className="col-span-full flex shrink flex-row justify-between"
+        className="relative col-span-full flex shrink flex-row justify-between"
       >
         <div className="flex flex-col justify-between gap-y-6">
           <div className="flex flex-col gap-y-2">
@@ -55,11 +55,11 @@ const Dashboard = () => {
             <p className="text-xl font-semibold text-slate-500 dark:text-slate-400">
               {dao.ensDomain}
             </p>
-            <p className="text-lg font-normal text-slate-500 dark:text-slate-400">
+            <p className="text-base font-normal text-slate-500 dark:text-slate-400">
               {dao.description}
             </p>
           </div>
-          <div className="flex flex-row items-center gap-x-6 text-sm font-normal text-slate-500 dark:text-slate-400">
+          <div className="flex flex-col gap-x-6 gap-y-2 text-sm font-normal text-slate-500 dark:text-slate-400 lg:flex-row lg:items-center">
             <div className="flex flex-row items-center gap-x-1">
               <HiCalendar className="h-5 w-5 text-primary dark:text-primary-500" />
               <p>{format(dao.creationDate, 'MMMM yyyy')}</p>
@@ -70,19 +70,19 @@ const Dashboard = () => {
             </div>
             <div className="flex flex-row items-center gap-x-1">
               <HiHome className="h-5 w-5 text-primary dark:text-primary-500" />
-              <p>{dao.address}</p>
+              <p className="w-48 truncate xs:w-full">{dao.address}</p>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col items-end gap-y-6">
+        <div className="hidden flex-col items-end gap-y-6 sm:flex">
           <Logo className="h-28 w-28" />
           <div className="flex flex-col gap-y-2">
             {dao.links.map((link, i) => (
               <a
                 key={i}
                 href={link.url}
-                className="text-base font-medium text-primary-500 transition-colors duration-200 hover:text-primary dark:hover:text-primary-400"
+                className="text-end text-base font-medium text-primary-500 transition-colors duration-200 hover:text-primary dark:hover:text-primary-400"
               >
                 {link.name}
               </a>
@@ -92,12 +92,12 @@ const Dashboard = () => {
       </Card>
 
       <MainCard
-        className="col-span-4"
+        className="col-span-full lg:col-span-4"
         icon={HiInboxStack}
         header={
           <div className="flex flex-row items-end gap-x-2">
             <span className="text-3xl">{proposals.length}</span>
-            <p>proposals created</p>
+            <p className="mb-1 leading-4">proposals created</p>
           </div>
         }
         aside={
@@ -108,14 +108,17 @@ const Dashboard = () => {
         }
       ></MainCard>
 
-      <div className="col-span-3 flex flex-col gap-y-6">
+      <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
         <MainCard
           className=""
           icon={HiCircleStack}
           header={
             <div className="flex flex-row items-end gap-x-2">
               <span className="text-3xl">{daoTransfers?.length}</span>
-              <p>transfers completed</p>
+              <p className="mb-1 leading-4">
+                transfers{' '}
+                <span className="lg:hidden xl:inline-block">completed</span>
+              </p>
             </div>
           }
           aside={
@@ -132,7 +135,7 @@ const Dashboard = () => {
           header={
             <div className="flex flex-row items-end gap-x-2">
               <span className="text-3xl">{members.length}</span>
-              <p>members</p>
+              <p className="mb-1 leading-4">members</p>
             </div>
           }
           aside={

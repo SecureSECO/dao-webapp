@@ -98,7 +98,7 @@ const SortSelector = ({
   }, [directionSelected]);
 
   return (
-    <div className="flex flex-row items-center gap-x-2 rounded-md bg-slate-50 p-1 dark:bg-slate-700/50">
+    <>
       <Dropdown>
         <DropdownMenuTrigger asChild>
           <Button variant="subtle" size="sm" icon={HiBarsArrowDown} />
@@ -132,12 +132,11 @@ const SortSelector = ({
             <Button
               variant="subtle"
               size="sm"
-              className="w-8"
               iconNode={
-                <div className="relative flex flex-col items-center justify-center">
+                <div className="relative flex h-4 w-4 flex-col items-center justify-center">
                   <HiChevronUp
                     className={cn(
-                      'h-3 w-3 transition-all duration-200',
+                      'h-3 w-3 shrink-0 transition-all duration-200',
                       directionSelected === DirectionState.ASC && 'scale-150',
                       directionSelected === DirectionState.DESC &&
                         'rotate-180 scale-150',
@@ -146,10 +145,10 @@ const SortSelector = ({
                   />
                   <HiChevronDown
                     className={cn(
-                      'h-3 w-3 transition-all duration-200',
+                      'h-3 w-3 shrink-0 transition-all duration-200',
                       (directionSelected === DirectionState.DESC ||
                         directionSelected === DirectionState.ASC) &&
-                        'hidden rotate-180',
+                        'hidden rotate-180 scale-150',
                       directionSelected === DirectionState.NONE && '-mt-0.5'
                     )}
                   />
@@ -172,7 +171,7 @@ const SortSelector = ({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    </div>
+    </>
   );
 };
 

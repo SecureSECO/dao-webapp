@@ -16,6 +16,12 @@ import {
 import SortSelector from '@/src/components/ui/SortSelector';
 
 import ProposalCard from '@/src/components/governance/ProposalCard';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/src/components/ui/Dropdown';
+import { HiChevronDown } from 'react-icons/hi2';
 
 const Governance = () => {
   return (
@@ -80,8 +86,34 @@ const ProposalTabs = () => {
       }
       variant="default"
     >
-      <div className="flex flex-row gap-x-3">
-        <TabsList>
+      <div className="flex flex-row items-center gap-x-2">
+        {/* Mobile category selector (dropdown) */}
+        <div className="lg:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="subtle" size="sm" className="group">
+                <div className="flex flex-row items-center gap-x-1">
+                  <p className="font-normal">{currentTab ?? 'All'}</p>
+                  <HiChevronDown className="h-4 w-4 transition-all duration-200 group-data-[state=open]:rotate-180" />
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <TabsList className="flex flex-col">
+                {tabs.map((tab) => (
+                  <TabsTrigger key={tab} value={tab}>
+                    <span className="lowercase first-letter:uppercase">
+                      {tab}
+                    </span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Desktop category selector */}
+        <TabsList className="hidden lg:inline-block">
           {tabs.map((tab) => (
             <TabsTrigger key={tab} value={tab}>
               <span className="lowercase first-letter:uppercase">{tab}</span>
@@ -114,7 +146,7 @@ export const ProposalCardList = ({
 }) => {
   if (loading)
     return (
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
         <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
       </div>
@@ -124,7 +156,7 @@ export const ProposalCardList = ({
   return (
     <div>
       {proposals.length > 0 ? (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {proposals.map((proposal) => {
             return <ProposalCard key={proposal.id} proposal={proposal} />;
           })}
