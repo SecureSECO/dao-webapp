@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { ReactNode } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '../../lib/utils';
@@ -52,12 +52,12 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   label?: string;
   icon?: IconType | null;
-  iconRotation?: number;
+  iconNode?: ReactNode | null;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, icon, iconRotation, variant, size, label, children, ...props },
+    { className, icon, iconNode, variant, size, label, children, ...props },
     ref
   ) => {
     const IconWrapper = { icon };
@@ -73,14 +73,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <span className="flex flex-row items-center gap-x-2">
             <IconWrapper.icon
               className={cn(iconVariants({ size, className }))}
-              style={{ transform: `rotate(${iconRotation}deg)` }}
             />
             {(label || children) && (
               <span className="leading-4">{label || children}</span>
             )}
           </span>
         ) : (
-          <span className="leading-4">{label || children}</span>
+          <>
+            {iconNode ? (
+              <>{iconNode}</>
+            ) : (
+              <span className="leading-4">{label || children}</span>
+            )}
+          </>
         )}
       </button>
     );

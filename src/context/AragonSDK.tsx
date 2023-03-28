@@ -30,7 +30,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   // e.g. for network: import.meta.env.DEV ? 'goerli' : 'polygon'
   useEffect(() => {
     // TODO: remove this line, but somehow still handle the case where signer is undefined, but we do want to fetch basic info from the DAO
-    if (!signer) return;
+    //if (!signer) return;
     const aragonSDKContextParams: ContextParams = {
       network: 'goerli',
       signer,

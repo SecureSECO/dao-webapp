@@ -79,7 +79,7 @@ const dummyProposals: Proposal[] = [
     },
     startDate: new Date('2023-03-16T00:00:00.000Z'),
     endDate: new Date('2023-03-23T00:00:00.000Z'),
-    status: ProposalStatus.EXECUTED,
+    status: ProposalStatus.ACTIVE,
     token: {
       address: '0x1234567890123456789012345678901234567890',
       name: 'The Token',
@@ -138,7 +138,7 @@ export const useProposals = ({
   useDummyData = false,
   status = undefined,
   sortBy = ProposalSortBy.CREATED_AT,
-  direction = SortDirection.ASC,
+  direction = SortDirection.DESC,
 }: UseProposalsProps): UseProposalsData => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -158,7 +158,7 @@ export const useProposals = ({
           daoAddressOrEns: import.meta.env.VITE_DAO_ADDRESS,
           status,
           sortBy,
-          direction,
+          direction: direction ?? SortDirection.DESC,
         })) as Proposal[];
 
       if (daoProposals) {

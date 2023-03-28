@@ -41,7 +41,13 @@ const navItems: NavItem[] = [
   },
 ];
 
-const Navitem = ({ item }: { item: NavItem }) => {
+const Navitem = ({
+  item,
+  mobile = false,
+}: {
+  item: NavItem;
+  mobile?: boolean;
+}) => {
   return (
     <NavLink
       key={item.label}
@@ -49,9 +55,10 @@ const Navitem = ({ item }: { item: NavItem }) => {
       className={({ isActive, isPending }) =>
         cn(
           'rounded-md py-2 px-4 text-lg font-semibold dark:text-slate-400',
-          isActive &&
-            'bg-white text-primary shadow-md dark:bg-slate-800 dark:text-primary-500',
-          isPending && ''
+          isActive && ' text-primary shadow-md dark:text-primary-500',
+          isPending && '',
+          isActive && mobile && 'bg-slate-50 dark:bg-slate-700/50',
+          isActive && !mobile && 'bg-white dark:bg-slate-800'
         )
       }
     >
@@ -70,19 +77,19 @@ const Navbar = () => {
       <nav className="relative lg:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="subtle" className="group">
-              <HiBars3 className="h-8 w-8 group-data-[state=open]:hidden" />
-              <HiXMark className="h-8 w-8 group-data-[state=closed]:hidden" />
+            <Button variant="outline" className="group" size="sm">
+              <HiBars3 className="h-6 w-6 group-data-[state=open]:hidden" />
+              <HiXMark className="h-6 w-6 group-data-[state=closed]:hidden" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="absolute -left-8 origin-top">
+          <DropdownMenuContent className="absolute -left-5 origin-top">
             <DropdownMenuGroup>
               {navItems.map((item) => (
                 <DropdownMenuItem
                   key={item.label}
                   className="hover:cursor-pointer"
                 >
-                  <Navitem item={item} />
+                  <Navitem item={item} mobile />
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>
