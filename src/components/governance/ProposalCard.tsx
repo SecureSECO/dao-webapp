@@ -14,17 +14,20 @@ import { ProposalStatus } from '@aragon/sdk-client';
 import { Proposal } from '@/src/hooks/useProposals';
 import { HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import Activity from '@/src/components/icons/Actitivy';
+import ProposalTag, {
+  ProposalTagProps,
+} from '@/src/components/governance/ProposalTag';
 
-const countdownText = (endDate: Date) => {
-  const date = new Date();
-  if (differenceInHours(endDate, date) > 24) {
-    return formatDistanceToNow(endDate, { addSuffix: true });
-  } else if (differenceInMinutes(endDate, date) > 60) {
-    return `${differenceInHours(endDate, date)} hours left`;
-  } else if (differenceInMinutes(endDate, date) > 1) {
-    return `${differenceInMinutes(endDate, date)} minutes left`;
+const countdownText = (date: Date) => {
+  const now = new Date();
+  if (differenceInHours(date, now) > 24) {
+    return formatDistanceToNow(date);
+  } else if (differenceInMinutes(date, now) > 60) {
+    return `${differenceInHours(date, now)} hours`;
+  } else if (differenceInMinutes(date, now) > 1) {
+    return `${differenceInMinutes(date, now)} minutes`;
   } else {
-    return 'Less than a minute left';
+    return 'less than a minute';
   }
 };
 
@@ -71,22 +74,65 @@ export const ProposalStatusBadge = ({ status }: { status: ProposalStatus }) => {
   );
 };
 
+const getProposalTags = (proposal: Proposal) => {
+  const res: ProposalTagProps[] = [];
+  if (proposal.status === ProposalStatus.PENDING)
+    res.push(
+      {
+        children: 'Starts in ' + countdownText(proposal.startDate),
+        variant: 'countdown',
+      },
+      {
+        children: 'Ends in ' + countdownText(proposal.endDate),
+        variant: 'countdown',
+      }
+    );
+  if (proposal.status === ProposalStatus.ACTIVE) {
+    const yesPercentage =
+      Number((proposal.result.yes * 10000n) / proposal.totalVotingWeight) / 100;
+    const noPercentage =
+      Number((proposal.result.no * 10000n) / proposal.totalVotingWeight) / 100;
+    res.push(
+      {
+        children: 'Ends in ' + countdownText(proposal.endDate),
+        variant: 'countdown',
+      },
+      {
+        children: yesPercentage.toString() + '%',
+        variant: 'yes',
+      },
+      {
+        children: noPercentage.toString() + '%',
+        variant: 'no',
+      }
+    );
+  }
+
+  // TODO: add tag for type of proposal (when we add support for different types)
+  return res;
+};
+
 const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
   const {
     metadata: { title, summary },
     status,
-    endDate,
-    startDate,
     creatorAddress,
   } = proposal;
 
   return (
-    <Card padding="sm" variant="light" className="space-y-1 p-4 font-normal">
-      <div className="flex flex-row justify-between">
-        <Header level={2}>{title}</Header>
-        <ProposalStatusBadge status={status} />
+    <Card padding="sm" variant="light" className="space-y-2 p-4 font-normal">
+      <div className="space-y-1">
+        <div className="flex flex-row justify-between">
+          <Header level={2}>{title}</Header>
+          <ProposalStatusBadge status={status} />
+        </div>
+        <p className="m-0 text-slate-500 dark:text-slate-400">{summary}</p>
       </div>
-      <p className="m-0 text-slate-500 dark:text-slate-400">{summary}</p>
+      <div className="flex flex-row gap-x-2">
+        {getProposalTags(proposal).map((tagProps, i) => (
+          <ProposalTag key={i} {...tagProps} />
+        ))}
+      </div>
       <div className="flex items-center gap-x-1 text-xs">
         <span className="text-gray-500 dark:text-slate-400">Published by</span>
         <Address
