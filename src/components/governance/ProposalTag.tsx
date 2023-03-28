@@ -8,7 +8,7 @@ import {
 } from 'react-icons/hi2';
 
 const proposalTagVariants = cva(
-  'flex flex-row gap-x-1 items-center rounded-full px-2 py-0.5 text-slate-500 dark:text-slate-400 text-sm',
+  'flex flex-row min-w-fit gap-x-1 items-center rounded-full px-2 py-0.5 text-slate-500 dark:text-slate-400 text-sm',
   {
     variants: {
       variant: {
@@ -42,7 +42,7 @@ const ProposalTag = ({
   return (
     <div {...props} className={cn(proposalTagVariants({ variant }), className)}>
       {proposalTagIcon[variant as keyof typeof proposalTagIcon]}
-      {children}
+      <div className="break-inside-avoid">{children}</div>
     </div>
   );
 };

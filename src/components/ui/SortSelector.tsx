@@ -94,7 +94,6 @@ const SortSelector = ({
         setDirection(SortDirection.DESC);
         break;
     }
-    console.log('Direction: ', DirectionState[directionSelected]);
   }, [directionSelected]);
 
   return (

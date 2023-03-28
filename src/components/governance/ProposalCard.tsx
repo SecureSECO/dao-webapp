@@ -39,7 +39,7 @@ type StatusVariant =
   | 'Defeated';
 
 const statusVariants = cva(
-  'rounded-lg px-2 py-1 flex flex-row gap-x-1 items-center h-fit',
+  'rounded-lg px-2 py-1 flex flex-row w-fit gap-x-1 items-center h-fit',
   {
     variants: {
       status: {
@@ -64,10 +64,22 @@ const statusIcon = {
   Defeated: <HiXMark className="h-4 w-4" />,
 };
 
-export const ProposalStatusBadge = ({ status }: { status: ProposalStatus }) => {
+interface ProposalStatusBadgeProps
+  extends React.BaseHTMLAttributes<HTMLDivElement> {
+  status: ProposalStatus;
+}
+
+export const ProposalStatusBadge = ({
+  status,
+  className,
+  ...props
+}: ProposalStatusBadgeProps) => {
   const statusString = status.toString() as StatusVariant;
   return (
-    <div className={cn(statusVariants({ status: statusString }))}>
+    <div
+      className={cn(statusVariants({ status: statusString }), className)}
+      {...props}
+    >
       {statusIcon[statusString]}
       <p className="text-sm">{status}</p>
     </div>
@@ -121,14 +133,17 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
 
   return (
     <Card padding="sm" variant="light" className="space-y-2 p-4 font-normal">
-      <div className="space-y-1">
+      <ProposalStatusBadge status={status} className="xs:hidden" />
+      <div className="space-y-2">
         <div className="flex flex-row justify-between">
           <Header level={2}>{title}</Header>
-          <ProposalStatusBadge status={status} />
+          <ProposalStatusBadge status={status} className="hidden xs:flex" />
         </div>
-        <p className="m-0 text-slate-500 dark:text-slate-400">{summary}</p>
+        <p className="leading-5 text-slate-500 dark:text-slate-400">
+          {summary}
+        </p>
       </div>
-      <div className="flex flex-row gap-x-2">
+      <div className="flex flex-wrap gap-1">
         {getProposalTags(proposal).map((tagProps, i) => (
           <ProposalTag key={i} {...tagProps} />
         ))}
