@@ -13,8 +13,8 @@ type UseMembersData = {
   members: Member[];
 };
 
-// TODO: add REP balance to this, fetch it from somewhere..
-type Member = string;
+// TODO: add REP balance to this, fetch it from wagmi
+export type Member = string;
 
 const dummyMembers: Member[] = [];
 
@@ -34,7 +34,7 @@ export const useMembers = ({
     }
 
     try {
-      const daoMembers: any | null = await client.methods.getMembers(
+      const daoMembers: Member[] | null = await client.methods.getMembers(
         votingPluginAddress
       );
       if (daoMembers) {

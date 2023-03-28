@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 import { IconType } from 'react-icons/lib';
 
 const buttonVariants = cva(
-  'active:scale-95 inline-flex w-fit items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
+  'active:scale-95 leading-4 inline-flex w-fit items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
   {
     variants: {
       variant: {
@@ -70,22 +70,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         <span className="sr-only">{label}</span>
         {icon && IconWrapper.icon ? (
-          <span className="flex flex-row items-center gap-x-2">
+          <div className="flex flex-row items-center gap-x-2">
             <IconWrapper.icon
               className={cn(iconVariants({ size, className }))}
             />
-            {(label || children) && (
-              <span className="leading-4">{label || children}</span>
-            )}
-          </span>
+            {(label || children) && <>{label || children}</>}
+          </div>
         ) : (
-          <>
-            {iconNode ? (
-              <>{iconNode}</>
-            ) : (
-              <span className="leading-4">{label || children}</span>
-            )}
-          </>
+          <div className="flex flex-row items-center gap-x-2">
+            {iconNode && <>{iconNode}</>}
+            {label || children}
+          </div>
         )}
       </button>
     );

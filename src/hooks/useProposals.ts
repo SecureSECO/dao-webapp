@@ -63,6 +63,7 @@ export type UseProposalsProps = {
   status?: ProposalStatus | undefined;
   sortBy?: ProposalSortBy | undefined;
   direction?: SortDirection | undefined;
+  limit?: number | undefined;
 };
 
 const dummyProposals: Proposal[] = [
@@ -139,6 +140,7 @@ export const useProposals = ({
   status = undefined,
   sortBy = ProposalSortBy.CREATED_AT,
   direction = SortDirection.DESC,
+  limit = undefined,
 }: UseProposalsProps): UseProposalsData => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -159,6 +161,7 @@ export const useProposals = ({
           status,
           sortBy,
           direction: direction ?? SortDirection.DESC,
+          limit,
         })) as Proposal[];
 
       if (daoProposals) {

@@ -25,7 +25,7 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
     return (
       <Card
         ref={ref}
-        className={cn(mainCardVariants({}), className)}
+        className={cn(mainCardVariants({}), className, 'gap-y-4')}
         {...props}
       >
         <div className="flex flex-row items-center justify-between">
@@ -38,7 +38,7 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
           <>{aside}</>
         </div>
         <div className="xs:hidden">{header}</div>
-        <div>{props.children}</div>
+        <div className="space-y-3">{props.children}</div>
       </Card>
     );
   }

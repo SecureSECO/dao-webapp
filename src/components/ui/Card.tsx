@@ -27,17 +27,22 @@ const cardVariants = cva(
 
 export interface CardProps
   extends React.BaseHTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {}
+    VariantProps<typeof cardVariants> {
+  loading?: boolean;
+}
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, padding, ...props }, ref) => {
+  ({ className, variant, padding, loading = false, ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={cn(cardVariants({ variant, padding, className }))}
+        className={cn(
+          cardVariants({ variant, padding, className }),
+          loading && 'animate-pulse'
+        )}
         {...props}
       >
-        {props.children}
+        {!loading && props.children}
       </div>
     );
   }

@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
 import { HiChevronDown } from 'react-icons/hi2';
+import { cn } from '@/src/lib/utils';
 
 const Governance = () => {
   return (
@@ -139,14 +140,21 @@ export const ProposalCardList = ({
   proposals,
   loading,
   error,
+  doubleColumn = true,
 }: {
   proposals: Proposal[];
   loading: boolean;
   error: string | null;
+  doubleColumn?: boolean;
 }) => {
   if (loading)
     return (
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-4',
+          doubleColumn && 'lg:grid-cols-2'
+        )}
+      >
         <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
         <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
       </div>
@@ -156,7 +164,12 @@ export const ProposalCardList = ({
   return (
     <div>
       {proposals.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div
+          className={cn(
+            'grid grid-cols-1 gap-4',
+            doubleColumn && 'lg:grid-cols-2'
+          )}
+        >
           {proposals.map((proposal) => {
             return <ProposalCard key={proposal.id} proposal={proposal} />;
           })}

@@ -152,7 +152,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
         <span className="text-gray-500 dark:text-slate-400">Published by</span>
         <Address
           address={creatorAddress}
-          maxLength={20}
+          maxLength={16}
           hasLink={true}
           showCopy={true}
         />
