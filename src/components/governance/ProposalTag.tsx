@@ -33,6 +33,9 @@ export interface ProposalTagProps
   extends React.BaseHTMLAttributes<HTMLDivElement>,
     VariantProps<typeof proposalTagVariants> {}
 
+/**
+ * @returns A pill shaped tag showing some information about a proposal, in the given style variant
+ */
 const ProposalTag = ({
   className,
   variant,

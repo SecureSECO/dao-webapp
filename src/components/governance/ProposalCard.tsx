@@ -14,6 +14,7 @@ import ProposalTag, {
 } from '@/src/components/governance/ProposalTag';
 import { countdownText } from '@/src/lib/utils';
 
+// Different types of statuses a proposal can have, as a string rather than an enum
 type StatusVariant =
   | 'Pending'
   | 'Active'
@@ -52,6 +53,10 @@ interface ProposalStatusBadgeProps
   status: ProposalStatus;
 }
 
+/**
+ * @returns A badge showing a proposal status
+ * @example Active status will have a blue background and an activity icon
+ */
 export const ProposalStatusBadge = ({
   status,
   className,
@@ -69,6 +74,12 @@ export const ProposalStatusBadge = ({
   );
 };
 
+/**
+ * Find the data for tags of a specific proposal
+ * @example A pending proposal will have two countdown tags, one for when it starts and another for when it ends
+ * @param proposal Proposal to extract the tags for
+ * @returns A list of props for the ProposalTag component
+ */
 const getProposalTags = (proposal: Proposal) => {
   const res: ProposalTagProps[] = [];
   if (proposal.status === ProposalStatus.PENDING)
