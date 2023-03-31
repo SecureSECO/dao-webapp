@@ -51,9 +51,9 @@ export const useMembers = ({
   const fetchBalances = async (addressList: string[]): Promise<Member[]> => {
     return Promise.all(
       addressList.map(
-        async (address, i) =>
+        async (address) =>
           new Promise((resolve) => {
-            fetchBalance(address + (i % 2 == 0 ? 'k' : ''))
+            fetchBalance(address)
               .then((bal: BigNumber) => {
                 return resolve({
                   address,
