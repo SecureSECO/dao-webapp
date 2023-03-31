@@ -1,4 +1,5 @@
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
 import { TokenVotingClient } from '@aragon/sdk-client';
 import { BigNumber } from 'ethers';
@@ -17,7 +18,7 @@ type UseMembersData = {
 };
 
 // TODO: add REP balance to this, fetch it from wagmi
-export type Member = { address: string; bal: number };
+export type Member = { address: string; bal: number | null };
 
 const dummyMembers: Member[] = [];
 
@@ -32,10 +33,45 @@ export const useMembers = ({
   const { votingClient, votingPluginAddress, repTokenContract } =
     useAragonSDKContext();
 
-  const fetchBalance = async (address: string) => {
-    if (!repTokenContract) return;
-    const bal = await repTokenContract.balanceOf(address);
-    return bal;
+  /**
+   * Fetch the REP balance for a single address. Throws an error if the REP token contract is not set
+   * @returns The REP balance of the given address
+   */
+  const fetchBalance = async (address: string): Promise<BigNumber> => {
+    if (!repTokenContract) throw new Error('REP token contract not set');
+    return repTokenContract.balanceOf(address);
+  };
+
+  /**
+   * Fetch balances for a list of addresses
+   * @param addressList List of addresses to fetch balances for
+   * @returns A list of Member objects
+   * @see Member for the type of object returned in the list
+   */
+  const fetchBalances = async (addressList: string[]): Promise<Member[]> => {
+    return Promise.all(
+      addressList.map(
+        async (address, i) =>
+          new Promise((resolve) => {
+            fetchBalance(address + (i % 2 == 0 ? 'k' : ''))
+              .then((bal: BigNumber) => {
+                return resolve({
+                  address,
+                  bal: Number(
+                    bal.toBigInt() /
+                      BigInt(10 ** CHAIN_METADATA.rep.nativeCurrency.decimals)
+                  ),
+                });
+              })
+              .catch(() =>
+                resolve({
+                  address,
+                  bal: null,
+                })
+              );
+          })
+      )
+    );
   };
 
   const fetchMembers = async (client: TokenVotingClient) => {
@@ -52,23 +88,15 @@ export const useMembers = ({
       );
       if (addressList) {
         // Fetch the balance of each member
-        const daoMembers: Member[] = await Promise.all(
-          addressList.map(
-            async (address) =>
-              new Promise((resolve, reject) => {
-                fetchBalance(address)
-                  .then((bal: BigNumber) => {
-                    return resolve({
-                      address,
-                      bal: Number(bal.toBigInt() / BigInt(10 ** 18)),
-                    });
-                  })
-                  .catch(reject);
-              })
-          )
-        );
+        const daoMembers = await fetchBalances(addressList);
 
-        daoMembers.sort((a, b) => b.bal - a.bal);
+        // Sort the members by balance, descending
+        daoMembers.sort((a, b) => {
+          if (a.bal === null) return 1;
+          if (b.bal === null) return -1;
+          return b.bal - a.bal;
+        });
+        // If a limit is set, only return that many members (with the highest balance)
         if (limit) setMembers(daoMembers.splice(0, limit));
         else setMembers(daoMembers);
         setMemberCount(addressList.length);

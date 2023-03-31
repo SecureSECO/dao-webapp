@@ -49,6 +49,7 @@ const sortProps = [
   },
 ];
 
+// eslint vies the below as unused, but they are used in the JSX
 // eslint-disable-next-line no-unused-vars
 enum DirectionState {
   // eslint-disable-next-line no-unused-vars
@@ -59,7 +60,14 @@ enum DirectionState {
   DESC,
 }
 
+/**
+ * Increment the direction state to obtain the next direction in the cycle of the DirectionState enum  (NONE -> ASC -> DESC -> NONE)
+ * @see DirectionState for the enum of directions this will cycle through
+ * @param state The direction to increment
+ * @returns The next direction in the cycle
+ */
 const incrementDirectionState = (state: DirectionState) => {
+  // Increment to get the next direction inside of the  enum
   return (state + 1) % 3;
 };
 

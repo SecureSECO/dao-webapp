@@ -1,9 +1,4 @@
 import { Card } from '@/src/components/ui/Card';
-import {
-  formatDistanceToNow,
-  differenceInHours,
-  differenceInMinutes,
-} from 'date-fns';
 import { Address } from '@/src/components/ui//Address';
 import Header from '@/src/components/ui/Header';
 import { cn } from '@/src/lib/utils';
@@ -17,19 +12,7 @@ import Activity from '@/src/components/icons/Actitivy';
 import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
-
-const countdownText = (date: Date) => {
-  const now = new Date();
-  if (differenceInHours(date, now) > 24) {
-    return formatDistanceToNow(date);
-  } else if (differenceInMinutes(date, now) > 60) {
-    return `${differenceInHours(date, now)} hours`;
-  } else if (differenceInMinutes(date, now) > 1) {
-    return `${differenceInMinutes(date, now)} minutes`;
-  } else {
-    return 'less than a minute';
-  }
-};
+import { countdownText } from '@/src/lib/utils';
 
 type StatusVariant =
   | 'Pending'
