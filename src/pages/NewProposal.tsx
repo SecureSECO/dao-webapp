@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Children, useState } from 'react';
 import {
   useForm,
   UseFormRegister,
@@ -28,19 +28,30 @@ const totalSteps = 4;
 
 const NewProposal = () => {
   const [step, setStep] = useState<number>(1);
-  const [formError, setFormError] = useState<string>('');
+  const [stepOneData, setStepOneData] = useState<any>(null);
 
-  const formMethods = useForm({ mode: 'onChange' });
-  const { handleSubmit, formState } = formMethods;
-  const isLastStep = step === totalSteps;
+  console.log('current step', step);
+  return (
+    <div className="flex flex-col gap-6">
+      <ProgressCard step={step}>
+        <StepContent
+          step={step}
+          StepNavigator={<StepNavigator step={step} setStep={setStep} />}
+        />
+      </ProgressCard>
+    </div>
+  );
+};
 
-  const onSubmit = (data: any) => {
-    if (isLastStep) {
-      console.log(data);
-      // Handle submission
-    }
-  };
+export default NewProposal;
 
+const StepNavigator = ({
+  step,
+  setStep,
+}: {
+  step: number;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const handleNextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (step < totalSteps) {
@@ -60,40 +71,23 @@ const NewProposal = () => {
     }
   };
 
-  console.log('current step', step);
+  const isLastStep = step === totalSteps;
+
   return (
-    <div className="flex flex-col gap-6">
-      <ProgressCard step={step}>
-        <FormProvider {...formMethods}>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
-            <StepContent step={step} />
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={handlePrevStep}
-                type="button"
-                disabled={step === 1}
-              >
-                Back
-              </Button>
-              {isLastStep ? (
-                <Button type="submit">Submit</Button>
-              ) : (
-                <Button onClick={handleNextStep} type="button">
-                  Next
-                </Button>
-              )}
-            </div>
-          </form>
-        </FormProvider>
-      </ProgressCard>
+    <div className="flex items-center gap-4">
+      <Button onClick={handlePrevStep} type="button" disabled={step === 1}>
+        Back
+      </Button>
+      {isLastStep ? (
+        <Button type="submit">Submit</Button>
+      ) : (
+        <Button onClick={handleNextStep} type="button">
+          Next
+        </Button>
+      )}
     </div>
   );
 };
-
-export default NewProposal;
 
 export const ProgressCard = ({
   step,
@@ -117,24 +111,57 @@ export const ProgressCard = ({
   );
 };
 
-const StepContent = ({ step }: { step: number }) => {
+const StepContent = ({
+  step,
+  StepNavigator,
+}: {
+  step: number;
+  StepNavigator?: React.ReactNode;
+}) => {
   if (step === 1) {
-    return <StepOne />;
+    return <StepOne StepNavigator={StepNavigator}></StepOne>;
   }
   if (step === 2) {
-    return <StepTwo />;
+    return <StepTwo StepNavigator={StepNavigator}></StepTwo>;
   }
 
   // Other steps will go here
   return null;
 };
 
-export const StepOne = () => {
+interface Resource {
+  name: string;
+  url: string;
+}
+
+interface Media {
+  logo: string;
+  header: string;
+}
+
+interface StepOneMetadata {
+  title: string;
+  summary: string;
+  description: string;
+  resources: Resource[];
+  media: Media;
+}
+
+export const StepOne = ({
+  StepNavigator,
+}: {
+  StepNavigator?: React.ReactNode;
+}) => {
   const [resources, setResources] = useState<
     Array<{ name: string; link: string }>
   >([{ name: '', link: '' }]);
 
-  const { register, getValues, setValue, control } = useFormContext();
+  const { register, getValues, setValue, control } = useForm<StepOneMetadata>();
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+    // Handle submission
+  };
 
   const handleAddResource = () => {
     setResources([...resources, { name: '', link: '' }]);
@@ -157,67 +184,70 @@ export const StepOne = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="title">Title of the proposal</Label>
-        <Input
-          {...register('title', { required: true, maxLength: 2 })}
-          type="text"
-          placeholder="Title"
-          id="title"
-          className="..."
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="summary">Summary</Label>
-        <Textarea
-          {...register('summary', { required: true })}
-          placeholder="Summary*"
-          id="summary"
-          className="..."
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="body">Body</Label>
-        <Controller
-          control={control}
-          name="body" // Replace this with the name of the field you want to store the WYSIWYG content
-          rules={{ required: false }} // Add any validation rules you need
-          defaultValue=""
-          render={({ field }) => (
-            <TextareaWYSIWYG
-              value={field.value}
-              onChange={field.onChange}
-              onBlur={() => field.onBlur()}
-              name={field.name}
-              placeholder="Enter your content"
-            />
-          )}
-        />
-      </div>
-      <fieldset className="flex flex-col gap-2">
-        <Label htmlFor="recources">Links and resources</Label>
-        {resources.map((resource, index) => (
-          <ResourceInput
-            key={index}
-            resource={resource}
-            onChange={(key, value) => handleResourceChange(index, key, value)}
-            onRemove={() => handleRemoveResource(index)}
-            register={register}
-            prefix={`resources[${index}]`}
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="title">Title of the proposal</Label>
+          <Input
+            {...register('title', { required: true, maxLength: 2 })}
+            type="text"
+            placeholder="Title"
+            id="title"
+            className="..."
           />
-        ))}
-        <Button
-          onClick={handleAddResource}
-          type="button"
-          variant={'outline'}
-          className="w-fit"
-          icon={HiPlus}
-        >
-          Add resource
-        </Button>
-      </fieldset>
-    </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="summary">Summary</Label>
+          <Textarea
+            {...register('summary', { required: true })}
+            placeholder="Summary*"
+            id="summary"
+            className="..."
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="body">Body</Label>
+          <Controller
+            control={control}
+            name="body" // Replace this with the name of the field you want to store the WYSIWYG content
+            rules={{ required: false }} // Add any validation rules you need
+            defaultValue=""
+            render={({ field }) => (
+              <TextareaWYSIWYG
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={() => field.onBlur()}
+                name={field.name}
+                placeholder="Enter your content"
+              />
+            )}
+          />
+        </div>
+        <fieldset className="flex flex-col gap-2">
+          <Label htmlFor="recources">Links and resources</Label>
+          {resources.map((resource, index) => (
+            <ResourceInput
+              key={index}
+              resource={resource}
+              onChange={(key, value) => handleResourceChange(index, key, value)}
+              onRemove={() => handleRemoveResource(index)}
+              register={register}
+              prefix={`resources[${index}]`}
+            />
+          ))}
+          <Button
+            onClick={handleAddResource}
+            type="button"
+            variant={'outline'}
+            className="w-fit"
+            icon={HiPlus}
+          >
+            Add resource
+          </Button>
+        </fieldset>
+      </div>
+      {StepNavigator}
+    </form>
   );
 };
 
@@ -262,13 +292,20 @@ const ResourceInput = ({
   );
 };
 
-export const StepTwo = () => {
+export const StepTwo = ({
+  StepNavigator,
+}: {
+  StepNavigator?: React.ReactNode;
+}) => {
   return (
-    <div className="flex flex-col gap-4">
-      <VotingOption />
-      <StartTime />
-      <EndTime />
-    </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
+        <VotingOption />
+        <StartTime />
+        <EndTime />
+      </div>
+      {StepNavigator}
+    </form>
   );
 };
 
