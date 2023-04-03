@@ -47,6 +47,7 @@ import {
   DropdownMenuTrigger,
 } from '../components/ui/Dropdown';
 import { Full } from '../components/ui/Address.stories';
+import { ProposalActionList } from '../components/proposal/ProposalActionList';
 
 const totalSteps = 4;
 
@@ -531,7 +532,7 @@ const StepThree = ({
           <AddAction />
         ) : (
           <>
-            <ActionList
+            <ProposalActionList
               actions={actions}
               register={register}
               control={control}
@@ -544,119 +545,3 @@ const StepThree = ({
     </form>
   );
 };
-
-const ActionList = ({
-  actions,
-  register,
-  control,
-}: {
-  actions: Action[];
-  register: any;
-  control: any;
-}) => (
-  <div>
-    {actions.map((action: Action, index) => {
-      switch (action.name) {
-        case 'withdraw_assets':
-          return (
-            <FormWithdrawAssets
-              action={action}
-              register={register}
-              control={control}
-              prefix={index.toString()}
-            />
-          );
-        case 'mint_tokens':
-          return (
-            <FormMintTokens
-              action={action}
-              register={register}
-              prefix={index.toString()}
-            />
-          );
-      }
-    })}
-  </div>
-);
-
-const FormWithdrawAssets = ({
-  action,
-  register,
-  prefix,
-  control,
-}: {
-  action: ActionWithdraw;
-  register: any;
-  prefix: string;
-  control: any;
-}) => (
-  <div className="flex flex-col gap-4">
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="recipient">Recipient</Label>
-      <Input
-        {...register(`${prefix}.recipient`)}
-        type="text"
-        value={action.to}
-        id="recipient"
-      />
-    </div>
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="tokenType">Token</Label>
-      <Controller
-        control={control}
-        name="tokenType"
-        rules={{ required: true }}
-        defaultValue=""
-        render={({ field }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger>Select a token</DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <span>Ja een of ander token</span>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      />
-    </div>
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="amount">Amount</Label>
-      <Input
-        {...register(`${prefix}.amount`)}
-        type="text"
-        value={action.amount}
-        id="amount"
-      />
-    </div>
-  </div>
-);
-const FormMintTokens = ({
-  action,
-  register,
-  prefix,
-}: {
-  action: ActionMintToken;
-  register: any;
-  prefix: string;
-}) => {
-  return (
-    <div className="flex flex-col gap-4">
-      <MintTokenInput></MintTokenInput>
-    </div>
-  );
-};
-
-const MintTokenInput = ({ onChange, onRemove, register, prefix }: any) => (
-  <div className="flex flex-col gap-4">
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="address">Address</Label>
-      <Input {...register(`${prefix}.address`)} type="text" id="address" />
-    </div>
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="tokens">Token Amount</Label>
-      <Input {...register(`${prefix}.tokens`)} type="number" id="tokens" />
-    </div>
-  </div>
-);
