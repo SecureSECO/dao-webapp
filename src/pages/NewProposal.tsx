@@ -149,8 +149,14 @@ export const StepOne = ({
     Array<{ name: string; link: string }>
   >([{ name: '', link: '' }]);
 
-  const { register, getValues, setValue, control, handleSubmit } =
-    useForm<StepOneMetadata>();
+  const {
+    register,
+    getValues,
+    setValue,
+    formState: { errors },
+    control,
+    handleSubmit,
+  } = useForm<StepOneMetadata>();
 
   const onSubmit = (data: StepOneMetadata) => {
     console.log('hello');
@@ -190,6 +196,7 @@ export const StepOne = ({
             placeholder="Title"
             id="title"
             className="..."
+            error={errors.title}
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -199,6 +206,7 @@ export const StepOne = ({
             placeholder="Summary*"
             id="summary"
             className="..."
+            error={errors.summary}
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -261,7 +269,7 @@ const ResourceInput = ({
   prefix: string;
 }) => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex w-full items-center gap-2">
       <Input
         {...register(`${prefix}.name`)}
         type="text"
@@ -283,7 +291,9 @@ const ResourceInput = ({
         placeholder="Resource link"
         className="..."
       />
-      <HiXMark className="h-10 w-10 cursor-pointer" onClick={onRemove} />
+      <div className="shrink-0">
+        <HiXMark className="h-5 w-5 cursor-pointer" onClick={onRemove} />
+      </div>
     </div>
   );
 };
