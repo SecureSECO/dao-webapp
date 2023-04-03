@@ -13,7 +13,7 @@ import Header from '@/src/components/ui/Header';
 import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { HiPlus, HiXMark } from 'react-icons/hi2';
+import { HiPlus, HiXMark, HiArrowRight } from 'react-icons/hi2';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { ErrorWrapper, Input, InputWithError } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
@@ -22,6 +22,30 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
+import {
+  Action,
+  ActionWithdraw,
+  ActionMintToken,
+  EmptyActionMintToken,
+  emptyActionWithdraw,
+} from '../lib/Actions';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/src/components/ui/Dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../components/ui/Dropdown';
+import { Full } from '../components/ui/Address.stories';
 
 const totalSteps = 4;
 
@@ -112,7 +136,9 @@ const StepContent = ({
         />
       );
     case 2:
-      return <StepTwo setStep={setStep} StepNavigator={StepNavigator} />;
+      return <StepTwo StepNavigator={StepNavigator} setStep={setStep} />;
+    case 3:
+      return <StepThree StepNavigator={StepNavigator} setStep={setStep} />;
     default:
       return null;
   }
@@ -444,3 +470,192 @@ export const EndTime = ({
     </fieldset>
   );
 };
+
+const StepThree = ({
+  StepNavigator,
+  setStep,
+}: {
+  StepNavigator?: React.ReactNode;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+}) => {
+  const { register, getValues, handleSubmit, control } = useForm();
+
+  const [actions, setActions] = useState<Action[]>([]);
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+    setStep(4);
+    // TODO: Handle submission
+  };
+
+  const handleAddWithdrawAssetsAction = () => {
+    setActions((prev) => [...prev, emptyActionWithdraw]);
+  };
+
+  const handleAddMintTokensAction = () => {
+    setActions((prev) => [...prev, EmptyActionMintToken]);
+  };
+
+  const AddAction = () => (
+    <Dialog>
+      <DialogTrigger>Add action</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add action</DialogTitle>
+          <DialogDescription></DialogDescription>
+        </DialogHeader>
+        <DialogClose className="flex flex-col gap-2">
+          <Button
+            label="Withdraw assets"
+            variant="subtle"
+            icon={HiArrowRight}
+            onClick={handleAddWithdrawAssetsAction}
+          />
+          <Button
+            label="Mint tokens"
+            variant="subtle"
+            icon={HiArrowRight}
+            onClick={handleAddMintTokensAction}
+          />
+        </DialogClose>
+      </DialogContent>
+    </Dialog>
+  );
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
+        <span>If option yes wins</span>
+        {actions.length === 0 ? (
+          <AddAction />
+        ) : (
+          <>
+            <ActionList
+              actions={actions}
+              register={register}
+              control={control}
+            />
+            <AddAction />
+          </>
+        )}
+      </div>
+      {StepNavigator}
+    </form>
+  );
+};
+
+const ActionList = ({
+  actions,
+  register,
+  control,
+}: {
+  actions: Action[];
+  register: any;
+  control: any;
+}) => (
+  <div>
+    {actions.map((action: Action, index) => {
+      switch (action.name) {
+        case 'withdraw_assets':
+          return (
+            <FormWithdrawAssets
+              action={action}
+              register={register}
+              control={control}
+              prefix={index.toString()}
+            />
+          );
+        case 'mint_tokens':
+          return (
+            <FormMintTokens
+              action={action}
+              register={register}
+              prefix={index.toString()}
+            />
+          );
+      }
+    })}
+  </div>
+);
+
+const FormWithdrawAssets = ({
+  action,
+  register,
+  prefix,
+  control,
+}: {
+  action: ActionWithdraw;
+  register: any;
+  prefix: string;
+  control: any;
+}) => (
+  <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="recipient">Recipient</Label>
+      <Input
+        {...register(`${prefix}.recipient`)}
+        type="text"
+        value={action.to}
+        id="recipient"
+      />
+    </div>
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="tokenType">Token</Label>
+      <Controller
+        control={control}
+        name="tokenType"
+        rules={{ required: true }}
+        defaultValue=""
+        render={({ field }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger>Select a token</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <span>Ja een of ander token</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      />
+    </div>
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="amount">Amount</Label>
+      <Input
+        {...register(`${prefix}.amount`)}
+        type="text"
+        value={action.amount}
+        id="amount"
+      />
+    </div>
+  </div>
+);
+const FormMintTokens = ({
+  action,
+  register,
+  prefix,
+}: {
+  action: ActionMintToken;
+  register: any;
+  prefix: string;
+}) => {
+  return (
+    <div className="flex flex-col gap-4">
+      <MintTokenInput></MintTokenInput>
+    </div>
+  );
+};
+
+const MintTokenInput = ({ onChange, onRemove, register, prefix }: any) => (
+  <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="address">Address</Label>
+      <Input {...register(`${prefix}.address`)} type="text" id="address" />
+    </div>
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="tokens">Token Amount</Label>
+      <Input {...register(`${prefix}.tokens`)} type="number" id="tokens" />
+    </div>
+  </div>
+);
