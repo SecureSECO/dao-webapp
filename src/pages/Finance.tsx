@@ -1,5 +1,5 @@
 import { TransferType } from '@aragon/sdk-client';
-import { HiArrowSmallRight, HiPlus } from 'react-icons/hi2';
+import { HiArrowSmallRight } from 'react-icons/hi2';
 import { Address } from '../components/ui/Address';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -168,10 +168,7 @@ const Finance = () => {
   return (
     <div>
       <div className="flex flex-col gap-6">
-        <HeaderCard
-          title="Finance"
-          aside={<Button label="New transfer" icon={HiPlus} />}
-        />
+        <HeaderCard title="Finance" aside={<Button label="New transfer" />} />
       </div>
       <div className="gap-4 md:grid md:grid-cols-2">
         <Card className="my-6">

@@ -1,6 +1,7 @@
 // Address.tsx
 import React from 'react';
 import { HiClipboardCopy } from 'react-icons/hi';
+import { useAccount } from 'wagmi';
 
 //TODO improve this (hidde will make it way better later)
 
@@ -29,8 +30,12 @@ export const Address: React.FC<AddressProps> = ({
   hasLink,
   showCopy,
 }) => {
+  const { address: currentUser } = useAccount();
   const etherscanURL = `https://etherscan.io/address/${address}`;
-  const truncatedAddress = truncateMiddle(address, maxLength);
+  const content =
+    address.toLowerCase() === currentUser?.toLowerCase()
+      ? 'you'
+      : truncateMiddle(address, maxLength);
 
   const handleClick = () => {
     if (showCopy) {
@@ -47,10 +52,10 @@ export const Address: React.FC<AddressProps> = ({
           rel="noopener noreferrer"
           className="text-blue-600"
         >
-          {truncatedAddress}
+          {content}
         </a>
       ) : (
-        <span>{truncatedAddress}</span>
+        <span>{content}</span>
       )}
 
       {showCopy && (

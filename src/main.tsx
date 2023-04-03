@@ -20,6 +20,7 @@ import Community from '@/src/pages/Community';
 import Settings from '@/src/pages/Settings';
 import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import NewProposal from '@/src/pages/NewProposal';
+import ViewProposal from '@/src/pages/ViewProposal';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -55,11 +56,20 @@ const router = createBrowserRouter([
       },
       {
         path: '/governance',
-        element: <Governance />,
-      },
-      {
-        path: '/governance/new-proposal',
-        element: <NewProposal />,
+        children: [
+          {
+            path: '',
+            element: <Governance />,
+          },
+          {
+            path: '/governance/new-proposal',
+            element: <NewProposal />,
+          },
+          {
+            path: '/governance/proposals/:id',
+            element: <ViewProposal />,
+          },
+        ],
       },
       {
         path: '/finance',

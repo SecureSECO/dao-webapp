@@ -7,12 +7,13 @@ import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import Check from '@/src/components/icons/Check';
 import { ProposalStatus } from '@aragon/sdk-client';
 import { Proposal } from '@/src/hooks/useProposals';
-import { HiOutlineClock, HiXMark } from 'react-icons/hi2';
+import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import Activity from '@/src/components/icons/Actitivy';
 import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
 import { countdownText } from '@/src/lib/utils';
+import { Link } from 'react-router-dom';
 
 // Different types of statuses a proposal can have, as a string rather than an enum
 type StatusVariant =
@@ -23,7 +24,7 @@ type StatusVariant =
   | 'Defeated';
 
 const statusVariants = cva(
-  'rounded-lg px-2 py-1 flex flex-row w-fit gap-x-1 items-center h-fit',
+  'rounded-lg flex flex-row w-fit gap-x-1 items-center h-fit',
   {
     variants: {
       status: {
@@ -33,9 +34,15 @@ const statusVariants = cva(
         Executed: 'bg-green-200 dark:bg-green-300 dark:text-slate-900',
         Defeated: 'bg-red-200 dark:bg-red-300 dark:text-slate-900',
       },
+      size: {
+        sm: 'text-sm px-2 py-1 gap-x-1',
+        md: 'text-base px-3 py-1 gap-x-2',
+        lg: 'text-lg px-3 py-1 gap-x-2',
+      },
     },
     defaultVariants: {
       status: 'Pending',
+      size: 'sm',
     },
   }
 );
@@ -51,6 +58,7 @@ const statusIcon = {
 interface ProposalStatusBadgeProps
   extends React.BaseHTMLAttributes<HTMLDivElement> {
   status: ProposalStatus;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 /**
@@ -59,17 +67,19 @@ interface ProposalStatusBadgeProps
  */
 export const ProposalStatusBadge = ({
   status,
+  size,
   className,
   ...props
 }: ProposalStatusBadgeProps) => {
   const statusString = status.toString() as StatusVariant;
+
   return (
     <div
-      className={cn(statusVariants({ status: statusString }), className)}
+      className={cn(statusVariants({ status: statusString, size }), className)}
       {...props}
     >
       {statusIcon[statusString]}
-      <p className="text-sm">{status}</p>
+      <p>{status}</p>
     </div>
   );
 };
@@ -130,7 +140,13 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
       <ProposalStatusBadge status={status} className="xs:hidden" />
       <div className="space-y-2">
         <div className="flex flex-row justify-between">
-          <Header level={2}>{title}</Header>
+          <Link
+            to={`/governance/proposals/${proposal.id}`}
+            className="flex flex-row items-end gap-x-2 hover:underline"
+          >
+            <Header level={2}>{title}</Header>
+            <HiChevronRight className="h-5 w-5" />
+          </Link>
           <ProposalStatusBadge status={status} className="hidden xs:flex" />
         </div>
         <p className="leading-5 text-slate-500 dark:text-slate-400">
