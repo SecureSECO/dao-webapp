@@ -66,11 +66,16 @@ const router = createBrowserRouter([
       },
       {
         path: '/governance',
-        element: <Governance />,
-      },
-      {
-        path: '/governance/new-proposal',
-        element: <NewProposal />,
+        children: [
+          {
+            path: '',
+            element: <Governance />,
+          },
+          {
+            path: '/governance/new-proposal',
+            element: <NewProposal />,
+          },
+        ],
       },
       {
         path: '/finance',

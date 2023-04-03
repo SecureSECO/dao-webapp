@@ -32,6 +32,7 @@ const NewProposal = () => {
     <div className="flex flex-col gap-6">
       <ProgressCard step={step}>
         <StepContent
+          setStep={setStep}
           step={step}
           StepNavigator={<StepNavigator step={step} setStep={setStep} />}
         />
@@ -49,19 +50,6 @@ const StepNavigator = ({
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
-  const handleNextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (step < totalSteps) {
-      setStep(step + 1);
-    }
-    // if (step < totalSteps && formState.isValid) {
-    //   setStep(step + 1);
-    // } else if (!formState.isValid) {
-    //   setFormError('Please fill in all required fields');
-    //   console.log('error', formState.errors.title);
-    // }
-  };
-
   const handlePrevStep = () => {
     if (step > 1) {
       setStep(step - 1);
@@ -75,13 +63,8 @@ const StepNavigator = ({
       <Button onClick={handlePrevStep} type="button" disabled={step === 1}>
         Back
       </Button>
-      {isLastStep ? (
-        <Button type="submit">Submit</Button>
-      ) : (
-        <Button onClick={handleNextStep} type="button">
-          Next
-        </Button>
-      )}
+
+      <Button type="submit">{isLastStep ? 'Submit' : 'Next'}</Button>
     </div>
   );
 };
@@ -111,9 +94,11 @@ export const ProgressCard = ({
 const StepContent = ({
   step,
   StepNavigator,
+  setStep,
 }: {
   step: number;
   StepNavigator?: React.ReactNode;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [stepOneData, setStepOneData] = useState<StepOneMetadata | null>(null);
 
@@ -121,12 +106,13 @@ const StepContent = ({
     case 1:
       return (
         <StepOne
+          setStep={setStep}
           setStepOneData={setStepOneData}
           StepNavigator={StepNavigator}
         />
       );
     case 2:
-      return <StepTwo StepNavigator={StepNavigator} />;
+      return <StepTwo setStep={setStep} StepNavigator={StepNavigator} />;
     default:
       return null;
   }
@@ -153,9 +139,11 @@ interface StepOneMetadata {
 export const StepOne = ({
   StepNavigator,
   setStepOneData,
+  setStep,
 }: {
   StepNavigator?: React.ReactNode;
   setStepOneData: React.Dispatch<React.SetStateAction<StepOneMetadata | null>>;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [resources, setResources] = useState<
     Array<{ name: string; link: string }>
@@ -165,8 +153,10 @@ export const StepOne = ({
     useForm<StepOneMetadata>();
 
   const onSubmit = (data: StepOneMetadata) => {
+    console.log('hello');
     console.log(data);
     // Handle submission
+    setStep(2);
   };
 
   const handleAddResource = () => {
@@ -195,7 +185,7 @@ export const StepOne = ({
         <div className="flex flex-col gap-2">
           <Label htmlFor="title">Title of the proposal</Label>
           <Input
-            {...register('title', { required: true, maxLength: 2 })}
+            {...register('title', { required: true })}
             type="text"
             placeholder="Title"
             id="title"
@@ -300,13 +290,16 @@ const ResourceInput = ({
 
 export const StepTwo = ({
   StepNavigator,
+  setStep,
 }: {
   StepNavigator?: React.ReactNode;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const { register, getValues, handleSubmit } = useForm();
 
   const onSubmit = (data: any) => {
     console.log(data);
+    setStep(3);
     // Handle submission
   };
 
