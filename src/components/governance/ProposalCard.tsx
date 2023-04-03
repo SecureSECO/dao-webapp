@@ -36,8 +36,8 @@ const statusVariants = cva(
       },
       size: {
         sm: 'text-sm px-2 py-1 gap-x-1',
-        md: 'text-base px-3 py-1 gap-x-2',
-        lg: 'text-lg px-3 py-1 gap-x-2',
+        md: 'text-lg px-3 py-1 gap-x-2',
+        lg: 'text-xl px-4 py-2 gap-x-3',
       },
     },
     defaultVariants: {
@@ -47,12 +47,35 @@ const statusVariants = cva(
   }
 );
 
-const statusIcon = {
-  Pending: <HiOutlineClock className="h-4 w-4" />,
-  Active: <Activity className="h-4 w-4" />,
-  Succeeded: <Check className="h-4 w-4" />,
-  Executed: <DoubleCheck className="h-4 w-4" />,
-  Defeated: <HiXMark className="h-4 w-4" />,
+const statusIconVariants = cva('', {
+  variants: {
+    size: {
+      sm: 'h-4 w-4',
+      md: 'h-5 w-5',
+      lg: 'h-6 w-6',
+    },
+  },
+  defaultVariants: {
+    size: 'sm',
+  },
+});
+
+const statusIcon = (
+  status: StatusVariant,
+  size: 'sm' | 'md' | 'lg' | undefined
+) => {
+  switch (status) {
+    case 'Pending':
+      return <HiOutlineClock className={cn(statusIconVariants({ size }))} />;
+    case 'Active':
+      return <Activity className={cn(statusIconVariants({ size }))} />;
+    case 'Succeeded':
+      return <Check className={cn(statusIconVariants({ size }))} />;
+    case 'Executed':
+      return <DoubleCheck className={cn(statusIconVariants({ size }))} />;
+    case 'Defeated':
+      return <HiXMark className={cn(statusIconVariants({ size }))} />;
+  }
 };
 
 interface ProposalStatusBadgeProps
@@ -78,7 +101,7 @@ export const ProposalStatusBadge = ({
       className={cn(statusVariants({ status: statusString, size }), className)}
       {...props}
     >
-      {statusIcon[statusString]}
+      {statusIcon(statusString, size)}
       <p>{status}</p>
     </div>
   );

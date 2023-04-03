@@ -10,6 +10,7 @@ type AddressProps = {
   maxLength: number;
   hasLink: boolean;
   showCopy: boolean;
+  replaceYou?: boolean;
 };
 
 const truncateMiddle = (address: string, maxLength: number) => {
@@ -29,11 +30,12 @@ export const Address: React.FC<AddressProps> = ({
   maxLength,
   hasLink,
   showCopy,
+  replaceYou = true,
 }) => {
   const { address: currentUser } = useAccount();
   const etherscanURL = `https://etherscan.io/address/${address}`;
   const content =
-    address.toLowerCase() === currentUser?.toLowerCase()
+    address.toLowerCase() === currentUser?.toLowerCase() && replaceYou
       ? 'you'
       : truncateMiddle(address, maxLength);
 
