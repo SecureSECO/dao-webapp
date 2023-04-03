@@ -5,7 +5,7 @@ import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import clsx from 'clsx';
 import React, { useCallback, useState, useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { FieldError, useFormContext } from 'react-hook-form';
 import ReactDOM from 'react-dom';
 import {
   FaBold,
@@ -24,6 +24,7 @@ type MenuBarProps = {
   isExpanded: boolean;
   setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
   fullScreen?: boolean;
+  error?: FieldError;
 };
 
 const MenuBar: React.FC<MenuBarProps> = ({

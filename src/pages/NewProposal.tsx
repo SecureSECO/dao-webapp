@@ -15,7 +15,7 @@ import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { HiPlus, HiXMark } from 'react-icons/hi2';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
-import { Input } from '@/src/components/ui/Input';
+import { ErrorWrapper, Input, InputWithError } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import TipTapLink from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -151,18 +151,23 @@ export const StepOne = ({
 
   const {
     register,
-    getValues,
-    setValue,
     formState: { errors },
     control,
     handleSubmit,
-  } = useForm<StepOneMetadata>();
+    getValues,
+  } = useForm<StepOneMetadata>({});
 
   const onSubmit = (data: StepOneMetadata) => {
     console.log('hello');
     console.log(data);
     // Handle submission
     setStep(2);
+  };
+
+  const onError = (errors: any) => {
+    //console.log(errors);
+    console.log(getValues('title'));
+    console.log('error');
   };
 
   const handleAddResource = () => {
@@ -186,23 +191,29 @@ export const StepOne = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      className="flex flex-col gap-4"
+    >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <Label htmlFor="title">Title of the proposal</Label>
-          <Input
-            {...register('title', { required: true })}
-            type="text"
-            placeholder="Title"
-            id="title"
-            className="..."
-            error={errors.title}
-          />
+          <ErrorWrapper name="Title" error={errors.title}>
+            <Input
+              {...register('title', { required: true })}
+              type="text"
+              placeholder="Title"
+              id="title"
+              className="..."
+              aria-invalid={errors.title ? 'true' : 'false'}
+              error={errors.title}
+            />
+          </ErrorWrapper>
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="summary">Summary</Label>
           <Textarea
-            {...register('summary', { required: true })}
+            {...register('summary')}
             placeholder="Summary*"
             id="summary"
             className="..."
