@@ -79,10 +79,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {(label || children) && <>{label || children}</>}
           </div>
         ) : (
-          <div className="flex flex-row items-center gap-x-2">
-            {iconNode && <>{iconNode}</>}
-            {label || children}
-          </div>
+          <>
+            {iconNode ? (
+              <div className="flex flex-row items-center gap-x-2">
+                {iconNode}
+                {label || children}
+              </div>
+            ) : (
+              <>{label || children}</>
+            )}
+          </>
         )}
       </button>
     );

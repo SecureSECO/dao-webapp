@@ -110,14 +110,9 @@ export const useProposal = ({
   const [proposal, setProposal] = useState<DetailedProposal | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { votingPluginAddress, votingClient } = useAragonSDKContext();
+  const { votingClient } = useAragonSDKContext();
 
   const fetchProposal = async (client: TokenVotingClient) => {
-    if (!votingPluginAddress) {
-      setLoading(false);
-      setError('Voting plugin address not set');
-      return;
-    }
     if (!id) {
       setError('Proposal not found');
       setLoading(false);
