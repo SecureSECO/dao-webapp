@@ -14,7 +14,8 @@ const StampCard = ({
   verify: (providerId: string) => void;
 }) => {
   const verified: boolean =
-    stamp != null && stamp[2] > Date.now() / 1000 - 60 * 24 * 60 * 60; // 60 days
+    // stamp != null && stamp[2] > Date.now() / 1000 - 60 * 24 * 60 * 60; // 60 days
+    false; //FIXME:
 
   return (
     <Card className="w-auto min-w-[min(80%,300px)]">
@@ -26,7 +27,11 @@ const StampCard = ({
       </div>
       <p className="mt-2 font-normal">
         Last verified at:{' '}
-        {stamp ? new Date(stamp[2] * 1000).toDateString() : 'never'}
+        {stamp
+          ? new Date(
+              stamp[2][stamp[2].length - 1].toNumber() * 1000
+            ).toDateString()
+          : 'never'}
       </p>
       <Button className="mt-4" onClick={() => verify(providerId)}>
         {verified ? 'Reverify' : 'Verify'}

@@ -7,6 +7,7 @@ import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
 import { apiUrl, verificationContractAddress } from '../main';
 import { Stamp } from '../types/Stamp';
+import { VerificationThreshold } from '../types/VerificationThreshold';
 
 const availableStamps = ['proofofhumanity', 'github', 'twitter'];
 
@@ -18,6 +19,18 @@ const Verification = () => {
     abi: verificationAbi,
     functionName: 'getStamps',
     args: [address],
+  });
+
+  const {
+    data: vData,
+    isError: vIsError,
+    error: vError,
+    isLoading: vIsLoading,
+  } = useContractRead({
+    address: verificationContractAddress,
+    abi: verificationAbi,
+    functionName: 'getThresholdHistory',
+    args: [],
   });
 
   const { signMessage } = useSignMessage({
@@ -58,6 +71,9 @@ const Verification = () => {
   });
 
   const [stamps, setStamps] = useState<Stamp[]>([]);
+  const [thresholdHistory, setThresholdHistory] = useState<
+    VerificationThreshold[]
+  >([]);
   const [nonce, setNonce] = useState<number>(0);
   const [providerId, setProviderId] = useState<string>('');
 
@@ -66,12 +82,19 @@ const Verification = () => {
       const stamps: Stamp[] = data.map((stamp: any) => [
         stamp.id,
         stamp._hash,
-        Number(stamp.verifiedAt),
+        stamp.verifiedAt,
       ]);
 
       setStamps(stamps);
+
+      // console.log(stamps);
     }
-  }, [data]);
+
+    if (vData && Array.isArray(vData)) {
+      setThresholdHistory(vData);
+      console.log(vData);
+    }
+  }, [data, vData]);
 
   const verify = async (providerId: string) => {
     try {
@@ -79,8 +102,13 @@ const Verification = () => {
       const stamp = stamps.find(([id]) => id === providerId);
       if (stamp) {
         const [, , verifiedAt] = stamp;
+        const lastVerifiedAt = verifiedAt[verifiedAt.length - 1];
+
         // Check if it has been more than 30 days
-        if (verifiedAt * 1000 + 30 * 24 * 60 * 60 * 1000 > Date.now()) {
+        if (
+          lastVerifiedAt.toNumber() * 1000 + 30 * 24 * 60 * 60 * 1000 >
+          Date.now()
+        ) {
           throw new Error(
             'You have already verified with this provider, please wait at least 30 days after the initial verification to verify again.'
           );

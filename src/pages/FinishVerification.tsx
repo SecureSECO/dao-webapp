@@ -43,22 +43,44 @@ const FinishVerification = () => {
     hash: data?.hash,
   });
 
+  const [isBusy, setIsBusy] = useState(false);
+
   const verify = async (): Promise<void> => {
+    setIsBusy(true);
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       if (!write) {
+        setIsBusy(false);
         return reject('Contract write not ready');
       }
 
-      const txResult = await write();
-      txResult
-        .wait()
-        .then(() => {
-          resolve();
-        })
-        .catch((error: any) => {
-          reject(error);
-        });
+      console.log('Verifying...');
+
+      try {
+        const txResult = await write();
+
+        console.log('txResult', txResult);
+
+        txResult
+          .wait()
+          .then(() => {
+            console.log('Verification successful');
+            setIsBusy(false);
+            resolve();
+          })
+          .catch((error: any) => {
+            console.error(
+              'FinishVerifcation ~ verify ~ txResult.catch ~ Verification failed',
+              error
+            );
+            setIsBusy(false);
+            reject(error);
+          });
+      } catch (error) {
+        console.error(error);
+        setIsBusy(false);
+        reject(error);
+      }
     });
   };
 
@@ -83,6 +105,10 @@ const FinishVerification = () => {
         <div className="flex flex-col gap-y-4">
           <h2 className="text-xl">Verification Info</h2>
           <div className="flex flex-col gap-4">
+            <VerificationItem
+              title="Contract Address"
+              value={verificationContractAddress}
+            />
             <VerificationItem title="Address" value={addressToVerify} />
             <VerificationItem title="Hash" value={hash} />
             <VerificationItem title="Timestamp" value={timestamp} />
@@ -97,10 +123,12 @@ const FinishVerification = () => {
                 toast.promise(verify(), {
                   loading: 'Verifying, please wait...',
                   success: 'Successfully verified!',
-                  error: 'Verification failed',
+                  error: (e) => 'Verification failed: ' + e.message,
                 });
               }}
-              disabled={!write || isLoading || isSuccess || isPrepareError}
+              disabled={
+                !write || isBusy || isLoading || isSuccess || isPrepareError
+              }
             >
               {isLoading
                 ? 'Verifying...'
