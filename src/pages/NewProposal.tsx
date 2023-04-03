@@ -13,7 +13,7 @@ import Header from '@/src/components/ui/Header';
 import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { HiPlus, HiXMark } from 'react-icons/hi2';
+import { HiPlus, HiXMark, HiArrowRight } from 'react-icons/hi2';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
@@ -23,6 +23,31 @@ import StarterKit from '@tiptap/starter-kit';
 import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import {
+  Action,
+  ActionWithdraw,
+  ActionMintToken,
+  EmptyActionMintToken,
+  emptyActionWithdraw,
+} from '../lib/Actions';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/src/components/ui/Dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../components/ui/Dropdown';
+import { Full } from '../components/ui/Address.stories';
+import { ProposalActionList } from '../components/proposal/ProposalActionList';
 
 const totalSteps = 4;
 
@@ -113,7 +138,9 @@ const StepContent = ({
         />
       );
     case 2:
-      return <StepTwo setStep={setStep} StepNavigator={StepNavigator} />;
+      return <StepTwo StepNavigator={StepNavigator} setStep={setStep} />;
+    case 3:
+      return <StepThree StepNavigator={StepNavigator} setStep={setStep} />;
     default:
       return null;
   }
@@ -452,5 +479,78 @@ export const EndTime = ({
         )
       )}
     </fieldset>
+  );
+};
+
+const StepThree = ({
+  StepNavigator,
+  setStep,
+}: {
+  StepNavigator?: React.ReactNode;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+}) => {
+  const { register, getValues, handleSubmit, control } = useForm();
+
+  const [actions, setActions] = useState<Action[]>([]);
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+    setStep(4);
+    // TODO: Handle submission
+  };
+
+  const handleAddWithdrawAssetsAction = () => {
+    setActions((prev) => [...prev, emptyActionWithdraw]);
+  };
+
+  const handleAddMintTokensAction = () => {
+    setActions((prev) => [...prev, EmptyActionMintToken]);
+  };
+
+  const AddAction = () => (
+    <Dialog>
+      <DialogTrigger>Add action</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add action</DialogTitle>
+          <DialogDescription></DialogDescription>
+        </DialogHeader>
+        <DialogClose className="flex flex-col gap-2">
+          <Button
+            label="Withdraw assets"
+            variant="subtle"
+            icon={HiArrowRight}
+            onClick={handleAddWithdrawAssetsAction}
+          />
+          <Button
+            label="Mint tokens"
+            variant="subtle"
+            icon={HiArrowRight}
+            onClick={handleAddMintTokensAction}
+          />
+        </DialogClose>
+      </DialogContent>
+    </Dialog>
+  );
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
+        <span>If option yes wins</span>
+        {actions.length === 0 ? (
+          <AddAction />
+        ) : (
+          <>
+            <ProposalActionList
+              actions={actions}
+              register={register}
+              control={control}
+            />
+            <AddAction />
+          </>
+        )}
+      </div>
+      {StepNavigator}
+    </form>
   );
 };
