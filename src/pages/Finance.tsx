@@ -15,17 +15,17 @@ import { useState } from 'react';
 
 type DaoTokenProps = {
   daoBalances: DaoBalances;
-  max_amount: number;
+  limit: number;
 };
 
 const DaoTokens = ({
   daoBalances,
-  max_amount = daoBalances.length,
+  limit = daoBalances.length,
 }: DaoTokenProps): JSX.Element => {
   const balances = daoBalances
     .slice() //Copies array
     .sort((a, b) => (a.updateDate < b.updateDate ? 1 : -1))
-    .slice(0, max_amount);
+    .slice(0, limit);
 
   return (
     <div className="mt-4 space-y-4">
@@ -61,19 +61,20 @@ const DaoTokens = ({
 
 const DaoTokensWrapped = (): JSX.Element => {
   const { daoBalances, loading, error } = useDaoBalance({});
-  const [maxAmount, setMaxAmount] = useState(3);
+  const [limit, setLimit] = useState(3);
   if (loading) return <Loader />;
   if (error) return <h3>{error}</h3>;
+
   return (
     <div>
-      {DaoTokens({ daoBalances: daoBalances, max_amount: maxAmount })}
-      {maxAmount < daoBalances.length && (
+      <DaoTokens daoBalances={daoBalances} limit={limit} />
+      {limit < daoBalances.length && (
         <Button
           className="my-4"
           variant="outline"
           label="Show more tokens"
           icon={HiArrowSmallRight}
-          onClick={() => setMaxAmount(maxAmount + Math.min(maxAmount, 25))}
+          onClick={() => setLimit(limit + Math.min(limit, 25))}
         />
       )}
     </div>
@@ -82,9 +83,9 @@ const DaoTokensWrapped = (): JSX.Element => {
 
 type DaoTransfersProps = {
   daoTransfers: DaoTransfer[];
-  limit: number;
+  limit?: number;
 };
-const DaoTransfers = ({
+export const DaoTransfers = ({
   daoTransfers,
   limit = daoTransfers.length,
 }: DaoTransfersProps): JSX.Element => {
@@ -104,7 +105,7 @@ const DaoTransfers = ({
               <h2 className="font-bold capitalize">{transfer.type}</h2>
               <span> {formatRelative(transfer.creationDate, new Date())} </span>
             </div>
-            <div className="text-right">
+            <div className="flex flex-col items-end text-right">
               <TokenAmount
                 className="font-bold"
                 amount={transfer.amount}
@@ -142,7 +143,8 @@ const DaoTransfersWrapped = (): JSX.Element => {
   const [limit, setLimit] = useState(3);
   if (loading) return <Loader />;
   if (error) return <h3>{error}</h3>;
-  if (!daoTransfers) return <h3>No transfers could be loaded</h3>;
+  if (!daoTransfers)
+    return <p className="text-center font-normal">No transfers found!</p>;
 
   return (
     <div>

@@ -19,6 +19,7 @@ import { Button } from '@/src/components/ui/Button';
 import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { ProposalCardList } from '@/src/pages/Governance';
 import MembersList from '@/src/components/dashboard/MembersList';
+import { DaoTransfers } from '@/src/pages/Finance';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -159,6 +160,11 @@ const Dashboard = () => {
             />
           }
         >
+          {!daoTransfers ? (
+            <p className="text-center font-normal">No tranfsers found!</p>
+          ) : (
+            <DaoTransfers daoTransfers={daoTransfers} limit={3} />
+          )}
           {/* TODO: replace with <Link /> */}
           <Button
             variant="outline"
