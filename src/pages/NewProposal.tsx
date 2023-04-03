@@ -129,7 +129,7 @@ interface Media {
   header: string;
 }
 
-interface StepOneMetadata {
+export interface StepOneMetadata {
   title: string;
   summary: string;
   description: string;
@@ -156,6 +156,8 @@ export const StepOne = ({
     control,
     handleSubmit,
     getValues,
+    setError,
+    clearErrors,
   } = useForm<StepOneMetadata>({});
 
   const onSubmit = (data: StepOneMetadata) => {
@@ -213,31 +215,38 @@ export const StepOne = ({
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="summary">Summary</Label>
-          <Textarea
-            {...register('summary')}
-            placeholder="Summary*"
-            id="summary"
-            className="..."
-            error={errors.summary}
-          />
+          <ErrorWrapper name="Summary" error={errors.summary}>
+            <Textarea
+              {...register('summary', { required: true })}
+              placeholder="Summary"
+              id="summary"
+              className="..."
+              error={errors.summary}
+            />
+          </ErrorWrapper>
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="body">Body</Label>
-          <Controller
-            control={control}
-            name="description" // Replace this with the name of the field you want to store the WYSIWYG content
-            rules={{ required: false }} // Add any validation rules you need
-            defaultValue=""
-            render={({ field }) => (
-              <TextareaWYSIWYG
-                value={field.value}
-                onChange={field.onChange}
-                onBlur={() => field.onBlur()}
-                name={field.name}
-                placeholder="Enter your content"
-              />
-            )}
-          />
+          <ErrorWrapper name="Description" error={errors.description}>
+            <Controller
+              control={control}
+              name="description" // Replace this with the name of the field you want to store the WYSIWYG content
+              rules={{ required: true }} // Add any validation rules you need
+              defaultValue=""
+              render={({ field }) => (
+                <TextareaWYSIWYG<StepOneMetadata>
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={() => field.onBlur()}
+                  name={field.name}
+                  placeholder="Enter your content"
+                  error={errors.description}
+                  setError={setError}
+                  clearErrors={clearErrors}
+                />
+              )}
+            />
+          </ErrorWrapper>
         </div>
         <fieldset className="flex flex-col gap-2">
           <Label htmlFor="recources">Links and resources</Label>

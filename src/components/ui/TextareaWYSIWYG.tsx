@@ -5,7 +5,7 @@ import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import clsx from 'clsx';
 import React, { useCallback, useState, useEffect } from 'react';
-import { FieldError, useFormContext } from 'react-hook-form';
+import { FieldError, UseFormClearErrors, UseFormSetError, useFormContext } from 'react-hook-form';
 import ReactDOM from 'react-dom';
 import {
   FaBold,
@@ -17,6 +17,7 @@ import {
   FaExpandAlt,
   FaCompressAlt,
 } from 'react-icons/fa';
+import { StepOneMetadata } from '@/src/pages/NewProposal';
 
 type MenuBarProps = {
   disabled: boolean;
@@ -24,7 +25,6 @@ type MenuBarProps = {
   isExpanded: boolean;
   setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
   fullScreen?: boolean;
-  error?: FieldError;
 };
 
 const MenuBar: React.FC<MenuBarProps> = ({
@@ -132,24 +132,31 @@ const MenuBar: React.FC<MenuBarProps> = ({
   );
 };
 
-export type TextareaWYSIWYGProps = {
+type TextareaWYSIWYGProps<T> = {
   placeholder?: string;
   disabled?: boolean;
   onBlur?: (html: string) => void;
   onChange?: (html: string) => void;
   name?: string;
   value?: string;
+  error?: FieldError;
+  setError: UseFormSetError<T>;
+  clearErrors: UseFormClearErrors<T>;
 };
 
-export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
+export const TextareaWYSIWYG = <T,>({
   placeholder = '',
   disabled = false,
   onBlur,
   onChange,
   name = 'editor',
   value = '',
-}) => {
+  error,
+  setError,
+  clearErrors,
+}: TextareaWYSIWYGProps<T>) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const editor = useEditor(
     {
       content: value,
@@ -165,15 +172,34 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
         if (onBlur) {
           onBlur(editor.getHTML());
         }
+
+        if (isEmptyContent(editor.getHTML())) {
+          setError('description', {
+            type: 'required',
+            message: 'Description is required',
+          });
+        } else {
+          clearErrors('description');
+        }
+
+        setIsFocused(false);
       },
       onUpdate: ({ editor }) => {
         if (onChange) {
           onChange(editor.getHTML());
         }
       },
+      onFocus: () => {
+        setIsFocused(true);
+      },
     },
     [disabled]
   );
+
+  const isEmptyContent = (content) => {
+    const strippedContent = content.replace(/<\/?[^>]+(>|$)/g, '').trim();
+    return strippedContent === '';
+  };
 
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
@@ -185,18 +211,12 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
     }
   }, [editor, onChange, value]);
 
-  const body = document.querySelector('body');
-
   if (isExpanded) {
     document.onkeydown = (e) => {
       if (e.key === 'Escape' && isExpanded) {
         setIsExpanded(!isExpanded);
       }
     };
-
-    if (body) {
-      body.style.overflow = 'hidden';
-    }
 
     let portalNode = document.querySelector('#fullscreen-editor');
     if (!portalNode) {
@@ -236,17 +256,21 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
     return ReactDOM.createPortal(fullScreenEditor, portalNode);
   }
 
-  if (body) {
-    body.style.overflow = 'auto';
-  }
-
   return (
     <div
       className={clsx(
-        'w-full overflow-auto rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2  dark:bg-slate-900/60 dark:text-slate-300 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900',
+        'group w-full overflow-auto rounded-md bg-white text-slate-700  dark:bg-slate-900/60 dark:text-slate-300 ',
         disabled
           ? 'cursor-not-allowed opacity-50'
-          : 'border border-slate-300 dark:border-slate-700'
+          : error
+          ? 'border border-red-600 dark:border-red-700'
+          : 'border border-slate-300 dark:border-slate-700',
+
+        error
+          ? 'ring-red-600  dark:ring-red-700 '
+          : ' ring-slate-400  dark:ring-slate-400 ',
+        isFocused &&
+          'outline-none ring-2 ring-offset-2 dark:ring-offset-slate-900'
       )}
     >
       <div
@@ -263,13 +287,8 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
         />
       </div>
       <div className="styled-editor-content">
-        <EditorContent name={name} editor={editor} />
+        <EditorContent name={name} editor={editor} className="" />
       </div>
     </div>
   );
 };
-
-// type Props = {
-//   disabled: boolean;
-//   fullScreen?: boolean;
-// };

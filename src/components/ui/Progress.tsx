@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as ProgressPrimitive from '@radix-ui/react-progress';
 
-//TODO might need updated colors or different variations
-
 import { cn } from '@/src/lib/utils';
 
 const Progress = React.forwardRef<
