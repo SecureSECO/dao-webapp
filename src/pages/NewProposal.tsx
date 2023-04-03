@@ -15,13 +15,14 @@ import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { HiPlus, HiXMark } from 'react-icons/hi2';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
-import { ErrorWrapper, Input, InputWithError } from '@/src/components/ui/Input';
+import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import TipTapLink from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 
 const totalSteps = 4;
 
