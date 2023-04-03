@@ -7,7 +7,6 @@ import {
   FieldValues,
   UseFormGetValues,
   FormProvider,
-  useFormContext,
   Controller,
 } from 'react-hook-form';
 import Header from '@/src/components/ui/Header';
@@ -28,9 +27,7 @@ const totalSteps = 4;
 
 const NewProposal = () => {
   const [step, setStep] = useState<number>(1);
-  const [stepOneData, setStepOneData] = useState<any>(null);
 
-  console.log('current step', step);
   return (
     <div className="flex flex-col gap-6">
       <ProgressCard step={step}>
@@ -118,15 +115,21 @@ const StepContent = ({
   step: number;
   StepNavigator?: React.ReactNode;
 }) => {
-  if (step === 1) {
-    return <StepOne StepNavigator={StepNavigator}></StepOne>;
-  }
-  if (step === 2) {
-    return <StepTwo StepNavigator={StepNavigator}></StepTwo>;
-  }
+  const [stepOneData, setStepOneData] = useState<StepOneMetadata | null>(null);
 
-  // Other steps will go here
-  return null;
+  switch (step) {
+    case 1:
+      return (
+        <StepOne
+          setStepOneData={setStepOneData}
+          StepNavigator={StepNavigator}
+        />
+      );
+    case 2:
+      return <StepTwo StepNavigator={StepNavigator} />;
+    default:
+      return null;
+  }
 };
 
 interface Resource {
@@ -149,16 +152,19 @@ interface StepOneMetadata {
 
 export const StepOne = ({
   StepNavigator,
+  setStepOneData,
 }: {
   StepNavigator?: React.ReactNode;
+  setStepOneData: React.Dispatch<React.SetStateAction<StepOneMetadata | null>>;
 }) => {
   const [resources, setResources] = useState<
     Array<{ name: string; link: string }>
   >([{ name: '', link: '' }]);
 
-  const { register, getValues, setValue, control } = useForm<StepOneMetadata>();
+  const { register, getValues, setValue, control, handleSubmit } =
+    useForm<StepOneMetadata>();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: StepOneMetadata) => {
     console.log(data);
     // Handle submission
   };
@@ -209,7 +215,7 @@ export const StepOne = ({
           <Label htmlFor="body">Body</Label>
           <Controller
             control={control}
-            name="body" // Replace this with the name of the field you want to store the WYSIWYG content
+            name="description" // Replace this with the name of the field you want to store the WYSIWYG content
             rules={{ required: false }} // Add any validation rules you need
             defaultValue=""
             render={({ field }) => (
@@ -297,21 +303,26 @@ export const StepTwo = ({
 }: {
   StepNavigator?: React.ReactNode;
 }) => {
+  const { register, getValues, handleSubmit } = useForm();
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+    // Handle submission
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
-        <VotingOption />
-        <StartTime />
-        <EndTime />
+        <VotingOption register={register} />
+        <StartTime register={register} getValues={getValues} />
+        <EndTime register={register} getValues={getValues} />
       </div>
       {StepNavigator}
     </form>
   );
 };
 
-export const VotingOption = () => {
-  const { register } = useFormContext();
-
+export const VotingOption = ({ register }: { register: any }) => {
   return (
     <fieldset>
       <legend>Options</legend>
@@ -327,9 +338,13 @@ export const VotingOption = () => {
   );
 };
 
-export const StartTime = () => {
-  const { register, getValues } = useFormContext();
-
+export const StartTime = ({
+  register,
+  getValues,
+}: {
+  register: any;
+  getValues: any;
+}) => {
   return (
     <fieldset>
       <legend>Start time</legend>
@@ -354,9 +369,13 @@ export const StartTime = () => {
   );
 };
 
-export const EndTime = () => {
-  const { register, getValues } = useFormContext();
-
+export const EndTime = ({
+  register,
+  getValues,
+}: {
+  register: any;
+  getValues: any;
+}) => {
   return (
     <fieldset>
       <legend>End time</legend>
