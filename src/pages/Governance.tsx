@@ -1,12 +1,4 @@
-import Header from '@/src/components/ui/Header';
-import { Card } from '@/src/components/ui/Card';
 import { Button } from '@/src/components/ui/Button';
-import {
-  formatDistanceToNow,
-  differenceInHours,
-  differenceInMinutes,
-} from 'date-fns';
-import { Address } from '@/src/components/ui//Address';
 import {
   Tabs,
   TabsContent,
@@ -15,12 +7,28 @@ import {
 } from '@/src/components/ui/Tabs';
 import { Proposal, useProposals } from '@/src/hooks/useProposals';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { useState } from 'react';
+import {
+  ProposalSortBy,
+  ProposalStatus,
+  SortDirection,
+} from '@aragon/sdk-client';
+import SortSelector from '@/src/components/ui/SortSelector';
+
+import ProposalCard from '@/src/components/governance/ProposalCard';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/src/components/ui/Dropdown';
+import { HiChevronDown } from 'react-icons/hi2';
+import { cn } from '@/src/lib/utils';
 
 const Governance = () => {
   return (
     <div className="flex flex-col gap-6">
       <HeaderCard
-        title="Community"
+        title="Proposals"
         aside={
           <Button
             variant="default"
@@ -28,111 +36,148 @@ const Governance = () => {
             onClick={() => console.log('New Proposal Clicked')}
           />
         }
-      >
-        <ProposalTabs />
-      </HeaderCard>
+      ></HeaderCard>
+      <ProposalTabs />
     </div>
   );
 };
 
+export type ProposalStatusString =
+  | 'ALL'
+  | 'PENDING'
+  | 'ACTIVE'
+  | 'SUCCEEDED'
+  | 'EXECUTED'
+  | 'DEFEATED';
+
+const statusStringToEnum = (
+  status: ProposalStatusString
+): ProposalStatus | undefined => {
+  if (status === 'ALL') return undefined;
+  return ProposalStatus[status];
+};
+
+const tabs: ProposalStatusString[] = [
+  'ALL',
+  ...Object.keys(ProposalStatus).map((k) => k as ProposalStatusString),
+];
+
 const ProposalTabs = () => {
-  const { proposals, loading, error } = useProposals({ useDummyData: true });
+  const [currentTab, setCurrentTab] = useState<ProposalStatus | undefined>(
+    undefined
+  );
+  const [sortBy, setSortBy] = useState<ProposalSortBy>(
+    ProposalSortBy.CREATED_AT
+  );
+  const [direction, setDirection] = useState<SortDirection | undefined>(
+    undefined
+  );
+  const { proposals, loading, error } = useProposals({
+    useDummyData: false,
+    status: currentTab,
+    sortBy,
+    direction,
+  });
+
   return (
-    <Tabs defaultValue="all" className="w-full">
-      <TabsList>
-        <TabsTrigger value="all">All</TabsTrigger>
-        <TabsTrigger value="pending">Pending</TabsTrigger>
-        <TabsTrigger value="active">Active</TabsTrigger>
-        <TabsTrigger value="succeeded">Succeeded</TabsTrigger>
-        <TabsTrigger value="executed">Executed</TabsTrigger>
-        <TabsTrigger value="defeated">Defeated</TabsTrigger>
-      </TabsList>
-      <TabsContent value="all" className="">
-        <div className="grid grid-cols-2 gap-4">
-          {proposals?.map((proposal) => {
-            return <ProposalCard key={proposal.id} proposal={proposal} />;
-          })}
+    <Tabs
+      defaultValue="ALL"
+      onValueChange={(v) =>
+        setCurrentTab(statusStringToEnum(v as ProposalStatusString))
+      }
+      variant="default"
+    >
+      <div className="flex flex-row items-center gap-x-2">
+        {/* Mobile category selector (dropdown) */}
+        <div className="lg:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="subtle" size="sm" className="group">
+                <div className="flex flex-row items-center gap-x-1">
+                  <p className="font-normal">{currentTab ?? 'All'}</p>
+                  <HiChevronDown className="h-4 w-4 transition-all duration-200 group-data-[state=open]:rotate-180" />
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <TabsList className="flex flex-col">
+                {tabs.map((tab) => (
+                  <TabsTrigger key={tab} value={tab}>
+                    <span className="lowercase first-letter:uppercase">
+                      {tab}
+                    </span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      </TabsContent>
-      <TabsContent value="pending">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Pending proposals are displayed here.
-        </p>
-      </TabsContent>
-      <TabsContent value="active">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Active proposals are displayed here.
-        </p>
-      </TabsContent>
-      <TabsContent value="succeeded">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Succeeded proposals are displayed here.
-        </p>
-      </TabsContent>
-      <TabsContent value="executed">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Executed proposals are displayed here.
-        </p>
-      </TabsContent>
-      <TabsContent value="defeated">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Defeated proposals are displayed here.
-        </p>
-      </TabsContent>
+
+        {/* Desktop category selector */}
+        <TabsList className="hidden lg:inline-block">
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab} value={tab}>
+              <span className="lowercase first-letter:uppercase">{tab}</span>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <SortSelector setSortBy={setSortBy} setDirection={setDirection} />
+      </div>
+      {tabs.map((tab) => (
+        <TabsContent key={tab} value={tab}>
+          <ProposalCardList
+            proposals={proposals}
+            loading={loading}
+            error={error}
+          />
+        </TabsContent>
+      ))}
     </Tabs>
   );
 };
 
-const countdownText = (endDate: Date) => {
-  if (differenceInHours(endDate, new Date()) > 24) {
-    return formatDistanceToNow(endDate, { addSuffix: true });
-  } else if (differenceInMinutes(endDate, new Date()) > 60) {
-    return `${differenceInHours(endDate, new Date())} hours left`;
-  } else if (differenceInMinutes(endDate, new Date()) > 1) {
-    return `${differenceInMinutes(endDate, new Date())} minutes left`;
-  } else {
-    return 'Less than a minute left';
-  }
-};
-
-export const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
-  const {
-    metadata: { title, summary },
-    status,
-    endDate,
-    startDate,
-    creatorAddress,
-  } = proposal;
-
-  return (
-    <Card
-      padding="sm"
-      variant="light"
-      className="space-y-2 p-4 dark:bg-slate-700/50"
-    >
-      <h3 className="text-lg font-bold dark:text-slate-300">{title}</h3>
-      <p className="text-sm text-gray-500 dark:text-slate-400">{summary}</p>
-      <p className="font-medium text-gray-800 dark:text-slate-300">
-        Status: {status}
-      </p>
-      <p className="text-sm text-gray-600 dark:text-slate-400">
-        End Date: {countdownText(endDate)}
-      </p>
-      <p className="text-sm text-gray-600 dark:text-slate-400">
-        Start Date: {startDate.toLocaleDateString()}
-      </p>
-      <div className="flex items-center">
-        <span className="mr-1 text-sm text-gray-600 dark:text-slate-400">
-          Published by:
-        </span>
-        <Address
-          address={creatorAddress}
-          maxLength={20}
-          hasLink={true}
-          showCopy={true}
-        />
+export const ProposalCardList = ({
+  proposals,
+  loading,
+  error,
+  doubleColumn = true,
+}: {
+  proposals: Proposal[];
+  loading: boolean;
+  error: string | null;
+  doubleColumn?: boolean;
+}) => {
+  if (loading)
+    return (
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-4',
+          doubleColumn && 'lg:grid-cols-2'
+        )}
+      >
+        <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
+        <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
       </div>
-    </Card>
+    );
+  if (error)
+    return <p className="text-center font-normal">An error was encountered</p>;
+  return (
+    <div>
+      {proposals.length > 0 ? (
+        <div
+          className={cn(
+            'grid grid-cols-1 gap-4',
+            doubleColumn && 'lg:grid-cols-2'
+          )}
+        >
+          {proposals.map((proposal) => {
+            return <ProposalCard key={proposal.id} proposal={proposal} />;
+          })}
+        </div>
+      ) : (
+        <p className="text-center font-normal">No proposals found!</p>
+      )}
+    </div>
   );
 };
 

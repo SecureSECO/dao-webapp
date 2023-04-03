@@ -51,8 +51,8 @@ export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
           plugins: dao.plugins,
         });
 
-        if (loading) setLoading(false);
-        if (error) setError(null);
+        setLoading(false);
+        setError(null);
       }
     } catch (e) {
       console.error(e);
@@ -63,8 +63,8 @@ export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
 
   //** Set dummy data for development without querying Aragon API */
   const setDummyData = () => {
-    if (loading) setLoading(false);
-    if (error) setError(null);
+    setLoading(false);
+    setError(null);
 
     setDaoDetails({
       name: 'SecureSECO Dummy DAO',
