@@ -82,13 +82,14 @@ const DaoTokensWrapped = (): JSX.Element => {
 
 type DaoTransfersProps = {
   daoTransfers: DaoTransfer[];
-  max_amount: number;
+  limit: number;
 };
 const DaoTransfers = ({
   daoTransfers,
-  max_amount = daoTransfers.length,
+  limit = daoTransfers.length,
 }: DaoTransfersProps): JSX.Element => {
-  const transfers = daoTransfers.slice(0, max_amount);
+  const transfers = daoTransfers.slice(0, limit);
+
   return (
     <div className="mt-4 space-y-4">
       {transfers.map((transfer: DaoTransfer) => (
@@ -138,20 +139,21 @@ const daoTransferAddress = (transfer: DaoTransfer): string => {
 
 const DaoTransfersWrapped = (): JSX.Element => {
   const { daoTransfers, loading, error } = useDaoTransfers({});
-  const [maxAmount, setMaxAmount] = useState(3);
+  const [limit, setLimit] = useState(3);
   if (loading) return <Loader />;
   if (error) return <h3>{error}</h3>;
   if (!daoTransfers) return <h3>No transfers could be loaded</h3>;
+
   return (
     <div>
-      {DaoTransfers({ daoTransfers, max_amount: maxAmount })}
-      {maxAmount < daoTransfers.length && (
+      <DaoTransfers daoTransfers={daoTransfers} limit={limit} />
+      {limit < daoTransfers.length && (
         <Button
           className="my-4"
           variant="outline"
           label="Show more transfers"
           onClick={() => {
-            setMaxAmount(maxAmount + Math.min(maxAmount, 25));
+            setLimit(limit + Math.min(limit, 25));
           }}
           icon={HiArrowSmallRight}
         />
