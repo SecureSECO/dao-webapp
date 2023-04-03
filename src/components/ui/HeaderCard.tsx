@@ -30,7 +30,7 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
         )}
         {...props}
       >
-        <div className="flex w-full items-center justify-between gap-y-6">
+        <div className="flex w-full flex-col justify-between gap-y-6 sm:flex-row sm:items-center">
           <Header>{title}</Header>
           <>{button}</>
         </div>

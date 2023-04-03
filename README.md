@@ -20,6 +20,7 @@ Note on `.env` files:
 4. run: `npm i`
 
 ## Running the webapp
+
 Use the following command to locally run the webapp for development:
 `npm run dev`
 
@@ -30,6 +31,7 @@ After building the webapp, it is possible to locally run the built webapp using:
 `npm run preview`
 
 ## Storybook
+
 Storybook is a frontend workshop for building UI components and pages in isolation.
 To run the storybook, use the following command:
 `npm run storybook`
@@ -38,14 +40,16 @@ The storybook can also be build, using:
 `npm run build-storybook`
 
 ## Testing
+
 Although most UI testing will have to occur manually (through the aid of storybook), there is support for automatic testing.
 The automatic Storybook tests (defined using _play_ functions) can be run using: `npm run test-storybook`.
 There is also support for tests written using _Jest_, mostly used for testing logic.
 These tests can be run using `npm test` (or optionally `npm run test`).
 
-
 ## Style guide
+
 ### Code style
+
 The code should be formatted as dictated by the automatic formatting tools.
 Code that gives an error upon linting (using `npm run lint`) should not be committed.
 
@@ -54,11 +58,12 @@ Code that gives an error upon linting (using `npm run lint`) should not be commi
 Below is a list of colors used for specific elements, both for light mode and dark mode. Colors are represented as tailwind classes here. The corresponding hex codes can be found in the [tailwind.config.cjs](tailwind.config.cjs) file.
 
 #### Light mode:
+
 ```
 - Background colors:
   - default: bg-slate-50
   - highlight: bg-white
-  - subhighlight: bg-slate-100
+  - subhighlight: bg-slate-50
   - warning: bg-red-500/80
 - Text colors:
   - default: text-slate-700

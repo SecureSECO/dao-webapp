@@ -2,6 +2,7 @@ import { useAragonSDKContext } from '@/src/context/AragonSDK';
 
 import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
+import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
 import { getErrorMessage } from '../lib/utils';
 
 export type UseDaoBalanceData = {
@@ -52,8 +53,8 @@ export const useDaoBalance = ({
       }
       setDaoBalances(balances);
 
-      if (loading) setLoading(false);
-      if (error) setError(null);
+      setLoading(false);
+      setError(null);
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -62,8 +63,8 @@ export const useDaoBalance = ({
   };
 
   const setDummyData = () => {
-    if (loading) setLoading(false);
-    if (error) setError(null);
+    setLoading(false);
+    setError(null);
 
     const nativeBal: AssetBalance = {
       type: TokenType.NATIVE,
@@ -110,7 +111,7 @@ export const useDaoBalance = ({
 
 function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
   const x = assetBalance as any;
-  return {
+  let result = {
     type: assetBalance.type,
     updateDate: assetBalance.updateDate,
     balance: x.balance ?? null,
@@ -119,4 +120,27 @@ function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
     name: x.name ?? null,
     symbol: x.symbol ?? null,
   };
+  switch (assetBalance.type) {
+    case TokenType.NATIVE:
+      // eslint-disable-next-line no-case-declarations
+      const metadata = PREFERRED_NETWORK_METADATA;
+      result.decimals = metadata.nativeCurrency.decimals;
+      result.address = import.meta.env.VITE_DAO_ADDRESS;
+      result.name = metadata.nativeCurrency.name;
+      result.symbol = metadata.nativeCurrency.symbol;
+      break;
+    case TokenType.ERC721:
+      result.balance = x.balance ?? 1;
+      result.decimals = x.decimals ?? 0;
+      break;
+    case TokenType.ERC20:
+      break;
+    default:
+      console.error(
+        'useDaoBalance.ts ~ assetBalanceToDaoBalance: Unexpected tokentype'
+      );
+      break;
+  }
+
+  return result;
 }
