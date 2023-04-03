@@ -1,4 +1,9 @@
 import { ClassValue, clsx } from 'clsx';
+import {
+  differenceInHours,
+  differenceInMinutes,
+  formatDistanceToNow,
+} from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
 /**
@@ -27,3 +32,16 @@ export function isNullOrUndefined(value: any): boolean {
 export function anyNullOrUndefined(...values: any[]): boolean {
   return values.some(isNullOrUndefined);
 }
+
+export const countdownText = (date: Date) => {
+  const now = new Date();
+  if (differenceInHours(date, now) > 24) {
+    return formatDistanceToNow(date);
+  } else if (differenceInMinutes(date, now) > 60) {
+    return `${differenceInHours(date, now)} hours`;
+  } else if (differenceInMinutes(date, now) > 1) {
+    return `${differenceInMinutes(date, now)} minutes`;
+  } else {
+    return 'less than a minute';
+  }
+};

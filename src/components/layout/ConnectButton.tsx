@@ -7,7 +7,6 @@ import { useWeb3Modal } from '@web3modal/react';
 import { useAccount, useNetwork, useDisconnect } from 'wagmi';
 import { FaWallet } from 'react-icons/fa';
 
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,7 +24,7 @@ import {
 } from '@/src/components/ui/Tooltip';
 import { Button } from '@/src/components/ui/Button';
 
-const prefferedNetwork: number = import.meta.env.VITE_PREFERRED_NETWORK_ID; 
+const prefferedNetwork: number = import.meta.env.VITE_PREFERRED_NETWORK_ID;
 const ConnectButton = () => {
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();
@@ -35,10 +34,7 @@ const ConnectButton = () => {
   let jazznumber = address ? jsNumberForAddress(address!) : 0;
 
   return address ? (
-    <div className="flex items-center gap-x-3 text-slate-900">
-      <div className="grid select-none gap-y-1.5 text-sm dark:text-gray-300">
-        {/* TODO: possibly put address here */}
-      </div>
+    <div className="flex items-center text-slate-900">
       <DropdownMenu>
         <DropdownMenuTrigger className="relative flex rounded-full text-sm focus:outline-none">
           <span className="sr-only">Open wallet menu</span>
@@ -47,7 +43,9 @@ const ConnectButton = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild className="absolute -top-2 -right-2">
-                  <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgb(0,0,0)] dark:text-primary-500" />
+                  <div>
+                    <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgba(0,0,0,0.4)] dark:text-primary-500" />
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Incorrect Network</p>

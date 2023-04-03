@@ -53,8 +53,8 @@ export const useDaoBalance = ({
       }
       setDaoBalances(balances);
 
-      if (loading) setLoading(false);
-      if (error) setError(null);
+      setLoading(false);
+      setError(null);
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -63,8 +63,8 @@ export const useDaoBalance = ({
   };
 
   const setDummyData = () => {
-    if (loading) setLoading(false);
-    if (error) setError(null);
+    setLoading(false);
+    setError(null);
 
     const nativeBal: AssetBalance = {
       type: TokenType.NATIVE,

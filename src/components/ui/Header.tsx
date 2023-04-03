@@ -10,8 +10,8 @@ interface HeaderProps
 
 const Header = ({ className, children, level = 1, ...props }: HeaderProps) => {
   const headerClasses = [
-    'text-4xl font-bold',
-    'text-2xl font-bold',
+    'text-4xl font-bold leading-8',
+    'text-2xl font-bold leading-6',
     'text-xl font-bold',
     'text-lg font-bold',
     'text-base font-bold',

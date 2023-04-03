@@ -71,8 +71,8 @@ export const useDaoTransfers = ({
       );
       const daoTransfers = transfers?.map(transferToDaoTransfer) ?? null;
       setDaoTransfers(daoTransfers);
-      if (loading) setLoading(false);
-      if (error) setError(null);
+      setLoading(false);
+      setError(null);
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -81,8 +81,8 @@ export const useDaoTransfers = ({
   };
 
   const setDummyData = () => {
-    if (loading) setLoading(false);
-    if (error) setError(null);
+    setLoading(false);
+    setError(null);
 
     const data: Transfer[] = [
       {

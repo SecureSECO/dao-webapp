@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 import { Card, CardProps } from '@/src/components/ui/Card';
 import { IconType } from 'react-icons/lib';
 
-const mainCardVariants = cva('w-full h-full flex flex-col gap-y-2', {
+const mainCardVariants = cva('w-full flex flex-col gap-y-2', {
   variants: {},
   defaultVariants: {},
 });
@@ -25,19 +25,20 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
     return (
       <Card
         ref={ref}
-        className={cn(mainCardVariants({}), className)}
+        className={cn(mainCardVariants({}), className, 'gap-y-4')}
         {...props}
       >
         <div className="flex flex-row items-center justify-between">
-          <div className="flex flex-row items-center gap-x-6">
+          <div className="flex flex-row items-center gap-x-3 lg:gap-x-6">
             <div className="rounded-md bg-slate-100 p-2 dark:bg-slate-700/50">
               <IconWrapper.icon className="h-5 w-5 text-primary dark:text-primary-500" />
             </div>
-            {header}
+            <div className="hidden xs:block">{header}</div>
           </div>
           <>{aside}</>
         </div>
-        <div>{props.children}</div>
+        <div className="xs:hidden">{header}</div>
+        <div className="space-y-3">{props.children}</div>
       </Card>
     );
   }
