@@ -1,14 +1,8 @@
 import { Card } from '@/src/components/ui/Card';
-import { Address } from '@/src/components/ui//Address';
+import { Address, AddressLength } from '@/src/components/ui//Address';
 import Header from '@/src/components/ui/Header';
-import { cn } from '@/src/lib/utils';
-import { cva } from 'class-variance-authority';
-import DoubleCheck from '@/src/components/icons/DoubleCheck';
-import Check from '@/src/components/icons/Check';
 import { ProposalStatus } from '@aragon/sdk-client';
 import { Proposal } from '@/src/hooks/useProposals';
-import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
-import Activity from '@/src/components/icons/Actitivy';
 import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
@@ -90,7 +84,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
         <span className="text-gray-500 dark:text-slate-400">Published by</span>
         <Address
           address={creatorAddress}
-          maxLength={16}
+          maxLength={AddressLength.Medium}
           hasLink={true}
           showCopy={true}
         />

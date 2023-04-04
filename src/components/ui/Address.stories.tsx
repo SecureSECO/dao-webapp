@@ -16,7 +16,7 @@ export const Medium: Story = {
   render: () => (
     <Address
       address={exampleAddress}
-      maxLength={AddressLength.medium}
+      maxLength={AddressLength.Medium}
       hasLink={true}
       showCopy={true}
     />
@@ -27,7 +27,7 @@ export const Small: Story = {
   render: () => (
     <Address
       address={exampleAddress}
-      maxLength={AddressLength.small}
+      maxLength={AddressLength.Small}
       hasLink={true}
       showCopy={true}
     />
@@ -38,7 +38,7 @@ export const Large: Story = {
   render: () => (
     <Address
       address={exampleAddress}
-      maxLength={AddressLength.large}
+      maxLength={AddressLength.Large}
       hasLink={true}
       showCopy={true}
     />
@@ -49,7 +49,7 @@ export const Full: Story = {
   render: () => (
     <Address
       address={exampleAddress}
-      maxLength={AddressLength.full}
+      maxLength={AddressLength.Large}
       hasLink={true}
       showCopy={true}
     />
@@ -60,7 +60,7 @@ export const NoLink: Story = {
   render: () => (
     <Address
       address={exampleAddress}
-      maxLength={AddressLength.medium}
+      maxLength={AddressLength.Medium}
       hasLink={false}
       showCopy={true}
     />
@@ -71,7 +71,7 @@ export const NoCopy: Story = {
   render: () => (
     <Address
       address={exampleAddress}
-      maxLength={AddressLength.medium}
+      maxLength={AddressLength.Medium}
       hasLink={true}
       showCopy={false}
     />
@@ -82,10 +82,9 @@ export const NoLinkNoCopy: Story = {
   render: () => (
     <Address
       address={exampleAddress}
-      maxLength={AddressLength.medium}
+      maxLength={AddressLength.Medium}
       hasLink={false}
       showCopy={false}
     />
   ),
 };
-
