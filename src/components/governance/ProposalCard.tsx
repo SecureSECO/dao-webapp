@@ -8,6 +8,8 @@ import ProposalTag, {
 } from '@/src/components/governance/ProposalTag';
 import { countdownText } from '@/src/lib/utils';
 import { StatusBadge } from '../ui/StatusBadge';
+import { Link } from 'react-router-dom';
+import { HiChevronRight } from 'react-icons/hi2';
 
 /**
  * Find the data for tags of a specific proposal
@@ -68,7 +70,13 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
       <StatusBadge status={status} className="xs:hidden" />
       <div className="space-y-2">
         <div className="flex flex-row justify-between">
-          <Header level={2}>{title}</Header>
+          <Link
+            to={`/governance/proposals/${proposal.id}`}
+            className="flex flex-row items-end gap-x-2 hover:underline"
+          >
+            <Header level={2}>{title}</Header>
+            <HiChevronRight className="h-5 w-5" />
+          </Link>
           <StatusBadge status={status} className="hidden xs:flex" />
         </div>
         <p className="leading-5 text-slate-500 dark:text-slate-400">
