@@ -1,19 +1,11 @@
-import { AiFillCheckCircle } from 'react-icons/ai';
-import React from 'react';
-import { Stamp } from '../../types/Stamp';
-import { Button } from './Button';
 import { Card } from './Card';
-import { VerificationThreshold } from '@/src/types/VerificationThreshold';
-import { BigNumber } from 'ethers';
-import { availableStamps, isVerified } from '@/src/pages/Verification';
+import { availableStamps } from '@/src/pages/Verification';
+import { HiCalendar, HiQuestionMarkCircle } from 'react-icons/hi2';
 import {
-  HiCalendar,
-  HiChartBar,
-  HiLink,
-  HiQuestionMarkCircle,
-} from 'react-icons/hi2';
-import { StampInfo } from '@/src/types/StampInfo';
-import { VerificationHistory } from '@/src/types/VerificationHistory';
+  StampInfo,
+  VerificationHistory,
+  VerificationThreshold,
+} from '../../pages/Verification';
 
 const RecentVerificationCard = ({
   history,

@@ -13,8 +13,7 @@ import {
 } from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
-import { apiUrl, verificationContractAddress } from '../main';
-import { Stamp } from '../types/Stamp';
+import { Stamp } from '../pages/Verification';
 
 const FinishVerification = () => {
   const { address } = useAccount();
@@ -31,7 +30,7 @@ const FinishVerification = () => {
     isError: isPrepareError,
     error: prepareError,
   } = usePrepareContractWrite({
-    address: verificationContractAddress,
+    address: import.meta.env.VITE_VERIFY_CONTRACT,
     abi: verificationAbi,
     functionName: 'verifyAddress',
     args: [addressToVerify, hash, parseInt(timestamp ?? ''), providerId, sig],
@@ -107,7 +106,7 @@ const FinishVerification = () => {
           <div className="flex flex-col gap-4">
             <VerificationItem
               title="Contract Address"
-              value={verificationContractAddress}
+              value={import.meta.env.VITE_VERIFY_CONTRACT}
             />
             <VerificationItem title="Address" value={addressToVerify} />
             <VerificationItem title="Hash" value={hash} />

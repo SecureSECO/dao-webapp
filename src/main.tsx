@@ -25,7 +25,7 @@ import Verification from './pages/Verification';
 import { Toaster } from 'react-hot-toast';
 import ViewProposal from '@/src/pages/ViewProposal';
 import FinishVerification from './pages/FinishVerification';
-import { ganache } from './assets/GanacheChain';
+import { ganache } from './lib/constants/GanacheChain';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -72,20 +72,15 @@ const router = createBrowserRouter([
         children: [
           {
             path: '',
-            children: [
-              {
-                path: '',
-                element: <Governance />,
-              },
-              {
-                path: '/governance/new-proposal',
-                element: <NewProposal />,
-              },
-              {
-                path: '/governance/proposals/:id',
-                element: <ViewProposal />,
-              },
-            ],
+            element: <Governance />,
+          },
+          {
+            path: '/governance/new-proposal',
+            element: <NewProposal />,
+          },
+          {
+            path: '/governance/proposals/:id',
+            element: <ViewProposal />,
           },
         ],
       },
@@ -99,11 +94,16 @@ const router = createBrowserRouter([
       },
       {
         path: '/verification',
-        element: <Verification />,
-      },
-      {
-        path: '/verification/finish',
-        element: <FinishVerification />,
+        children: [
+          {
+            path: '',
+            element: <Verification />,
+          },
+          {
+            path: '/verification/finish',
+            element: <FinishVerification />,
+          },
+        ],
       },
       {
         path: '/settings',
@@ -114,8 +114,8 @@ const router = createBrowserRouter([
   // If you need a route without the layout, add another object here
 ]);
 
-export const apiUrl = import.meta.env.VITE_API_URL;
-export const verificationContractAddress = import.meta.env.VITE_VERIFY_CONTRACT;
+// export const apiUrl = import.meta.env.VITE_API_URL;
+// export const verificationContractAddress = import.meta.env.VITE_VERIFY_CONTRACT;
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
