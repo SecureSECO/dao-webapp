@@ -53,3 +53,19 @@ const mintTokensAction: Action[] = [
   },
 ];
 export const MintTokensAction = StoryBuilder(mintTokensAction);
+
+const withdrawAssets: Action[] = [
+  {
+    amount: 3.45,
+    name: 'withdraw_assets',
+    to: '0x1234567891234356789',
+    tokenAddress: '0x7af963cf6d228e564e2a0aa0ddbf06210b38615d',
+    tokenBalance: 12.3,
+    tokenDecimals: 0,
+    tokenImgUrl: '',
+    tokenName: 'Example token',
+    tokenSymbol: 'EXA',
+    isCustomToken: true,
+  },
+];
+export const WithdrawAssetsAction = StoryBuilder(withdrawAssets);
