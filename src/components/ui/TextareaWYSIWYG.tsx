@@ -5,7 +5,13 @@ import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import clsx from 'clsx';
 import React, { useCallback, useState, useEffect } from 'react';
-import { FieldError, UseFormClearErrors, UseFormSetError, useFormContext } from 'react-hook-form';
+import {
+  FieldError,
+  FieldValues,
+  UseFormClearErrors,
+  UseFormSetError,
+  useFormContext,
+} from 'react-hook-form';
 import ReactDOM from 'react-dom';
 import {
   FaBold,
@@ -132,7 +138,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
   );
 };
 
-type TextareaWYSIWYGProps<T> = {
+export type TextareaWYSIWYGProps<T extends FieldValues> = {
   placeholder?: string;
   disabled?: boolean;
   onBlur?: (html: string) => void;
@@ -140,11 +146,11 @@ type TextareaWYSIWYGProps<T> = {
   name?: string;
   value?: string;
   error?: FieldError;
-  setError: UseFormSetError<T>;
-  clearErrors: UseFormClearErrors<T>;
+  setError: () => void;
+  clearErrors: () => void;
 };
 
-export const TextareaWYSIWYG = <T,>({
+export const TextareaWYSIWYG = <T extends FieldValues>({
   placeholder = '',
   disabled = false,
   onBlur,
@@ -174,12 +180,9 @@ export const TextareaWYSIWYG = <T,>({
         }
 
         if (isEmptyContent(editor.getHTML())) {
-          setError('description', {
-            type: 'required',
-            message: 'Description is required',
-          });
+          setError();
         } else {
-          clearErrors('description');
+          clearErrors();
         }
 
         setIsFocused(false);
@@ -196,7 +199,7 @@ export const TextareaWYSIWYG = <T,>({
     [disabled]
   );
 
-  const isEmptyContent = (content) => {
+  const isEmptyContent = (content: string) => {
     const strippedContent = content.replace(/<\/?[^>]+(>|$)/g, '').trim();
     return strippedContent === '';
   };

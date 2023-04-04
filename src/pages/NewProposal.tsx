@@ -257,8 +257,8 @@ export const StepOne = ({
           <ErrorWrapper name="Description" error={errors.description}>
             <Controller
               control={control}
-              name="description" // Replace this with the name of the field you want to store the WYSIWYG content
-              rules={{ required: true }} // Add any validation rules you need
+              name="description" 
+              rules={{ required: true }}
               defaultValue=""
               render={({ field }) => (
                 <TextareaWYSIWYG<StepOneMetadata>
@@ -268,8 +268,13 @@ export const StepOne = ({
                   name={field.name}
                   placeholder="Enter your content"
                   error={errors.description}
-                  setError={setError}
-                  clearErrors={clearErrors}
+                  setError={() =>
+                    setError('description', {
+                      type: 'required',
+                      message: 'Description is required',
+                    })
+                  }
+                  clearErrors={() => clearErrors('description')}
                 />
               )}
             />
