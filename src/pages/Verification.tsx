@@ -41,38 +41,46 @@ export const isVerified = (
   thresholdHistory: VerificationThreshold[],
   stamp: Stamp | null
 ) => {
-  const mostRecentThreshold = getThresholdForTimestamp(
+  const threshold = getThresholdForTimestamp(
     Date.now() / 1000,
     thresholdHistory
   );
+  const lastVerifiedAt = stamp
+    ? stamp[2][stamp[2].length - 1]
+    : BigNumber.from(0);
+
   const preCondition: boolean =
     stamp != null &&
     stamp[2] != null &&
     stamp[2].length > 0 &&
     thresholdHistory != null &&
     thresholdHistory.length > 0 &&
-    Date.now() / 1000 > stamp[2][stamp[2].length - 1].toNumber();
+    Date.now() / 1000 > lastVerifiedAt.toNumber();
 
   const verified =
     preCondition &&
     stamp != null &&
     Date.now() / 1000 <
-      stamp[2][stamp[2].length - 1]
-        .add(mostRecentThreshold.mul(24 * 60 * 60))
-        .toNumber();
+      lastVerifiedAt.add(threshold.mul(24 * 60 * 60)).toNumber();
 
   const expired =
     preCondition &&
     stamp != null &&
     Date.now() / 1000 >
-      stamp[2][stamp[2].length - 1]
-        .add(mostRecentThreshold.mul(24 * 60 * 60))
-        .toNumber();
+      lastVerifiedAt.add(threshold.mul(24 * 60 * 60)).toNumber();
+
+  let timeLeftUntilExpiration = null;
+  if (verified) {
+    timeLeftUntilExpiration =
+      lastVerifiedAt.add(threshold.mul(24 * 60 * 60)).toNumber() -
+      Date.now() / 1000;
+  }
 
   return {
     verified,
     expired,
     preCondition,
+    timeLeftUntilExpiration,
   };
 };
 
@@ -95,6 +103,13 @@ const Verification = () => {
     abi: verificationAbi,
     functionName: 'getStamps',
     args: [address],
+  });
+
+  const { data: rData } = useContractRead({
+    address: verificationContractAddress,
+    abi: verificationAbi,
+    functionName: 'reverifyThreshold',
+    args: [],
   });
 
   const {
@@ -153,6 +168,7 @@ const Verification = () => {
   const [thresholdHistory, setThresholdHistory] = useState<
     VerificationThreshold[]
   >([]);
+  const [reverifyThreshold, setReverifyThreshold] = useState<number>(30);
   const [nonce, setNonce] = useState<number>(0);
   const [providerId, setProviderId] = useState<string>('');
 
@@ -193,7 +209,11 @@ const Verification = () => {
     if (vData && Array.isArray(vData)) {
       setThresholdHistory(vData);
     }
-  }, [data, vData]);
+
+    if (rData != null) {
+      setReverifyThreshold((rData as BigNumber).toNumber());
+    }
+  }, [data, vData, rData]);
 
   const verify = async (providerId: string) => {
     try {
@@ -203,19 +223,15 @@ const Verification = () => {
         const [, , verifiedAt] = stamp;
         const lastVerifiedAt = verifiedAt[verifiedAt.length - 1];
 
-        // Check if it has been more than 30 days
+        // Check if it has been more than the reverifyThreshold
         if (
           lastVerifiedAt.toNumber() * 1000 +
-            thresholdHistory[thresholdHistory.length - 1][1].toNumber() *
-              24 *
-              60 *
-              60 *
-              1000 >
+            reverifyThreshold * 24 * 60 * 60 * 1000 >
           Date.now()
         ) {
           throw new Error(
             `You have already verified with this provider, please wait at least ${Math.round(
-              thresholdHistory[thresholdHistory.length - 1][1].toNumber() / 2
+              reverifyThreshold
             )} days after the initial verification to verify again.`
           );
         }

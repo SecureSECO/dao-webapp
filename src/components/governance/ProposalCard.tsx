@@ -13,66 +13,7 @@ import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
 import { countdownText } from '@/src/lib/utils';
-
-// Different types of statuses a proposal can have, as a string rather than an enum
-type StatusVariant =
-  | 'Pending'
-  | 'Active'
-  | 'Succeeded'
-  | 'Executed'
-  | 'Defeated';
-
-const statusVariants = cva(
-  'rounded-lg px-2 py-1 flex flex-row w-fit gap-x-1 items-center h-fit',
-  {
-    variants: {
-      status: {
-        Pending: 'bg-slate-200 dark:bg-slate-600',
-        Active: 'bg-primary-200 dark:bg-primary-400 dark:text-slate-900',
-        Succeeded: 'bg-green-200 dark:bg-green-300 dark:text-slate-900',
-        Executed: 'bg-green-200 dark:bg-green-300 dark:text-slate-900',
-        Defeated: 'bg-red-200 dark:bg-red-300 dark:text-slate-900',
-      },
-    },
-    defaultVariants: {
-      status: 'Pending',
-    },
-  }
-);
-
-const statusIcon = {
-  Pending: <HiOutlineClock className="h-4 w-4" />,
-  Active: <Activity className="h-4 w-4" />,
-  Succeeded: <Check className="h-4 w-4" />,
-  Executed: <DoubleCheck className="h-4 w-4" />,
-  Defeated: <HiXMark className="h-4 w-4" />,
-};
-
-interface ProposalStatusBadgeProps
-  extends React.BaseHTMLAttributes<HTMLDivElement> {
-  status: ProposalStatus;
-}
-
-/**
- * @returns A badge showing a proposal status
- * @example Active status will have a blue background and an activity icon
- */
-export const ProposalStatusBadge = ({
-  status,
-  className,
-  ...props
-}: ProposalStatusBadgeProps) => {
-  const statusString = status.toString() as StatusVariant;
-  return (
-    <div
-      className={cn(statusVariants({ status: statusString }), className)}
-      {...props}
-    >
-      {statusIcon[statusString]}
-      <p className="text-sm">{status}</p>
-    </div>
-  );
-};
+import { StatusBadge } from '../ui/StatusBadge';
 
 /**
  * Find the data for tags of a specific proposal
@@ -127,11 +68,11 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
 
   return (
     <Card padding="sm" variant="light" className="space-y-2 p-4 font-normal">
-      <ProposalStatusBadge status={status} className="xs:hidden" />
+      <StatusBadge status={status} className="xs:hidden" />
       <div className="space-y-2">
         <div className="flex flex-row justify-between">
           <Header level={2}>{title}</Header>
-          <ProposalStatusBadge status={status} className="hidden xs:flex" />
+          <StatusBadge status={status} className="hidden xs:flex" />
         </div>
         <p className="leading-5 text-slate-500 dark:text-slate-400">
           {summary}

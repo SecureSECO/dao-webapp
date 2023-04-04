@@ -6,6 +6,11 @@ export const verificationAbi = [
         name: '_threshold',
         type: 'uint64',
       },
+      {
+        internalType: 'uint64',
+        name: '_reverifyThreshold',
+        type: 'uint64',
+      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -112,6 +117,20 @@ export const verificationAbi = [
       },
     ],
     stateMutability: 'pure',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [],
+    name: 'reverifyThreshold',
+    outputs: [
+      {
+        internalType: 'uint64',
+        name: '',
+        type: 'uint64',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
     constant: true,
   },
@@ -335,5 +354,18 @@ export const verificationAbi = [
     stateMutability: 'view',
     type: 'function',
     constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint64',
+        name: '_days',
+        type: 'uint64',
+      },
+    ],
+    name: 'setReverifyThreshold',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
 ];
