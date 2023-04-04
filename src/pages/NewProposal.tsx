@@ -29,6 +29,7 @@ import {
   ActionMintToken,
   EmptyActionMintToken,
   emptyActionWithdraw,
+  ActionFormData,
 } from '../lib/Actions';
 import {
   Dialog,
@@ -482,14 +483,23 @@ export const EndTime = ({
   );
 };
 
-const StepThree = ({
+export interface StepThreeData {
+  actions: ActionFormData[];
+}
+
+export const StepThree = ({
   StepNavigator,
   setStep,
 }: {
   StepNavigator?: React.ReactNode;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
-  const { register, getValues, handleSubmit, setValue } = useForm();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+  } = useForm<StepThreeData>();
 
   const [actions, setActions] = useState<Action[]>([]);
 
@@ -549,6 +559,7 @@ const StepThree = ({
               actions={actions}
               register={register}
               setValue={setValue}
+              errors={errors}
             />
             <AddAction />
           </>

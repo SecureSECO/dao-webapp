@@ -17,13 +17,14 @@ type Story = StoryObj<typeof ProposalActionList>;
 
 const StoryBuilder = (actions: Action[]): Story => ({
   render: () => {
-    const { register, control } = useForm();
+    const { register, setValue } = useForm();
     return (
       <form>
         <ProposalActionList
           actions={actions}
           register={register}
-          control={control}
+          errors={{ actions: [] }}
+          setValue={setValue}
         />
       </form>
     );

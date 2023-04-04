@@ -57,3 +57,13 @@ export type ActionMintToken = {
     totalMembers?: number;
   };
 };
+
+export type ActionWithdrawFormData = {
+  recipient: string;
+  tokenAddress: string;
+  amount: string;
+};
+
+export type ActionMintTokenFormData = {};
+
+export type ActionFormData = ActionWithdrawFormData | ActionMintTokenFormData;

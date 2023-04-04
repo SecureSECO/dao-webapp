@@ -1,4 +1,4 @@
-import { ActionWithdraw } from '@/src/lib/Actions';
+import { ActionWithdraw, ActionWithdrawFormData } from '@/src/lib/Actions';
 import { Input } from '../ui/Input';
 import { Label } from '../ui/Label';
 import { UseDaoBalanceData, useDaoBalance } from '@/src/hooks/useDaoBalance';
@@ -15,6 +15,9 @@ import { Button } from '../ui/Button';
 import { AddressPattern } from '@/src/lib/Patterns';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import { Card } from '../ui/Card';
+import { FieldErrors } from 'react-hook-form';
+import { StepThreeData } from '@/src/pages/NewProposal';
+import { ErrorWrapper } from '../ui/ErrorWrapper';
 
 const Description = ({ text }: { text: string }) => (
   <p className="text-slate-500">{text}</p>
@@ -25,11 +28,13 @@ export const WithdrawAssetsAction = ({
   register,
   setValue,
   prefix,
+  errors,
 }: {
   action: ActionWithdraw;
   register: any;
   setValue: any;
   prefix: string;
+  errors: FieldErrors<ActionWithdrawFormData> | undefined;
 }) => {
   const daoBalanceData = useDaoBalance({});
 
@@ -47,12 +52,15 @@ export const WithdrawAssetsAction = ({
           Recipient
         </Label>
         <Description text="The wallet that receives the tokens" />
-        <Input
-          {...register(`${prefix}.recipient`)}
-          type="text"
-          id="recipient"
-          defaultValue={action.to}
-        />
+        <ErrorWrapper name="Recipient" error={errors?.recipient ?? undefined}>
+          <Input
+            {...register(`${prefix}.recipient`)}
+            type="text"
+            id="recipient"
+            defaultValue={action.to}
+            error={errors?.recipient ?? undefined}
+          />
+        </ErrorWrapper>
       </div>
       <Label className="text-lg" htmlFor="tokenAddress">
         Token
@@ -73,25 +81,31 @@ export const WithdrawAssetsAction = ({
             </DialogContent>
           </Dialog>
         </div>
-        <Input
-          {...register(tokenAddressInputName)}
-          className="basis-2/3"
-          name="tokenAddress"
-          defaultValue="Or enter a custom token address"
-          pattern={AddressPattern}
-        />
+        <ErrorWrapper name="Token" error={errors?.tokenAddress ?? undefined}>
+          <Input
+            {...register(tokenAddressInputName)}
+            className="basis-2/3"
+            name="tokenAddress"
+            defaultValue="Or enter a custom token address"
+            pattern={AddressPattern}
+            error={errors?.tokenAddress ?? undefined}
+          />
+        </ErrorWrapper>
       </div>
       <div className="flex flex-col gap-2">
         <Label className="text-lg" htmlFor="amount">
           Amount
         </Label>
         <Description text="Amount is calculated in number of tokens, not dollar value" />
-        <Input
-          {...register(`${prefix}.amount`)}
-          type="text"
-          id="amount"
-          defaultValue={action.amount}
-        />
+        <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
+          <Input
+            {...register(`${prefix}.amount`)}
+            type="text"
+            id="amount"
+            defaultValue={action.amount}
+            error={errors?.amount ?? undefined}
+          />
+        </ErrorWrapper>
       </div>
     </Card>
   );
@@ -117,7 +131,7 @@ export const TokenSelectorDialogButtons = ({
           <DialogClose
             key={index}
             type="button"
-          className="flex h-10 flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
+            className="flex h-10 flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
             // icon={HiArrowRight}
             onClick={() => setTokenAddress(token.address!)}
           >

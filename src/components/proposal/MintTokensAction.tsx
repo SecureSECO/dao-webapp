@@ -1,6 +1,7 @@
 import {
   Action,
   ActionMintToken,
+  ActionMintTokenFormData,
   EmptyActionMintToken,
 } from '@/src/lib/Actions';
 import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
@@ -9,15 +10,19 @@ import { HiPlus, HiXMark } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
 import { useState } from 'react';
 import { Card } from '../ui/Card';
+import { FieldErrors } from 'react-hook-form';
+import { StepThreeData } from '@/src/pages/NewProposal';
 
 export const MintTokensAction = ({
   action,
   register,
   prefix,
+  errors,
 }: {
   action: ActionMintToken;
   register: any;
   prefix: string;
+  errors: FieldErrors<ActionMintTokenFormData> | undefined;
 }) => {
   const [_action, setAction] = useState<ActionMintToken>(action);
   const handleAddMintTokensAction = () => {

@@ -1,15 +1,23 @@
-import { Action } from '@/src/lib/Actions';
+import {
+  Action,
+  ActionMintTokenFormData,
+  ActionWithdrawFormData,
+} from '@/src/lib/Actions';
 import { MintTokensAction } from './MintTokensAction';
 import { WithdrawAssetsAction } from './WithdrawAssetsAction';
+import { StepThreeData } from '@/src/pages/NewProposal';
+import { FieldErrors } from 'react-hook-form';
 
 export const ProposalActionList = ({
   actions,
   register,
   setValue,
+  errors,
 }: {
   actions: Action[];
   register: any;
   setValue: any;
+  errors: FieldErrors<StepThreeData>;
 }) => (
   <div>
     {actions.map((action: Action, index) => {
@@ -22,6 +30,7 @@ export const ProposalActionList = ({
               prefix={index.toString()}
               key={index}
               setValue={setValue}
+              errors={errors.actions ? errors.actions[index] : undefined}
             />
           );
         case 'mint_tokens':
@@ -31,6 +40,7 @@ export const ProposalActionList = ({
               register={register}
               prefix={index.toString()}
               key={index}
+              errors={errors.actions ? errors.actions[index] : undefined}
             />
           );
       }
