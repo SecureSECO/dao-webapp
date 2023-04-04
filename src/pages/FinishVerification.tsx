@@ -2,106 +2,160 @@ import { Button } from '@/src/components/ui/Button';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useAccount, useContractRead, useSignMessage } from 'wagmi';
+import { useSearchParams } from 'react-router-dom';
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+  useSignMessage,
+  useWaitForTransaction,
+} from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
-import { apiUrl } from '../main';
+import { apiUrl, verificationContractAddress } from '../main';
 import { Stamp } from '../types/Stamp';
 
 const FinishVerification = () => {
   const { address } = useAccount();
 
-  const { data, isError, error, isLoading } = useContractRead({
-    address: '0xD547BC6bc09D8778a95F7dB378eA4b6E5b79885e',
+  const [searchParams] = useSearchParams();
+  const addressToVerify = searchParams.get('address');
+  const hash = searchParams.get('hash');
+  const timestamp = searchParams.get('timestamp');
+  const providerId = searchParams.get('providerId');
+  const sig = searchParams.get('sig');
+
+  const {
+    config,
+    isError: isPrepareError,
+    error: prepareError,
+  } = usePrepareContractWrite({
+    address: verificationContractAddress,
     abi: verificationAbi,
-    functionName: 'getStamps',
-    args: [address],
+    functionName: 'verifyAddress',
+    args: [addressToVerify, hash, parseInt(timestamp ?? ''), providerId, sig],
   });
 
-  const { signMessage } = useSignMessage({
-    onError(error) {
-      toast.error(error.message.substr(0, 100));
-    },
-    async onSuccess(data) {
+  const { data, writeAsync: write } = useContractWrite(config);
+
+  const { isLoading, isSuccess, isError, error } = useWaitForTransaction({
+    hash: data?.hash,
+  });
+
+  const [isBusy, setIsBusy] = useState(false);
+
+  const verify = async (): Promise<void> => {
+    setIsBusy(true);
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
+      if (!write) {
+        setIsBusy(false);
+        return reject('Contract write not ready');
+      }
+
+      console.log('Verifying...');
+
       try {
-        // Send the signature to the API
-        const response = await fetch(`${apiUrl}/verify`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            address,
-            signature: data,
-            nonce: nonce.toString(),
-            providerId,
-          }),
-        });
+        const txResult = await write();
 
-        if (!response.ok) {
-          throw new Error('Verification failed');
-        }
+        console.log('txResult', txResult);
 
-        const { ok, message, url } = await response.json();
-
-        if (ok) {
-          window.location.href = url;
-        } else {
-          throw new Error('Verification failed: ' + message);
-        }
-      } catch (error: any) {
-        toast.error(error.message.substr(0, 100));
+        txResult
+          .wait()
+          .then(() => {
+            console.log('Verification successful');
+            setIsBusy(false);
+            resolve();
+          })
+          .catch((error: any) => {
+            console.error(
+              'FinishVerifcation ~ verify ~ txResult.catch ~ Verification failed',
+              error
+            );
+            setIsBusy(false);
+            reject(error);
+          });
+      } catch (error) {
+        console.error(error);
+        setIsBusy(false);
+        reject(error);
       }
-    },
-  });
+    });
+  };
 
-  const [stamps, setStamps] = useState<Stamp[]>([]);
-  const [nonce, setNonce] = useState<number>(0);
-  const [providerId, setProviderId] = useState<string>('');
-
-  useEffect(() => {
-    if (data && Array.isArray(data)) {
-      const stamps: Stamp[] = data.map((stamp: any) => [
-        stamp.id,
-        stamp._hash,
-        Number(stamp.verifiedAt),
-      ]);
-
-      setStamps(stamps);
-    }
-  }, [data]);
-
-  const verify = async (providerId: string) => {
-    try {
-      // Check if the account has already verified
-      const stamp = stamps.find(([id]) => id === providerId);
-      if (stamp) {
-        const [, , verifiedAt] = stamp;
-        // Check if it has been more than 30 days
-        if (verifiedAt * 1000 + 30 * 24 * 60 * 60 * 1000 > Date.now()) {
-          throw new Error(
-            'You have already verified with this provider, please wait at least 30 days after the initial verification to verify again.'
-          );
-        }
-      }
-
-      const nonce = Math.floor(Math.random() * 1000000);
-      setNonce(nonce);
-      setProviderId(providerId);
-
-      // Sign a message with the account
-      signMessage({
-        message: `SecureSECO DAO Verification \nN:${nonce}`,
-      });
-    } catch (error: any) {
-      console.log(error);
-      toast.error(error.message.substr(0, 100));
-    }
+  const VerificationItem = ({
+    title,
+    value,
+  }: {
+    title: string;
+    value: string | null;
+  }) => {
+    return (
+      <div>
+        <h3>{title}</h3>
+        <p className="break-words font-light">{value ?? 'Unknown'}</p>
+      </div>
+    );
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <HeaderCard title="Finish Verification" aside={<></>}></HeaderCard>
+      <HeaderCard title="Finish Verification" aside={<></>}>
+        <div className="flex flex-col gap-y-4">
+          <h2 className="text-xl">Verification Info</h2>
+          <div className="flex flex-col gap-4">
+            <VerificationItem
+              title="Contract Address"
+              value={verificationContractAddress}
+            />
+            <VerificationItem title="Address" value={addressToVerify} />
+            <VerificationItem title="Hash" value={hash} />
+            <VerificationItem title="Timestamp" value={timestamp} />
+            <VerificationItem title="Provider" value={providerId} />
+            <VerificationItem title="Signature" value={sig} />
+          </div>
+
+          <div>
+            <Button
+              className="mt-4"
+              onClick={() => {
+                toast.promise(verify(), {
+                  loading: 'Verifying, please wait...',
+                  success: 'Successfully verified!',
+                  error: (e) => 'Verification failed: ' + e.message,
+                });
+              }}
+              disabled={
+                !write || isBusy || isLoading || isSuccess || isPrepareError
+              }
+            >
+              {isLoading
+                ? 'Verifying...'
+                : isSuccess
+                ? 'Transaction Sent'
+                : isError
+                ? 'Verification failed: ' + error?.message
+                : 'Verify Account'}
+            </Button>
+          </div>
+          <div>{data?.hash && <p>Transaction hash: {data.hash}</p>}</div>
+          {(isPrepareError || isError) && (
+            <div>
+              <p>Verification Error</p>
+              <code>
+                {(prepareError as any)?.data?.message ?? 'Unknown error'}
+              </code>
+              <code>{error?.message}</code>
+            </div>
+          )}
+          {isSuccess && (
+            <a href="/verification" className="text-blue-500">
+              Go back to stamps
+            </a>
+          )}
+        </div>
+      </HeaderCard>
     </div>
   );
 };
