@@ -71,20 +71,20 @@ const router = createBrowserRouter([
           {
             path: '',
             children: [
-          {
-            path: '',
-            element: <Governance />,
+              {
+                path: '',
+                element: <Governance />,
               },
               {
                 path: '/governance/new-proposal',
                 element: <NewProposal />,
               },
-          {
-            path: '/governance/proposals/:id',
-            element: <ViewProposal />,
+              {
+                path: '/governance/proposals/:id',
+                element: <ViewProposal />,
+              },
+            ],
           },
-        ],
-      },
         ],
       },
       {
