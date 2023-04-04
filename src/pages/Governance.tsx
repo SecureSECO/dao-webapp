@@ -7,6 +7,7 @@ import {
 } from '@/src/components/ui/Tabs';
 import { Proposal, useProposals } from '@/src/hooks/useProposals';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { Link } from '@/src/components/ui/Link';
 import { useState } from 'react';
 import {
   ProposalSortBy,
@@ -30,7 +31,8 @@ const Governance = () => {
       <HeaderCard
         title="Proposals"
         aside={
-          <Button
+          <Link
+            to="/governance/new-proposal"
             variant="default"
             label="New proposal"
             onClick={() => console.log('New Proposal Clicked')}

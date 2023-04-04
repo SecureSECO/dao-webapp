@@ -25,6 +25,14 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
+export function isNullOrUndefined(value: any): boolean {
+  return value === null || value === undefined;
+}
+
+export function anyNullOrUndefined(...values: any[]): boolean {
+  return values.some(isNullOrUndefined);
+}
+
 export const countdownText = (date: Date) => {
   const now = new Date();
   if (differenceInHours(date, now) > 24) {

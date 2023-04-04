@@ -20,6 +20,7 @@ import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { ProposalCardList } from '@/src/pages/Governance';
 import MembersList from '@/src/components/dashboard/MembersList';
 import { DaoTransfers } from '@/src/pages/Finance';
+import { Link } from '../components/ui/Link';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -128,15 +129,15 @@ const Dashboard = () => {
           loading={proposalsLoading}
           error={proposalsError}
         />
-        {/* TODO: replace with <Link /> */}
-        <Button
+        <Link
           variant="outline"
           className="flex flex-row items-center gap-x-2"
+          to="/governance"
           onClick={() => console.log('View all proposals click!')}
         >
           <p>View all proposals</p>
           <HiArrowRight className="h-5 w-5" />
-        </Button>
+        </Link>
       </MainCard>
 
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
@@ -165,15 +166,14 @@ const Dashboard = () => {
           ) : (
             <DaoTransfers daoTransfers={daoTransfers} limit={3} />
           )}
-          {/* TODO: replace with <Link /> */}
-          <Button
+          <Link
             variant="outline"
             className="flex flex-row items-center gap-x-2"
-            onClick={() => console.log('View all transfers click!')}
+            to="/finance"
           >
             <p>View all transfers</p>
             <HiArrowRight className="h-5 w-5" />
-          </Button>
+          </Link>
         </MainCard>
 
         <MainCard
@@ -198,15 +198,15 @@ const Dashboard = () => {
             loading={membersLoading}
             error={membersError}
           />
-          {/* TODO: replace with <Link /> */}
-          <Button
+          <Link
             variant="outline"
             className="flex flex-row items-center gap-x-2"
             onClick={() => console.log('View all members click!')}
+            to="/community"
           >
             <p>View all members</p>
             <HiArrowRight className="h-5 w-5" />
-          </Button>
+          </Link>
         </MainCard>
       </div>
     </div>

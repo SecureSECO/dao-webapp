@@ -12,3 +12,7 @@ test('bigIntToFloat correct on 123456781234567812345678n, decimal 18', () => {
     123456.78123456781
   );
 });
+
+test('bigIntToFloat correct on 1n, decimal 0 (ERC721)', () => {
+  expect(bigIntToFloat(1n, 0)).toBe(1);
+});

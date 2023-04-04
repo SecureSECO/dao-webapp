@@ -40,3 +40,7 @@ export const TooHighAmount: Story = {
     />
   ),
 };
+
+export const NftAmount: Story = {
+  render: () => <TokenAmount amount={1n} tokenDecimals={0} symbol="The NFT" />,
+};

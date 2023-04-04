@@ -7,8 +7,8 @@
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    @apply text-gray-100 shadow-[inset_0_0_0_30px] shadow-gray-600;
-    -webkit-text-fill-color: #f3f4f6 !important;
+    @apply text-gray-100 shadow-[inset_0_0_0_30px] shadow-white dark:shadow-slate-800;
+    -webkit-text-fill-color: #aaa !important;
   }
 
   html,
@@ -28,4 +28,42 @@
   ::selection {
     @apply bg-blue-500 text-gray-700;
   }
+}
+
+.styled-editor-content .ProseMirror {
+  padding: 12px 16px;
+  height: 100%;
+  min-height: 112px;
+}
+
+.styled-editor-content .ProseMirror:focus {
+  outline: none;
+}
+
+.styled-editor-content .ProseMirror ul {
+  list-style-type: decimal;
+  padding: 0 1rem;
+}
+
+.styled-editor-content .ProseMirror ol {
+  list-style-type: disc;
+  padding: 0 1rem;
+}
+
+.styled-editor-content .ProseMirror a {
+  color: #003bf5;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.styled-editor-content .ProseMirror a:hover {
+  color: #0031ad;
+}
+
+.styled-editor-content .ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
