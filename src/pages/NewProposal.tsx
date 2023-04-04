@@ -499,6 +499,7 @@ export const StepThree = ({
     formState: { errors },
     handleSubmit,
     setValue,
+    control
   } = useForm<StepThreeData>();
 
   const [actions, setActions] = useState<Action[]>([]);
@@ -558,6 +559,7 @@ export const StepThree = ({
             <ProposalActionList
               actions={actions}
               register={register}
+              control={control}
               setValue={setValue}
               errors={errors}
             />

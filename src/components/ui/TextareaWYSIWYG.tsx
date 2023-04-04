@@ -5,7 +5,11 @@ import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import clsx from 'clsx';
 import React, { useCallback, useState, useEffect } from 'react';
-import { FieldError, UseFormClearErrors, UseFormSetError, useFormContext } from 'react-hook-form';
+import {
+  FieldError,
+  UseFormClearErrors,
+  UseFormSetError,
+} from 'react-hook-form';
 import ReactDOM from 'react-dom';
 import {
   FaBold,

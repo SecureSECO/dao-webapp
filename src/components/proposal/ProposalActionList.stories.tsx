@@ -17,7 +17,7 @@ type Story = StoryObj<typeof ProposalActionList>;
 
 const StoryBuilder = (actions: Action[]): Story => ({
   render: () => {
-    const { register, setValue } = useForm();
+    const { register, setValue, control } = useForm();
     return (
       <form>
         <ProposalActionList
@@ -25,6 +25,7 @@ const StoryBuilder = (actions: Action[]): Story => ({
           register={register}
           errors={{ actions: [] }}
           setValue={setValue}
+          control={control}
         />
       </form>
     );

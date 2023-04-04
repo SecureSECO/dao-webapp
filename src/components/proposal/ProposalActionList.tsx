@@ -11,11 +11,13 @@ import { FieldErrors } from 'react-hook-form';
 export const ProposalActionList = ({
   actions,
   register,
+  control,
   setValue,
   errors,
 }: {
   actions: Action[];
   register: any;
+  control: any;
   setValue: any;
   errors: FieldErrors<StepThreeData>;
 }) => (
@@ -36,8 +38,8 @@ export const ProposalActionList = ({
         case 'mint_tokens':
           return (
             <MintTokensAction
-              action={action}
               register={register}
+              control={control}
               prefix={index.toString()}
               key={index}
               errors={errors.actions ? errors.actions[index] : undefined}
