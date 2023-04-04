@@ -5,16 +5,31 @@ import { toast } from 'react-hot-toast';
 import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
-import { apiUrl, verificationContractAddress } from '../main';
-import { Stamp } from '../types/Stamp';
-import { VerificationThreshold } from '../types/VerificationThreshold';
 import { MainCard } from '../components/ui/MainCard';
 import { HiCheckBadge, HiClock, HiUserCircle } from 'react-icons/hi2';
 import { AiFillGithub, AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
-import { StampInfo } from '../types/StampInfo';
-import { VerificationHistory } from '../types/VerificationHistory';
 import RecentVerificationCard from '../components/ui/RecentVerificationCard';
+
+export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
+export type StampInfo = {
+  id: string;
+  displayName: string;
+  url: string;
+  icon: JSX.Element;
+};
+
+export type VerificationHistory = {
+  id: string;
+  timestamp: number;
+  isExpired: boolean;
+  stamp: Stamp;
+};
+
+export type VerificationThreshold = [
+  timestamp: BigNumber,
+  threshold: BigNumber
+];
 
 export const availableStamps: StampInfo[] = [
   {
@@ -37,6 +52,12 @@ export const availableStamps: StampInfo[] = [
   },
 ];
 
+/**
+ * Check if a given stamp is currently verified
+ * @param thresholdHistory The threshold history
+ * @param stamp The stamp
+ * @returns An object containing information about the verification status
+ */
 export const isVerified = (
   thresholdHistory: VerificationThreshold[],
   stamp: Stamp | null
@@ -84,6 +105,12 @@ export const isVerified = (
   };
 };
 
+/**
+ * Gets the threshold for a given timestamp
+ * @param timestamp The timestamp in seconds
+ * @param thresholdHistory The threshold history
+ * @returns The threshold at the given timestamp
+ */
 const getThresholdForTimestamp = (
   timestamp: number,
   thresholdHistory: VerificationThreshold[]
@@ -99,14 +126,14 @@ const Verification = () => {
   const { address } = useAccount();
 
   const { data, isError, error, isLoading } = useContractRead({
-    address: verificationContractAddress,
+    address: import.meta.env.VITE_VERIFY_CONTRACT,
     abi: verificationAbi,
     functionName: 'getStamps',
     args: [address],
   });
 
   const { data: rData } = useContractRead({
-    address: verificationContractAddress,
+    address: import.meta.env.VITE_VERIFY_CONTRACT,
     abi: verificationAbi,
     functionName: 'reverifyThreshold',
     args: [],
@@ -118,7 +145,7 @@ const Verification = () => {
     error: vError,
     isLoading: vIsLoading,
   } = useContractRead({
-    address: verificationContractAddress,
+    address: import.meta.env.VITE_VERIFY_CONTRACT,
     abi: verificationAbi,
     functionName: 'getThresholdHistory',
     args: [],
@@ -131,7 +158,7 @@ const Verification = () => {
     async onSuccess(data) {
       try {
         // Send the signature to the API
-        const response = await fetch(`${apiUrl}/verify`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/verify`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

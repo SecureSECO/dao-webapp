@@ -1,33 +1,14 @@
-import { AiFillCheckCircle, AiFillHourglass } from 'react-icons/ai';
-import React from 'react';
-import { Stamp } from '../../types/Stamp';
+import {
+  Stamp,
+  StampInfo,
+  VerificationThreshold,
+  isVerified,
+} from '../../pages/Verification';
 import { Button } from './Button';
 import { Card } from './Card';
-import { VerificationThreshold } from '@/src/types/VerificationThreshold';
-import { BigNumber } from 'ethers';
-import { isVerified } from '@/src/pages/Verification';
-import { HiCalendar, HiChartBar, HiLink, HiXCircle } from 'react-icons/hi2';
-import { StampInfo } from '@/src/types/StampInfo';
-import { intervalToDuration } from 'date-fns';
+import { HiCalendar, HiChartBar, HiLink } from 'react-icons/hi2';
 import { FaHourglass } from 'react-icons/fa';
 import { StatusBadge } from './StatusBadge';
-
-const StampTag = ({
-  icon,
-  text,
-  className,
-}: {
-  icon: JSX.Element;
-  text: string;
-  className?: string;
-}) => (
-  <div
-    className={`flex items-center gap-x-2 text-slate-600 dark:text-slate-400 ${className}`}
-  >
-    {icon}
-    <p className="font-normal">{text}</p>
-  </div>
-);
 
 const StampCard = ({
   stampInfo,
@@ -44,12 +25,10 @@ const StampCard = ({
   const {
     verified,
     expired,
-    preCondition,
     timeLeftUntilExpiration,
   }: {
     verified: boolean;
     expired: boolean;
-    preCondition: boolean;
     timeLeftUntilExpiration: number | null;
   } = isVerified(thresholdHistory, stamp);
 
@@ -124,7 +103,7 @@ const StampCard = ({
 
       <Button
         className="mt-4"
-        disabled={true}
+        // disabled={true}
         onClick={() => verify(providerId)}
       >
         {verified ? 'Reverify' : 'Verify'}
