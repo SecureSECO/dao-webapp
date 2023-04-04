@@ -489,7 +489,7 @@ const StepThree = ({
   StepNavigator?: React.ReactNode;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
-  const { register, getValues, handleSubmit, control } = useForm();
+  const { register, getValues, handleSubmit, setValue } = useForm();
 
   const [actions, setActions] = useState<Action[]>([]);
 
@@ -544,7 +544,7 @@ const StepThree = ({
             <ProposalActionList
               actions={actions}
               register={register}
-              control={control}
+              setValue={setValue}
             />
             <AddAction />
           </>

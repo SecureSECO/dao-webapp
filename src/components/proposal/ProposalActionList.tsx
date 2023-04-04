@@ -5,11 +5,11 @@ import { WithdrawAssetsAction } from './WithdrawAssetsAction';
 export const ProposalActionList = ({
   actions,
   register,
-  control,
+  setValue,
 }: {
   actions: Action[];
   register: any;
-  control: any;
+  setValue: any;
 }) => (
   <div>
     {actions.map((action: Action, index) => {
@@ -19,8 +19,9 @@ export const ProposalActionList = ({
             <WithdrawAssetsAction
               action={action}
               register={register}
-              control={control}
               prefix={index.toString()}
+              key={index}
+              setValue={setValue}
             />
           );
         case 'mint_tokens':
@@ -29,6 +30,7 @@ export const ProposalActionList = ({
               action={action}
               register={register}
               prefix={index.toString()}
+              key={index}
             />
           );
       }
