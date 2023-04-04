@@ -86,6 +86,8 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
   };
 
   const voteValue = watch('vote_value');
+  const userCanVote =
+    !loading && error === null && canVote[voteValue as VoteValueStringUpper];
 
   return (
     <form onSubmit={handleSubmit(onSubmitVote)} className="space-y-2">
@@ -111,22 +113,16 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
           />
         </Accordion>
       </RadioGroup>
-      {/* 
-        Button is disabled if the user cannot vote for the currently selected voting option
-      */}
-      <Button
-        disabled={
-          loading ||
-          error !== null ||
-          !canVote[voteValue as VoteValueStringUpper]
-        }
-        type="submit"
-        onClick={() => false}
-      >
+      {/* Button is disabled if the user cannot vote for the currently selected voting option */}
+      <Button disabled={!userCanVote} type="submit" onClick={() => false}>
         Vote{' '}
-        <span className="ml-1 inline-block lowercase first-letter:uppercase">
-          {voteValue ?? 'Yes'}
-        </span>
+        {!userCanVote ? (
+          'submitted'
+        ) : (
+          <span className="ml-1 inline-block lowercase first-letter:uppercase">
+            {voteValue ?? 'Yes'}
+          </span>
+        )}
       </Button>
     </form>
   );
@@ -155,6 +151,13 @@ const VoteOption = ({
 
   return (
     <div className="flex flex-row items-center gap-x-2">
+      {proposal.status === ProposalStatus.ACTIVE && register && (
+        <RadioGroupItem
+          {...register('vote_value')}
+          value={voteValueString}
+          id={voteValueString}
+        />
+      )}
       <AccordionItem value={voteValueString}>
         <AccordionTrigger className="flex w-full flex-col gap-y-2">
           <div className="flex w-full flex-row items-center justify-between text-left">
@@ -208,13 +211,6 @@ const VoteOption = ({
           )}
         </AccordionContent>
       </AccordionItem>
-      {proposal.status === ProposalStatus.ACTIVE && register && (
-        <RadioGroupItem
-          {...register('vote_value')}
-          value={voteValueString}
-          id={voteValueString}
-        />
-      )}
     </div>
   );
 };

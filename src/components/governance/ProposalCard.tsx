@@ -126,16 +126,12 @@ const getProposalTags = (proposal: Proposal) => {
         variant: 'countdown',
       }
     );
-  if (proposal.status === ProposalStatus.ACTIVE) {
+  else {
     const yesPercentage =
       Number((proposal.result.yes * 10000n) / proposal.totalVotingWeight) / 100;
     const noPercentage =
       Number((proposal.result.no * 10000n) / proposal.totalVotingWeight) / 100;
     res.push(
-      {
-        children: 'Ends in ' + countdownText(proposal.endDate),
-        variant: 'countdown',
-      },
       {
         children: yesPercentage.toString() + '%',
         variant: 'yes',
@@ -145,6 +141,13 @@ const getProposalTags = (proposal: Proposal) => {
         variant: 'no',
       }
     );
+  }
+
+  if (proposal.status === ProposalStatus.ACTIVE) {
+    res.push({
+      children: 'Ends in ' + countdownText(proposal.endDate),
+      variant: 'countdown',
+    });
   }
 
   // TODO: add tag for type of proposal (when we add support for different types)
