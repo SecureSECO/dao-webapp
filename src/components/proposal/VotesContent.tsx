@@ -17,7 +17,7 @@ import { useForm, SubmitHandler, UseFormRegister } from 'react-hook-form';
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { useCanVote } from '@/src/hooks/useCanVote';
 import { useAccount } from 'wagmi';
-import { Address } from '@/src/components/ui/Address';
+import { Address, AddressLength } from '@/src/components/ui/Address';
 
 type VoteFormData = {
   vote_value: string;
@@ -185,7 +185,7 @@ const VoteOption = ({
               >
                 <Address
                   address={vote.address}
-                  maxLength={14}
+                  maxLength={AddressLength.Small}
                   hasLink={true}
                   showCopy={false}
                   replaceYou={false}

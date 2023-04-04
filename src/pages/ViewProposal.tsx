@@ -44,7 +44,7 @@ const ViewProposal = () => {
                   </span>
                   <Address
                     address={proposal.creatorAddress}
-                    maxLength={AddressLength.medium}
+                    maxLength={AddressLength.Medium}
                     hasLink={true}
                     showCopy={false}
                   />

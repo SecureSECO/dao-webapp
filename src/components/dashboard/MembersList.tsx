@@ -1,4 +1,4 @@
-import { Address } from '@/src/components/ui/Address';
+import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { Member } from '@/src/hooks/useMembers';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
@@ -22,7 +22,7 @@ const MemberCard = ({ member }: { member: Member }) => {
         <Address
           address={member.address}
           hasLink={true}
-          maxLength={20}
+          maxLength={AddressLength.Medium}
           showCopy={false}
         />
       </div>
