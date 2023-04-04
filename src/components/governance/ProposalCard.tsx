@@ -1,5 +1,5 @@
 import { Card } from '@/src/components/ui/Card';
-import { Address } from '@/src/components/ui//Address';
+import { Address, AddressLength } from '@/src/components/ui//Address';
 import Header from '@/src/components/ui/Header';
 import { cn } from '@/src/lib/utils';
 import { cva } from 'class-variance-authority';
@@ -90,7 +90,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
         <span className="text-gray-500 dark:text-slate-400">Published by</span>
         <Address
           address={creatorAddress}
-          maxLength={16}
+          maxLength={AddressLength.medium}
           hasLink={true}
           showCopy={true}
         />

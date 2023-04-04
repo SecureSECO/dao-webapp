@@ -1,12 +1,12 @@
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useProposal } from '@/src/hooks/useProposal';
 import { useParams } from 'react-router';
-import { Address } from '@/src/components/ui/Address';
-import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
+import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { ProposalStatus } from '@aragon/sdk-client';
 import VotesContent from '@/src/components/proposal/VotesContent';
+import { StatusBadge } from '../components/ui/StatusBadge';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -27,9 +27,8 @@ const ViewProposal = () => {
             loading={loading}
             title={proposal?.metadata.title ?? 'Proposal not found'}
             aside={
-              <ProposalStatusBadge
+              <StatusBadge
                 status={proposal?.status ?? ProposalStatus.PENDING}
-                size="md"
               />
             }
             className="col-span-full"
@@ -45,7 +44,7 @@ const ViewProposal = () => {
                   </span>
                   <Address
                     address={proposal.creatorAddress}
-                    maxLength={16}
+                    maxLength={AddressLength.medium}
                     hasLink={true}
                     showCopy={false}
                   />
