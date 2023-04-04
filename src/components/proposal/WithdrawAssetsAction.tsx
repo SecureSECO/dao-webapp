@@ -1,59 +1,129 @@
 import { ActionWithdraw } from '@/src/lib/Actions';
-import { Controller } from 'react-hook-form';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/Dropdown';
 import { Input } from '../ui/Input';
 import { Label } from '../ui/Label';
+import { UseDaoBalanceData, useDaoBalance } from '@/src/hooks/useDaoBalance';
+import Loader from '../ui/Loader';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from '../ui/Dialog';
+import { HiArrowRight } from 'react-icons/hi2';
+import { Button } from '../ui/Button';
+import { AddressPattern } from '@/src/lib/Patterns';
+import { anyNullOrUndefined } from '@/src/lib/utils';
+import { Card } from '../ui/Card';
+
+const Description = ({ text }: { text: string }) => (
+  <p className="text-slate-500">{text}</p>
+);
 
 export const WithdrawAssetsAction = ({
   action,
   register,
+  setValue,
   prefix,
-  control,
 }: {
   action: ActionWithdraw;
   register: any;
+  setValue: any;
   prefix: string;
-  control: any;
-}) => (
-  <div className="flex flex-col gap-4">
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="recipient">Recipient</Label>
-      <Input {...register(`${prefix}.recipient`)} type="text" id="recipient" />
-    </div>
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="tokenType">Token</Label>
-      <Controller
-        control={control}
-        name="tokenType"
-        rules={{ required: true }}
-        defaultValue=""
-        render={({ field }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger>Select a token</DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <span>Ja een of ander token</span>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      />
-    </div>
-    <div className="flex flex-col gap-2">
-      <Label htmlFor="amount">Amount</Label>
-      <Input {...register(`${prefix}.amount`)} type="text" id="amount" />
-    </div>
-  </div>
-);
+}) => {
+  const daoBalanceData = useDaoBalance({});
 
-const TokenList = () => {
+  const tokenAddressInputName = `${prefix}.TokenAddress`;
 
-}
+  const handleSetTokenAddress = (value: string) =>
+    setValue(tokenAddressInputName, value);
+
+  return (
+    <Card className="flex flex-col gap-4">
+      <h1 className="text-2xl">Withdraw Assets</h1>
+      <Description text="Withdraw assets from the DAO treasury" />
+      <div className="flex flex-col gap-2">
+        <Label className="text-lg" htmlFor="recipient">
+          Recipient
+        </Label>
+        <Description text="The wallet that receives the tokens" />
+        <Input
+          {...register(`${prefix}.recipient`)}
+          type="text"
+          id="recipient"
+          defaultValue={action.to}
+        />
+      </div>
+      <Label className="text-lg" htmlFor="tokenAddress">
+        Token
+      </Label>
+      <Description text="Token to withdraw" />
+      <div className="flex w-full gap-2">
+        <div className="basis-1/3">
+          <Dialog>
+            <DialogTrigger className="h-full w-full rounded-md border-2 border-solid">
+              Select token
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>Select token to withdraw</DialogHeader>
+              <TokenSelectorDialogButtons
+                daoBalanceData={daoBalanceData}
+                setTokenAddress={handleSetTokenAddress}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
+        <Input
+          {...register(tokenAddressInputName)}
+          className="basis-2/3"
+          name="tokenAddress"
+          defaultValue="Or enter a custom token address"
+          pattern={AddressPattern}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label className="text-lg" htmlFor="amount">
+          Amount
+        </Label>
+        <Description text="Amount is calculated in number of tokens, not dollar value" />
+        <Input
+          {...register(`${prefix}.amount`)}
+          type="text"
+          id="amount"
+          defaultValue={action.amount}
+        />
+      </div>
+    </Card>
+  );
+};
+
+export const TokenSelectorDialogButtons = ({
+  daoBalanceData,
+  setTokenAddress,
+}: {
+  daoBalanceData: UseDaoBalanceData;
+  setTokenAddress: any;
+}): JSX.Element => {
+  if (daoBalanceData.loading) return <Loader />;
+  if (daoBalanceData.error) return <span> {daoBalanceData.error} </span>;
+
+  return (
+    <>
+      {daoBalanceData.daoBalances.map((token, index) => {
+        if (anyNullOrUndefined(token.name, token.symbol, token.address))
+          return <></>;
+
+        return (
+          <DialogClose
+            key={index}
+            type="button"
+            // icon={HiArrowRight}
+            onClick={() => setTokenAddress(token.address!)}
+          >
+            {token.name!}
+          </DialogClose>
+        );
+      })}
+    </>
+  );
+};
