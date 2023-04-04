@@ -38,7 +38,7 @@ const Governance = () => {
             onClick={() => console.log('New Proposal Clicked')}
           />
         }
-      ></HeaderCard>
+      />
       <ProposalTabs />
     </div>
   );

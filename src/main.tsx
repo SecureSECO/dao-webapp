@@ -23,6 +23,7 @@ import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import NewProposal from '@/src/pages/NewProposal';
 import Verification from './pages/Verification';
 import { Toaster } from 'react-hot-toast';
+import ViewProposal from '@/src/pages/ViewProposal';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -69,12 +70,21 @@ const router = createBrowserRouter([
         children: [
           {
             path: '',
-            element: <Governance />,
-          },
+            children: [
           {
-            path: '/governance/new-proposal',
-            element: <NewProposal />,
+            path: '',
+            element: <Governance />,
+              },
+              {
+                path: '/governance/new-proposal',
+                element: <NewProposal />,
+              },
+          {
+            path: '/governance/proposals/:id',
+            element: <ViewProposal />,
           },
+        ],
+      },
         ],
       },
       {

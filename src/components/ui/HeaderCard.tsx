@@ -14,11 +14,11 @@ export interface HeaderCardProps
   extends CardProps,
     VariantProps<typeof headerCardVariants> {
   title: string;
-  aside: ReactNode;
+  aside?: ReactNode;
 }
 
 const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
-  ({ className, title, aside: button, ...props }, ref) => {
+  ({ className, title, aside = '', ...props }, ref) => {
     return (
       <Card
         ref={ref}
@@ -26,13 +26,13 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
         className={cn(
           headerCardVariants({}),
           className,
-          'flex flex-col justify-between gap-y-8'
+          'flex flex-col justify-between gap-y-6'
         )}
         {...props}
       >
         <div className="flex w-full flex-col justify-between gap-y-6 sm:flex-row sm:items-center">
           <Header>{title}</Header>
-          <>{button}</>
+          <>{aside}</>
         </div>
         {props.children}
       </Card>

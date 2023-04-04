@@ -2,6 +2,7 @@
 import { cva } from 'class-variance-authority';
 import React from 'react';
 import { HiClipboardCopy } from 'react-icons/hi';
+import { useAccount } from 'wagmi';
 
 //TODO improve this (hidde will make it way better later)
 export enum AddressLength {
@@ -16,6 +17,7 @@ type AddressProps = {
   maxLength: AddressLength;
   hasLink: boolean;
   showCopy: boolean;
+  replaceYou?: boolean;
 };
 
 const truncateMiddle = (address: string, maxLength: number) => {
@@ -35,9 +37,14 @@ export const Address: React.FC<AddressProps> = ({
   maxLength,
   hasLink,
   showCopy,
+  replaceYou = true,
 }) => {
+  const { address: currentUser } = useAccount();
   const etherscanURL = `https://etherscan.io/address/${address}`;
-  const truncatedAddress = truncateMiddle(address, maxLength);
+  const content =
+    address.toLowerCase() === currentUser?.toLowerCase() && replaceYou
+      ? 'you'
+      : truncateMiddle(address, maxLength);
 
   const handleClick = () => {
     if (showCopy) {
@@ -54,10 +61,10 @@ export const Address: React.FC<AddressProps> = ({
           rel="noopener noreferrer"
           className="text-blue-600"
         >
-          {truncatedAddress}
+          {content}
         </a>
       ) : (
-        <span>{truncatedAddress}</span>
+        <span>{content}</span>
       )}
 
       {showCopy && (
