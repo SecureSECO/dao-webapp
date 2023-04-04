@@ -117,6 +117,7 @@ export const TokenSelectorDialogButtons = ({
           <DialogClose
             key={index}
             type="button"
+          className="flex h-10 flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
             // icon={HiArrowRight}
             onClick={() => setTokenAddress(token.address!)}
           >

@@ -515,19 +515,23 @@ const StepThree = ({
           <DialogTitle>Add action</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <DialogClose className="flex flex-col gap-2">
-          <Button
-            label="Withdraw assets"
-            variant="subtle"
-            icon={HiArrowRight}
-            onClick={handleAddWithdrawAssetsAction}
-          />
-          <Button
-            label="Mint tokens"
-            variant="subtle"
-            icon={HiArrowRight}
-            onClick={handleAddMintTokensAction}
-          />
+        <DialogClose
+          className="flex h-10 flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
+          onClick={handleAddWithdrawAssetsAction}
+        >
+          <div className="flex flex-row items-center gap-x-2">
+            <HiArrowRight />
+            Withdraw assets
+          </div>
+        </DialogClose>
+        <DialogClose
+          className="flex h-10 flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
+          onClick={handleAddMintTokensAction}
+        >
+          <div className="flex flex-row items-center gap-x-2">
+            <HiArrowRight />
+            Mint tokens
+          </div>
         </DialogClose>
       </DialogContent>
     </Dialog>
