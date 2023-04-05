@@ -1,3 +1,8 @@
+/**
+ * The Link module provides a pre-styled link component based on react-router-dom.
+ * It extends the RouterLink component with additional styling and accepts both icons and labels.
+ */
+
 import * as React from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 import { Link as RouterLink } from 'react-router-dom';
@@ -51,6 +56,12 @@ export interface LinkProps
   to: string;
 }
 
+/**
+ * The Link component is a pre-styled link element based on react-router-dom.
+ * It extends the RouterLink component with additional styling and accepts both icons and labels.
+ * @param props - Props for the Link component.
+ * @returns A Link React element.
+ */
 const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   (
     { className, icon, iconNode, variant, size, label, children, ...props },
