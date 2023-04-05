@@ -1,9 +1,18 @@
+/**
+ * The Progress module provides a customizable progress bar component.
+ * It supports different sizes and variants, and can be used to display the progress of an operation.
+ */
+
 import * as React from 'react';
 import * as ProgressPrimitive from '@radix-ui/react-progress';
 
 import { cn } from '@/src/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';
 
+/**
+ * `progressVariants` defines the available variants and sizes for the Progress component.
+ * It includes configuration for default and alternative variants, as well as small and medium sizes.
+ */
 const progressVariants = cva('relative w-full overflow-hidden rounded-full', {
   variants: {
     size: {
@@ -21,6 +30,9 @@ const progressVariants = cva('relative w-full overflow-hidden rounded-full', {
   },
 });
 
+/**
+ * `indicatorVariants` defines the available indicator variants for the Progress component.
+ */
 const indicatorVariants = cva('h-full w-full flex-1 transition-all', {
   variants: {
     variant: {
@@ -33,6 +45,11 @@ const indicatorVariants = cva('h-full w-full flex-1 transition-all', {
   },
 });
 
+/**
+ * The Progress component is a customizable progress bar that supports different sizes and variants.
+ * @param {React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> & VariantProps<typeof progressVariants>} props - The properties for the Progress component.
+ * @returns A Progress React element.
+ */
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> &
