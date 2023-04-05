@@ -2,11 +2,21 @@ import { cn } from '@/src/lib/utils';
 import React from 'react';
 import { FieldError } from 'react-hook-form';
 
+/**
+ * ErrorWrapperProps interface represents the props for the ErrorWrapper component.
+ * @extends React.HTMLAttributes<HTMLDivElement> - Extends the HTMLDivElement attributes.
+ */
 interface ErrorWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
-  error?: FieldError;
-  name: string;
+  error?: FieldError; // Error object from react-hook-form.
+  name: string; // Name of the field related to the error.
 }
 
+/**
+ * The ErrorWrapper component is a container for form elements that displays error messages
+ * associated with the provided error object from react-hook-form.
+ * @param props - Props for the ErrorWrapper component.
+ * @returns An ErrorWrapper React element.
+ */
 export const ErrorWrapper = React.forwardRef<HTMLDivElement, ErrorWrapperProps>(
   ({ children, error, name, className }, ref) => {
     return (
