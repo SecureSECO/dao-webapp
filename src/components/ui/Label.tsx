@@ -1,5 +1,5 @@
 /**
- * The Label module provides a pre-styled label component based on @radix-ui/react-label.
+ * The Label module provides a pre-styled label component based on @radix-ui/react-label and https://ui.shadcn.com/docs/primitives/label
  */
 
 import * as React from 'react';
