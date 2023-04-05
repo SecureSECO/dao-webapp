@@ -87,7 +87,7 @@ export const WithdrawAssetsAction = ({
             className="basis-2/3"
             name="tokenAddress"
             defaultValue="Or enter a custom token address"
-            pattern={AddressPattern}
+            // pattern={AddressPattern}
             error={errors?.tokenAddress ?? undefined}
           />
         </ErrorWrapper>

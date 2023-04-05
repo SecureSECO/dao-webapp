@@ -64,6 +64,12 @@ export type ActionWithdrawFormData = {
   amount: string;
 };
 
-export type ActionMintTokenFormData = {};
+export type MintAddressAmount = {
+  address: string;
+  amount: number;
+};
+export type ActionMintTokenFormData = {
+  wallets: MintAddressAmount[];
+};
 
 export type ActionFormData = ActionWithdrawFormData | ActionMintTokenFormData;

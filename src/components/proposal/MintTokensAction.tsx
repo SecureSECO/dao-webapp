@@ -3,6 +3,7 @@ import {
   ActionMintToken,
   ActionMintTokenFormData,
   EmptyActionMintToken,
+  MintAddressAmount,
 } from '@/src/lib/Actions';
 import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
 import { Input } from '../ui/Input';
@@ -12,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '../ui/Card';
 import { FieldErrors, useFieldArray } from 'react-hook-form';
 import { StepThreeData } from '@/src/pages/NewProposal';
+import { ErrorWrapper } from '../ui/ErrorWrapper';
 
 export const MintTokensAction = ({
   register,
@@ -31,23 +33,17 @@ export const MintTokensAction = ({
 
   useEffect(() => append({ address: '', amount: '' }), []);
 
-  // const handleRemove = (index: number) => {
-  // const newMintTokens = _action.inputs.mintTokensToWallets.slice(0);
-  // newMintTokens.splice(index, 1);
-  // setAction({ ..._action, inputs: { mintTokensToWallets: newMintTokens } });
-  // };
-
   return (
     <Card className="grid grid-cols-3 gap-4">
       <span className="col-span-1 pl-2">Address</span>
       <span className="col-span-1 pl-2">Tokens</span>
       <span className="col-span-1" />
-      {/* TODO: Fix removal of elements */}
       {fields.map((field, index) => (
         <AddressTokensMint
           key={field.id}
           unique_prefix={`${prefix}.${field.id}`}
           register={register}
+          errors={errors?.wallets?.[index] ?? undefined}
           onRemove={() => remove(index)}
         />
       ))}
@@ -62,39 +58,39 @@ export const MintTokensAction = ({
   );
 };
 
-type AddressToken = {
-  address: string;
-  amount: string | number;
-};
-
 const AddressTokensMint = ({
   register,
   onRemove,
+  errors,
   unique_prefix,
 }: {
   register: any;
   onRemove: () => void;
+  errors: FieldErrors<MintAddressAmount> | undefined;
   unique_prefix: string;
 }) => (
   <div className="col-span-3 grid grid-cols-3 gap-4">
     <div className="flex flex-col gap-2">
-      {/* <Label htmlFor="address">Address</Label> */}
-      {/* TODO Add pattern for validation */}
-      <Input
-        {...register(`${unique_prefix}.address`)}
-        type="text"
-        id="address"
-        pattern={AddressPattern}
-      />
+      <ErrorWrapper name="Address" error={errors?.address ?? undefined}>
+        <Input
+          {...register(`${unique_prefix}.address`)}
+          type="text"
+          id="address"
+          error={errors?.address ?? undefined}
+          pattern={AddressPattern}
+        />
+      </ErrorWrapper>
     </div>
     <div className="flex flex-col gap-2">
-      {/* <Label htmlFor="tokens">Tokens</Label> */}
-      <Input
-        {...register(`${unique_prefix}.amount`)}
-        type="number"
-        id="tokens"
-        pattern={NumberPattern}
-      />
+      <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
+        <Input
+          {...register(`${unique_prefix}.amount`)}
+          type="number"
+          id="tokens"
+          error={errors?.amount ?? undefined}
+          pattern={NumberPattern}
+        />
+      </ErrorWrapper>
     </div>
     <HiXMark
       className="h-5 w-5 cursor-pointer self-center"
