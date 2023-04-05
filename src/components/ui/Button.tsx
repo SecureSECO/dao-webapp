@@ -1,9 +1,17 @@
+/**
+ * This component uses the `class-variance-authority` package to generate dynamic class names based on the provided props.
+ * For more information on the available variants, see https://ui.shadcn.com/docs/primitives/button.
+ */
+
 import React, { ReactNode } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '../../lib/utils';
 import { IconType } from 'react-icons/lib';
 
+/**
+ * The generated variants for the `Button` component, based on the `class-variance-authority` package.
+ */
 const buttonVariants = cva(
   'active:scale-95 leading-4 inline-flex w-fit items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
   {
@@ -57,6 +65,29 @@ export interface ButtonProps
   iconNode?: ReactNode | null;
 }
 
+/**
+ * A component that renders a button with customizable styling and an optional icon.
+ * @param props - Props for the `Button` component.
+ * @param [props.className] - Additional CSS classes to apply to the button.
+ * @param [props.icon] - The icon to display in the button. If `iconNode` is also provided, this icon will be ignored.
+ * @param [props.iconNode] - A custom icon node to display in the button. If provided, `icon` will be ignored.
+ * @param [props.variant="default"] - The variant of the button to use.
+ * @param [props.size="default"] - The size of the button to use.
+ * @param [props.label] - The label to display in the button, which will be read by screen readers.
+ * @param [props.children] - The content to display inside the button.
+ * @returns - A React element representing the `Button` component.
+ * @example
+ * <Button
+ *   icon={AiFillCheckCircle}
+ *   label="Submit"
+ *   variant="outline"
+ *   size="lg"
+ *   onClick={() => console.log('Button clicked!')}
+ * >
+ *   Submit
+ * </Button>
+ *  @remark - You can pass either a label or children to the button, if you pass both, the label will be used.
+ */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     { className, icon, iconNode, variant, size, label, children, ...props },
