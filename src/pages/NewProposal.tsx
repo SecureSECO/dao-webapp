@@ -8,6 +8,7 @@ import {
   UseFormGetValues,
   FormProvider,
   Controller,
+  useFieldArray,
 } from 'react-hook-form';
 import Header from '@/src/components/ui/Header';
 import { Progress } from '@/src/components/ui/Progress';
@@ -30,6 +31,8 @@ import {
   EmptyActionMintToken,
   emptyActionWithdraw,
   ActionFormData,
+  emptyActionWithdrawFormData,
+  emptyActionMintTokenFormData,
 } from '../lib/Actions';
 import {
   Dialog,
@@ -499,10 +502,18 @@ export const StepThree = ({
     formState: { errors },
     handleSubmit,
     setValue,
-    control
+    getValues,
+    control,
   } = useForm<StepThreeData>();
 
-  const [actions, setActions] = useState<Action[]>([]);
+  const prefix = 'stepThree';
+
+  const { fields, append, remove } = useFieldArray({
+    name: prefix,
+    control: control,
+  });
+
+  // const [actions, setActions] = useState<Action[]>([]);
 
   const onSubmit = (data: any) => {
     console.log(data);
@@ -510,17 +521,21 @@ export const StepThree = ({
     // TODO: Handle submission
   };
 
-  const handleAddWithdrawAssetsAction = () => {
-    setActions((prev) => [...prev, emptyActionWithdraw]);
-  };
+  const handleAddWithdrawAssetsAction = () =>
+    append(emptyActionWithdrawFormData);
 
   const handleAddMintTokensAction = () => {
-    setActions((prev) => [...prev, EmptyActionMintToken]);
+    append(emptyActionMintTokenFormData);
   };
 
   const AddAction = () => (
     <Dialog>
-      <DialogTrigger>Add action</DialogTrigger>
+      <DialogTrigger className=" h-10 w-fit bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400">
+        <div className="flex w-fit flex-row items-center gap-x-2">
+          <HiPlus className="h-5 w-5" />
+          Add action
+        </div>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add action</DialogTitle>
@@ -552,16 +567,19 @@ export const StepThree = ({
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <span>If option yes wins</span>
-        {actions.length === 0 ? (
+        {fields.length === 0 ? (
           <AddAction />
         ) : (
           <>
             <ProposalActionList
-              actions={actions}
+              fields={fields}
               register={register}
               control={control}
+              prefix={prefix}
+              getValues={getValues}
               setValue={setValue}
               errors={errors}
+              remover={remove}
             />
             <AddAction />
           </>

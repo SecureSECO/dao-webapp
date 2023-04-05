@@ -4,49 +4,65 @@ import {
   ActionMintTokenFormData,
   EmptyActionMintToken,
   MintAddressAmount,
+  emptyActionMintTokenFormData,
 } from '@/src/lib/Actions';
 import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
 import { Input } from '../ui/Input';
-import { HiPlus, HiXMark } from 'react-icons/hi2';
+import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
 import { useEffect, useState } from 'react';
 import { Card } from '../ui/Card';
 import { FieldErrors, useFieldArray } from 'react-hook-form';
 import { StepThreeData } from '@/src/pages/NewProposal';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
+import { MainCard } from '../ui/MainCard';
 
 export const MintTokensAction = ({
   register,
   control,
   prefix,
   errors,
+  onRemove,
 }: {
   register: any;
   control: any;
   prefix: string;
   errors: FieldErrors<ActionMintTokenFormData> | undefined;
+  onRemove: () => void;
 }) => {
   const { fields, append, remove } = useFieldArray({
     name: `${prefix}.mintFields`,
     control: control,
   });
 
-  useEffect(() => append({ address: '', amount: '' }), []);
-
   return (
-    <Card className="grid grid-cols-3 gap-4">
-      <span className="col-span-1 pl-2">Address</span>
-      <span className="col-span-1 pl-2">Tokens</span>
-      <span className="col-span-1" />
-      {fields.map((field, index) => (
-        <AddressTokensMint
-          key={field.id}
-          unique_prefix={`${prefix}.${field.id}`}
-          register={register}
-          errors={errors?.wallets?.[index] ?? undefined}
-          onRemove={() => remove(index)}
+    <MainCard
+      className="flex flex-col gap-4"
+      header="Mint tokens"
+      icon={HiCircleStack}
+      aside={
+        <Button
+          type="button"
+          icon={HiXMark}
+          onClick={onRemove}
+          variant="ghost"
         />
-      ))}
+      }
+    >
+      <div className="grid grid-cols-3 gap-2">
+        <span className="col-span-1 pl-2 pb-2">Address</span>
+        <span className="col-span-1 pl-2 pb-2">Tokens</span>
+        <span className="col-span-1" />
+        {fields.map((field, index) => (
+          <AddressTokensMint
+            key={field.id}
+            unique_prefix={`${prefix}.${field.id}`}
+            register={register}
+            errors={errors?.wallets?.[index] ?? undefined}
+            onRemove={() => remove(index)}
+          />
+        ))}
+      </div>
       <Button
         variant="subtle"
         type="button"
@@ -54,7 +70,7 @@ export const MintTokensAction = ({
         icon={HiPlus}
         onClick={() => append({ address: '', amount: '' })}
       />
-    </Card>
+    </MainCard>
   );
 };
 

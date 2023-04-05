@@ -10,31 +10,31 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '../ui/Dialog';
-import { HiArrowRight } from 'react-icons/hi2';
+import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
 import { AddressPattern } from '@/src/lib/Patterns';
 import { anyNullOrUndefined } from '@/src/lib/utils';
-import { Card } from '../ui/Card';
 import { FieldErrors } from 'react-hook-form';
 import { StepThreeData } from '@/src/pages/NewProposal';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
+import { MainCard } from '../ui/MainCard';
 
 const Description = ({ text }: { text: string }) => (
   <p className="text-slate-500">{text}</p>
 );
 
 export const WithdrawAssetsAction = ({
-  action,
   register,
   setValue,
   prefix,
   errors,
+  onRemove,
 }: {
-  action: ActionWithdraw;
   register: any;
   setValue: any;
   prefix: string;
   errors: FieldErrors<ActionWithdrawFormData> | undefined;
+  onRemove: any;
 }) => {
   const daoBalanceData = useDaoBalance({});
 
@@ -44,8 +44,19 @@ export const WithdrawAssetsAction = ({
     setValue(tokenAddressInputName, value);
 
   return (
-    <Card className="flex flex-col gap-4">
-      <h1 className="text-2xl">Withdraw Assets</h1>
+    <MainCard
+      className="flex flex-col gap-4"
+      header="Withdraw Assets"
+      icon={HiBanknotes}
+      aside={
+        <Button
+          type="button"
+          icon={HiXMark}
+          onClick={onRemove}
+          variant="ghost"
+        />
+      }
+    >
       <Description text="Withdraw assets from the DAO treasury" />
       <div className="flex flex-col gap-2">
         <Label className="text-lg" htmlFor="recipient">
@@ -57,7 +68,7 @@ export const WithdrawAssetsAction = ({
             {...register(`${prefix}.recipient`)}
             type="text"
             id="recipient"
-            defaultValue={action.to}
+            defaultValue={''}
             error={errors?.recipient ?? undefined}
           />
         </ErrorWrapper>
@@ -102,12 +113,12 @@ export const WithdrawAssetsAction = ({
             {...register(`${prefix}.amount`)}
             type="text"
             id="amount"
-            defaultValue={action.amount}
+            defaultValue={''}
             error={errors?.amount ?? undefined}
           />
         </ErrorWrapper>
       </div>
-    </Card>
+    </MainCard>
   );
 };
 
