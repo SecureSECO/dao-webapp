@@ -133,12 +133,17 @@ const getThresholdForTimestamp = (
   return threshold ? threshold[1] : BigNumber.from(0);
 };
 
+export const verificationAddress =
+  import.meta.env.VITE_USE_SEPOLIA === 'true'
+    ? import.meta.env.VITE_VERIFY_CONTRACT_SEPOLIA
+    : import.meta.env.VITE_VERIFY_CONTRACT;
+
 const Verification = () => {
   const { address, isConnected } = useAccount();
 
   // Gets all the stamps for the current address
   const { data, isError, error, isLoading } = useContractRead({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getStamps',
     args: [address],
@@ -146,7 +151,7 @@ const Verification = () => {
 
   // Gets the reverification threshold
   const { data: rData, refetch } = useContractRead({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'reverifyThreshold',
     args: [],
@@ -154,7 +159,7 @@ const Verification = () => {
 
   // Gets the verification threshold history
   const { data: vData } = useContractRead({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getThresholdHistory',
     args: [],

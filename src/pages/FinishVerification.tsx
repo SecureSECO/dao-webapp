@@ -13,7 +13,7 @@ import {
 } from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
-import { Stamp } from '../pages/Verification';
+import { Stamp, verificationAddress } from '../pages/Verification';
 import {
   Accordion,
   AccordionContent,
@@ -21,6 +21,7 @@ import {
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
 import { HiExclamationCircle } from 'react-icons/hi2';
+import Header from '../components/ui/Header';
 
 const FinishVerification = () => {
   const { address } = useAccount();
@@ -37,7 +38,7 @@ const FinishVerification = () => {
     isError: isPrepareError,
     error: prepareError,
   } = usePrepareContractWrite({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'verifyAddress',
     args: [addressToVerify, hash, parseInt(timestamp ?? ''), providerId, sig],
@@ -103,7 +104,9 @@ const FinishVerification = () => {
   }) => {
     return (
       <div>
-        <h3 className="font-medium">{title}</h3>
+        <Header level={6} className="font-medium">
+          {title}
+        </Header>
         <p className="break-words font-light">{value ?? 'Unknown'}</p>
       </div>
     );
@@ -113,17 +116,17 @@ const FinishVerification = () => {
     <div className="flex flex-col gap-6">
       <HeaderCard title="Finish Verification" aside={<></>}>
         <div className="flex flex-col gap-y-4">
-          <h2 className="text-xl font-medium">Verification Info</h2>
+          <Header level={3}>Verification Info</Header>
           <Accordion type="single" collapsible className="space-y-2">
             <AccordionItem value="verificationInfo">
               <AccordionTrigger className="flex items-center justify-between">
-                <h3 className="font-medium">Show Details</h3>
+                <Header level={5}>Show Details</Header>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="flex flex-col gap-4">
                   <VerificationItem
                     title="Contract Address"
-                    value={import.meta.env.VITE_VERIFY_CONTRACT}
+                    value={verificationAddress}
                   />
                   <VerificationItem title="Address" value={addressToVerify} />
                   <VerificationItem title="Hash" value={hash} />
