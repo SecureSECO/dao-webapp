@@ -19,7 +19,6 @@ import { useCanVote } from '@/src/hooks/useCanVote';
 import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
-import { useEffect } from 'react';
 
 type VoteFormData = {
   vote_value: string;
@@ -84,9 +83,6 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
   };
 
   const voteValue = watch('vote_value');
-  useEffect(() => {
-    console.log(voteValue);
-  }, [voteValue]);
   const userCanVote =
     !loading && error === null && canVote[voteValue as VoteValueStringUpper];
 
