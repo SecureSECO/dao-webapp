@@ -1,8 +1,4 @@
-import {
-  Action,
-  ActionMintTokenFormData,
-  ActionWithdrawFormData,
-} from '@/src/lib/Actions';
+import { ActionFormData } from '@/src/lib/Actions';
 import { MintTokensAction } from './MintTokensAction';
 import { WithdrawAssetsAction } from './WithdrawAssetsAction';
 import { StepThreeData } from '@/src/pages/NewProposal';
@@ -29,8 +25,7 @@ export const ProposalActionList = ({
 }) => (
   <div className="flex flex-col gap-6">
     {fields.map((field: Record<'id', string>, index: number) => {
-      //TODO: Fix this red line
-      const action = getValues(prefix)[index];
+      const action: ActionFormData = getValues(`actions.${index}`);
 
       switch (action.name) {
         case 'withdraw_assets':

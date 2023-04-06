@@ -506,9 +506,9 @@ export const StepThree = ({
     control,
   } = useForm<StepThreeData>();
 
-  const prefix = 'stepThree';
+  const prefix = 'actions';
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove } = useFieldArray<StepThreeData>({
     name: prefix,
     control: control,
   });
