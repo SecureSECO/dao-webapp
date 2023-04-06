@@ -143,7 +143,7 @@ const Dashboard = () => {
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
         <MainCard
           className=""
-          loading={daoTransfersLoading} // TODO: replace with actual daoTransfers
+          loading={daoTransfersLoading}
           icon={HiCircleStack}
           header={
             <div className="flex flex-row items-end gap-x-2">

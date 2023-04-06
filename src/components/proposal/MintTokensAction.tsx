@@ -43,7 +43,6 @@ export const MintTokensAction = ({
       <span className="col-span-1 pl-2">Address</span>
       <span className="col-span-1 pl-2">Tokens</span>
       <span className="col-span-1" />
-      {/* TODO: Fix removal of elements */}
       {_action.inputs.mintTokensToWallets.map((atm, index) => (
         <AddressTokensMint
           addressToken={atm}

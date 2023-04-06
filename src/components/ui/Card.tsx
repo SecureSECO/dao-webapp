@@ -1,3 +1,7 @@
+/**
+ * This is a Card component that supports various variants and padding options.
+ * It also provides a loading state with a pulse animation.
+ */
 import * as React from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 
@@ -22,12 +26,25 @@ const cardVariants = cva('w-full rounded-lg shadow-md overflow-clip relative', {
   },
 });
 
+/**
+ * Card component properties.
+ * @property className - Optional custom CSS class name.
+ * @property variant - Visual style of the card. Can be "default", "warning", or "light".
+ * @property padding - Padding applied to the card. Can be "default", "sm", or "lg".
+ * @property loading - Optional boolean flag to enable/disable the loading state.
+ */
 export interface CardProps
   extends React.BaseHTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {
   loading?: boolean;
 }
 
+/**
+ * A Card component that supports various visual styles, padding options, and a loading state.
+ * @param props - Props for the Card component.
+ * @returns A Card React element.
+ * @remarks This component is built using the class-variance-authority library for managing CSS classes. You can pass a loading property to enable a loading state with a pulse animation.
+ */
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant, padding, loading = false, ...props }, ref) => {
     return (

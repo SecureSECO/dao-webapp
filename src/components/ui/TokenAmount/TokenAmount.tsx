@@ -1,4 +1,4 @@
-import { anyNullOrUndefined } from '@/src/lib/utils';
+import { anyNullOrUndefined } from '../../../lib/utils';
 import { TransferType } from '@aragon/sdk-client';
 import React from 'react';
 

@@ -165,7 +165,6 @@ const VoteOption = ({
               {voteValueString}
             </p>
             <div className="flex flex-row items-center gap-x-4 text-right">
-              {/* TODO: use toAbbreviatedTokenAmount */}
               <p className="text-slate-500 dark:text-slate-400">
                 {Number(proposal.result[voteValueLower]) / 10 ** 18} REP
               </p>
@@ -192,7 +191,6 @@ const VoteOption = ({
                 />
                 <div className="grid grid-cols-2 text-right">
                   <p className="text-gray-500 ">
-                    {/* TODO: use toAbbreviatedTokenAmount */}
                     {Number(vote.weight) / 10 ** 18} REP
                   </p>
                   <p className="text-slate-500 dark:text-slate-400">

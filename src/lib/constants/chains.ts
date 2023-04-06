@@ -71,7 +71,7 @@ export type ChainData = {
   testnet: boolean;
   explorer: string;
   logo: string;
-  rpc?: string[]; // TODO: Maybe should not be optional
+  rpc?: string[];
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
 };

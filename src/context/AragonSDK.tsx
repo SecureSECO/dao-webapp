@@ -1,3 +1,9 @@
+/**
+ * @see https://devs.aragon.org/docs/sdk/examples/ - Aragon SDK Context setup
+ * Exports a React Context that provides the Aragon SDK Context and Client.
+ * This context is used by the useAragonSDK hook.
+ */
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
   Client,
@@ -37,11 +43,9 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
     chainId: import.meta.env.VITE_PREFERRED_NETWORK_ID,
   });
 
-  // TODO: Add support for Polygon
-  // e.g. for network: import.meta.env.DEV ? 'goerli' : 'polygon'
   useEffect(() => {
-    // TODO: remove this line, but somehow still handle the case where signer is undefined, but we do want to fetch basic info from the DAO
-    //if (!signer) return;
+
+
     const aragonSDKContextParams: ContextParams = {
       network: 'goerli',
       signer,

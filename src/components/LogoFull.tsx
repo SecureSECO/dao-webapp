@@ -1,3 +1,8 @@
+/**
+ * @file Logo Full Component
+ * This file defines the Logo component (full icon + name) for SecureSecoDAO.
+ */
+
 import React from 'react';
 
 const LogoFull = (props: React.BaseHTMLAttributes<SVGElement>) => {

@@ -268,8 +268,13 @@ export const StepOne = ({
                   name={field.name}
                   placeholder="Enter your content"
                   error={errors.description}
-                  setError={setError}
-                  clearErrors={clearErrors}
+                  setError={() =>
+                    setError('description', {
+                      type: 'required',
+                      message: 'Description is required',
+                    })
+                  }
+                  clearErrors={() => clearErrors('description')}
                 />
               )}
             />
@@ -496,7 +501,6 @@ const StepThree = ({
   const onSubmit = (data: any) => {
     console.log(data);
     setStep(4);
-    // TODO: Handle submission
   };
 
   const handleAddWithdrawAssetsAction = () => {
