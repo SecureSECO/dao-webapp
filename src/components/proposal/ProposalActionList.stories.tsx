@@ -6,10 +6,11 @@ import {
   emptyActionWithdrawFormData,
 } from '@/src/lib/Actions';
 import type { Meta, StoryObj } from '@storybook/react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Control, useFieldArray, useForm } from 'react-hook-form';
 
 import { ProposalActionList } from './ProposalActionList';
 import { useEffect } from 'react';
+import { StepThreeData } from '@/src/pages/NewProposal';
 
 const meta: Meta<typeof ProposalActionList> = {
   component: ProposalActionList,
@@ -22,7 +23,7 @@ const StoryBuilder = (actions: any[]): Story => ({
   render: () => {
     const { register, setValue, getValues, control } = useForm();
     const { fields, append, remove } = useFieldArray({
-      name: 'test',
+      name: 'actions',
       control: control,
     });
     useEffect(() => {
@@ -31,17 +32,18 @@ const StoryBuilder = (actions: any[]): Story => ({
       });
     }, []);
 
+    const controlX = control as any as Control<StepThreeData>;
+
     return (
       <form>
         <ProposalActionList
           fields={fields}
           register={register}
-          prefix="test"
-          errors={{ actions: [] }}
+          control={controlX}
           getValues={getValues as any}
           setValue={setValue}
-          control={control}
           remover={remove}
+          errors={{ actions: [] }}
         />
       </form>
     );
