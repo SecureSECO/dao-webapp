@@ -26,7 +26,7 @@ export interface MainCardProps
     VariantProps<typeof mainCardVariants> {
   icon: IconType;
   header: ReactNode;
-  aside: ReactNode;
+  aside?: ReactNode;
 }
 
 /**
@@ -52,7 +52,7 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
             </div>
             <div className="hidden xs:block">{header}</div>
           </div>
-          <>{aside}</>
+          <>{aside && aside}</>
         </div>
         <div className="xs:hidden">{header}</div>
         <div className="space-y-3">{props.children}</div>

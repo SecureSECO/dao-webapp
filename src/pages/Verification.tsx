@@ -309,7 +309,6 @@ const Verification = () => {
               <p className="mb-1 leading-4">verified accounts</p>
             </div>
           }
-          aside={<></>}
         >
           {isLoading ? (
             <div className="flex flex-col gap-4">
@@ -353,7 +352,6 @@ const Verification = () => {
               <p className="mb-1 leading-4">total verifications</p>
             </div>
           }
-          aside={<></>}
         >
           {verificationHistory?.map((history, index) => (
             <RecentVerificationCard key={index} history={history} />
