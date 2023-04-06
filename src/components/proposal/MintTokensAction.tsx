@@ -1,18 +1,9 @@
-import {
-  Action,
-  ActionMintToken,
-  ActionMintTokenFormData,
-  EmptyActionMintToken,
-  MintAddressAmount,
-  emptyActionMintTokenFormData,
-} from '@/src/lib/Actions';
+import { ActionMintTokenFormData, MintAddressAmount } from '@/src/lib/Actions';
 import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
 import { Input } from '../ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
-import { useEffect, useState } from 'react';
-import { Card } from '../ui/Card';
-import { FieldErrors, useFieldArray } from 'react-hook-form';
+import { Control, FieldErrors, useFieldArray } from 'react-hook-form';
 import { StepThreeData } from '@/src/pages/NewProposal';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
 import { MainCard } from '../ui/MainCard';
@@ -25,13 +16,13 @@ export const MintTokensAction = ({
   onRemove,
 }: {
   register: any;
-  control: any;
-  prefix: string;
+  control: Control<StepThreeData>;
+  prefix: `actions.${number}`;
   errors: FieldErrors<ActionMintTokenFormData> | undefined;
   onRemove: () => void;
 }) => {
   const { fields, append, remove } = useFieldArray({
-    name: `${prefix}.mintFields`,
+    name: `${prefix}.wallets`,
     control: control,
   });
 
@@ -56,7 +47,7 @@ export const MintTokensAction = ({
         {fields.map((field, index) => (
           <AddressTokensMint
             key={field.id}
-            unique_prefix={`${prefix}.${field.id}`}
+            prefix={`${prefix}.wallets.${index}`}
             register={register}
             errors={errors?.wallets?.[index] ?? undefined}
             onRemove={() => remove(index)}
@@ -68,7 +59,7 @@ export const MintTokensAction = ({
         type="button"
         label="Add wallet"
         icon={HiPlus}
-        onClick={() => append({ address: '', amount: '' })}
+        onClick={() => append({ address: '', amount: 0 })}
       />
     </MainCard>
   );
@@ -78,18 +69,18 @@ const AddressTokensMint = ({
   register,
   onRemove,
   errors,
-  unique_prefix,
+  prefix,
 }: {
   register: any;
   onRemove: () => void;
   errors: FieldErrors<MintAddressAmount> | undefined;
-  unique_prefix: string;
+  prefix: `actions.${number}.wallets.${number}`;
 }) => (
   <div className="col-span-3 grid grid-cols-3 gap-4">
     <div className="flex flex-col gap-2">
       <ErrorWrapper name="Address" error={errors?.address ?? undefined}>
         <Input
-          {...register(`${unique_prefix}.address`)}
+          {...register(`${prefix}.address`)}
           type="text"
           id="address"
           error={errors?.address ?? undefined}
@@ -100,7 +91,7 @@ const AddressTokensMint = ({
     <div className="flex flex-col gap-2">
       <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
         <Input
-          {...register(`${unique_prefix}.amount`)}
+          {...register(`${prefix}.amount`)}
           type="number"
           id="tokens"
           error={errors?.amount ?? undefined}

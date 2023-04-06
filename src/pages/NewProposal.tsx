@@ -25,11 +25,6 @@ import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import {
-  Action,
-  ActionWithdraw,
-  ActionMintToken,
-  EmptyActionMintToken,
-  emptyActionWithdraw,
   ActionFormData,
   emptyActionWithdrawFormData,
   emptyActionMintTokenFormData,
@@ -43,13 +38,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../components/ui/Dropdown';
 import { Full } from '../components/ui/Address.stories';
 import { ProposalActionList } from '../components/proposal/ProposalActionList';
 
@@ -506,10 +494,8 @@ export const StepThree = ({
     control,
   } = useForm<StepThreeData>();
 
-  const prefix = 'actions';
-
   const { fields, append, remove } = useFieldArray<StepThreeData>({
-    name: prefix,
+    name: 'actions',
     control: control,
   });
 
@@ -575,7 +561,6 @@ export const StepThree = ({
               fields={fields}
               register={register}
               control={control}
-              prefix={prefix}
               getValues={getValues}
               setValue={setValue}
               errors={errors}

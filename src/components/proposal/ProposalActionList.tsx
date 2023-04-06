@@ -2,13 +2,12 @@ import { ActionFormData } from '@/src/lib/Actions';
 import { MintTokensAction } from './MintTokensAction';
 import { WithdrawAssetsAction } from './WithdrawAssetsAction';
 import { StepThreeData } from '@/src/pages/NewProposal';
-import { FieldErrors, UseFormGetValues } from 'react-hook-form';
+import { Control, FieldErrors, UseFormGetValues } from 'react-hook-form';
 
 export const ProposalActionList = ({
   fields,
   register,
   control,
-  prefix,
   getValues,
   setValue,
   remover,
@@ -16,8 +15,7 @@ export const ProposalActionList = ({
 }: {
   fields: Record<'id', string>[];
   register: any;
-  control: any;
-  prefix: string;
+  control: Control<StepThreeData>;
   getValues: UseFormGetValues<StepThreeData>;
   setValue: any;
   remover: any;
@@ -25,14 +23,17 @@ export const ProposalActionList = ({
 }) => (
   <div className="flex flex-col gap-6">
     {fields.map((field: Record<'id', string>, index: number) => {
-      const action: ActionFormData = getValues(`actions.${index}`);
+      const prefix: `actions.${number}` = `actions.${index}`;
+      const action: ActionFormData = getValues(prefix);
+      console.log('All values', getValues());
+      console.log('Action:', action);
 
       switch (action.name) {
         case 'withdraw_assets':
           return (
             <WithdrawAssetsAction
               register={register}
-              prefix={`${prefix}.${field.id}`}
+              prefix={prefix}
               key={field.id}
               setValue={setValue}
               errors={errors.actions ? errors.actions[index] : undefined}
@@ -44,7 +45,7 @@ export const ProposalActionList = ({
             <MintTokensAction
               register={register}
               control={control}
-              prefix={`${prefix}.${field.id}`}
+              prefix={prefix}
               key={field.id}
               errors={errors.actions ? errors.actions[index] : undefined}
               onRemove={() => remover(index)}

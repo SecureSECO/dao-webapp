@@ -1,4 +1,4 @@
-import { ActionWithdraw, ActionWithdrawFormData } from '@/src/lib/Actions';
+import { ActionWithdrawFormData } from '@/src/lib/Actions';
 import { Input } from '../ui/Input';
 import { Label } from '../ui/Label';
 import { UseDaoBalanceData, useDaoBalance } from '@/src/hooks/useDaoBalance';
@@ -32,13 +32,13 @@ export const WithdrawAssetsAction = ({
 }: {
   register: any;
   setValue: any;
-  prefix: string;
+  prefix: `actions.${number}`;
   errors: FieldErrors<ActionWithdrawFormData> | undefined;
   onRemove: any;
 }) => {
   const daoBalanceData = useDaoBalance({});
 
-  const tokenAddressInputName = `${prefix}.TokenAddress`;
+  const tokenAddressInputName = `${prefix}.tokenAddress`;
 
   const handleSetTokenAddress = (value: string) =>
     setValue(tokenAddressInputName, value);
