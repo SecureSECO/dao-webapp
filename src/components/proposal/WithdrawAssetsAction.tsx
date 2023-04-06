@@ -18,6 +18,7 @@ import { FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { StepThreeData } from '@/src/pages/NewProposal';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
 import { MainCard } from '../ui/MainCard';
+import TokenAmount from '../ui/TokenAmount/TokenAmount';
 
 const Description = ({ text }: { text: string }) => (
   <p className="text-slate-500">{text}</p>
@@ -150,18 +151,33 @@ const TokenSelectorDialogButtons = ({
   return (
     <>
       {daoBalanceData.daoBalances.map((token, index) => {
-        if (anyNullOrUndefined(token.name, token.symbol, token.address))
+        if (
+          anyNullOrUndefined(
+            token.name,
+            token.symbol,
+            token.address,
+            token.balance
+          )
+        )
           return <></>;
 
         return (
-          <DialogClose
-            key={index}
-            type="button"
-            className="flex h-10 flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
-            onClick={() => setTokenAddress(token.address!)}
-          >
-            {token.name!}
-          </DialogClose>
+          <div className="flex flex-row">
+            <DialogClose
+              key={index}
+              type="button"
+              className="h-10 rounded bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
+              onClick={() => setTokenAddress(token.address!)}
+            >
+              <span> {token.name!} </span>
+              <span> - </span>
+              <TokenAmount
+                amount={token.balance}
+                tokenDecimals={token.decimals}
+                symbol={token.symbol}
+              />
+            </DialogClose>
+          </div>
         );
       })}
     </>
