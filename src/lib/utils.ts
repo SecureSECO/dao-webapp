@@ -35,12 +35,12 @@ export function anyNullOrUndefined(...values: any[]): boolean {
 
 export const countdownText = (date: Date) => {
   const now = new Date();
-  if (differenceInHours(date, now) > 24) {
+  if (Math.abs(differenceInHours(date, now)) > 24) {
     return formatDistanceToNow(date);
-  } else if (differenceInMinutes(date, now) > 60) {
-    return `${differenceInHours(date, now)} hours`;
-  } else if (differenceInMinutes(date, now) > 1) {
-    return `${differenceInMinutes(date, now)} minutes`;
+  } else if (Math.abs(differenceInMinutes(date, now)) > 60) {
+    return `${Math.abs(differenceInHours(date, now))} hours`;
+  } else if (Math.abs(differenceInMinutes(date, now)) > 1) {
+    return `${Math.abs(differenceInMinutes(date, now))} minutes`;
   } else {
     return 'less than a minute';
   }

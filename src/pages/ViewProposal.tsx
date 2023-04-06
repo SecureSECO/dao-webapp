@@ -6,14 +6,31 @@ import { ProposalStatus } from '@aragon/sdk-client';
 import VotesContent from '@/src/components/proposal/VotesContent';
 import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { HiChatBubbleLeftRight, HiChevronLeft, HiLink } from 'react-icons/hi2';
+import {
+  HiChatBubbleLeftRight,
+  HiChevronLeft,
+  HiLink,
+  HiOutlineClock,
+} from 'react-icons/hi2';
 import { Link } from '@/src/components/ui/Link';
+import { countdownText } from '@/src/lib/utils';
 
 const ViewProposal = () => {
   const { id } = useParams();
   const { proposal, loading, error } = useProposal({ id });
 
-  if (error) return <p>{error}</p>;
+  const statusText = (status: ProposalStatus) => {
+    if (!proposal) return '';
+    switch (status) {
+      case ProposalStatus.PENDING:
+        return 'Starts in ' + countdownText(proposal.startDate);
+      case ProposalStatus.ACTIVE:
+        return 'Ends in ' + countdownText(proposal.endDate);
+      default:
+        return 'Ended ' + countdownText(proposal.endDate) + ' ago';
+    }
+  };
+
   return (
     <div className="space-y-2">
       {/* Back button */}
@@ -22,7 +39,7 @@ const ViewProposal = () => {
         type="button"
         icon={HiChevronLeft}
         variant="outline"
-        label="Governance"
+        label="All proposals"
         className="text-lg"
       />
       <div className="grid grid-cols-7 gap-6">
@@ -39,10 +56,16 @@ const ViewProposal = () => {
               loading={loading}
               title={proposal?.metadata.title ?? 'Proposal not found'}
               aside={
-                <ProposalStatusBadge
-                  size="md"
-                  status={proposal?.status ?? ProposalStatus.PENDING}
-                />
+                <div className="flex h-full flex-col items-end justify-between">
+                  <ProposalStatusBadge
+                    size="md"
+                    status={proposal?.status ?? ProposalStatus.PENDING}
+                  />
+                  <div className="flex flex-row items-center gap-x-2 text-slate-400 dark:text-slate-500">
+                    <HiOutlineClock className="h-5 w-5" />
+                    {statusText(proposal?.status ?? ProposalStatus.PENDING)}
+                  </div>
+                </div>
               }
               className="col-span-full"
             >
