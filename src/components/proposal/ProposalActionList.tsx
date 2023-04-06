@@ -2,7 +2,12 @@ import { ActionFormData } from '@/src/lib/Actions';
 import { MintTokensAction } from './MintTokensAction';
 import { WithdrawAssetsAction } from './WithdrawAssetsAction';
 import { StepThreeData } from '@/src/pages/NewProposal';
-import { Control, FieldErrors, UseFormGetValues } from 'react-hook-form';
+import {
+  Control,
+  FieldErrors,
+  UseFormGetValues,
+  UseFormSetValue,
+} from 'react-hook-form';
 
 export const ProposalActionList = ({
   fields,
@@ -17,7 +22,7 @@ export const ProposalActionList = ({
   register: any;
   control: Control<StepThreeData>;
   getValues: UseFormGetValues<StepThreeData>;
-  setValue: any;
+  setValue: UseFormSetValue<StepThreeData>;
   remover: any;
   errors: FieldErrors<StepThreeData>;
 }) => (
@@ -25,8 +30,6 @@ export const ProposalActionList = ({
     {fields.map((field: Record<'id', string>, index: number) => {
       const prefix: `actions.${number}` = `actions.${index}`;
       const action: ActionFormData = getValues(prefix);
-      console.log('All values', getValues());
-      console.log('Action:', action);
 
       switch (action.name) {
         case 'withdraw_assets':
