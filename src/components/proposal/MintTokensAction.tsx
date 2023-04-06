@@ -3,11 +3,19 @@ import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
 import { Input } from '../ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
-import { Control, FieldErrors, useFieldArray } from 'react-hook-form';
+import {
+  Control,
+  FieldErrors,
+  UseFormRegister,
+  useFieldArray,
+} from 'react-hook-form';
 import { StepThreeData } from '@/src/pages/NewProposal';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
 import { MainCard } from '../ui/MainCard';
 
+/**
+ * @returns Component to be used within a form to describe the action of minting tokens.
+ */
 export const MintTokensAction = ({
   register,
   control,
@@ -15,7 +23,7 @@ export const MintTokensAction = ({
   errors,
   onRemove,
 }: {
-  register: any;
+  register: UseFormRegister<StepThreeData>;
   control: Control<StepThreeData>;
   prefix: `actions.${number}`;
   errors: FieldErrors<ActionMintTokenFormData> | undefined;
@@ -30,6 +38,7 @@ export const MintTokensAction = ({
     <MainCard
       className="flex flex-col gap-4"
       header="Mint tokens"
+      variant="light"
       icon={HiCircleStack}
       aside={
         <Button
@@ -41,8 +50,8 @@ export const MintTokensAction = ({
       }
     >
       <div className="grid grid-cols-3 gap-2">
-        <span className="col-span-1 pl-2 pb-2">Address</span>
-        <span className="col-span-1 pl-2 pb-2">Tokens</span>
+        <span className="col-span-1 pl-2">Address</span>
+        <span className="col-span-1 pl-2">Tokens</span>
         <span className="col-span-1" />
         {fields.map((field, index) => (
           <AddressTokensMint
@@ -98,6 +107,7 @@ const AddressTokensMint = ({
           error={errors?.amount ?? undefined}
           title="A number using a '.' as decimal place, e.g. '3.141'"
           pattern={NumberPattern}
+          min="0"
           required
         />
       </ErrorWrapper>

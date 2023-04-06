@@ -5,7 +5,9 @@ import { StepThreeData } from '@/src/pages/NewProposal';
 import {
   Control,
   FieldErrors,
+  UseFieldArrayRemove,
   UseFormGetValues,
+  UseFormRegister,
   UseFormSetValue,
 } from 'react-hook-form';
 
@@ -19,11 +21,11 @@ export const ProposalActionList = ({
   errors,
 }: {
   fields: Record<'id', string>[];
-  register: any;
+  register: UseFormRegister<StepThreeData>;
   control: Control<StepThreeData>;
   getValues: UseFormGetValues<StepThreeData>;
   setValue: UseFormSetValue<StepThreeData>;
-  remover: any;
+  remover: UseFieldArrayRemove;
   errors: FieldErrors<StepThreeData>;
 }) => (
   <div className="flex flex-col gap-6">

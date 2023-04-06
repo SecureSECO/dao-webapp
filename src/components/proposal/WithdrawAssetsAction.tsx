@@ -14,7 +14,7 @@ import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
 import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
 import { anyNullOrUndefined } from '@/src/lib/utils';
-import { FieldErrors, UseFormSetValue } from 'react-hook-form';
+import { FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { StepThreeData } from '@/src/pages/NewProposal';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
 import { MainCard } from '../ui/MainCard';
@@ -23,6 +23,9 @@ const Description = ({ text }: { text: string }) => (
   <p className="text-slate-500">{text}</p>
 );
 
+/**
+ * @returns Component to be used within a form to describe the action of withdrawing assets.
+ */
 export const WithdrawAssetsAction = ({
   register,
   setValue,
@@ -30,7 +33,7 @@ export const WithdrawAssetsAction = ({
   errors,
   onRemove,
 }: {
-  register: any;
+  register: UseFormRegister<StepThreeData>;
   setValue: UseFormSetValue<StepThreeData>;
   prefix: `actions.${number}`;
   errors: FieldErrors<ActionWithdrawFormData> | undefined;
@@ -46,6 +49,7 @@ export const WithdrawAssetsAction = ({
       className="flex flex-col gap-4"
       header="Withdraw Assets"
       icon={HiBanknotes}
+      variant="light"
       aside={
         <Button
           type="button"
@@ -57,10 +61,12 @@ export const WithdrawAssetsAction = ({
     >
       <Description text="Withdraw assets from the DAO treasury" />
       <div className="flex flex-col gap-2">
-        <Label className="text-lg" htmlFor="recipient">
-          Recipient
-        </Label>
-        <Description text="The wallet that receives the tokens" />
+        <div className="flex flex-col">
+          <Label className="text-lg" htmlFor="recipient">
+            Recipient
+          </Label>
+          <Description text="The wallet that receives the tokens" />
+        </div>
         <ErrorWrapper name="Recipient" error={errors?.recipient ?? undefined}>
           <Input
             {...register(`${prefix}.recipient`, { required: true })}
@@ -72,10 +78,12 @@ export const WithdrawAssetsAction = ({
           />
         </ErrorWrapper>
       </div>
-      <Label className="text-lg" htmlFor="tokenAddress">
-        Token
-      </Label>
-      <Description text="Token to withdraw" />
+      <div className="flex flex-col">
+        <Label className="text-lg" htmlFor="tokenAddress">
+          Token
+        </Label>
+        <Description text="Token to withdraw" />
+      </div>
       <div className="flex w-full gap-2">
         <div className="basis-1/3">
           <Dialog>
@@ -103,10 +111,12 @@ export const WithdrawAssetsAction = ({
         </ErrorWrapper>
       </div>
       <div className="flex flex-col gap-2">
-        <Label className="text-lg" htmlFor="amount">
-          Amount
-        </Label>
-        <Description text="Amount is calculated in number of tokens, not dollar value" />
+        <div className="flex flex-col">
+          <Label className="text-lg" htmlFor="amount">
+            Amount
+          </Label>
+          <Description text="Amount is calculated in number of tokens, not dollar value" />
+        </div>
         <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
           <Input
             {...(register(`${prefix}.amount`), { required: true })}
@@ -122,7 +132,11 @@ export const WithdrawAssetsAction = ({
   );
 };
 
-export const TokenSelectorDialogButtons = ({
+/**
+ * DialogClose buttons showing all token types currently in the DAO treasury.
+ * This component should only be used within Dialogs
+ */
+const TokenSelectorDialogButtons = ({
   daoBalanceData,
   setTokenAddress,
 }: {
