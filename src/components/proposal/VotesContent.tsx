@@ -19,6 +19,9 @@ import { useCanVote } from '@/src/hooks/useCanVote';
 import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
+import { useWeb3Modal } from '@web3modal/react';
+import toast from 'react-hot-toast';
+import { useState } from 'react';
 
 type VoteFormData = {
   vote_value: string;
@@ -58,28 +61,45 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
     address,
   });
   const { votingClient } = useAragonSDKContext();
+  const { open } = useWeb3Modal();
+  const [awaitingConfirm, setAwaitingConfirm] = useState(false);
 
   // Send the vote to SDK
-  const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
+  const confirmVote = async (vote: number) => {
     if (!votingClient) return;
     const steps = votingClient.methods.voteProposal({
       proposalId: proposal.id,
-      vote: VoteValues[data.vote_value as VoteValueStringUpper],
+      vote,
     });
-
     for await (const step of steps) {
       try {
         switch (step.key) {
           case VoteProposalStep.VOTING:
-            console.log(step.txHash);
+            setAwaitingConfirm(true);
             break;
           case VoteProposalStep.DONE:
+            setAwaitingConfirm(false);
             break;
         }
       } catch (err) {
+        setAwaitingConfirm(false);
         console.error(err);
       }
     }
+  };
+
+  const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
+    if (!votingClient) return;
+    toast.promise(
+      confirmVote(VoteValues[data.vote_value as VoteValueStringUpper]),
+      {
+        loading: awaitingConfirm
+          ? 'Awaiting confirmation...'
+          : 'Awaiting signature...',
+        success: 'Vote submitted!',
+        error: 'Error submitting vote',
+      }
+    );
   };
 
   const voteValue = watch('vote_value');
@@ -122,7 +142,16 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
         {!address && (
           <div className="flex flex-row items-center gap-x-1 text-slate-500 dark:text-slate-400">
             <HiOutlineExclamationCircle className="h-5 w-5" />
-            <p>Connect your wallet to vote</p>
+            <p>
+              <button
+                type="button"
+                className="hover:underline"
+                onClick={() => open()}
+              >
+                Connect
+              </button>{' '}
+              your wallet to vote
+            </p>
           </div>
         )}
       </div>
