@@ -1,7 +1,6 @@
 /**
  * A module that exports the `Address` component for displaying Ethereum addresses, optionally with a link to Etherscan/Polyscan and a copy-to-clipboard button.
  */
-import { cva } from 'class-variance-authority';
 import React from 'react';
 import { HiClipboardCopy } from 'react-icons/hi';
 import { useAccount } from 'wagmi';
@@ -70,12 +69,6 @@ export const Address: React.FC<AddressProps> = ({
   showCopy,
   replaceYou = true,
 }) => {
-  const truncated = truncateMiddle(
-    '0x1234567890123456789012345678901234567890',
-    20
-  );
-  console.log(truncated);
-
   const { address: currentUser } = useAccount();
   const etherscanURL = `https://etherscan.io/address/${address}`;
   // if the address is the current user's address, replace it with "you"
