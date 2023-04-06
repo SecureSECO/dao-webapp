@@ -24,7 +24,7 @@ const Header = ({ className, children, level = 1, ...props }: HeaderProps) => {
 
   return React.createElement(
     headerTag,
-    { className: cn(className, headerClasses[level - 1]), ...props },
+    { className: cn(headerClasses[level - 1], className), ...props },
     children
   );
 };
