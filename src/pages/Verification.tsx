@@ -5,7 +5,12 @@ import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
 import { DefaultMainCardHeader, MainCard } from '../components/ui/MainCard';
-import { HiCheckBadge, HiClock, HiUserCircle } from 'react-icons/hi2';
+import {
+  HiCheckBadge,
+  HiClock,
+  HiOutlineLockClosed,
+  HiUserCircle,
+} from 'react-icons/hi2';
 import { AiFillGithub, AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
 import RecentVerificationCard from '../components/ui/RecentVerificationCard';
@@ -128,12 +133,14 @@ const getThresholdForTimestamp = (
   return threshold ? threshold[1] : BigNumber.from(0);
 };
 
+export const verificationAddress = import.meta.env.VITE_VERIFY_CONTRACT;
+
 const Verification = () => {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   // Gets all the stamps for the current address
   const { data, isError, error, isLoading } = useContractRead({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getStamps',
     args: [address],
@@ -141,7 +148,7 @@ const Verification = () => {
 
   // Gets the reverification threshold
   const { data: rData, refetch } = useContractRead({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'reverifyThreshold',
     args: [],
@@ -149,7 +156,7 @@ const Verification = () => {
 
   // Gets the verification threshold history
   const { data: vData } = useContractRead({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getThresholdHistory',
     args: [],
@@ -298,66 +305,78 @@ const Verification = () => {
         </p>
       </HeaderCard>
 
-      <div className="flex flex-col items-start gap-6 lg:flex-row">
-        <MainCard
-          className="basis-3/5"
-          loading={false}
-          icon={HiCheckBadge}
-          header={
-            <DefaultMainCardHeader
-              value={amountOfVerifiedStamps}
-              label="verified accounts"
-            />
-          }
-        >
-          {isLoading ? (
-            <div className="flex flex-col gap-4">
-              <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
-              <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
-              <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
-            </div>
-          ) : isError ? (
-            <div>
-              <p>
-                There was an error fetching your stamps. Please try again later.
-              </p>
-              <p className="mt-4">
-                Information: <code>{error?.message}</code>
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-y-8">
-              <div className="flex flex-wrap gap-6">
-                {availableStamps.map((stampInfo) => (
-                  <StampCard
-                    key={stampInfo.id}
-                    stampInfo={stampInfo}
-                    stamp={stamps.find(([id]) => id === stampInfo.id) || null}
-                    thresholdHistory={thresholdHistory ?? []}
-                    verify={verify}
-                    refetch={refetch}
-                  />
-                ))}
+      {isConnected ? (
+        <div className="flex flex-col items-start gap-6 lg:flex-row">
+          <MainCard
+            className="basis-3/5"
+            loading={false}
+            icon={HiCheckBadge}
+            header={
+              <DefaultMainCardHeader
+                value={amountOfVerifiedStamps}
+                label="verified accounts"
+              />
+            }
+          >
+            {isLoading ? (
+              <div className="flex flex-col gap-4">
+                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
+                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
+                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
               </div>
-            </div>
-          )}
-        </MainCard>
-        <MainCard
-          className="basis-2/5"
-          loading={false}
-          icon={HiClock}
-          header={
-            <DefaultMainCardHeader
-              value={verificationHistory.length}
-              label="verifications"
-            />
-          }
-        >
-          {verificationHistory?.map((history, index) => (
-            <RecentVerificationCard key={index} history={history} />
-          ))}
-        </MainCard>
-      </div>
+            ) : isError ? (
+              <div>
+                <p>
+                  There was an error fetching your stamps. Please try again
+                  later.
+                </p>
+                <p className="mt-4">
+                  Information: <code>{error?.message}</code>
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-y-8">
+                <div className="flex flex-wrap gap-6">
+                  {availableStamps.map((stampInfo) => (
+                    <StampCard
+                      key={stampInfo.id}
+                      stampInfo={stampInfo}
+                      stamp={stamps.find(([id]) => id === stampInfo.id) || null}
+                      thresholdHistory={thresholdHistory ?? []}
+                      verify={verify}
+                      refetch={refetch}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </MainCard>
+          <MainCard
+            className="basis-2/5"
+            loading={false}
+            icon={HiClock}
+            header={
+              <DefaultMainCardHeader
+                value={verificationHistory.length}
+                label="verifications"
+              />
+            }
+          >
+            {verificationHistory?.map((history, index) => (
+              <RecentVerificationCard key={index} history={history} />
+            ))}
+          </MainCard>
+        </div>
+      ) : (
+        <div className="mt-10 flex flex-col items-center justify-center gap-6">
+          <div className="flex flex-col items-center justify-center gap-4">
+            <HiOutlineLockClosed className="text-6xl text-slate-500 dark:text-slate-400" />
+            <p className="text-xl font-medium text-slate-500 dark:text-slate-400">
+              Connect your wallet to verify your identity
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
