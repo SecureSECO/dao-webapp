@@ -13,11 +13,12 @@ import {
 import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
-import { useForm, SubmitHandler, UseFormRegister } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { useCanVote } from '@/src/hooks/useCanVote';
 import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
+import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 
 type VoteFormData = {
   vote_value: string;
@@ -50,7 +51,7 @@ type VoteValueStringUpper = 'YES' | 'NO' | 'ABSTAIN';
  * @see VotesContent
  */
 const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
-  const { register, handleSubmit, watch } = useForm<VoteFormData>();
+  const { handleSubmit, watch, control } = useForm<VoteFormData>();
   const { address } = useAccount();
   const { canVote, loading, error } = useCanVote({
     proposalId: proposal.id,
@@ -92,39 +93,46 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmitVote)} className="space-y-2">
-      <RadioGroup
+      <Controller
+        control={control}
         defaultValue={VoteValues[VoteValues.YES]}
-        {...register('vote_value', { required: true })}
-      >
-        <Accordion type="single" collapsible className="space-y-2">
-          <VoteOption
-            register={register}
-            proposal={proposal}
-            voteValue={VoteValues.YES}
-          />
-          <VoteOption
-            register={register}
-            proposal={proposal}
-            voteValue={VoteValues.NO}
-          />
-          <VoteOption
-            register={register}
-            proposal={proposal}
-            voteValue={VoteValues.ABSTAIN}
-          />
-        </Accordion>
-      </RadioGroup>
-      {/* Button is disabled if the user cannot vote for the currently selected voting option */}
-      <Button disabled={!userCanVote} type="submit">
-        Vote{' '}
-        {!userCanVote ? (
-          'submitted'
-        ) : (
-          <span className="ml-1 inline-block lowercase">
-            {voteValue ?? 'yes'}
-          </span>
+        name="vote_value"
+        render={({ field: { onChange } }) => (
+          <RadioGroup
+            onChange={(v) => {
+              console.log(v);
+              onChange;
+            }}
+            defaultValue={VoteValues[VoteValues.YES]}
+          >
+            <Accordion type="single" collapsible className="space-y-2">
+              <VoteOption proposal={proposal} voteValue={VoteValues.YES} />
+              <VoteOption proposal={proposal} voteValue={VoteValues.NO} />
+              <VoteOption proposal={proposal} voteValue={VoteValues.ABSTAIN} />
+            </Accordion>
+          </RadioGroup>
         )}
-      </Button>
+      />
+
+      {/* Button is disabled if the user cannot vote for the currently selected voting option */}
+      <div className="flex flex-row items-center gap-x-4">
+        <Button disabled={!userCanVote || !address} type="submit">
+          Vote{' '}
+          {!userCanVote && address ? (
+            'submitted'
+          ) : (
+            <span className="ml-1 inline-block lowercase">
+              {voteValue ?? 'yes'}
+            </span>
+          )}
+        </Button>
+        {!address && (
+          <div className="flex flex-row items-center gap-x-1 text-slate-500 dark:text-slate-400">
+            <HiOutlineExclamationCircle className="h-5 w-5" />
+            <p>Connect your wallet to vote</p>
+          </div>
+        )}
+      </div>
     </form>
   );
 };
@@ -135,11 +143,9 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
 const VoteOption = ({
   proposal,
   voteValue,
-  register,
 }: {
   proposal: DetailedProposal;
   voteValue: VoteValues;
-  register?: UseFormRegister<VoteFormData>;
 }) => {
   const voteValueString = VoteValues[voteValue];
 
@@ -152,12 +158,8 @@ const VoteOption = ({
 
   return (
     <div className="flex flex-row items-center gap-x-2">
-      {proposal.status === ProposalStatus.ACTIVE && register && (
-        <RadioGroupItem
-          {...register('vote_value')}
-          value={voteValueString}
-          id={voteValueString}
-        />
+      {proposal.status === ProposalStatus.ACTIVE && (
+        <RadioGroupItem value={voteValueString} id={voteValueString} />
       )}
       <AccordionItem value={voteValueString}>
         <AccordionTrigger className="flex w-full flex-col gap-y-2">
