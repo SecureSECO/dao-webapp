@@ -1,3 +1,9 @@
+/**
+ * @see https://devs.aragon.org/docs/sdk/examples/ - Aragon SDK Context setup
+ * Exports a React Context that provides the Aragon SDK Context and Client.
+ * This context is used by the useAragonSDK hook.
+ */
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
   Client,
@@ -42,6 +48,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   useEffect(() => {
     // TODO: remove this line, but somehow still handle the case where signer is undefined, but we do want to fetch basic info from the DAO
     //if (!signer) return;
+
     const aragonSDKContextParams: ContextParams = {
       network: 'goerli',
       signer,
