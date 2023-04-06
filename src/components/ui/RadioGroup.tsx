@@ -1,7 +1,8 @@
 /**
  * The RadioGroup module provides a customizable and accessible radio group component.
  * It supports various styles and can be used for selecting a single option from a list of choices.
- * @see https://ui.shadcn.com/docs/primitives/radio-group
+ * @see https://www.radix-ui.com/docs/primitives/components/radio-group - Radix UI Radio Group Primitive
+ * inspired by https://ui.shadcn.com/docs/primitives/radio-group
  */
 
 import * as React from 'react';
@@ -42,13 +43,13 @@ const RadioGroupItem = React.forwardRef<
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        'text:fill-slate-50 h-4 w-4 rounded-full border border-slate-300 text-slate-900 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-100 dark:hover:text-slate-900 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900',
+        'text:fill-slate-50 h-4 w-4 rounded-full border border-slate-300 text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-400 dark:text-slate-200 dark:hover:text-slate-100 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900',
         className
       )}
       {...props}
     >
       <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <div className="h-2.5 w-2.5 rounded-full bg-slate-900 dark:bg-slate-50" />
+        <div className="h-2.5 w-2.5 rounded-full bg-slate-700 dark:bg-slate-200" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   );

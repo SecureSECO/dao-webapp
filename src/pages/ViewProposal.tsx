@@ -2,7 +2,6 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useProposal } from '@/src/hooks/useProposal';
 import { useParams } from 'react-router';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { ProposalStatus } from '@aragon/sdk-client';
@@ -45,7 +44,7 @@ const ViewProposal = () => {
                   </span>
                   <Address
                     address={proposal.creatorAddress}
-                    maxLength={AddressLength.medium}
+                    maxLength={AddressLength.Medium}
                     hasLink={true}
                     showCopy={false}
                   />
