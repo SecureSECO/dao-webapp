@@ -47,7 +47,8 @@ export interface StatusBadgeProps
 }
 
 /**
- * @returns A badge showing a status with predefined color and size
+ * A badge showing a status with an icon and text
+ * @returns A div showing the passed text with predefined color and size
  */
 export const StatusBadge = ({
   icon,
