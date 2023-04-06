@@ -4,7 +4,7 @@
 
 // -1 for undeployed tokens, such as REP
 export const SUPPORTED_CHAIN_ID = [
-  1, 5, 137, 80001, 42161, 421613, -1,
+  1, 5, 137, 80001, 42161, 421613, -1, 1337,
 ] as const;
 export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 
@@ -71,7 +71,7 @@ export type ChainData = {
   testnet: boolean;
   explorer: string;
   logo: string;
-  //   rpc: string[];
+  rpc?: string[]; // TODO: Maybe should not be optional
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
 };

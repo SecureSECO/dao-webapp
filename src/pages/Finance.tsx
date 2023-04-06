@@ -1,6 +1,6 @@
 import { TransferType } from '@aragon/sdk-client';
 import { HiArrowSmallRight } from 'react-icons/hi2';
-import { Address } from '../components/ui/Address';
+import { Address, AddressLength } from '../components/ui/Address';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { HeaderCard } from '../components/ui/HeaderCard';
@@ -47,7 +47,7 @@ const DaoTokens = ({
             <span>
               <Address
                 address={balance.address ?? '-'}
-                maxLength={10}
+                maxLength={AddressLength.Small}
                 hasLink={true}
                 showCopy={true}
               />
@@ -115,7 +115,7 @@ export const DaoTransfers = ({
               />
               <Address
                 address={daoTransferAddress(transfer)}
-                maxLength={10}
+                maxLength={AddressLength.Small}
                 hasLink={true}
                 showCopy={true}
               />

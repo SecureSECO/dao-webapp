@@ -8,10 +8,10 @@ import { HiClipboardCopy } from 'react-icons/hi';
 import { useAccount } from 'wagmi';
 
 export enum AddressLength {
-  small = 10,
-  medium = 20,
-  large = 40,
-  full = -1, //Any negative number means no trunction
+  Small = 10,
+  Medium = 20,
+  Large = 40,
+  Full = -1, // no trunction
 }
 
 type AddressProps = {

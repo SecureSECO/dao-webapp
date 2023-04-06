@@ -1,6 +1,17 @@
 export const verificationAbi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'uint64',
+        name: '_threshold',
+        type: 'uint64',
+      },
+      {
+        internalType: 'uint64',
+        name: '_reverifyThreshold',
+        type: 'uint64',
+      },
+    ],
     stateMutability: 'nonpayable',
     type: 'constructor',
   },
@@ -110,6 +121,20 @@ export const verificationAbi = [
     constant: true,
   },
   {
+    inputs: [],
+    name: 'reverifyThreshold',
+    outputs: [
+      {
+        internalType: 'uint64',
+        name: '',
+        type: 'uint64',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+  },
+  {
     inputs: [
       {
         internalType: 'bytes',
@@ -163,7 +188,7 @@ export const verificationAbi = [
       },
       {
         internalType: 'bytes',
-        name: 'signature',
+        name: '_signature',
         type: 'bytes',
       },
     ],
@@ -192,9 +217,9 @@ export const verificationAbi = [
         type: 'string',
       },
       {
-        internalType: 'uint256',
+        internalType: 'uint64',
         name: '_timestamp',
-        type: 'uint256',
+        type: 'uint64',
       },
       {
         internalType: 'string',
@@ -235,9 +260,9 @@ export const verificationAbi = [
             type: 'string',
           },
           {
-            internalType: 'uint256',
+            internalType: 'uint64[]',
             name: 'verifiedAt',
-            type: 'uint256',
+            type: 'uint64[]',
           },
         ],
         internalType: 'struct GithubVerification.Stamp[]',
@@ -252,12 +277,93 @@ export const verificationAbi = [
   {
     inputs: [
       {
+        internalType: 'address',
+        name: '_toCheck',
+        type: 'address',
+      },
+      {
         internalType: 'uint256',
-        name: '_days',
+        name: '_timestamp',
         type: 'uint256',
       },
     ],
+    name: 'getStampsAt',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'string',
+            name: 'id',
+            type: 'string',
+          },
+          {
+            internalType: 'string',
+            name: '_hash',
+            type: 'string',
+          },
+          {
+            internalType: 'uint64[]',
+            name: 'verifiedAt',
+            type: 'uint64[]',
+          },
+        ],
+        internalType: 'struct GithubVerification.Stamp[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint64',
+        name: '_days',
+        type: 'uint64',
+      },
+    ],
     name: 'setVerifyDayThreshold',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getThresholdHistory',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint64',
+            name: 'timestamp',
+            type: 'uint64',
+          },
+          {
+            internalType: 'uint64',
+            name: 'threshold',
+            type: 'uint64',
+          },
+        ],
+        internalType: 'struct GithubVerification.Threshold[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint64',
+        name: '_days',
+        type: 'uint64',
+      },
+    ],
+    name: 'setReverifyThreshold',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
