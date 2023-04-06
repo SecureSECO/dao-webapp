@@ -80,10 +80,11 @@ const AddressTokensMint = ({
     <div className="flex flex-col gap-2">
       <ErrorWrapper name="Address" error={errors?.address ?? undefined}>
         <Input
-          {...register(`${prefix}.address`)}
+          {...register(`${prefix}.address`, { required: true })}
           type="text"
           id="address"
           error={errors?.address ?? undefined}
+          title="An address starting with 0x, followed by 40 address characters"
           pattern={AddressPattern}
         />
       </ErrorWrapper>
@@ -91,11 +92,13 @@ const AddressTokensMint = ({
     <div className="flex flex-col gap-2">
       <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
         <Input
-          {...register(`${prefix}.amount`)}
+          {...register(`${prefix}.amount`, { required: true })}
           type="number"
           id="tokens"
           error={errors?.amount ?? undefined}
+          title="A number using a '.' as decimal place, e.g. '3.141'"
           pattern={NumberPattern}
+          required
         />
       </ErrorWrapper>
     </div>
