@@ -14,7 +14,7 @@ import Header from '@/src/components/ui/Header';
 import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { HiPlus, HiXMark, HiArrowRight } from 'react-icons/hi2';
+import { HiPlus, HiXMark, HiArrowRight, HiOutlinePlusCircle } from 'react-icons/hi2';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
@@ -528,19 +528,19 @@ export const StepThree = ({
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <DialogClose
-          className="flex h-10 flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
+          className="flex h-10 w-fit flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
           onClick={handleAddWithdrawAssetsAction}
         >
-          <div className="flex flex-row items-center gap-x-2">
+          <div className="flex w-fit flex-row items-center gap-x-2">
             <HiArrowRight />
             Withdraw assets
           </div>
         </DialogClose>
         <DialogClose
-          className="flex h-10 flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
+          className="flex h-10 w-fit flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
           onClick={handleAddMintTokensAction}
         >
-          <div className="flex flex-row items-center gap-x-2">
+          <div className="flex w-fit flex-row items-center gap-x-2">
             <HiArrowRight />
             Mint tokens
           </div>
@@ -554,7 +554,16 @@ export const StepThree = ({
       <div className="flex flex-col gap-4">
         <span>If option yes wins</span>
         {fields.length === 0 ? (
-          <AddAction />
+          <Card>
+            <HiOutlinePlusCircle />
+            <h2 className="text-2xl">Add action</h2>
+            <p>
+              This action will execute if the vote passes. A common automatic
+              action is transferring funds to a guild or person if their
+              proposal passes a vote.
+            </p>
+            <AddAction />
+          </Card>
         ) : (
           <>
             <ProposalActionList

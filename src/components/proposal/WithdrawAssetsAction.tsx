@@ -12,9 +12,9 @@ import {
 } from '../ui/Dialog';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
-import { AddressPattern } from '@/src/lib/Patterns';
+import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
 import { anyNullOrUndefined } from '@/src/lib/utils';
-import { FieldErrors } from 'react-hook-form';
+import { FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { StepThreeData } from '@/src/pages/NewProposal';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
 import { MainCard } from '../ui/MainCard';
@@ -31,17 +31,15 @@ export const WithdrawAssetsAction = ({
   onRemove,
 }: {
   register: any;
-  setValue: any;
+  setValue: UseFormSetValue<StepThreeData>;
   prefix: `actions.${number}`;
   errors: FieldErrors<ActionWithdrawFormData> | undefined;
   onRemove: any;
 }) => {
   const daoBalanceData = useDaoBalance({});
 
-  const tokenAddressInputName = `${prefix}.tokenAddress`;
-
   const handleSetTokenAddress = (value: string) =>
-    setValue(tokenAddressInputName, value);
+    setValue(`${prefix}.tokenAddress`, value);
 
   return (
     <MainCard
@@ -65,10 +63,11 @@ export const WithdrawAssetsAction = ({
         <Description text="The wallet that receives the tokens" />
         <ErrorWrapper name="Recipient" error={errors?.recipient ?? undefined}>
           <Input
-            {...register(`${prefix}.recipient`)}
+            {...register(`${prefix}.recipient`, { required: true })}
             type="text"
             id="recipient"
-            defaultValue={''}
+            pattern={AddressPattern}
+            title="An address starting with 0x, followed by 40 address characters"
             error={errors?.recipient ?? undefined}
           />
         </ErrorWrapper>
@@ -94,11 +93,11 @@ export const WithdrawAssetsAction = ({
         </div>
         <ErrorWrapper name="Token" error={errors?.tokenAddress ?? undefined}>
           <Input
-            {...register(tokenAddressInputName)}
+            {...register(`${prefix}.tokenAddress`, { required: true })}
             className="basis-2/3"
             name="tokenAddress"
-            defaultValue="Or enter a custom token address"
-            // pattern={AddressPattern}
+            pattern={AddressPattern}
+            title="An address starting with 0x, followed by 40 address characters"
             error={errors?.tokenAddress ?? undefined}
           />
         </ErrorWrapper>
@@ -110,10 +109,11 @@ export const WithdrawAssetsAction = ({
         <Description text="Amount is calculated in number of tokens, not dollar value" />
         <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
           <Input
-            {...register(`${prefix}.amount`)}
+            {...(register(`${prefix}.amount`), { required: true })}
             type="text"
             id="amount"
-            defaultValue={''}
+            title="A number using a '.' as decimal place, e.g. '3.141'"
+            pattern={NumberPattern}
             error={errors?.amount ?? undefined}
           />
         </ErrorWrapper>
@@ -127,7 +127,8 @@ export const TokenSelectorDialogButtons = ({
   setTokenAddress,
 }: {
   daoBalanceData: UseDaoBalanceData;
-  setTokenAddress: any;
+  // eslint-disable-next-line no-unused-vars
+  setTokenAddress: (fn: string) => void;
 }): JSX.Element => {
   if (daoBalanceData.loading) return <Loader />;
   if (daoBalanceData.error) return <span> {daoBalanceData.error} </span>;
@@ -143,7 +144,6 @@ export const TokenSelectorDialogButtons = ({
             key={index}
             type="button"
             className="flex h-10 flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
-            // icon={HiArrowRight}
             onClick={() => setTokenAddress(token.address!)}
           >
             {token.name!}
