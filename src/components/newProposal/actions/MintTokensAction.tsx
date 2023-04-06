@@ -1,17 +1,20 @@
-import { ActionMintTokenFormData, MintAddressAmount } from '@/src/lib/Actions';
 import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
-import { Input } from '../ui/Input';
+import { Input } from '../../ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
-import { Button } from '../ui/Button';
+import { Button } from '../../ui/Button';
 import {
   Control,
   FieldErrors,
   UseFormRegister,
   useFieldArray,
 } from 'react-hook-form';
-import { StepThreeData } from '@/src/pages/NewProposal';
-import { ErrorWrapper } from '../ui/ErrorWrapper';
-import { MainCard } from '../ui/MainCard';
+import {
+  ActionMintTokenFormData,
+  MintAddressAmount,
+  StepThreeData,
+} from '../newProposalData';
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
+import { MainCard } from '../../ui/MainCard';
 
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.

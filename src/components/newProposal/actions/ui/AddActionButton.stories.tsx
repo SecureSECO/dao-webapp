@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { AddActionButton } from './AddProposalAction';
+import { AddActionButton } from './AddActionButton';
 
 const meta: Meta<typeof AddActionButton> = {
   component: AddActionButton,

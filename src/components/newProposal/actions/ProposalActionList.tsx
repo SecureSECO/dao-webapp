@@ -1,7 +1,6 @@
-import { ActionFormData } from '@/src/lib/Actions';
 import { MintTokensAction } from './MintTokensAction';
 import { WithdrawAssetsAction } from './WithdrawAssetsAction';
-import { StepThreeData } from '@/src/pages/NewProposal';
+import { StepThreeData, ActionFormData } from '../newProposalData';
 import {
   Control,
   FieldErrors,
