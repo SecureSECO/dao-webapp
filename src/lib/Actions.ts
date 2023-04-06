@@ -57,3 +57,39 @@ export type ActionMintToken = {
     totalMembers?: number;
   };
 };
+
+export const emptyActionWithdrawFormData: ActionWithdrawFormData = {
+  name: 'withdraw_assets',
+  recipient: '',
+  tokenAddress: '',
+  amount: '',
+};
+
+export type ActionWithdrawFormData = {
+  name: 'withdraw_assets';
+  recipient: string;
+  tokenAddress: string;
+  amount: string;
+};
+
+export const emptyMintAddressAmount: MintAddressAmount = {
+  address: '',
+  amount: 0,
+};
+
+export type MintAddressAmount = {
+  address: string;
+  amount: number;
+};
+
+export const emptyActionMintTokenFormData: ActionMintTokenFormData = {
+  name: 'mint_tokens',
+  wallets: [emptyMintAddressAmount],
+};
+
+export type ActionMintTokenFormData = {
+  name: 'mint_tokens';
+  wallets: MintAddressAmount[];
+};
+
+export type ActionFormData = ActionWithdrawFormData | ActionMintTokenFormData;

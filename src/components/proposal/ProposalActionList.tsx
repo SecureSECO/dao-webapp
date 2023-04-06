@@ -1,34 +1,59 @@
-import { Action } from '@/src/lib/Actions';
+import { ActionFormData } from '@/src/lib/Actions';
 import { MintTokensAction } from './MintTokensAction';
 import { WithdrawAssetsAction } from './WithdrawAssetsAction';
+import { StepThreeData } from '@/src/pages/NewProposal';
+import {
+  Control,
+  FieldErrors,
+  UseFieldArrayRemove,
+  UseFormGetValues,
+  UseFormRegister,
+  UseFormSetValue,
+} from 'react-hook-form';
 
 export const ProposalActionList = ({
-  actions,
+  fields,
   register,
   control,
+  getValues,
+  setValue,
+  remover,
+  errors,
 }: {
-  actions: Action[];
-  register: any;
-  control: any;
+  fields: Record<'id', string>[];
+  register: UseFormRegister<StepThreeData>;
+  control: Control<StepThreeData>;
+  getValues: UseFormGetValues<StepThreeData>;
+  setValue: UseFormSetValue<StepThreeData>;
+  remover: UseFieldArrayRemove;
+  errors: FieldErrors<StepThreeData>;
 }) => (
-  <div>
-    {actions.map((action: Action, index) => {
+  <div className="flex flex-col gap-6">
+    {fields.map((field: Record<'id', string>, index: number) => {
+      const prefix: `actions.${number}` = `actions.${index}`;
+      const action: ActionFormData = getValues(prefix);
+
       switch (action.name) {
         case 'withdraw_assets':
           return (
             <WithdrawAssetsAction
-              action={action}
               register={register}
-              control={control}
-              prefix={index.toString()}
+              prefix={prefix}
+              key={field.id}
+              setValue={setValue}
+              errors={errors.actions ? errors.actions[index] : undefined}
+              onRemove={() => remover(index)}
             />
           );
         case 'mint_tokens':
           return (
             <MintTokensAction
-              action={action}
               register={register}
-              prefix={index.toString()}
+              control={control}
+              prefix={prefix}
+              key={field.id}
+              errors={errors.actions ? errors.actions[index] : undefined}
+              onRemove={() => remover(index)}
             />
           );
       }

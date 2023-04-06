@@ -8,12 +8,18 @@ import {
   UseFormGetValues,
   FormProvider,
   Controller,
+  useFieldArray,
 } from 'react-hook-form';
 import Header from '@/src/components/ui/Header';
 import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { HiPlus, HiXMark, HiArrowRight } from 'react-icons/hi2';
+import {
+  HiPlus,
+  HiXMark,
+  HiArrowRight,
+  HiOutlinePlusCircle,
+} from 'react-icons/hi2';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
@@ -24,11 +30,9 @@ import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import {
-  Action,
-  ActionWithdraw,
-  ActionMintToken,
-  EmptyActionMintToken,
-  emptyActionWithdraw,
+  ActionFormData,
+  emptyActionWithdrawFormData,
+  emptyActionMintTokenFormData,
 } from '../lib/Actions';
 import {
   Dialog,
@@ -39,15 +43,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../components/ui/Dropdown';
 import { Full } from '../components/ui/Address.stories';
 import { ProposalActionList } from '../components/proposal/ProposalActionList';
+import {
+  AddActionButton,
+  AddActionCard,
+} from '../components/proposal/AddProposalAction';
 
 const totalSteps = 4;
 
@@ -487,70 +488,54 @@ export const EndTime = ({
   );
 };
 
-const StepThree = ({
+export interface StepThreeData {
+  actions: ActionFormData[];
+}
+
+export const StepThree = ({
   StepNavigator,
   setStep,
 }: {
   StepNavigator?: React.ReactNode;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
-  const { register, getValues, handleSubmit, control } = useForm();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+    getValues,
+    control,
+  } = useForm<StepThreeData>();
 
-  const [actions, setActions] = useState<Action[]>([]);
+  const { fields, append, remove } = useFieldArray<StepThreeData>({
+    name: 'actions',
+    control: control,
+  });
 
   const onSubmit = (data: any) => {
     console.log(data);
     setStep(4);
   };
 
-  const handleAddWithdrawAssetsAction = () => {
-    setActions((prev) => [...prev, emptyActionWithdraw]);
-  };
-
-  const handleAddMintTokensAction = () => {
-    setActions((prev) => [...prev, EmptyActionMintToken]);
-  };
-
-  const AddAction = () => (
-    <Dialog>
-      <DialogTrigger>Add action</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add action</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        <DialogClose className="flex flex-col gap-2">
-          <Button
-            label="Withdraw assets"
-            variant="subtle"
-            icon={HiArrowRight}
-            onClick={handleAddWithdrawAssetsAction}
-          />
-          <Button
-            label="Mint tokens"
-            variant="subtle"
-            icon={HiArrowRight}
-            onClick={handleAddMintTokensAction}
-          />
-        </DialogClose>
-      </DialogContent>
-    </Dialog>
-  );
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <span>If option yes wins</span>
-        {actions.length === 0 ? (
-          <AddAction />
+        {fields.length === 0 ? (
+          <AddActionCard append={append} />
         ) : (
           <>
             <ProposalActionList
-              actions={actions}
+              fields={fields}
               register={register}
               control={control}
+              getValues={getValues}
+              setValue={setValue}
+              errors={errors}
+              remover={remove}
             />
-            <AddAction />
+            <AddActionButton append={append} />
           </>
         )}
       </div>

@@ -1,12 +1,13 @@
 import {
-  Action,
-  EmptyActionMintToken,
-  emptyActionWithdraw,
+  emptyActionMintTokenFormData,
+  emptyActionWithdrawFormData,
 } from '@/src/lib/Actions';
 import type { Meta, StoryObj } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import { Control, useFieldArray, useForm } from 'react-hook-form';
 
 import { ProposalActionList } from './ProposalActionList';
+import { useEffect } from 'react';
+import { StepThreeData } from '@/src/pages/NewProposal';
 
 const meta: Meta<typeof ProposalActionList> = {
   component: ProposalActionList,
@@ -15,41 +16,54 @@ const meta: Meta<typeof ProposalActionList> = {
 export default meta;
 type Story = StoryObj<typeof ProposalActionList>;
 
-const StoryBuilder = (actions: Action[]): Story => ({
+const StoryBuilder = (actions: any[]): Story => ({
   render: () => {
-    const { register, control } = useForm();
+    const { register, setValue, getValues, control } = useForm();
+    const { fields, append, remove } = useFieldArray({
+      name: 'actions',
+      control: control,
+    });
+    useEffect(() => {
+      actions.forEach((action) => {
+        append(action);
+      });
+    }, []);
+
+    const controlX = control as any as Control<StepThreeData>;
+
     return (
       <form>
         <ProposalActionList
-          actions={actions}
+          fields={fields}
           register={register}
-          control={control}
+          control={controlX}
+          getValues={getValues as any}
+          setValue={setValue}
+          remover={remove}
+          errors={{ actions: [] }}
         />
       </form>
     );
   },
 });
 
-const emptyActions = [emptyActionWithdraw, EmptyActionMintToken];
+const emptyActions = [
+  emptyActionMintTokenFormData,
+  emptyActionWithdrawFormData,
+];
 export const EmptyActions: Story = StoryBuilder(emptyActions);
 
-const mintTokensAction: Action[] = [
-  {
-    name: 'mint_tokens',
-    inputs: {
-      mintTokensToWallets: [
-        { address: '0x123456789', amount: 5 },
-        { address: '0x987654321', amount: 3 },
-        { address: '0x111222233', amount: 8 },
-      ],
-    },
-    summary: {
-      newTokens: 122,
-      tokenSupply: 3,
-      newHoldersCount: 8,
-      daoTokenSymbol: 'REP',
-      daoTokenAddress: '0x123456789',
-    },
-  },
+const mintTokensAction = [
+  { name: 'mint_tokens', wallets: [{ address: '0x123', amount: 1 }] },
 ];
 export const MintTokensAction = StoryBuilder(mintTokensAction);
+
+const withdrawAssets = [
+  {
+    name: 'withdraw_assets',
+    recipient: '0x123456',
+    tokenAddress: '0x987654321',
+    amount: '1',
+  },
+];
+export const WithdrawAssetsAction = StoryBuilder(withdrawAssets);
