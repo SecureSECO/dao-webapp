@@ -14,6 +14,13 @@ import {
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
 import { Stamp } from '../pages/Verification';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/src/components/ui/Accordion';
+import { HiExclamationCircle } from 'react-icons/hi2';
 
 const FinishVerification = () => {
   const { address } = useAccount();
@@ -44,6 +51,10 @@ const FinishVerification = () => {
 
   const [isBusy, setIsBusy] = useState(false);
 
+  /**
+   * Actually makes a write call to the contract to verify the address
+   * @returns {Promise<void>} Promise that resolves when the verification settles
+   */
   const verify = async (): Promise<void> => {
     setIsBusy(true);
     // eslint-disable-next-line no-async-promise-executor
@@ -92,7 +103,7 @@ const FinishVerification = () => {
   }) => {
     return (
       <div>
-        <h3>{title}</h3>
+        <h3 className="font-medium">{title}</h3>
         <p className="break-words font-light">{value ?? 'Unknown'}</p>
       </div>
     );
@@ -102,18 +113,27 @@ const FinishVerification = () => {
     <div className="flex flex-col gap-6">
       <HeaderCard title="Finish Verification" aside={<></>}>
         <div className="flex flex-col gap-y-4">
-          <h2 className="text-xl">Verification Info</h2>
-          <div className="flex flex-col gap-4">
-            <VerificationItem
-              title="Contract Address"
-              value={import.meta.env.VITE_VERIFY_CONTRACT}
-            />
-            <VerificationItem title="Address" value={addressToVerify} />
-            <VerificationItem title="Hash" value={hash} />
-            <VerificationItem title="Timestamp" value={timestamp} />
-            <VerificationItem title="Provider" value={providerId} />
-            <VerificationItem title="Signature" value={sig} />
-          </div>
+          <h2 className="text-xl font-medium">Verification Info</h2>
+          <Accordion type="single" collapsible className="space-y-2">
+            <AccordionItem value="verificationInfo">
+              <AccordionTrigger className="flex items-center justify-between">
+                <h3 className="font-medium">Show Details</h3>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="flex flex-col gap-4">
+                  <VerificationItem
+                    title="Contract Address"
+                    value={import.meta.env.VITE_VERIFY_CONTRACT}
+                  />
+                  <VerificationItem title="Address" value={addressToVerify} />
+                  <VerificationItem title="Hash" value={hash} />
+                  <VerificationItem title="Timestamp" value={timestamp} />
+                  <VerificationItem title="Provider" value={providerId} />
+                  <VerificationItem title="Signature" value={sig} />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
           <div>
             <Button
@@ -141,7 +161,10 @@ const FinishVerification = () => {
           <div>{data?.hash && <p>Transaction hash: {data.hash}</p>}</div>
           {(isPrepareError || isError) && (
             <div>
-              <p>Verification Error</p>
+              <div className="mb-2 flex items-center gap-x-2 text-red-400">
+                <HiExclamationCircle />
+                <p>Verification Error</p>
+              </div>
               <code>
                 {(prepareError as any)?.data?.message ?? 'Unknown error'}
               </code>
