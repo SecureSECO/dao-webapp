@@ -15,7 +15,7 @@ export const Primary: Story = {
   render: () => (
     <div>
       <Input id="test" />
-      <Label for="test">This is a label for the input above</Label>
+      <Label htmlFor="test">This is a label for the input above</Label>
     </div>
   ),
 };

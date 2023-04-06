@@ -6,7 +6,7 @@ import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { ProposalStatus } from '@aragon/sdk-client';
 import VotesContent from '@/src/components/proposal/VotesContent';
-import { StatusBadge } from '../components/ui/StatusBadge';
+import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -27,7 +27,8 @@ const ViewProposal = () => {
             loading={loading}
             title={proposal?.metadata.title ?? 'Proposal not found'}
             aside={
-              <StatusBadge
+              <ProposalStatusBadge
+                size="md"
                 status={proposal?.status ?? ProposalStatus.PENDING}
               />
             }

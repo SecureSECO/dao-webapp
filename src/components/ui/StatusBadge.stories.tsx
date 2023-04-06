@@ -1,59 +1,56 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { StatusBadge } from './StatusBadge';
+import Check from '../icons/Check';
+import Activity from '../icons/Actitivy';
+import { HiOutlineClock, HiXMark } from 'react-icons/hi2';
 
 const meta = {
   component: StatusBadge,
   tags: ['autodocs'],
-  argTypes: {},
+  argTypes: {
+    icon: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 } satisfies Meta<typeof StatusBadge>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Pending: Story = {
+export const Primary: Story = {
   args: {
-    status: 'Pending',
+    variant: 'primary',
+    icon: Activity,
+    size: 'md',
+    text: 'Active',
   },
 };
 
-export const Active: Story = {
+export const Secondary: Story = {
   args: {
-    status: 'Active',
+    variant: 'secondary',
+    icon: HiOutlineClock,
+    size: 'md',
+    text: 'Pending',
   },
 };
 
-export const Succeeded: Story = {
+export const Green: Story = {
   args: {
-    status: 'Succeeded',
+    variant: 'green',
+    icon: Check,
+    size: 'md',
+    text: 'Succeeded',
   },
 };
 
-export const Executed: Story = {
+export const Red: Story = {
   args: {
-    status: 'Executed',
-  },
-};
-
-export const Defeated: Story = {
-  args: {
-    status: 'Defeated',
-  },
-};
-
-export const Verified: Story = {
-  args: {
-    status: 'Verified',
-  },
-};
-
-export const Expired: Story = {
-  args: {
-    status: 'Expired',
-  },
-};
-
-export const Unverified: Story = {
-  args: {
-    status: 'Unverified',
+    variant: 'red',
+    icon: HiXMark,
+    size: 'md',
+    text: 'Defeated',
   },
 };
