@@ -1,6 +1,6 @@
 /**
  * This component uses the `class-variance-authority` package to generate dynamic class names based on the provided props.
- * For more information on the available variants, see https://ui.shadcn.com/docs/primitives/button.
+ * Inspired by https://ui.shadcn.com/docs/primitives/button.
  */
 
 import React, { ReactNode } from 'react';

@@ -1,6 +1,10 @@
 /**
  * This code is based on the Radix UI React Collapsible component, which provides a set of composable and accessible primitives to build collapsible components.
- * For more information on the available props and examples of usage, see https://ui.shadcn.com/docs/primitives/collapsible.
+ *
+ * For more information on the available props and examples of usage:
+ * @see https://www.radix-ui.com/docs/primitives/components/collapsible - Radix UI Collapsible Primitive
+ *
+ * Inspired by https://ui.shadcn.com/docs/primitives/collapsible.
  */
 
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';

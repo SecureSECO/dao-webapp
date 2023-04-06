@@ -1,5 +1,11 @@
 /**
- * The Label module provides a pre-styled label component based on @radix-ui/react-label and https://ui.shadcn.com/docs/primitives/label
+ * The Label module provides a pre-styled label component based on @radix-ui/react-label
+ *
+ * @see https://www.radix-ui.com/docs/primitives/components/label - Radix UI Label Primitive
+ * This component is based on the native label element,
+ * it will automatically apply the correct labelling when wrapping controls or using the htmlFor attribute.
+ *
+ * Inspired by https://ui.shadcn.com/docs/primitives/label
  */
 
 import * as React from 'react';

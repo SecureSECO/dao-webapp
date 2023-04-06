@@ -1,6 +1,9 @@
 /**
  * This file contains a set of Dialog components using the Radix UI DialogPrimitive.
+ * @see https://www.radix-ui.com/docs/primitives/components/dialog - Radix UI Dialog Primitive
  * These components provide a customizable and accessible implementation of the Dialog pattern.
+ * 
+ * Inspired by https://ui.shadcn.com/docs/primitives/dialog
  */
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';

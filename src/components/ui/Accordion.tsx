@@ -1,5 +1,9 @@
 /**
- * A reusable accordion component built on top of `@radix-ui/react-accordion` inspired by https://ui.shadcn.com/docs/primitives/accordion
+ * A reusable accordion component built on top of `@radix-ui/react-accordion`.
+ *
+ * @see https://www.radix-ui.com/docs/primitives/components/accordion - Radix UI Accordion Primitive
+ *
+ * inspired by https://ui.shadcn.com/docs/primitives/accordion
  */
 import * as React from 'react';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
@@ -88,10 +92,10 @@ const AccordionContent = React.forwardRef<
   ) => (
     <AccordionPrimitive.Content
       ref={ref}
-      className="overflow-hidden text-sm transition-all data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up"
+      className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
       {...props}
     >
-      <div className={cn('pt-0 pb-4', className)}>{children}</div>
+      <div className={cn('pb-4 pt-0', className)}>{children}</div>
     </AccordionPrimitive.Content>
   )
 );

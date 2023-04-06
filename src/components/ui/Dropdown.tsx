@@ -1,6 +1,7 @@
 /**
  * The DropdownMenu component is the root component of the dropdown menu system,
- * built using Radix UI's DropdownMenu primitive adapted by https://ui.shadcn.com/docs/primitives/dropdown-menu
+ * @see https://www.radix-ui.com/docs/primitives/components/dropdown-menu - Radix UI DropdownMenu Primitive
+ * built using Radix UI's DropdownMenu primitive adapted and inspired by https://ui.shadcn.com/docs/primitives/dropdown-menu
  */
 
 import * as React from 'react';

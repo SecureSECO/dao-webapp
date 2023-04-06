@@ -1,5 +1,6 @@
 /**
  * This file contains a set of custom Tabs components built on top of the '@radix-ui/react-tabs' library.
+ * @see https://www.radix-ui.com/docs/primitives/components/tabs - Radix UI Tabs Primitive
  * The components include Tabs, TabsList, TabsTrigger, and TabsContent.
  * These components are styled and provide a consistent UI look and feel for tabs throughout an application. inspired by https://ui.shadcn.com/docs/primitives/tabs
  * The components also have support for multiple variants and padding options, which can be controlled through the props.

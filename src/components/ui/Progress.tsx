@@ -1,7 +1,8 @@
 /**
  * The Progress module provides a customizable progress bar component.
  * It supports different sizes and variants, and can be used to display the progress of an operation.
- *  Inspired, but adapted from: https://ui.shadcn.com/docs/primitives/progress
+ * @see https://www.radix-ui.com/docs/primitives/components/progress - Radix UI Progress Primitive
+ * Inspired, but adapted from: https://ui.shadcn.com/docs/primitives/progress
  */
 
 import * as React from 'react';
