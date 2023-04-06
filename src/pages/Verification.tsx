@@ -1,4 +1,3 @@
-import { Button } from '@/src/components/ui/Button';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -10,6 +9,7 @@ import { HiCheckBadge, HiClock, HiUserCircle } from 'react-icons/hi2';
 import { AiFillGithub, AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
 import RecentVerificationCard from '../components/ui/RecentVerificationCard';
+import { FaDiscord } from 'react-icons/fa';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -49,6 +49,12 @@ export const availableStamps: StampInfo[] = [
     displayName: 'Twitter',
     url: 'https://twitter.com/',
     icon: <AiFillTwitterCircle size={20} />,
+  },
+  {
+    id: 'discord',
+    displayName: 'Discord',
+    url: 'https://discord.com/',
+    icon: <FaDiscord size={20} />,
   },
 ];
 
@@ -125,6 +131,7 @@ const getThresholdForTimestamp = (
 const Verification = () => {
   const { address } = useAccount();
 
+  // Gets all the stamps for the current address
   const { data, isError, error, isLoading } = useContractRead({
     address: import.meta.env.VITE_VERIFY_CONTRACT,
     abi: verificationAbi,
@@ -132,25 +139,23 @@ const Verification = () => {
     args: [address],
   });
 
-  const { data: rData } = useContractRead({
+  // Gets the reverification threshold
+  const { data: rData, refetch } = useContractRead({
     address: import.meta.env.VITE_VERIFY_CONTRACT,
     abi: verificationAbi,
     functionName: 'reverifyThreshold',
     args: [],
   });
 
-  const {
-    data: vData,
-    isError: vIsError,
-    error: vError,
-    isLoading: vIsLoading,
-  } = useContractRead({
+  // Gets the verification threshold history
+  const { data: vData } = useContractRead({
     address: import.meta.env.VITE_VERIFY_CONTRACT,
     abi: verificationAbi,
     functionName: 'getThresholdHistory',
     args: [],
   });
 
+  // Sign our message to verify our address
   const { signMessage } = useSignMessage({
     onError(error) {
       toast.error(error.message.substr(0, 100));
@@ -175,6 +180,7 @@ const Verification = () => {
           throw new Error('Verification failed');
         }
 
+        // url is the callback url where we finish the verification
         const { ok, message, url } = await response.json();
 
         if (ok) {
@@ -205,14 +211,18 @@ const Verification = () => {
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
+      // Convert data to stamps
       const stamps: Stamp[] = data.map((stamp: any) => [
-        stamp.id,
-        stamp._hash,
+        stamp.providerId,
+        stamp.userHash,
         stamp.verifiedAt,
       ]);
 
+      console.log('stamps', data);
+
       setStamps(stamps);
 
+      // Convert stamps to verification history
       let verificationHistory: VerificationHistory[] = [];
       for (let i = 0; i < stamps.length; i++) {
         const stamp = stamps[i];
@@ -226,6 +236,7 @@ const Verification = () => {
         }
       }
 
+      // Sort verification history by timestamp, newest first
       verificationHistory.sort((a, b) => b.timestamp - a.timestamp);
 
       setVerificationHistory(verificationHistory);
@@ -244,7 +255,7 @@ const Verification = () => {
 
   const verify = async (providerId: string) => {
     try {
-      // Check if the account has already verified
+      // Check if the account has already been verified
       const stamp = stamps.find(([id]) => id === providerId);
       if (stamp) {
         const [, , verifiedAt] = stamp;
@@ -298,13 +309,7 @@ const Verification = () => {
               <p className="mb-1 leading-4">verified accounts</p>
             </div>
           }
-          aside={
-            // <Button
-            //   label="New proposal"
-            //   onClick={() => console.log('New proposal click!')}
-            // />
-            <></>
-          }
+          aside={<></>}
         >
           {isLoading ? (
             <div className="flex flex-col gap-4">
@@ -331,6 +336,7 @@ const Verification = () => {
                     stamp={stamps.find(([id]) => id === stampInfo.id) || null}
                     thresholdHistory={thresholdHistory ?? []}
                     verify={verify}
+                    refetch={refetch}
                   />
                 ))}
               </div>

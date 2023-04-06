@@ -1,6 +1,7 @@
 import React from 'react';
+import { IconType } from 'react-icons';
 
-const Activity = (props: React.BaseHTMLAttributes<SVGElement>) => {
+const Activity: IconType = (props: React.BaseHTMLAttributes<SVGElement>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -240,6 +240,44 @@ export const verificationAbi = [
   {
     inputs: [
       {
+        internalType: 'string',
+        name: '_providerId',
+        type: 'string',
+      },
+    ],
+    name: 'unverify',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: 'str1',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: 'str2',
+        type: 'string',
+      },
+    ],
+    name: 'stringsAreEqual',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'pure',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [
+      {
         internalType: 'address',
         name: '_toCheck',
         type: 'address',
@@ -251,12 +289,12 @@ export const verificationAbi = [
         components: [
           {
             internalType: 'string',
-            name: 'id',
+            name: 'providerId',
             type: 'string',
           },
           {
             internalType: 'string',
-            name: '_hash',
+            name: 'userHash',
             type: 'string',
           },
           {
@@ -293,12 +331,12 @@ export const verificationAbi = [
         components: [
           {
             internalType: 'string',
-            name: 'id',
+            name: 'providerId',
             type: 'string',
           },
           {
             internalType: 'string',
-            name: '_hash',
+            name: 'userHash',
             type: 'string',
           },
           {

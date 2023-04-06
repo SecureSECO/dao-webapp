@@ -1,79 +1,69 @@
-import { cva } from 'class-variance-authority';
-import DoubleCheck from '@/src/components/icons/DoubleCheck';
-import Check from '@/src/components/icons/Check';
-import { ProposalStatus } from '@aragon/sdk-client';
-import { Proposal } from '@/src/hooks/useProposals';
-import { HiOutlineClock, HiXMark } from 'react-icons/hi2';
-import Activity from '@/src/components/icons/Actitivy';
+import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '@/src/lib/utils';
-import { FaHourglass } from 'react-icons/fa';
-import { AiFillHourglass } from 'react-icons/ai';
+import { IconType } from 'react-icons';
+import { createElement } from 'react';
 
 const statusVariants = cva(
   'rounded-lg px-2 py-1 flex flex-row w-fit gap-x-1 items-center h-fit',
   {
     variants: {
-      status: {
-        Pending: 'bg-slate-200 dark:bg-slate-600',
-        Active: 'bg-primary-200 dark:bg-primary-400 dark:text-slate-900',
-        Succeeded: 'bg-green-200 dark:bg-green-300 dark:text-slate-900',
-        Executed: 'bg-green-200 dark:bg-green-300 dark:text-slate-900',
-        Defeated: 'bg-red-200 dark:bg-red-300 dark:text-slate-900',
-        Verified: 'bg-green-200 dark:bg-green-300 dark:text-slate-900',
-        Expired: 'bg-red-200 dark:bg-slate-600',
-        Unverified: 'bg-slate-200 dark:bg-slate-600',
+      variant: {
+        primary: 'bg-primary-200 dark:bg-primary-400 dark:text-slate-900',
+        secondary: 'bg-slate-200 dark:bg-slate-600',
+        green: 'bg-green-200 dark:bg-green-300 dark:text-slate-900',
+        red: 'bg-red-200 dark:bg-red-300 dark:text-slate-900',
+      },
+      size: {
+        sm: 'text-sm px-2 py-1 gap-x-1',
+        md: 'text-lg px-3 py-1 gap-x-2',
+        lg: 'text-xl px-4 py-2 gap-x-3',
       },
     },
     defaultVariants: {
-      status: 'Pending',
+      variant: 'primary',
+      size: 'sm',
     },
   }
 );
 
-const statusIcon = {
-  Pending: <HiOutlineClock className="h-4 w-4" />,
-  Active: <Activity className="h-4 w-4" />,
-  Succeeded: <Check className="h-4 w-4" />,
-  Executed: <DoubleCheck className="h-4 w-4" />,
-  Defeated: <HiXMark className="h-4 w-4" />,
-  Verified: <DoubleCheck className="h-4 w-4" />,
-  Expired: <AiFillHourglass className="h-4 w-4" />,
-  Unverified: <HiXMark className="h-4 w-4" />,
-};
+const iconVariants = cva('', {
+  variants: {
+    size: {
+      sm: 'h-4 w-4',
+      md: 'h-5 w-5',
+      lg: 'h-6 w-6',
+    },
+  },
+  defaultVariants: {
+    size: 'sm',
+  },
+});
 
-// Different types of statuses, as a string rather than an enum
-type StatusVariant =
-  | 'Pending'
-  | 'Active'
-  | 'Succeeded'
-  | 'Executed'
-  | 'Defeated'
-  | 'Verified'
-  | 'Expired'
-  | 'Unverified';
-
-interface ProposalStatusBadgeProps
-  extends React.BaseHTMLAttributes<HTMLDivElement> {
-  status: ProposalStatus | StatusVariant;
+export interface StatusBadgeProps
+  extends React.BaseHTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof statusVariants> {
+  icon: IconType;
+  text: string;
 }
 
 /**
- * @returns A badge with some status
- * @example Active status will have a blue background and an activity icon
+ * @returns A badge showing a status with predefined color and size
  */
 export const StatusBadge = ({
-  status,
+  icon,
+  size,
+  variant,
+  text,
   className,
   ...props
-}: ProposalStatusBadgeProps) => {
-  const statusString = status.toString() as StatusVariant;
+}: StatusBadgeProps) => {
   return (
     <div
-      className={cn(statusVariants({ status: statusString }), className)}
+      className={cn(statusVariants({ size, variant }), className)}
       {...props}
     >
-      {statusIcon[statusString]}
-      <p className="text-sm">{status}</p>
+      {createElement(icon, { className: cn(iconVariants({ size })) })}
+      <p>{text}</p>
     </div>
   );
 };

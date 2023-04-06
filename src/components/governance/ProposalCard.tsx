@@ -7,9 +7,85 @@ import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
 import { countdownText } from '@/src/lib/utils';
-import { StatusBadge } from '../ui/StatusBadge';
+import { StatusBadge, StatusBadgeProps } from '../ui/StatusBadge';
 import { Link } from 'react-router-dom';
-import { HiChevronRight } from 'react-icons/hi2';
+import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
+import Activity from '@/src/components/icons/Actitivy';
+import Check from '@/src/components/icons/Check';
+import DoubleCheck from '@/src/components/icons/DoubleCheck';
+
+type StatusBadgePropsMap = {
+  Pending: StatusBadgeProps;
+  Active: StatusBadgeProps;
+  Succeeded: StatusBadgeProps;
+  Executed: StatusBadgeProps;
+  Defeated: StatusBadgeProps;
+};
+
+const statusBadgeProps: StatusBadgePropsMap = {
+  Pending: {
+    icon: HiOutlineClock,
+    variant: 'secondary',
+    text: 'Pending',
+  },
+  Active: {
+    icon: Activity,
+    variant: 'primary',
+    text: 'Active',
+  },
+  Succeeded: {
+    icon: Check,
+    variant: 'green',
+    text: 'Succeeded',
+  },
+  Executed: {
+    icon: DoubleCheck,
+    variant: 'green',
+    text: 'Executed',
+  },
+  Defeated: {
+    icon: HiXMark,
+    variant: 'red',
+    text: 'Defeated',
+  },
+};
+
+// Different types of statuses, as a string rather than an enum
+type ProposalStatusVariant =
+  | 'Pending'
+  | 'Active'
+  | 'Succeeded'
+  | 'Executed'
+  | 'Defeated';
+
+interface ProposalStatusBadgeProps
+  extends React.BaseHTMLAttributes<HTMLDivElement> {
+  status: ProposalStatus | ProposalStatusVariant;
+  size?: 'sm' | 'md';
+}
+
+/**
+ * @returns A badge showing the status of a proposal
+ * @example Active status will have a blue background and an activity icon
+ */
+export const ProposalStatusBadge = ({
+  status,
+  size = 'sm',
+  className,
+  ...props
+}: ProposalStatusBadgeProps) => {
+  const statusString = status.toString() as ProposalStatusVariant;
+  const statusProps = statusBadgeProps[statusString];
+
+  return (
+    <StatusBadge
+      {...statusProps}
+      size={size}
+      {...props}
+      className={className}
+    />
+  );
+};
 
 /**
  * Find the data for tags of a specific proposal
@@ -67,7 +143,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
 
   return (
     <Card padding="sm" variant="light" className="space-y-2 p-4 font-normal">
-      <StatusBadge status={status} className="xs:hidden" />
+      <ProposalStatusBadge status={status} className="xs:hidden" />
       <div className="space-y-2">
         <div className="flex flex-row justify-between">
           <Link
@@ -77,7 +153,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
             <Header level={2}>{title}</Header>
             <HiChevronRight className="h-5 w-5" />
           </Link>
-          <StatusBadge status={status} className="hidden xs:flex" />
+          <ProposalStatusBadge status={status} className="hidden xs:flex" />
         </div>
         <p className="leading-5 text-slate-500 dark:text-slate-400">
           {summary}
