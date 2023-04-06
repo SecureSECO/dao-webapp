@@ -79,7 +79,7 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
         {...props}
       >
         <div className="flex flex-row items-center justify-between">
-          <div className="flex flex-row items-center gap-x-3 lg:gap-x-6">
+          <div className="flex flex-row items-center gap-x-3 lg:gap-x-4">
             <div className="rounded-md bg-slate-100 p-2 dark:bg-slate-700/50">
               <IconWrapper.icon className="h-5 w-5 text-primary dark:text-primary-500" />
             </div>
