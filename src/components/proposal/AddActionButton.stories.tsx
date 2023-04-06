@@ -10,5 +10,11 @@ export default meta;
 type Story = StoryObj<typeof AddActionButton>;
 
 export const Primary: Story = {
-  render: () => <AddActionButton append={() => {}} />,
+  render: () => (
+    <AddActionButton
+      append={() => {
+        console.log('Adding action');
+      }}
+    />
+  ),
 };

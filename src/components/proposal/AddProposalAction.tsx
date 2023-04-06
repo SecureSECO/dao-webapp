@@ -1,5 +1,10 @@
 import { Card } from '@/src/components/ui/Card';
-import { HiPlus, HiArrowRight, HiOutlinePlusCircle } from 'react-icons/hi2';
+import {
+  HiPlus,
+  HiArrowRight,
+  HiOutlinePlusCircle,
+  HiOutlineBolt,
+} from 'react-icons/hi2';
 import {
   emptyActionWithdrawFormData,
   emptyActionMintTokenFormData,
@@ -14,7 +19,7 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
 
-export const AddActionButton = ({ append }: { append: any }) => {
+export const AddActionButton = ({ append}: { append: any }) => {
   const handleAddWithdrawAssetsAction = () =>
     append(emptyActionWithdrawFormData);
 
@@ -24,7 +29,7 @@ export const AddActionButton = ({ append }: { append: any }) => {
 
   return (
     <Dialog>
-      <DialogTrigger className=" h-10 w-fit bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400">
+      <DialogTrigger className="h-10 w-fit rounded border border-slate-300 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400">
         <div className="flex w-fit flex-row items-center gap-x-2">
           <HiPlus className="h-5 w-5" />
           Add action
@@ -58,14 +63,17 @@ export const AddActionButton = ({ append }: { append: any }) => {
   );
 };
 
-export const AddActionCard = ({ append }: { append: any }) => {
-  <Card>
-    <HiOutlinePlusCircle className="h-6 w-6" />
-    <h2 className="text-2xl">Add action</h2>
-    <p className="">
+export const AddActionCard = ({ append }: { append: any }) => (
+  <Card
+    variant="light"
+    className="flex max-w-4xl flex-col items-center gap-4 self-center"
+  >
+    <HiOutlineBolt className="h-20 w-16" />
+    <h2 className="text-4xl">Add action</h2>
+    <p className="max-w-3xl text-lg">
       This action will execute if the vote passes. A common automatic action is
       transferring funds to a guild or person if their proposal passes a vote.
     </p>
     <AddActionButton append={append} />
-  </Card>;
-};
+  </Card>
+);
