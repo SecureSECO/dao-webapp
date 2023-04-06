@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
-import { MainCard } from '../components/ui/MainCard';
+import { DefaultMainCardHeader, MainCard } from '../components/ui/MainCard';
 import { HiCheckBadge, HiClock, HiUserCircle } from 'react-icons/hi2';
 import { AiFillGithub, AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
@@ -304,10 +304,10 @@ const Verification = () => {
           loading={false}
           icon={HiCheckBadge}
           header={
-            <div className="flex flex-row items-end gap-x-2">
-              <span className="text-3xl">{amountOfVerifiedStamps}</span>
-              <p className="mb-1 leading-4">verified accounts</p>
-            </div>
+            <DefaultMainCardHeader
+              value={amountOfVerifiedStamps}
+              label="verified accounts"
+            />
           }
         >
           {isLoading ? (
@@ -347,10 +347,10 @@ const Verification = () => {
           loading={false}
           icon={HiClock}
           header={
-            <div className="flex flex-row items-end gap-x-2">
-              <span className="text-3xl">{verificationHistory.length}</span>
-              <p className="mb-1 leading-4">total verifications</p>
-            </div>
+            <DefaultMainCardHeader
+              value={verificationHistory.length}
+              label="verifications"
+            />
           }
         >
           {verificationHistory?.map((history, index) => (

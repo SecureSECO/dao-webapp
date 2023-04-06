@@ -22,7 +22,7 @@ export type UseProposalProps = {
   useDummyData?: boolean;
 };
 
-const dummyProposal: DetailedProposal = {
+export const dummyProposal: DetailedProposal = {
   id: '0x1234567890123456789012345678901234567890_0x0',
   dao: {
     address: import.meta.env.VITE_DAO_ADDRESS,

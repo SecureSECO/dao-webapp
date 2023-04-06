@@ -82,7 +82,7 @@ export const useCanVote = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!votingClient) return;
+    if (!votingClient || !address) return;
     setLoading(true);
     fetchProposal(votingClient);
   }, [votingClient, proposalId, address]);

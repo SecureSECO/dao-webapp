@@ -2,11 +2,11 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useProposal } from '@/src/hooks/useProposal';
 import { useParams } from 'react-router';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { Card } from '@/src/components/ui/Card';
-import Header from '@/src/components/ui/Header';
 import { ProposalStatus } from '@aragon/sdk-client';
 import VotesContent from '@/src/components/proposal/VotesContent';
 import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { HiChatBubbleLeftRight, HiLink } from 'react-icons/hi2';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -54,15 +54,30 @@ const ViewProposal = () => {
             )}
           </HeaderCard>
 
-          <Card className="col-span-full flex flex-col gap-y-4 lg:col-span-4">
-            <Header level={2}>Votes</Header>
+          <MainCard
+            className="col-span-full flex flex-col gap-y-4 lg:col-span-4"
+            icon={HiChatBubbleLeftRight}
+            header={
+              <DefaultMainCardHeader
+                value={proposal?.votes.length ?? 0}
+                label="votes"
+              />
+            }
+          >
             {proposal && <VotesContent proposal={proposal} />}
-          </Card>
+          </MainCard>
 
-          <Card
+          <MainCard
             loading={loading}
             className="col-span-full lg:col-span-3"
-          ></Card>
+            icon={HiLink}
+            header={
+              <DefaultMainCardHeader
+                value={proposal?.metadata.resources.length ?? 0}
+                label="resources"
+              />
+            }
+          ></MainCard>
         </>
       )}
     </div>

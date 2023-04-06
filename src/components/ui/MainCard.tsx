@@ -16,6 +16,39 @@ const mainCardVariants = cva('w-full flex flex-col gap-y-2', {
 });
 
 /**
+ * Default header for the MainCard component.
+ * @param props.value The numeric value to be displayed in the header.
+ * @param props.label The label of the value to be displayed in the header.
+ * @param props.truncateMobile Whether or not to hide all but the first word of the label on mobile. Defaulted to `false`.
+ * @returns A div to be used as the header for the MainCard component.
+ */
+export const DefaultMainCardHeader = ({
+  value,
+  label,
+  truncateMobile = false,
+}: {
+  value: number | string;
+  label: string;
+  truncateMobile?: boolean;
+}) => {
+  const split = label.split(' ');
+
+  return (
+    <div className="flex flex-row items-end gap-x-2">
+      <span className="text-3xl">{value}</span>
+      {!truncateMobile ? (
+        <p className="mb-1 leading-4">{label}</p>
+      ) : (
+        <p className="mb-1 leading-4">
+          {split[0]}{' '}
+          <span className="hidden xs:inline">{split.slice(1).join(' ')}</span>
+        </p>
+      )}
+    </div>
+  );
+};
+
+/**
  * MainCardProps represents the properties for the MainCard component.
  * @property icon - An icon to be displayed on the card, next to the header. Typically a React Icon component.
  * @property header - A header content that is displayed on the card.

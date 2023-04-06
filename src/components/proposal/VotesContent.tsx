@@ -28,6 +28,7 @@ type VoteFormData = {
  */
 const VotesContent = ({ proposal }: { proposal: DetailedProposal }) => {
   switch (proposal.status) {
+    // Active proposals include radio button to vote
     case ProposalStatus.ACTIVE:
       return <VotesContentActive proposal={proposal} />;
     default:
@@ -114,13 +115,13 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
         </Accordion>
       </RadioGroup>
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
-      <Button disabled={!userCanVote} type="submit" onClick={() => false}>
+      <Button disabled={!userCanVote} type="submit">
         Vote{' '}
         {!userCanVote ? (
           'submitted'
         ) : (
-          <span className="ml-1 inline-block lowercase first-letter:uppercase">
-            {voteValue ?? 'Yes'}
+          <span className="ml-1 inline-block lowercase">
+            {voteValue ?? 'yes'}
           </span>
         )}
       </Button>
