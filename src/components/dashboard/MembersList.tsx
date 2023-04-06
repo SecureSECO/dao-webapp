@@ -14,7 +14,6 @@ const MemberCard = ({ member }: { member: Member }) => {
       padding="sm"
       className="flex flex-row items-center justify-between bg-slate-50 dark:bg-slate-700/50"
     >
-      {/* TODO: possibly include option to show Jazzicon in the Address component */}
       <div className="flex flex-row items-center gap-x-2">
         <div className="h-fit w-fit">
           <Jazzicon diameter={25} seed={jsNumberForAddress(member.address!)} />

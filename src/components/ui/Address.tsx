@@ -1,6 +1,5 @@
 /**
  * A module that exports the `Address` component for displaying Ethereum addresses, optionally with a link to Etherscan/Polyscan and a copy-to-clipboard button.
- * TODO improve this (hidde will make it way better later)
  */
 import { cva } from 'class-variance-authority';
 import React from 'react';

@@ -17,7 +17,6 @@ type UseMembersData = {
   memberCount: number;
 };
 
-// TODO: add REP balance to this, fetch it from wagmi
 export type Member = { address: string; bal: number | null };
 
 const dummyMembers: Member[] = [];

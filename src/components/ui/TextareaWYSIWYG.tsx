@@ -71,7 +71,6 @@ const MenuBar: React.FC<MenuBarProps> = ({
       return;
     }
 
-    // TODO: All possible url validations should be done here instead of just checking for protocol
     if (url.indexOf('http://') === -1 && url.indexOf('https://') === -1) {
       editor
         ?.chain()

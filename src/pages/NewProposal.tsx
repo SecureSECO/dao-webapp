@@ -501,7 +501,6 @@ const StepThree = ({
   const onSubmit = (data: any) => {
     console.log(data);
     setStep(4);
-    // TODO: Handle submission
   };
 
   const handleAddWithdrawAssetsAction = () => {
