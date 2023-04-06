@@ -1,8 +1,5 @@
 import {
-  Action,
-  EmptyActionMintToken,
   emptyActionMintTokenFormData,
-  emptyActionWithdraw,
   emptyActionWithdrawFormData,
 } from '@/src/lib/Actions';
 import type { Meta, StoryObj } from '@storybook/react';
