@@ -1,3 +1,11 @@
+/**
+ * This file contains a set of custom Tabs components built on top of the '@radix-ui/react-tabs' library.
+ * @see https://www.radix-ui.com/docs/primitives/components/tabs - Radix UI Tabs Primitive
+ * The components include Tabs, TabsList, TabsTrigger, and TabsContent.
+ * These components are styled and provide a consistent UI look and feel for tabs throughout an application. inspired by https://ui.shadcn.com/docs/primitives/tabs
+ * The components also have support for multiple variants and padding options, which can be controlled through the props.
+ */
+
 import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 
@@ -28,6 +36,15 @@ export interface TabsProps
   extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>,
     VariantProps<typeof tabsVariants> {}
 
+/**
+ * The Tabs component represents the main container for tabs.
+ * It supports multiple variants and padding options.
+ * @param {Object} props - The properties for the Tabs component.
+ * @param {string} props.className - Optional CSS classes to add to the component.
+ * @param {string} props.variant - Optional variant to control the appearance of the Tabs component.
+ * @param {string} props.padding - Optional padding option to control the padding of the Tabs component.
+ * @returns A Tabs React element.
+ */
 const Tabs = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Root>,
   TabsProps
@@ -43,6 +60,10 @@ const Tabs = React.forwardRef<
 ));
 Tabs.displayName = TabsPrimitive.Root.displayName;
 
+/**
+ * The TabsList component represents the list of tab triggers within the Tabs component.
+ * @returns A TabsList React element.
+ */
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
@@ -58,6 +79,11 @@ const TabsList = React.forwardRef<
 ));
 TabsList.displayName = TabsPrimitive.List.displayName;
 
+/**
+ * The TabsTrigger component represents an individual tab trigger within the TabsList component.
+ * It controls the active state of the associated tab content.
+ * @returns A TabsTrigger React element.
+ */
 const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
@@ -73,6 +99,11 @@ const TabsTrigger = React.forwardRef<
 ));
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
+/**
+ * The TabsContent component represents the content of an individual tab.
+ * The content will be shown or hidden based on the active state of the associated tab trigger.
+ * @returns A TabsContent React element.
+ */
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>

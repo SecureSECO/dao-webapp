@@ -1,3 +1,9 @@
+/**
+ * This file contains a custom TextareaWYSIWYG component that provides rich text editing functionality.
+ * It utilizes 'tiptap' and 'react-hook-form' to create a feature-rich textarea component for various use cases.
+ * The MenuBar component is also defined here to handle toolbar actions and styling.
+ */
+
 import { Toggle } from '@/src/components/ui/Toggle';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -5,7 +11,13 @@ import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import clsx from 'clsx';
 import React, { useCallback, useState, useEffect } from 'react';
-import { FieldError, UseFormClearErrors, UseFormSetError, useFormContext } from 'react-hook-form';
+import {
+  FieldError,
+  FieldValues,
+  UseFormClearErrors,
+  UseFormSetError,
+  useFormContext,
+} from 'react-hook-form';
 import ReactDOM from 'react-dom';
 import {
   FaBold,
@@ -27,6 +39,18 @@ type MenuBarProps = {
   fullScreen?: boolean;
 };
 
+/**
+ * The MenuBar component represents the toolbar for the TextareaWYSIWYG component.
+ * It contains buttons for applying formatting and other actions.
+ *
+ * @param props - The properties for the MenuBar component.
+ * @param {boolean} props.disabled - Indicates whether the editor is disabled.
+ * @param {Editor} props.editor - The 'tiptap' Editor instance.
+ * @param {boolean} props.isExpanded - Indicates whether the editor is in fullscreen mode.
+ * @param {React.SetStateAction<boolean>} props.setIsExpanded - A function to toggle the editor's fullscreen mode.
+ * @param {boolean} [props.fullScreen=false] - Optional flag to indicate if the menu bar should be displayed in fullscreen mode.
+ * @returns A MenuBar React element.
+ */
 const MenuBar: React.FC<MenuBarProps> = ({
   editor,
   disabled,
@@ -47,7 +71,6 @@ const MenuBar: React.FC<MenuBarProps> = ({
       return;
     }
 
-    // TODO: All possible url validations should be done here instead of just checking for protocol
     if (url.indexOf('http://') === -1 && url.indexOf('https://') === -1) {
       editor
         ?.chain()
@@ -132,7 +155,24 @@ const MenuBar: React.FC<MenuBarProps> = ({
   );
 };
 
-type TextareaWYSIWYGProps<T> = {
+/**
+ * The TextareaWYSIWYG component represents a styled WYSIWYG textarea element with rich text editing functionality.
+ * It supports error handling with 'react-hook-form' and can be easily integrated into forms.
+ *
+ * @template T - The generic type parameter for FieldValues.
+ * @param {Object} props - The properties for the TextareaWYSIWYG component.
+ * @param {string} [props.placeholder=''] - Optional placeholder text for the textarea.
+ * @param {boolean} [props.disabled=false] - Optional flag to disable the editor.
+ * @param {(html: string) => void} [props.onBlur] - Optional callback to handle the onBlur event.
+ * @param {(html: string) => void} [props.onChange] - Optional callback to handle the onChange event.
+ * @param {string} [props.name='editor'] - Optional name attribute for the textarea.
+ * @param {string} [props.value=''] - Optional initial value for the textarea.
+ * @param {FieldError} [props.error] - Optional 'react-hook-form' FieldError object to handle error states.
+ * @param {() => void} props.setError - A function to set the error state for the textarea.
+ * @param {() => void} props.clearErrors - A function to clear the error state for the textarea.
+ * @returns A TextareaWYSIWYG React element.
+ */
+export type TextareaWYSIWYGProps<T extends FieldValues> = {
   placeholder?: string;
   disabled?: boolean;
   onBlur?: (html: string) => void;
@@ -140,11 +180,11 @@ type TextareaWYSIWYGProps<T> = {
   name?: string;
   value?: string;
   error?: FieldError;
-  setError: UseFormSetError<T>;
-  clearErrors: UseFormClearErrors<T>;
+  setError: () => void;
+  clearErrors: () => void;
 };
 
-export const TextareaWYSIWYG = <T,>({
+export const TextareaWYSIWYG = <T extends FieldValues>({
   placeholder = '',
   disabled = false,
   onBlur,
@@ -155,8 +195,13 @@ export const TextareaWYSIWYG = <T,>({
   setError,
   clearErrors,
 }: TextareaWYSIWYGProps<T>) => {
+  // State for handling expanded mode
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // State for handling focus state
   const [isFocused, setIsFocused] = useState(false);
+
+  // Initialize tiptap editor
   const editor = useEditor(
     {
       content: value,
@@ -168,18 +213,16 @@ export const TextareaWYSIWYG = <T,>({
           placeholder,
         }),
       ],
+      // Handle onBlur event
       onBlur: ({ editor }) => {
         if (onBlur) {
           onBlur(editor.getHTML());
         }
 
         if (isEmptyContent(editor.getHTML())) {
-          setError('description', {
-            type: 'required',
-            message: 'Description is required',
-          });
+          setError();
         } else {
-          clearErrors('description');
+          clearErrors();
         }
 
         setIsFocused(false);
@@ -196,11 +239,13 @@ export const TextareaWYSIWYG = <T,>({
     [disabled]
   );
 
-  const isEmptyContent = (content) => {
+  // Helper function to check if content is empty
+  const isEmptyContent = (content: string) => {
     const strippedContent = content.replace(/<\/?[^>]+(>|$)/g, '').trim();
     return strippedContent === '';
   };
 
+  // Update editor content and handle onChange event
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value);
@@ -211,13 +256,16 @@ export const TextareaWYSIWYG = <T,>({
     }
   }, [editor, onChange, value]);
 
+  // Handle expanded mode and create portal if necessary
   if (isExpanded) {
+    // Handle escape key to exit fullscreen mode
     document.onkeydown = (e) => {
       if (e.key === 'Escape' && isExpanded) {
         setIsExpanded(!isExpanded);
       }
     };
 
+    // Create and render portal for fullscreen mode
     let portalNode = document.querySelector('#fullscreen-editor');
     if (!portalNode) {
       const div = document.createElement('div');

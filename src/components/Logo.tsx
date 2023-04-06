@@ -1,3 +1,8 @@
+/**
+ * @file Logo.tsx
+ * This file defines the Logo component (only the icon) for SecureSecoDAO.
+ */
+
 import React from 'react';
 
 const Logo = (props: React.BaseHTMLAttributes<SVGElement>) => {

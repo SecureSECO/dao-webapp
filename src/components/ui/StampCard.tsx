@@ -1,3 +1,12 @@
+/**
+ * The StampCard component displays information about a specific stamp.
+ * It shows the providerId, the last verified date, and a button to verify or reverify the stamp.
+ * If the stamp is verified, a checkmark icon will be displayed next to the providerId.
+ */
+
+import { AiFillCheckCircle } from 'react-icons/ai';
+import React from 'react';
+import { Stamp } from '../../types/Stamp';
 import {
   Stamp,
   StampInfo,
@@ -10,6 +19,13 @@ import { HiCalendar, HiChartBar, HiLink } from 'react-icons/hi2';
 import { FaHourglass } from 'react-icons/fa';
 import { StatusBadge } from './StatusBadge';
 
+/**
+ * @param {Object} props - The properties for the StampCard component.
+ * @param {string} props.providerId - The providerId for the stamp.
+ * @param {Stamp | null} props.stamp - The stamp object, or null if there is no stamp.
+ * @param {(providerId: string) => void} props.verify - Callback to verify the stamp.
+ * @returns A StampCard React element.
+ */
 const StampCard = ({
   stampInfo,
   stamp,

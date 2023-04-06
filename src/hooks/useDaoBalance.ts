@@ -88,7 +88,6 @@ export const useDaoBalance = ({
       updateDate: new Date(2023, 2, 10),
     };
 
-    //TODO
     setDaoBalances([
       assetBalanceToDaoBalance(nativeBal),
       assetBalanceToDaoBalance(erc20Bal),
