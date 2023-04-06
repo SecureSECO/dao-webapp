@@ -1,3 +1,9 @@
+/**
+ * The SortSelector module provides a customizable, interactive component to
+ * control the sort order and direction of a list of items.
+ * It is built with the Dropdown, Button, and Tooltip components.
+ */
+
 import React, { useEffect, useState } from 'react';
 import {
   DropdownMenu as Dropdown,
@@ -71,6 +77,14 @@ const incrementDirectionState = (state: DirectionState) => {
   return (state + 1) % 3;
 };
 
+/**
+ * The SortSelector component is used to set the sort order and direction of a list of proposals.
+ * It includes a dropdown menu to choose the sorting method and a button to toggle the sort direction.
+ * @param {Object} props - The properties for the SortSelector component.
+ * @param {(sortBy: ProposalSortBy) => void} props.setSortBy - Callback to set the sort order.
+ * @param {(direction: SortDirection | undefined) => void} props.setDirection - Callback to set the sort direction.
+ * @returns A SortSelector React element.
+ */
 const SortSelector = ({
   setSortBy,
   setDirection,
@@ -90,6 +104,8 @@ const SortSelector = ({
     setSortBy(ProposalSortBy[sortBySelected]);
   }, [sortBySelected]);
 
+  // This code is used to set the direction of the table
+  // It is used to set the direction state based on the direction selected
   useEffect(() => {
     switch (directionSelected) {
       case DirectionState.NONE:

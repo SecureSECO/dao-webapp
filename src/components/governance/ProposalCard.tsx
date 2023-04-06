@@ -53,8 +53,6 @@ const getProposalTags = (proposal: Proposal) => {
       variant: 'countdown',
     });
   }
-
-  // TODO: add tag for type of proposal (when we add support for different types)
   return res;
 };
 

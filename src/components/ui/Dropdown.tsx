@@ -1,3 +1,9 @@
+/**
+ * The DropdownMenu component is the root component of the dropdown menu system,
+ * @see https://www.radix-ui.com/docs/primitives/components/dropdown-menu - Radix UI DropdownMenu Primitive
+ * built using Radix UI's DropdownMenu primitive adapted and inspired by https://ui.shadcn.com/docs/primitives/dropdown-menu
+ */
+
 import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 
@@ -5,9 +11,18 @@ import { HiChevronRight, HiCheck } from 'react-icons/hi2';
 
 import { cn } from '@/src/lib/utils';
 
+/**
+ * The DropdownMenu component is the root component of the dropdown menu system,
+ * It is a wrapper for Radix UI's DropdownMenu primitive that provides the context for the other components.
+ */
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
-//const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+/**
+ * The DropdownMenuTrigger component is a wrapper for Radix UI's DropdownMenu Trigger
+ * primitive that is used to open or close the dropdown menu when clicked.
+ * @param props - Props for the DropdownMenuTrigger component.
+ * @returns A DropdownMenuTrigger React element.
+ */
 const DropdownMenuTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Trigger>
@@ -22,14 +37,36 @@ const DropdownMenuTrigger = React.forwardRef<
 ));
 DropdownMenuTrigger.displayName = DropdownMenuPrimitive.Trigger.displayName;
 
+/**
+ * The DropdownMenuGroup component is a wrapper for Radix UI's DropdownMenu Group
+ * primitive that groups related items together within the dropdown menu.
+ */
 const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 
+/**
+ * The DropdownMenuPortal component is a wrapper for Radix UI's DropdownMenu Portal
+ * primitive which is used to render the dropdown menu contents in a React portal.
+ */
 const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
 
+/**
+ * The DropdownMenuSub component is a wrapper for Radix UI's DropdownMenu Sub
+ * primitive that represents a nested submenu within the dropdown menu.
+ */
 const DropdownMenuSub = DropdownMenuPrimitive.Sub;
 
+/**
+ * The DropdownMenuRadioGroup component is a wrapper for Radix UI's DropdownMenuPrimitive RadioGroup
+ * primitive that is used to group related radio items together within the dropdown menu.
+ */
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 
+/**
+ * The DropdownMenuSubTrigger component is a wrapper for Radix UI's DropdownMenu SubTrigger
+ * primitive that is used to open or close a nested submenu when clicked.
+ * @param props - Props for the DropdownMenuSubTrigger component.
+ * @returns A DropdownMenuSubTrigger React element.
+ */
 const DropdownMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
@@ -39,7 +76,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      'flex cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm font-medium outline-none focus:bg-slate-100 data-[state=open]:bg-slate-100 dark:focus:bg-slate-700 dark:data-[state=open]:bg-slate-700',
+      'flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm font-medium outline-none focus:bg-slate-100 data-[state=open]:bg-slate-100 dark:focus:bg-slate-700 dark:data-[state=open]:bg-slate-700',
       inset && 'pl-8',
       className
     )}
@@ -52,6 +89,12 @@ const DropdownMenuSubTrigger = React.forwardRef<
 DropdownMenuSubTrigger.displayName =
   DropdownMenuPrimitive.SubTrigger.displayName;
 
+/**
+ * The DropdownMenuSubContent component is a wrapper for Radix UI's DropdownMenu SubContent
+ * primitive that renders the contents of a nested submenu within the dropdown menu.
+ * @param props - Props for the DropdownMenuSubContent component.
+ * @returns A DropdownMenuSubContent React element.
+ */
 const DropdownMenuSubContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent>
@@ -68,6 +111,12 @@ const DropdownMenuSubContent = React.forwardRef<
 DropdownMenuSubContent.displayName =
   DropdownMenuPrimitive.SubContent.displayName;
 
+/**
+ * The DropdownMenuContent component is a wrapper for Radix UI's DropdownMenu Content
+ * primitive that renders the contents of the dropdown menu.
+ * @param props - Props for the DropdownMenuContent component.
+ * @returns A DropdownMenuContent React element.
+ */
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
@@ -86,6 +135,12 @@ const DropdownMenuContent = React.forwardRef<
 ));
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
 
+/**
+ * The DropdownMenuItem component is a wrapper for Radix UI's DropdownMenu Item
+ * primitive that represents an individual item within the dropdown menu.
+ * @param props - Props for the DropdownMenuItem component.
+ * @returns A DropdownMenuItem React element.
+ */
 const DropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
@@ -95,7 +150,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm font-medium outline-none focus:bg-slate-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-slate-700',
+      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm font-medium outline-none focus:bg-slate-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-slate-700',
       inset && 'pl-8',
       className
     )}
@@ -104,6 +159,12 @@ const DropdownMenuItem = React.forwardRef<
 ));
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
 
+/**
+ * The DropdownMenuCheckboxItem component is a wrapper for Radix UI's DropdownMenu CheckboxItem
+ * primitive that represents an individual checkbox item within the dropdown menu.
+ * @param props - Props for the DropdownMenuCheckboxItem component.
+ * @returns A DropdownMenuCheckboxItem React element.
+ */
 const DropdownMenuCheckboxItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem>
@@ -132,6 +193,12 @@ type CustomRadioItemProps = {
   hasIndicator?: boolean;
 };
 
+/**
+ * The DropdownMenuRadioItem component is a wrapper for Radix UI's DropdownMenu RadioItem
+ * primitive that represents an individual radio item within the dropdown menu.
+ * @param props - Props for the DropdownMenuRadioItem component.
+ * @returns A DropdownMenuRadioItem React element.
+ */
 const DropdownMenuRadioItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem> &
@@ -158,6 +225,12 @@ const DropdownMenuRadioItem = React.forwardRef<
 ));
 DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName;
 
+/**
+ * The DropdownMenuLabel component is a wrapper for Radix UI's DropdownMenu Label
+ * primitive that represents a label within the dropdown menu.
+ * @param props - Props for the DropdownMenuLabel component.
+ * @returns A DropdownMenuLabel React element.
+ */
 const DropdownMenuLabel = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
@@ -176,6 +249,12 @@ const DropdownMenuLabel = React.forwardRef<
 ));
 DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
 
+/**
+ * The DropdownMenuSeparator component is a wrapper for Radix UI's DropdownMenu Separator
+ * primitive that visually separates groups of items within the dropdown menu.
+ * @param props - Props for the DropdownMenuSeparator component.
+ * @returns A DropdownMenuSeparator React element.
+ */
 const DropdownMenuSeparator = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
@@ -188,6 +267,12 @@ const DropdownMenuSeparator = React.forwardRef<
 ));
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
+/**
+ * The DropdownMenuShortcut component is a wrapper for Radix UI's DropdownMenu Shortcut
+ * primitive that represents a keyboard shortcut within the dropdown menu.
+ * @param props - Props for the DropdownMenuShortcut component.
+ * @returns A DropdownMenuShortcut React element.
+ */
 const DropdownMenuShortcut = ({
   className,
   ...props

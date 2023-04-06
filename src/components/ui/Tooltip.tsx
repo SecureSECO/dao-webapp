@@ -1,15 +1,43 @@
+/**
+ * @file Custom Tooltip Component
+ * This file defines a custom tooltip component that wraps the Radix UI tooltip primitive.
+ * It applies custom styling to the TooltipContent and exports Tooltip, TooltipTrigger, TooltipContent, and TooltipProvider components.
+ * @see https://www.radix-ui.com/docs/primitives/components/tooltip - Radix UI Tooltip Primitive
+ * This component was inspired by https://ui.shadcn.com/docs/primitives/tooltip
+ */
+
 import * as React from 'react';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
 import { cn } from '@/src/lib/utils';
 
+/**
+ * Provider to control display delay globally.
+ */
 const TooltipProvider = TooltipPrimitive.Provider;
 
+/**
+ * Custom Tooltip component. Contains all the parts of a tooltip.
+ * @param {object} props - The properties for the tooltip component.
+ * @returns {React.Element} The rendered Tooltip component.
+ */
 const Tooltip = ({ ...props }) => <TooltipPrimitive.Root {...props} />;
 Tooltip.displayName = TooltipPrimitive.Tooltip.displayName;
 
+/**
+ * Custom TooltipTrigger component.
+ * The button that toggles the tooltip. By default, the Tooltip.Content will position itself against the trigger.
+ */
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
+/**
+ * Custom TooltipContent component with additional styling.
+ * The component that pops out when the tooltip is open.
+ *
+ * @param {object} props - The properties for the TooltipContent component.
+ * @param {React.Ref} ref - The forwarded ref for the TooltipPrimitive.Content.
+ * @returns {React.Element} The rendered TooltipContent component.
+ */
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
