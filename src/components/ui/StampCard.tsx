@@ -6,7 +6,6 @@
 
 import { AiFillCheckCircle } from 'react-icons/ai';
 import React from 'react';
-import { Stamp } from '../../types/Stamp';
 import {
   Stamp,
   StampInfo,

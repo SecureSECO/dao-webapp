@@ -10,5 +10,10 @@ export default meta;
 type Story = StoryObj<typeof TextareaWYSIWYG>;
 
 export const Primary: Story = {
-  render: () => <TextareaWYSIWYG />,
+  render: () => (
+    <TextareaWYSIWYG
+      setError={() => console.log('error')}
+      clearErrors={() => console.log('clear errors')}
+    />
+  ),
 };
