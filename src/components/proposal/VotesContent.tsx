@@ -19,6 +19,7 @@ import { useCanVote } from '@/src/hooks/useCanVote';
 import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
+import { useEffect } from 'react';
 
 type VoteFormData = {
   vote_value: string;
@@ -61,11 +62,6 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
 
   // Send the vote to SDK
   const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
-    console.log(
-      data.vote_value,
-      VoteValues[data.vote_value as VoteValueStringUpper]
-    );
-
     if (!votingClient) return;
     const steps = votingClient.methods.voteProposal({
       proposalId: proposal.id,
@@ -88,6 +84,9 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
   };
 
   const voteValue = watch('vote_value');
+  useEffect(() => {
+    console.log(voteValue);
+  }, [voteValue]);
   const userCanVote =
     !loading && error === null && canVote[voteValue as VoteValueStringUpper];
 
@@ -97,13 +96,11 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
         control={control}
         defaultValue={VoteValues[VoteValues.YES]}
         name="vote_value"
-        render={({ field: { onChange } }) => (
+        render={({ field: { onChange, name } }) => (
           <RadioGroup
-            onChange={(v) => {
-              console.log(v);
-              onChange;
-            }}
+            onChange={onChange}
             defaultValue={VoteValues[VoteValues.YES]}
+            name={name}
           >
             <Accordion type="single" collapsible className="space-y-2">
               <VoteOption proposal={proposal} voteValue={VoteValues.YES} />
