@@ -14,7 +14,7 @@ import {
 } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { goerli, polygon, sepolia } from 'wagmi/chains';
+import { goerli, polygon } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import Finance from '@/src/pages/Finance';
 import Community from '@/src/pages/Community';
@@ -34,17 +34,11 @@ if (!import.meta.env.VITE_APP_PROJECT_ID) {
 const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 
 // 2. Configure wagmi client
-const chains = [goerli, polygon, sepolia, ganache];
+const chains = [goerli, polygon, ganache];
 
 const { provider } = configureChains(chains, [
   import.meta.env.PROD
     ? (w3mProvider({ projectId }) as any)
-    : import.meta.env.VITE_USE_SEPOLIA
-    ? jsonRpcProvider({
-        rpc: () => ({
-          http: 'https://rpc.sepolia.org',
-        }),
-      })
     : // DEV NOTE: This is a local testnet on Ganache. Make sure you have it running
       // on port 65534, and deploy the necessary contracts to it.
       jsonRpcProvider({

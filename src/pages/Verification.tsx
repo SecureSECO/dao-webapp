@@ -133,10 +133,7 @@ const getThresholdForTimestamp = (
   return threshold ? threshold[1] : BigNumber.from(0);
 };
 
-export const verificationAddress =
-  import.meta.env.VITE_USE_SEPOLIA === 'true'
-    ? import.meta.env.VITE_VERIFY_CONTRACT_SEPOLIA
-    : import.meta.env.VITE_VERIFY_CONTRACT;
+export const verificationAddress = import.meta.env.VITE_VERIFY_CONTRACT;
 
 const Verification = () => {
   const { address, isConnected } = useAccount();
