@@ -43,7 +43,7 @@ const buttonVariants = cva(
   }
 );
 
-const iconVariants = cva('transition-all duration-200', {
+const iconVariants = cva('transition-all duration-200 shrink-0', {
   variants: {
     size: {
       default: 'h-5 w-5',
@@ -103,7 +103,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         <span className="sr-only">{label}</span>
         {icon && IconWrapper.icon ? (
-          <div className="flex flex-row items-center gap-x-2">
+          <div className="flex flex-row items-center gap-x-2 leading-4">
             <IconWrapper.icon
               className={cn(iconVariants({ size, className }))}
             />
@@ -112,7 +112,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ) : (
           <>
             {iconNode ? (
-              <div className="flex flex-row items-center gap-x-2">
+              <div className="flex flex-row items-center gap-x-2 leading-4">
                 {iconNode}
                 {label || children}
               </div>

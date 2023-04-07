@@ -37,7 +37,7 @@ export const AddActionButton = ({
 
   return (
     <Dialog>
-      <DialogTrigger className="h-10 w-fit rounded border border-slate-300 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400">
+      <DialogTrigger className="h-10 w-fit rounded border border-slate-300 bg-slate-100 px-4 py-2 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400">
         <div className="flex w-fit flex-row items-center gap-x-2">
           <HiPlus className="h-5 w-5" />
           Add action
@@ -49,7 +49,7 @@ export const AddActionButton = ({
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <DialogClose
-          className="flex h-10 w-fit flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
+          className="flex h-10 w-fit flex-col gap-2 bg-slate-100 px-4 py-2 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
           onClick={handleAddWithdrawAssetsAction}
         >
           <div className="flex w-fit flex-row items-center gap-x-2">
@@ -58,7 +58,7 @@ export const AddActionButton = ({
           </div>
         </DialogClose>
         <DialogClose
-          className="flex h-10 w-fit flex-col gap-2 bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
+          className="flex h-10 w-fit flex-col gap-2 bg-slate-100 px-4 py-2 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
           onClick={handleAddMintTokensAction}
         >
           <div className="flex w-fit flex-row items-center gap-x-2">

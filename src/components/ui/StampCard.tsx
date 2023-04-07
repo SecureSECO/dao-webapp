@@ -4,7 +4,6 @@
  * If the stamp is verified, a checkmark icon will be displayed next to the providerId.
  */
 
-import { AiFillCheckCircle } from 'react-icons/ai';
 import React from 'react';
 import {
   Stamp,

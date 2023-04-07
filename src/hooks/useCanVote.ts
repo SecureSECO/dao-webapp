@@ -13,6 +13,7 @@ export type UseCanVoteData = {
   loading: boolean;
   error: string | null;
   canVote: CanVote;
+  refetch: () => void;
 };
 
 export type UseCanVoteProps = {
@@ -38,7 +39,8 @@ export const useCanVote = ({
   const [error, setError] = useState<string | null>(null);
   const { votingClient } = useAragonSDKContext();
 
-  const fetchProposal = async (client: TokenVotingClient) => {
+  const fetchCanVote = async () => {
+    if (!votingClient || !address) return;
     if (!proposalId || !address) {
       setError('Proposal not found');
       setLoading(false);
@@ -49,7 +51,7 @@ export const useCanVote = ({
       const values = [VoteValues.ABSTAIN, VoteValues.YES, VoteValues.NO];
       const canVoteData = await Promise.all(
         values.map((vote) => {
-          return (client as TokenVotingClient)?.methods.canVote({
+          return (votingClient as TokenVotingClient)?.methods.canVote({
             voterAddressOrEns: address,
             proposalId,
             vote,
@@ -82,14 +84,16 @@ export const useCanVote = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!votingClient) return;
-    setLoading(true);
-    fetchProposal(votingClient);
+    if (votingClient && address) setLoading(true);
+    // fetchCanVote();
+    setLoading(false);
+    setCanVote({ YES: true, NO: true, ABSTAIN: true });
   }, [votingClient, proposalId, address]);
 
   return {
     loading,
     error,
     canVote,
+    refetch: () => (!useDummyData ? fetchCanVote() : void 0),
   };
 };

@@ -42,7 +42,7 @@ const ConnectButton = () => {
           {chain?.id !== prefferedNetwork && (
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger asChild className="absolute -top-2 -right-2">
+                <TooltipTrigger asChild className="absolute -right-2 -top-2">
                   <div>
                     <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgba(0,0,0,0.4)] dark:text-primary-500" />
                   </div>
