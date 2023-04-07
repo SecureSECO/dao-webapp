@@ -395,8 +395,13 @@ export const VotingOption = ({
       <Controller
         control={control}
         name="option"
-        render={({ field: { onChange } }) => (
-          <RadioGroup onChange={onChange}>
+        defaultValue={'yes-no-abstain'}
+        render={({ field: { onChange, name } }) => (
+          <RadioGroup
+            onChange={onChange}
+            defaultValue={'yes-no-abstain'}
+            name={name}
+          >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="yes-no-abstain" id="yes-no-abstain" />
               <h2>
@@ -425,8 +430,9 @@ export const StartTime = ({
       <Controller
         control={control}
         name="start_time_type"
-        render={({ field: { onChange } }) => (
-          <RadioGroup onChange={onChange}>
+        defaultValue={'now'}
+        render={({ field: { onChange, name } }) => (
+          <RadioGroup onChange={onChange} defaultValue={'now'} name={name}>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="now" id="start-now" />
               <h2>Now</h2>
@@ -464,8 +470,9 @@ export const EndTime = ({
       <Controller
         control={control}
         name="end_time_type"
-        render={({ field: { onChange } }) => (
-          <RadioGroup onChange={onChange}>
+        defaultValue={'duration'}
+        render={({ field: { name, onChange } }) => (
+          <RadioGroup defaultValue={'duration'} onChange={onChange} name={name}>
             <div className="flex items-center space-x-2">
               <RadioGroupItem
                 value="duration"
