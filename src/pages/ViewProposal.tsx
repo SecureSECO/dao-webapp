@@ -17,7 +17,7 @@ import { countdownText } from '@/src/lib/utils';
 
 const ViewProposal = () => {
   const { id } = useParams();
-  const { proposal, loading, error } = useProposal({ id });
+  const { proposal, loading, error, refetch } = useProposal({ id });
 
   const statusText = (status: ProposalStatus) => {
     if (!proposal) return '';
@@ -99,7 +99,9 @@ const ViewProposal = () => {
                 />
               }
             >
-              {proposal && <VotesContent proposal={proposal} />}
+              {proposal && (
+                <VotesContent proposal={proposal} refetch={refetch} />
+              )}
             </MainCard>
 
             <MainCard

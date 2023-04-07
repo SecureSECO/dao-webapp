@@ -20,8 +20,8 @@ import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 import { useWeb3Modal } from '@web3modal/react';
-import toast from 'react-hot-toast';
-import { useState } from 'react';
+import toast, { LoaderIcon } from 'react-hot-toast';
+import { getChainDataByChainId } from '@/src/lib/constants/chains';
 
 type VoteFormData = {
   vote_value: string;
@@ -29,12 +29,20 @@ type VoteFormData = {
 
 /**
  * Accordion for the vote values of a proposal, showing the addresses of the voters who voted for each value
+ * @param props.proposal The proposal to show the votes for
+ * @param props.refetch Function to refetch the proposal data (after submitting vote)
  */
-const VotesContent = ({ proposal }: { proposal: DetailedProposal }) => {
+const VotesContent = ({
+  proposal,
+  refetch,
+}: {
+  proposal: DetailedProposal;
+  refetch: () => void;
+}) => {
   switch (proposal.status) {
     // Active proposals include radio button to vote
     case ProposalStatus.ACTIVE:
-      return <VotesContentActive proposal={proposal} />;
+      return <VotesContentActive proposal={proposal} refetch={refetch} />;
     default:
       return (
         <Accordion type="single" collapsible className="space-y-2">
@@ -53,7 +61,13 @@ type VoteValueStringUpper = 'YES' | 'NO' | 'ABSTAIN';
  * VotesContent specific to active proposals, which allows the user to vote
  * @see VotesContent
  */
-const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
+const VotesContentActive = ({
+  proposal,
+  refetch,
+}: {
+  proposal: DetailedProposal;
+  refetch: () => void;
+}) => {
   const { handleSubmit, watch, control } = useForm<VoteFormData>();
   const { address } = useAccount();
   const { canVote, loading, error } = useCanVote({
@@ -62,44 +76,68 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
   });
   const { votingClient } = useAragonSDKContext();
   const { open } = useWeb3Modal();
-  const [awaitingConfirm, setAwaitingConfirm] = useState(false);
 
   // Send the vote to SDK
-  const confirmVote = async (vote: number) => {
+  const confirmVote = async (vote: number, toastId: string) => {
     if (!votingClient) return;
     const steps = votingClient.methods.voteProposal({
       proposalId: proposal.id,
       vote,
     });
+
+    // Get etherscan url for the currently preferred network
+    // Use +chainId to convert string to number
+    const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
+    const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
+
     for await (const step of steps) {
       try {
+        console.log('step', step);
+
         switch (step.key) {
           case VoteProposalStep.VOTING:
-            setAwaitingConfirm(true);
+            // Show link to transaction on etherscan
+            toast(
+              <div className="flex flex-col">
+                <span>Awaiting confirmation...</span>
+                <a
+                  href={`${etherscanURL}/tx/${step.txHash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-primary"
+                >
+                  View on etherscan
+                </a>
+              </div>,
+              {
+                icon: <LoaderIcon />,
+                id: toastId,
+                duration: Infinity,
+              }
+            );
             break;
           case VoteProposalStep.DONE:
-            setAwaitingConfirm(false);
+            toast.success('Vote submitted!', { id: toastId, duration: 3000 });
             break;
         }
       } catch (err) {
-        setAwaitingConfirm(false);
+        toast.error('Error submitting vote', { id: toastId, duration: 3000 });
         console.error(err);
       }
     }
+    // Refetch proposal data after submitting vote to update the number of votes
+    refetch();
   };
 
   const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
     if (!votingClient) return;
-    toast.promise(
-      confirmVote(VoteValues[data.vote_value as VoteValueStringUpper]),
-      {
-        loading: awaitingConfirm
-          ? 'Awaiting confirmation...'
-          : 'Awaiting signature...',
-        success: 'Vote submitted!',
-        error: 'Error submitting vote',
-      }
-    );
+    // Instead of toast.promise(), use manual updating of toast here, to update the loading message
+    // upon receiving the signature from user
+    // Duration Infinity because toast will be dismissed programmatically when transaction is confirmed
+    const toastId = toast.loading('Awaiting signature...', {
+      duration: Infinity,
+    });
+    confirmVote(VoteValues[data.vote_value as VoteValueStringUpper], toastId);
   };
 
   const voteValue = watch('vote_value');
@@ -131,7 +169,7 @@ const VotesContentActive = ({ proposal }: { proposal: DetailedProposal }) => {
       <div className="flex flex-row items-center gap-x-4">
         <Button disabled={!userCanVote || !address} type="submit">
           Vote{' '}
-          {!userCanVote && address ? (
+          {!userCanVote && address && !loading ? (
             'submitted'
           ) : (
             <span className="ml-1 inline-block lowercase">

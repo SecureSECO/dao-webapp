@@ -1,7 +1,6 @@
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
-  TokenVotingClient,
   ProposalStatus,
   TokenType,
   VoteValues,
@@ -15,6 +14,7 @@ export type UseProposalData = {
   loading: boolean;
   error: string | null;
   proposal: DetailedProposal | null;
+  refetch: () => void;
 };
 
 export type UseProposalProps = {
@@ -112,7 +112,8 @@ export const useProposal = ({
   const [error, setError] = useState<string | null>(null);
   const { votingClient } = useAragonSDKContext();
 
-  const fetchProposal = async (client: TokenVotingClient) => {
+  const fetchProposal = async () => {
+    if (!votingClient) return;
     if (!id) {
       setError('Proposal not found');
       setLoading(false);
@@ -120,9 +121,8 @@ export const useProposal = ({
     }
 
     try {
-      const daoProposal: DetailedProposal = (await client.methods.getProposal(
-        id
-      )) as DetailedProposal;
+      const daoProposal: DetailedProposal =
+        (await votingClient.methods.getProposal(id)) as DetailedProposal;
 
       if (daoProposal) {
         // Check if the proposal is from the correct DAO
@@ -153,14 +153,15 @@ export const useProposal = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!votingClient) return;
     setLoading(true);
-    fetchProposal(votingClient);
+    fetchProposal();
   }, [votingClient, id]);
 
   return {
     loading,
     error,
     proposal,
+    // Only allow refetching if not using dummy data
+    refetch: () => (useDummyData ? fetchProposal() : void 0),
   };
 };
