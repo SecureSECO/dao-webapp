@@ -1,3 +1,9 @@
+/**
+ * @file VotesContent.tsx
+ * Component that will show the votes for a proposal, including which addresses voted for specific option in an accordion
+ * and allow the user to submit their own vote if the proposal is active (and they are eligible to vote).
+ */
+
 import { DetailedProposal } from '@/src/hooks/useProposal';
 import {
   ProposalStatus,

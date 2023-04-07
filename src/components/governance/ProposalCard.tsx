@@ -6,7 +6,7 @@ import { Proposal } from '@/src/hooks/useProposals';
 import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
-import { countdownText } from '@/src/lib/utils';
+import { calcBigintPercentage, countdownText } from '@/src/lib/utils';
 import { StatusBadge, StatusBadgeProps } from '../ui/StatusBadge';
 import { Link } from 'react-router-dom';
 import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
@@ -107,10 +107,14 @@ const getProposalTags = (proposal: Proposal) => {
       }
     );
   else {
-    const yesPercentage =
-      Number((proposal.result.yes * 10000n) / proposal.totalVotingWeight) / 100;
-    const noPercentage =
-      Number((proposal.result.no * 10000n) / proposal.totalVotingWeight) / 100;
+    const yesPercentage = calcBigintPercentage(
+      proposal.result.yes,
+      proposal.totalVotingWeight
+    );
+    const noPercentage = calcBigintPercentage(
+      proposal.result.no,
+      proposal.totalVotingWeight
+    );
     res.push(
       {
         children: yesPercentage.toString() + '%',

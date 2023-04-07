@@ -1,4 +1,11 @@
+/**
+ * @file VotingDetails.tsx
+ * Component that displays details regarding the voting process of a proposal.
+ * Details shown include: support threhold, minimum participation, current participation, unique voters, start date, and end date
+ */
+
 import { DetailedProposal } from '@/src/hooks/useProposal';
+import { calcBigintPercentage } from '@/src/lib/utils';
 import { format } from 'date-fns';
 
 /**
@@ -12,9 +19,10 @@ const VotingDetails = ({ proposal }: { proposal: DetailedProposal | null }) => {
       </p>
     );
 
-  const currentParticipation =
-    Number((proposal.usedVotingWeight * 10000n) / proposal.totalVotingWeight) /
-    100;
+  const currentParticipation = calcBigintPercentage(
+    proposal.usedVotingWeight,
+    proposal.totalVotingWeight
+  );
   const uniqueVoters = proposal.votes.reduce(
     (acc, vote) => acc.add(vote.address),
     new Set<string>()
