@@ -27,7 +27,12 @@ import { Address, AddressLength } from '@/src/components/ui/Address';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 import { useWeb3Modal } from '@web3modal/react';
 import toast, { CheckmarkIcon, LoaderIcon, ErrorIcon } from 'react-hot-toast';
-import { getChainDataByChainId } from '@/src/lib/constants/chains';
+import {
+  CHAIN_METADATA,
+  getChainDataByChainId,
+} from '@/src/lib/constants/chains';
+import { calcBigintPercentage } from '@/src/lib/utils';
+import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
 
 type VoteFormData = {
   vote_value: string;
@@ -238,10 +243,10 @@ const VoteOption = ({
 
   const voteValueLower = voteValueString.toLowerCase() as VoteValueString;
   const votes = proposal.votes.filter((vote) => vote.vote === voteValue);
-  const percentage =
-    Number(
-      (proposal.result[voteValueLower] * 10000n) / proposal.totalVotingWeight
-    ) / 100;
+  const percentage = calcBigintPercentage(
+    proposal.result[voteValueLower],
+    proposal.totalVotingWeight
+  );
 
   return (
     <div className="flex flex-row items-center gap-x-2">
@@ -256,7 +261,12 @@ const VoteOption = ({
             </p>
             <div className="flex flex-row items-center gap-x-4 text-right">
               <p className="text-slate-500 dark:text-slate-400">
-                {Number(proposal.result[voteValueLower]) / 10 ** 18} REP
+                {toAbbreviatedTokenAmount(
+                  proposal.result[voteValueLower],
+                  CHAIN_METADATA.rep.nativeCurrency.decimals,
+                  true
+                )}{' '}
+                REP
               </p>
               <p className="w-12 text-right text-primary-500 dark:text-primary-400">
                 {percentage}%
@@ -281,12 +291,18 @@ const VoteOption = ({
                 />
                 <div className="grid grid-cols-2 text-right">
                   <p className="text-gray-500 ">
-                    {Number(vote.weight) / 10 ** 18} REP
+                    {toAbbreviatedTokenAmount(
+                      vote.weight,
+                      CHAIN_METADATA.rep.nativeCurrency.decimals,
+                      true
+                    )}{' '}
+                    REP
                   </p>
                   <p className="text-slate-500 dark:text-slate-400">
-                    {Number(
-                      (vote.weight * 10000n) / proposal.totalVotingWeight
-                    ) / 100}
+                    {calcBigintPercentage(
+                      vote.weight,
+                      proposal.totalVotingWeight
+                    )}
                     %
                   </p>
                 </div>
