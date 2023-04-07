@@ -14,6 +14,17 @@ import {
 } from 'react-icons/hi2';
 import { Link } from '@/src/components/ui/Link';
 import { countdownText } from '@/src/lib/utils';
+import { Button } from '@/src/components/ui/Button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/src/components/ui/Dialog';
+import VotingDetails from '@/src/components/proposal/VotingDetails';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -97,6 +108,32 @@ const ViewProposal = () => {
                   value={proposal?.votes.length ?? 0}
                   label="votes"
                 />
+              }
+              aside={
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="subtle" label="View details" />
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Voting details</DialogTitle>
+                      <DialogDescription asChild>
+                        <div className="flex flex-col gap-y-4">
+                          <VotingDetails proposal={proposal} />
+                        </div>
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogClose asChild>
+                      <div className="flex items-end justify-end">
+                        <Button
+                          variant="subtle"
+                          label="Close"
+                          className="self-end"
+                        />
+                      </div>
+                    </DialogClose>
+                  </DialogContent>
+                </Dialog>
               }
             >
               {proposal && (
