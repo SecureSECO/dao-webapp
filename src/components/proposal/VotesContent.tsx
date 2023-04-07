@@ -20,7 +20,7 @@ import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 import { useWeb3Modal } from '@web3modal/react';
-import toast, { LoaderIcon } from 'react-hot-toast';
+import toast, { CheckmarkIcon, LoaderIcon, ErrorIcon } from 'react-hot-toast';
 import { getChainDataByChainId } from '@/src/lib/constants/chains';
 
 type VoteFormData = {
@@ -117,11 +117,19 @@ const VotesContentActive = ({
             );
             break;
           case VoteProposalStep.DONE:
-            toast.success('Vote submitted!', { id: toastId, duration: 3000 });
+            toast.success('Vote submitted!', {
+              id: toastId,
+              duration: 3000,
+              icon: <CheckmarkIcon />,
+            });
             break;
         }
       } catch (err) {
-        toast.error('Error submitting vote', { id: toastId, duration: 3000 });
+        toast.error('Error submitting vote', {
+          id: toastId,
+          duration: 3000,
+          icon: <ErrorIcon />,
+        });
         console.error(err);
       }
     }
@@ -133,7 +141,6 @@ const VotesContentActive = ({
     if (!votingClient) return;
     // Instead of toast.promise(), use manual updating of toast here, to update the loading message
     // upon receiving the signature from user
-    // Duration Infinity because toast will be dismissed programmatically when transaction is confirmed
     const toastId = toast.loading('Awaiting signature...', {
       duration: Infinity,
     });
