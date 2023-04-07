@@ -8,9 +8,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './Dialog';
+import { Button } from '@/src/components/ui/Button';
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog,
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -19,7 +21,9 @@ type Story = StoryObj<typeof Dialog>;
 export const Primary: Story = {
   render: () => (
     <Dialog>
-      <DialogTrigger>Open</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button label="Open" />
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you sure absolutely sure?</DialogTitle>

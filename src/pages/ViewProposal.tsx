@@ -67,13 +67,13 @@ const ViewProposal = () => {
               loading={loading}
               title={proposal?.metadata.title ?? 'Proposal not found'}
               aside={
-                <div className="flex h-full flex-col items-end justify-between">
+                <div className="flex h-full flex-row-reverse items-center justify-between gap-y-4 sm:flex-col sm:items-end">
                   <ProposalStatusBadge
                     size="md"
                     status={proposal?.status ?? ProposalStatus.PENDING}
                   />
                   <div className="flex flex-row items-center gap-x-2 text-slate-400 dark:text-slate-500">
-                    <HiOutlineClock className="h-5 w-5" />
+                    <HiOutlineClock className="h-5 w-5 shrink-0" />
                     {statusText(proposal?.status ?? ProposalStatus.PENDING)}
                   </div>
                 </div>

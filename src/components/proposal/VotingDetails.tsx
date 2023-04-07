@@ -9,6 +9,68 @@ import { calcBigintPercentage } from '@/src/lib/utils';
 import { format } from 'date-fns';
 
 /**
+ * Collection of categories of information about a proposal, te be shown in the VotingDetails component
+ * @see VotingDetails for the component that displays these details
+ */
+const categories = [
+  {
+    title: 'Decision rules',
+    items: [
+      {
+        label: 'Support threshold',
+        value: (proposal: DetailedProposal) =>
+          `${proposal.settings.supportThreshold * 100}%`,
+      },
+      {
+        label: 'Minimum participation',
+        value: (proposal: DetailedProposal) =>
+          `${proposal.settings.minParticipation * 100}%`,
+      },
+    ],
+  },
+  {
+    title: 'Voting activity',
+    items: [
+      {
+        label: 'Current participation',
+        value: (proposal: DetailedProposal) => {
+          const currentParticipation = calcBigintPercentage(
+            proposal.usedVotingWeight,
+            proposal.totalVotingWeight
+          );
+          return `${currentParticipation}%`;
+        },
+      },
+      {
+        label: 'Unique voters',
+        value: (proposal: DetailedProposal) => {
+          const uniqueVoters = proposal.votes.reduce(
+            (acc, vote) => acc.add(vote.address),
+            new Set<string>()
+          ).size;
+          return uniqueVoters;
+        },
+      },
+    ],
+  },
+  {
+    title: 'Voting period',
+    items: [
+      {
+        label: 'Start date',
+        value: (proposal: DetailedProposal) =>
+          format(new Date(proposal.startDate), 'Pp'),
+      },
+      {
+        label: 'End date',
+        value: (proposal: DetailedProposal) =>
+          format(new Date(proposal.endDate), 'Pp'),
+      },
+    ],
+  },
+];
+
+/**
  * @returns Collection of div elements that display details regarding the voting process of the given proposal
  */
 const VotingDetails = ({ proposal }: { proposal: DetailedProposal | null }) => {
@@ -19,77 +81,24 @@ const VotingDetails = ({ proposal }: { proposal: DetailedProposal | null }) => {
       </p>
     );
 
-  const currentParticipation = calcBigintPercentage(
-    proposal.usedVotingWeight,
-    proposal.totalVotingWeight
-  );
-  const uniqueVoters = proposal.votes.reduce(
-    (acc, vote) => acc.add(vote.address),
-    new Set<string>()
-  ).size;
-
   return (
     <>
-      <div>
-        <div className="flex flex-row items-center gap-x-2">
-          <p className="font-medium">Decision rules</p>
-          <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
+      {categories.map((category) => (
+        <div>
+          <div className="flex flex-row items-center gap-x-2">
+            <p className="font-medium dark:text-slate-300">{category.title}</p>
+            <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
+          </div>
+          {category.items.map((item) => (
+            <div className="flex flex-row justify-between gap-x-2">
+              <p className="text-gray-500 dark:text-slate-400">{item.label}</p>
+              <p className="text-primary-300 dark:text-primary-400">
+                {item.value(proposal)}
+              </p>
+            </div>
+          ))}
         </div>
-        <div className="flex flex-row justify-between gap-x-2">
-          <p className="text-gray-500 dark:text-slate-400">Support threshold</p>
-          <p className="text-primary-300 dark:text-primary-400">
-            {proposal.settings.supportThreshold * 100}%
-          </p>
-        </div>
-        <div className="flex flex-row justify-between gap-x-2">
-          <p className="text-gray-500 dark:text-slate-400">
-            Minimum participation
-          </p>
-          <p className="text-primary-300 dark:text-primary-400">
-            {proposal.settings.minParticipation * 100}%
-          </p>
-        </div>
-      </div>
-
-      <div>
-        <div className="flex flex-row items-center gap-x-2">
-          <p className="font-medium">Voting activity</p>
-          <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
-        </div>
-        <div className="flex flex-row justify-between gap-x-2">
-          <p className="text-gray-500 dark:text-slate-400">
-            Current participation
-          </p>
-          <p className="text-primary-300 dark:text-primary-400">
-            {currentParticipation}%
-          </p>
-        </div>
-        <div className="flex flex-row justify-between gap-x-2">
-          <p className="text-gray-500 dark:text-slate-400">Unique voters</p>
-          <p className="text-primary-300 dark:text-primary-400">
-            {uniqueVoters}
-          </p>
-        </div>
-      </div>
-
-      <div>
-        <div className="flex flex-row items-center gap-x-2">
-          <p className="font-medium">Duration</p>
-          <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
-        </div>
-        <div className="flex flex-row justify-between gap-x-2">
-          <p className="text-gray-500 dark:text-slate-400">Start</p>
-          <p className="text-primary-300 dark:text-primary-400">
-            {format(proposal.startDate, 'Pp')}
-          </p>
-        </div>
-        <div className="flex flex-row justify-between gap-x-2">
-          <p className="text-gray-500 dark:text-slate-400">End</p>
-          <p className="text-primary-300 dark:text-primary-400">
-            {format(proposal.endDate, 'Pp')}
-          </p>
-        </div>
-      </div>
+      ))}
     </>
   );
 };
