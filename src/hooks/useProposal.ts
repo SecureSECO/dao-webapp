@@ -153,7 +153,7 @@ export const useProposal = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    setLoading(true);
+    if (votingClient) setLoading(true);
     fetchProposal();
   }, [votingClient, id]);
 
@@ -162,6 +162,6 @@ export const useProposal = ({
     error,
     proposal,
     // Only allow refetching if not using dummy data
-    refetch: () => (useDummyData ? fetchProposal() : void 0),
+    refetch: () => (!useDummyData ? fetchProposal() : void 0),
   };
 };

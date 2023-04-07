@@ -70,7 +70,12 @@ const VotesContentActive = ({
 }) => {
   const { handleSubmit, watch, control } = useForm<VoteFormData>();
   const { address } = useAccount();
-  const { canVote, loading, error } = useCanVote({
+  const {
+    canVote,
+    loading,
+    error,
+    refetch: refetchCanVote,
+  } = useCanVote({
     proposalId: proposal.id,
     address,
   });
@@ -80,61 +85,70 @@ const VotesContentActive = ({
   // Send the vote to SDK
   const confirmVote = async (vote: number, toastId: string) => {
     if (!votingClient) return;
-    const steps = votingClient.methods.voteProposal({
-      proposalId: proposal.id,
-      vote,
-    });
+    try {
+      const steps = votingClient.methods.voteProposal({
+        proposalId: proposal.id,
+        vote,
+      });
 
-    // Get etherscan url for the currently preferred network
-    // Use +chainId to convert string to number
-    const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
-    const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
+      // Get etherscan url for the currently preferred network
+      // Use +chainId to convert string to number
+      const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
+      const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
 
-    for await (const step of steps) {
-      try {
-        console.log('step', step);
+      for await (const step of steps) {
+        try {
+          console.log('step', step);
 
-        switch (step.key) {
-          case VoteProposalStep.VOTING:
-            // Show link to transaction on etherscan
-            toast(
-              <div className="flex flex-col">
-                <span>Awaiting confirmation...</span>
-                <a
-                  href={`${etherscanURL}/tx/${step.txHash}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs text-primary"
-                >
-                  View on etherscan
-                </a>
-              </div>,
-              {
-                icon: <LoaderIcon />,
+          switch (step.key) {
+            case VoteProposalStep.VOTING:
+              // Show link to transaction on etherscan
+              toast(
+                <div className="flex flex-col">
+                  <span>Awaiting confirmation...</span>
+                  <a
+                    href={`${etherscanURL}/tx/${step.txHash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-primary"
+                  >
+                    View on etherscan
+                  </a>
+                </div>,
+                {
+                  icon: <LoaderIcon />,
+                  id: toastId,
+                  duration: Infinity,
+                }
+              );
+              break;
+            case VoteProposalStep.DONE:
+              toast.success('Vote submitted!', {
                 id: toastId,
-                duration: Infinity,
-              }
-            );
-            break;
-          case VoteProposalStep.DONE:
-            toast.success('Vote submitted!', {
-              id: toastId,
-              duration: 3000,
-              icon: <CheckmarkIcon />,
-            });
-            break;
+                duration: 3000,
+                icon: <CheckmarkIcon />,
+              });
+              break;
+          }
+        } catch (err) {
+          toast.error('Error submitting vote', {
+            id: toastId,
+            duration: 3000,
+            icon: <ErrorIcon />,
+          });
+          console.error(err);
         }
-      } catch (err) {
-        toast.error('Error submitting vote', {
-          id: toastId,
-          duration: 3000,
-          icon: <ErrorIcon />,
-        });
-        console.error(err);
       }
+      // Refetch proposal data after submitting vote to update the number of votes
+      refetch();
+      refetchCanVote();
+    } catch (e) {
+      toast.error('Error submitting vote', {
+        id: toastId,
+        duration: 3000,
+        icon: <ErrorIcon />,
+      });
     }
-    // Refetch proposal data after submitting vote to update the number of votes
-    refetch();
   };
 
   const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
