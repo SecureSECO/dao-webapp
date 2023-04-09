@@ -15,6 +15,7 @@ import {
 } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
+import { ActionFormError } from './ProposalActionList';
 
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.
@@ -29,7 +30,7 @@ export const MintTokensAction = ({
   register: UseFormRegister<StepThreeData>;
   control: Control<StepThreeData>;
   prefix: `actions.${number}`;
-  errors: FieldErrors<ActionMintTokenFormData> | undefined;
+  errors: ActionFormError<ActionMintTokenFormData>;
   onRemove: () => void;
 }) => {
   const { fields, append, remove } = useFieldArray({
@@ -85,7 +86,7 @@ const AddressTokensMint = ({
 }: {
   register: any;
   onRemove: () => void;
-  errors: FieldErrors<MintAddressAmount> | undefined;
+  errors: ActionFormError<MintAddressAmount>;
   prefix: `actions.${number}.wallets.${number}`;
 }) => (
   <div className="col-span-3 grid grid-cols-3 gap-4">

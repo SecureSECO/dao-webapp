@@ -3,12 +3,19 @@ import { WithdrawAssetsAction } from './WithdrawAssetsAction';
 import { StepThreeData, ActionFormData } from '../newProposalData';
 import {
   Control,
+  FieldError,
   FieldErrors,
+  FieldValues,
+  Merge,
   UseFieldArrayRemove,
   UseFormGetValues,
   UseFormRegister,
   UseFormSetValue,
 } from 'react-hook-form';
+
+export type ActionFormError<T extends FieldValues> =
+  | Merge<FieldError, FieldErrors<NonNullable<T> | T>>
+  | undefined;
 
 export const ProposalActionList = ({
   fields,

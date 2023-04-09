@@ -1,10 +1,8 @@
 import { Input } from '../../ui/Input';
 import { Label } from '../../ui/Label';
-import { UseDaoBalanceData, useDaoBalance } from '@/src/hooks/useDaoBalance';
-import Loader from '../../ui/Loader';
+import { useDaoBalance } from '@/src/hooks/useDaoBalance';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTrigger,
@@ -12,13 +10,12 @@ import {
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
 import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
-import { anyNullOrUndefined } from '@/src/lib/utils';
-import { FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { ActionWithdrawFormData, StepThreeData } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import TokenAmount from '../../ui/TokenAmount/TokenAmount';
 import { TokenSelectorDialogButtons } from './ui/TokenSelectorDialogButtons';
+import { ActionFormError } from './ProposalActionList';
 
 const Description = ({ text }: { text: string }) => (
   <p className="text-slate-500">{text}</p>
@@ -37,7 +34,7 @@ export const WithdrawAssetsAction = ({
   register: UseFormRegister<StepThreeData>;
   setValue: UseFormSetValue<StepThreeData>;
   prefix: `actions.${number}`;
-  errors: FieldErrors<ActionWithdrawFormData> | undefined;
+  errors: ActionFormError<ActionWithdrawFormData>;
   onRemove: any;
 }) => {
   const daoBalanceData = useDaoBalance({});
