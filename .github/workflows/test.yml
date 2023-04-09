@@ -3,9 +3,9 @@ name: UI Tests
 on:
   workflow_dispatch:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "dev" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "dev" ]
 
 env:
   NODE_VERSION: 18.x
