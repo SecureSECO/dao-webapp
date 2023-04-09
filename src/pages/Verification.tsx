@@ -1,15 +1,20 @@
-import { Button } from '@/src/components/ui/Button';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
-import { MainCard } from '../components/ui/MainCard';
-import { HiCheckBadge, HiClock, HiUserCircle } from 'react-icons/hi2';
+import { DefaultMainCardHeader, MainCard } from '../components/ui/MainCard';
+import {
+  HiCheckBadge,
+  HiClock,
+  HiOutlineLockClosed,
+  HiUserCircle,
+} from 'react-icons/hi2';
 import { AiFillGithub, AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
 import RecentVerificationCard from '../components/ui/RecentVerificationCard';
+import { FaDiscord } from 'react-icons/fa';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -49,6 +54,12 @@ export const availableStamps: StampInfo[] = [
     displayName: 'Twitter',
     url: 'https://twitter.com/',
     icon: <AiFillTwitterCircle size={20} />,
+  },
+  {
+    id: 'discord',
+    displayName: 'Discord',
+    url: 'https://discord.com/',
+    icon: <FaDiscord size={20} />,
   },
 ];
 
@@ -122,35 +133,36 @@ const getThresholdForTimestamp = (
   return threshold ? threshold[1] : BigNumber.from(0);
 };
 
-const Verification = () => {
-  const { address } = useAccount();
+export const verificationAddress = import.meta.env.VITE_VERIFY_CONTRACT;
 
+const Verification = () => {
+  const { address, isConnected } = useAccount();
+
+  // Gets all the stamps for the current address
   const { data, isError, error, isLoading } = useContractRead({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getStamps',
     args: [address],
   });
 
-  const { data: rData } = useContractRead({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+  // Gets the reverification threshold
+  const { data: rData, refetch } = useContractRead({
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'reverifyThreshold',
     args: [],
   });
 
-  const {
-    data: vData,
-    isError: vIsError,
-    error: vError,
-    isLoading: vIsLoading,
-  } = useContractRead({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
+  // Gets the verification threshold history
+  const { data: vData } = useContractRead({
+    address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getThresholdHistory',
     args: [],
   });
 
+  // Sign our message to verify our address
   const { signMessage } = useSignMessage({
     onError(error) {
       toast.error(error.message.substr(0, 100));
@@ -175,6 +187,7 @@ const Verification = () => {
           throw new Error('Verification failed');
         }
 
+        // url is the callback url where we finish the verification
         const { ok, message, url } = await response.json();
 
         if (ok) {
@@ -205,14 +218,18 @@ const Verification = () => {
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
+      // Convert data to stamps
       const stamps: Stamp[] = data.map((stamp: any) => [
-        stamp.id,
-        stamp._hash,
+        stamp.providerId,
+        stamp.userHash,
         stamp.verifiedAt,
       ]);
 
+      console.log('stamps', data);
+
       setStamps(stamps);
 
+      // Convert stamps to verification history
       let verificationHistory: VerificationHistory[] = [];
       for (let i = 0; i < stamps.length; i++) {
         const stamp = stamps[i];
@@ -226,6 +243,7 @@ const Verification = () => {
         }
       }
 
+      // Sort verification history by timestamp, newest first
       verificationHistory.sort((a, b) => b.timestamp - a.timestamp);
 
       setVerificationHistory(verificationHistory);
@@ -244,7 +262,7 @@ const Verification = () => {
 
   const verify = async (providerId: string) => {
     try {
-      // Check if the account has already verified
+      // Check if the account has already been verified
       const stamp = stamps.find(([id]) => id === providerId);
       if (stamp) {
         const [, , verifiedAt] = stamp;
@@ -287,73 +305,78 @@ const Verification = () => {
         </p>
       </HeaderCard>
 
-      <div className="flex flex-col items-start gap-6 lg:flex-row">
-        <MainCard
-          className="basis-3/5"
-          loading={false}
-          icon={HiCheckBadge}
-          header={
-            <div className="flex flex-row items-end gap-x-2">
-              <span className="text-3xl">{amountOfVerifiedStamps}</span>
-              <p className="mb-1 leading-4">verified accounts</p>
-            </div>
-          }
-          aside={
-            // <Button
-            //   label="New proposal"
-            //   onClick={() => console.log('New proposal click!')}
-            // />
-            <></>
-          }
-        >
-          {isLoading ? (
-            <div className="flex flex-col gap-4">
-              <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
-              <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
-              <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
-            </div>
-          ) : isError ? (
-            <div>
-              <p>
-                There was an error fetching your stamps. Please try again later.
-              </p>
-              <p className="mt-4">
-                Information: <code>{error?.message}</code>
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-y-8">
-              <div className="flex flex-wrap gap-6">
-                {availableStamps.map((stampInfo) => (
-                  <StampCard
-                    key={stampInfo.id}
-                    stampInfo={stampInfo}
-                    stamp={stamps.find(([id]) => id === stampInfo.id) || null}
-                    thresholdHistory={thresholdHistory ?? []}
-                    verify={verify}
-                  />
-                ))}
+      {isConnected ? (
+        <div className="flex flex-col items-start gap-6 lg:flex-row">
+          <MainCard
+            className="basis-3/5"
+            loading={false}
+            icon={HiCheckBadge}
+            header={
+              <DefaultMainCardHeader
+                value={amountOfVerifiedStamps}
+                label="verified accounts"
+              />
+            }
+          >
+            {isLoading ? (
+              <div className="flex flex-col gap-4">
+                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
+                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
+                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
               </div>
-            </div>
-          )}
-        </MainCard>
-        <MainCard
-          className="basis-2/5"
-          loading={false}
-          icon={HiClock}
-          header={
-            <div className="flex flex-row items-end gap-x-2">
-              <span className="text-3xl">{verificationHistory.length}</span>
-              <p className="mb-1 leading-4">total verifications</p>
-            </div>
-          }
-          aside={<></>}
-        >
-          {verificationHistory?.map((history, index) => (
-            <RecentVerificationCard key={index} history={history} />
-          ))}
-        </MainCard>
-      </div>
+            ) : isError ? (
+              <div>
+                <p>
+                  There was an error fetching your stamps. Please try again
+                  later.
+                </p>
+                <p className="mt-4">
+                  Information: <code>{error?.message}</code>
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-y-8">
+                <div className="flex flex-wrap gap-6">
+                  {availableStamps.map((stampInfo) => (
+                    <StampCard
+                      key={stampInfo.id}
+                      stampInfo={stampInfo}
+                      stamp={stamps.find(([id]) => id === stampInfo.id) || null}
+                      thresholdHistory={thresholdHistory ?? []}
+                      verify={verify}
+                      refetch={refetch}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </MainCard>
+          <MainCard
+            className="basis-2/5"
+            loading={false}
+            icon={HiClock}
+            header={
+              <DefaultMainCardHeader
+                value={verificationHistory.length}
+                label="verifications"
+              />
+            }
+          >
+            {verificationHistory?.map((history, index) => (
+              <RecentVerificationCard key={index} history={history} />
+            ))}
+          </MainCard>
+        </div>
+      ) : (
+        <div className="mt-10 flex flex-col items-center justify-center gap-6">
+          <div className="flex flex-col items-center justify-center gap-4">
+            <HiOutlineLockClosed className="text-6xl text-slate-500 dark:text-slate-400" />
+            <p className="text-xl font-medium text-slate-500 dark:text-slate-400">
+              Connect your wallet to verify your identity
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

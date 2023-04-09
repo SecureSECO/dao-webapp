@@ -2,7 +2,7 @@
  * This file contains a set of Dialog components using the Radix UI DialogPrimitive.
  * @see https://www.radix-ui.com/docs/primitives/components/dialog - Radix UI Dialog Primitive
  * These components provide a customizable and accessible implementation of the Dialog pattern.
- * 
+ *
  * Inspired by https://ui.shadcn.com/docs/primitives/dialog
  */
 import * as React from 'react';
@@ -77,14 +77,14 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0 fixed z-50 grid w-full gap-4 rounded-b-lg bg-white p-6 sm:max-w-lg sm:rounded-lg',
-        'dark:bg-slate-900',
+        'animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0 fixed z-50 grid w-full gap-4 rounded-b-lg bg-white px-6 py-4 sm:max-w-lg sm:rounded-lg',
+        'dark:bg-slate-800',
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-slate-100 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 dark:data-[state=open]:bg-slate-800">
+      <DialogPrimitive.Close className="absolute right-6 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-slate-100 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 dark:data-[state=open]:bg-slate-800">
         <HiXMark className="h-6 w-6" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
@@ -146,7 +146,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      'text-lg font-semibold text-slate-900',
+      'text-xl font-semibold text-slate-900',
       'dark:text-slate-50',
       className
     )}

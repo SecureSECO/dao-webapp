@@ -61,13 +61,14 @@ export function abbreviateTokenAmount(amount: string): string {
 
 export function toAbbreviatedTokenAmount(
   value: BigInt | null | undefined,
-  decimals: number | null | undefined
+  decimals: number | null | undefined,
+  round = false
 ): string {
   if (anyNullOrUndefined(value, decimals)) return 'N/A';
   let asFloat = bigIntToFloat(value!, decimals!);
-  // Theoretically 'bigIntToFlot' never returns NaN, guaranteed by its type's preconditions. In practice, this might still happen.
+  // Theoretically 'bigIntToFloat' never returns NaN, guaranteed by its type's preconditions. In practice, this might still happen.
   if (isNaN(asFloat)) return 'N/A';
-  return abbreviateTokenAmount(asFloat.toFixed(2));
+  return abbreviateTokenAmount(asFloat.toFixed(round ? 0 : 2));
 }
 
 /**

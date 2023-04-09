@@ -42,15 +42,15 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
         className={cn(
           headerCardVariants({}),
           className,
-          'flex flex-col justify-between gap-y-6'
+          'flex flex-col justify-between gap-y-6 sm:flex-row sm:items-center'
         )}
         {...props}
       >
-        <div className="flex w-full flex-col justify-between gap-y-6 sm:flex-row sm:items-center">
+        <div className="space-y-6">
           <Header>{title}</Header>
-          <>{aside}</>
+          {props.children}
         </div>
-        {props.children}
+        <>{aside}</>
       </Card>
     );
   }

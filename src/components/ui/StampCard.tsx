@@ -4,7 +4,6 @@
  * If the stamp is verified, a checkmark icon will be displayed next to the providerId.
  */
 
-import { AiFillCheckCircle } from 'react-icons/ai';
 import React from 'react';
 import {
   Stamp,
@@ -16,7 +15,55 @@ import { Button } from './Button';
 import { Card } from './Card';
 import { HiCalendar, HiChartBar, HiLink } from 'react-icons/hi2';
 import { FaHourglass } from 'react-icons/fa';
-import { StatusBadge } from './StatusBadge';
+import { StatusBadge, StatusBadgeProps } from './StatusBadge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../ui/AlertDialog';
+import { toast } from 'react-hot-toast';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { verificationAbi } from '../../assets/verificationAbi';
+import { useState } from 'react';
+import DoubleCheck from '@/src/components/icons/DoubleCheck';
+import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
+
+/**
+ * Derives the status badge props from the stamp's verification status
+ * @param verified A boolean indicating whether the stamp is verified
+ * @param expired A boolean indicating whether the stamp is expired
+ * @returns A StatusBadgeProps object
+ */
+const getStatusProps = (
+  verified: boolean,
+  expired: boolean
+): StatusBadgeProps => {
+  if (verified)
+    return {
+      icon: DoubleCheck,
+      variant: 'green',
+      text: 'Verified',
+    };
+
+  if (expired)
+    return {
+      icon: HiOutlineClock,
+      text: 'Expired',
+      variant: 'red',
+    };
+
+  return {
+    icon: HiXMark,
+    text: 'Unverified',
+    variant: 'secondary',
+  };
+};
 
 /**
  * @param {Object} props - The properties for the StampCard component.
@@ -30,12 +77,14 @@ const StampCard = ({
   stamp,
   thresholdHistory,
   verify,
+  refetch,
 }: {
   stampInfo: StampInfo;
   stamp: Stamp | null;
   thresholdHistory: VerificationThreshold[];
   // eslint-disable-next-line no-unused-vars
   verify: (providerId: string) => void;
+  refetch: () => void;
 }) => {
   const {
     verified,
@@ -49,6 +98,64 @@ const StampCard = ({
 
   const providerId = stampInfo.id;
 
+  const [isBusy, setIsBusy] = useState(false);
+
+  const { config } = usePrepareContractWrite({
+    address: import.meta.env.VITE_VERIFY_CONTRACT,
+    abi: verificationAbi,
+    functionName: 'unverify',
+    args: [providerId],
+  });
+
+  const { writeAsync } = useContractWrite(config);
+
+  /**
+   * Deletes the stamp from this specific provider
+   * @returns {Promise<void>} Promise that resolves when the stamp is deleted
+   */
+  const unverify = async (): Promise<void> => {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (isBusy) {
+          return reject('Already unverifying');
+        }
+
+        setIsBusy(true);
+
+        if (!writeAsync) {
+          setIsBusy(false);
+          return reject('Contract write not ready');
+        }
+
+        const txResult = await writeAsync();
+
+        console.log('txResult', txResult);
+
+        txResult
+          .wait()
+          .then(() => {
+            console.log('Successfully unverified');
+            resolve();
+          })
+          .catch((error: any) => {
+            console.error(
+              'StampCard ~ unverify ~ txResult.catch ~ Unverification failed',
+              error
+            );
+            reject(error);
+          });
+      } catch (error: any) {
+        console.error(
+          'StampCard ~ unverify ~ try/catch ~ Unverification failed',
+          error
+        );
+        setIsBusy(false);
+        reject(error);
+      }
+    });
+  };
+
   return (
     <Card
       padding="sm"
@@ -60,9 +167,7 @@ const StampCard = ({
           {stampInfo.icon}
           <h2 className="text-xl font-semibold">{stampInfo.displayName}</h2>
         </div>
-        <StatusBadge
-          status={verified ? 'Verified' : expired ? 'Expired' : 'Unverified'}
-        />
+        <StatusBadge {...getStatusProps(verified, expired)} />
       </div>
       <div className="flex items-center gap-x-2 text-slate-600 dark:text-slate-400">
         <HiLink />
@@ -116,13 +221,49 @@ const StampCard = ({
         </>
       )}
 
-      <Button
-        className="mt-4"
-        // disabled={true}
-        onClick={() => verify(providerId)}
-      >
-        {verified ? 'Reverify' : 'Verify'}
-      </Button>
+      <div className="mt-4 flex items-center gap-2">
+        <Button onClick={() => verify(providerId)}>
+          {verified ? 'Reverify' : 'Verify'}
+        </Button>
+
+        {verified && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="subtle">Remove</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your stamp from the blockchain.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isBusy}>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  disabled={isBusy}
+                  onClick={() => {
+                    const promise = unverify();
+                    toast.promise(promise, {
+                      loading: 'Removing stamp...',
+                      success: 'Stamp removed',
+                      error: (err) => 'Failed to remove stamp: ' + err,
+                    });
+
+                    promise.finally(() => {
+                      setIsBusy(false);
+                      refetch();
+                    });
+                  }}
+                >
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+      </div>
     </Card>
   );
 };

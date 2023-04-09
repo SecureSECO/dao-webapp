@@ -11,7 +11,7 @@ import {
   HiInboxStack,
   HiUserGroup,
 } from 'react-icons/hi2';
-import { MainCard } from '@/src/components/ui/MainCard';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { useDao } from '@/src/hooks/useDao';
 import { useProposals } from '@/src/hooks/useProposals';
 import { useMembers } from '@/src/hooks/useMembers';
@@ -111,10 +111,10 @@ const Dashboard = () => {
         loading={allProposalsLoading}
         icon={HiInboxStack}
         header={
-          <div className="flex flex-row items-end gap-x-2">
-            <span className="text-3xl">{allProposals.length}</span>
-            <p className="mb-1 leading-4">proposals created</p>
-          </div>
+          <DefaultMainCardHeader
+            value={allProposals.length}
+            label="proposals created"
+          />
         }
         aside={
           <Button
@@ -146,13 +146,11 @@ const Dashboard = () => {
           loading={daoTransfersLoading}
           icon={HiCircleStack}
           header={
-            <div className="flex flex-row items-end gap-x-2">
-              <span className="text-3xl">{daoTransfers?.length}</span>
-              <p className="mb-1 leading-4">
-                transfers{' '}
-                <span className="lg:hidden xl:inline-block">completed</span>
-              </p>
-            </div>
+            <DefaultMainCardHeader
+              value={daoTransfers?.length ?? 0}
+              label="transfers completed"
+              truncateMobile
+            />
           }
           aside={
             <Button
@@ -162,7 +160,7 @@ const Dashboard = () => {
           }
         >
           {!daoTransfers ? (
-            <p className="text-center font-normal">No tranfsers found!</p>
+            <p className="text-center font-normal">No transfers found!</p>
           ) : (
             <DaoTransfers daoTransfers={daoTransfers} limit={3} />
           )}
@@ -180,12 +178,7 @@ const Dashboard = () => {
           className=""
           loading={membersLoading}
           icon={HiUserGroup}
-          header={
-            <div className="flex flex-row items-end gap-x-2">
-              <span className="text-3xl">{memberCount}</span>
-              <p className="mb-1 leading-4">members</p>
-            </div>
-          }
+          header={<DefaultMainCardHeader value={memberCount} label="members" />}
           aside={
             <Button
               label="Add members"
