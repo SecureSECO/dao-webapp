@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { AddActionCard } from './AddProposalAction';
+import { AddActionCard } from './AddActionCard';
 
 const meta: Meta<typeof AddActionCard> = {
   component: AddActionCard,

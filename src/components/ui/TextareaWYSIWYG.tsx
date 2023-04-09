@@ -29,7 +29,6 @@ import {
   FaExpandAlt,
   FaCompressAlt,
 } from 'react-icons/fa';
-import { StepOneMetadata } from '@/src/pages/NewProposal';
 
 type MenuBarProps = {
   disabled: boolean;

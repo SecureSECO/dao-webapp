@@ -1,13 +1,12 @@
-import {
-  emptyActionMintTokenFormData,
-  emptyActionWithdrawFormData,
-} from '@/src/lib/Actions';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Control, useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 
 import { ProposalActionList } from './ProposalActionList';
 import { useEffect } from 'react';
-import { StepThreeData } from '@/src/pages/NewProposal';
+import {
+  emptyActionMintTokenFormData,
+  emptyActionWithdrawFormData,
+} from '../newProposalData';
 
 const meta: Meta<typeof ProposalActionList> = {
   component: ProposalActionList,
@@ -29,16 +28,14 @@ const StoryBuilder = (actions: any[]): Story => ({
       });
     }, []);
 
-    const controlX = control as any as Control<StepThreeData>;
-
     return (
       <form>
         <ProposalActionList
           fields={fields}
-          register={register}
-          control={controlX}
+          register={register as any}
+          control={control as any}
           getValues={getValues as any}
-          setValue={setValue}
+          setValue={setValue as any}
           remover={remove}
           errors={{ actions: [] }}
         />

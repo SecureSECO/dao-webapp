@@ -1,24 +1,21 @@
-import { ActionWithdrawFormData } from '@/src/lib/Actions';
-import { Input } from '../ui/Input';
-import { Label } from '../ui/Label';
-import { UseDaoBalanceData, useDaoBalance } from '@/src/hooks/useDaoBalance';
-import Loader from '../ui/Loader';
+import { Input } from '../../ui/Input';
+import { Label } from '../../ui/Label';
+import { useDaoBalance } from '@/src/hooks/useDaoBalance';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from '../ui/Dialog';
+} from '../../ui/Dialog';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
-import { Button } from '../ui/Button';
+import { Button } from '../../ui/Button';
 import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
-import { anyNullOrUndefined } from '@/src/lib/utils';
-import { FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
-import { StepThreeData } from '@/src/pages/NewProposal';
-import { ErrorWrapper } from '../ui/ErrorWrapper';
-import { MainCard } from '../ui/MainCard';
-import TokenAmount from '../ui/TokenAmount/TokenAmount';
+import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { ActionWithdrawFormData, StepThreeData } from '../newProposalData';
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
+import { MainCard } from '../../ui/MainCard';
+import { TokenSelectorDialogButtons } from './ui/TokenSelectorDialogButtons';
+import { ActionFormError } from './ProposalActionList';
 
 const Description = ({ text }: { text: string }) => (
   <p className="text-slate-500">{text}</p>
@@ -37,7 +34,7 @@ export const WithdrawAssetsAction = ({
   register: UseFormRegister<StepThreeData>;
   setValue: UseFormSetValue<StepThreeData>;
   prefix: `actions.${number}`;
-  errors: FieldErrors<ActionWithdrawFormData> | undefined;
+  errors: ActionFormError<ActionWithdrawFormData>;
   onRemove: any;
 }) => {
   const daoBalanceData = useDaoBalance({});
@@ -130,56 +127,5 @@ export const WithdrawAssetsAction = ({
         </ErrorWrapper>
       </div>
     </MainCard>
-  );
-};
-
-/**
- * DialogClose buttons showing all token types currently in the DAO treasury.
- * This component should only be used within Dialogs
- */
-const TokenSelectorDialogButtons = ({
-  daoBalanceData,
-  setTokenAddress,
-}: {
-  daoBalanceData: UseDaoBalanceData;
-  // eslint-disable-next-line no-unused-vars
-  setTokenAddress: (fn: string) => void;
-}): JSX.Element => {
-  if (daoBalanceData.loading) return <Loader />;
-  if (daoBalanceData.error) return <span> {daoBalanceData.error} </span>;
-
-  return (
-    <>
-      {daoBalanceData.daoBalances.map((token, index) => {
-        if (
-          anyNullOrUndefined(
-            token.name,
-            token.symbol,
-            token.address,
-            token.balance
-          )
-        )
-          return <></>;
-
-        return (
-          <div className="flex flex-row">
-            <DialogClose
-              key={index}
-              type="button"
-              className="h-10 rounded bg-slate-100 py-2 px-4 text-slate-900 hover:bg-slate-200 focus:ring-primary-200 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-700/50 dark:focus:ring-primary-400"
-              onClick={() => setTokenAddress(token.address!)}
-            >
-              <span> {token.name!} </span>
-              <span> - </span>
-              <TokenAmount
-                amount={token.balance}
-                tokenDecimals={token.decimals}
-                symbol={token.symbol}
-              />
-            </DialogClose>
-          </div>
-        );
-      })}
-    </>
   );
 };

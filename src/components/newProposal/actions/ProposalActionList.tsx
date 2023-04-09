@@ -1,15 +1,21 @@
-import { ActionFormData } from '@/src/lib/Actions';
 import { MintTokensAction } from './MintTokensAction';
 import { WithdrawAssetsAction } from './WithdrawAssetsAction';
-import { StepThreeData } from '@/src/pages/NewProposal';
+import { StepThreeData, ActionFormData } from '../newProposalData';
 import {
   Control,
+  FieldError,
   FieldErrors,
+  FieldValues,
+  Merge,
   UseFieldArrayRemove,
   UseFormGetValues,
   UseFormRegister,
   UseFormSetValue,
 } from 'react-hook-form';
+
+export type ActionFormError<T extends FieldValues> =
+  | Merge<FieldError, FieldErrors<NonNullable<T> | T>>
+  | undefined;
 
 export const ProposalActionList = ({
   fields,

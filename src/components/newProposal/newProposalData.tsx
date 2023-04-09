@@ -1,3 +1,27 @@
+// STEP 1 DATA
+export interface StepOneMetadata {
+  title: string;
+  summary: string;
+  description: string;
+  resources: Resource[];
+  media: Media;
+}
+
+export interface Resource {
+  name: string;
+  url: string;
+}
+
+export interface Media {
+  logo: string;
+  header: string;
+}
+
+// STEP 3 DATA
+export interface StepThreeData {
+  actions: ActionFormData[];
+}
+
 export type Action = ActionWithdraw | ActionMintToken;
 
 export const emptyActionWithdraw: ActionWithdraw = {
