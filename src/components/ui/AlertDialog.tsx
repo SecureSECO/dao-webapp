@@ -1,4 +1,11 @@
 /**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+/**
  * The AlertDialog component is the root component of the dropdown menu system,
  * @see https://www.radix-ui.com/docs/primitives/components/alert-dialog - Radix UI DropdownMenu Primitive
  * built using Radix UI's AlertDialog primitive adapted and inspired by https://ui.shadcn.com/docs/primitives/alert-dialog
@@ -41,7 +48,7 @@ const AlertDialogOverlay = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
     className={cn(
-      'animate-in fade-in fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity',
+      'fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity animate-in fade-in',
       className
     )}
     {...props}
@@ -63,7 +70,7 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        'animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0 fixed z-50 grid w-full max-w-lg scale-100 gap-4 bg-white px-6 py-4 opacity-100 sm:rounded-lg md:w-full',
+        'fixed z-50 grid w-full max-w-lg scale-100 gap-4 bg-white px-6 py-4 opacity-100 animate-in fade-in-90 slide-in-from-bottom-10 sm:rounded-lg sm:zoom-in-90 sm:slide-in-from-bottom-0 md:w-full',
         'dark:bg-slate-800',
         className
       )}

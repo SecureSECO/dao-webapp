@@ -1,4 +1,12 @@
 /**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
  * The RadioGroup module provides a customizable and accessible radio group component.
  * It supports various styles and can be used for selecting a single option from a list of choices.
  * @see https://www.radix-ui.com/docs/primitives/components/radio-group - Radix UI Radio Group Primitive
