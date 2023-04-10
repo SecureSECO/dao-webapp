@@ -1,4 +1,12 @@
 /**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
  * The DropdownMenu component is the root component of the dropdown menu system,
  * @see https://www.radix-ui.com/docs/primitives/components/dropdown-menu - Radix UI DropdownMenu Primitive
  * built using Radix UI's DropdownMenu primitive adapted and inspired by https://ui.shadcn.com/docs/primitives/dropdown-menu
@@ -102,7 +110,7 @@ const DropdownMenuSubContent = React.forwardRef<
   <DropdownMenuPrimitive.SubContent
     ref={ref}
     className={cn(
-      'animate-in slide-in-from-left-1 z-50 min-w-[8rem] overflow-hidden rounded-md border border-slate-100 bg-white p-1 text-slate-900 shadow-md dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400',
+      'z-50 min-w-[8rem] overflow-hidden rounded-md border border-slate-100 bg-white p-1 text-slate-900 shadow-md animate-in slide-in-from-left-1 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400',
       className
     )}
     {...props}
@@ -126,7 +134,7 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        'animate-in data-[side=right]:slide-in-from-left-2 data-[side=left]:slide-in-from-right-2 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] overflow-hidden rounded-md border border-slate-100 bg-white p-1 text-slate-700 shadow-md dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400',
+        'z-50 min-w-[8rem] overflow-hidden rounded-md border border-slate-100 bg-white p-1 text-slate-700 shadow-md animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400',
         className
       )}
       {...props}

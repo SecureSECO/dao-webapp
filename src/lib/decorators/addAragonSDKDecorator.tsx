@@ -6,15 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 
-import { Input } from './Input';
-
-const meta: Meta<typeof Input> = {
-  component: Input,
+export const addAragonSDKDecorator = (Story: any) => {
+  return (
+    <AragonSDKWrapper>
+      <Story />
+    </AragonSDKWrapper>
+  );
 };
-
-export default meta;
-type Story = StoryObj<typeof Input>;
-
-export const Primary: Story = {};

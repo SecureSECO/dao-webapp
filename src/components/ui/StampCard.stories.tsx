@@ -1,7 +1,16 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import StampCard from './StampCard';
 import { AiFillGithub } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
+import { addWagmiClientDecorator } from '@/src/lib/decorators/addWagmiClientDecorator';
 
 const meta = {
   component: StampCard,
@@ -24,6 +33,7 @@ export const Verified: Story = {
     thresholdHistory: [[BigNumber.from(0), BigNumber.from(60)]],
     verify: () => {},
   },
+  decorators: [addWagmiClientDecorator],
 };
 
 export const Expired: Story = {
@@ -38,6 +48,7 @@ export const Expired: Story = {
     thresholdHistory: [[BigNumber.from(0), BigNumber.from(0)]],
     verify: () => {},
   },
+  decorators: [addWagmiClientDecorator],
 };
 
 export const Unverified: Story = {
@@ -52,4 +63,5 @@ export const Unverified: Story = {
     thresholdHistory: [[BigNumber.from(0), BigNumber.from(60)]],
     verify: () => {},
   },
+  decorators: [addWagmiClientDecorator],
 };

@@ -84,3 +84,7 @@ Below is a list of colors used for specific elements, both for light mode and da
   - subtext: text-slate-400
 - Highlight color: text-primary-500
 ```
+
+### License
+
+This repository is [MIT licensed](./LICENSE).

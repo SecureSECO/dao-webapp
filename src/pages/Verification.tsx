@@ -1,6 +1,13 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast';
 import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
 import StampCard from '../components/ui/StampCard';
@@ -15,6 +22,7 @@ import { AiFillGithub, AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
 import RecentVerificationCard from '../components/ui/RecentVerificationCard';
 import { FaDiscord } from 'react-icons/fa';
+import { useToast } from '@/src/hooks/useToast';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -137,9 +145,10 @@ export const verificationAddress = import.meta.env.VITE_VERIFY_CONTRACT;
 
 const Verification = () => {
   const { address, isConnected } = useAccount();
+  const { toast } = useToast();
 
   // Gets all the stamps for the current address
-  const { data, isError, error, isLoading } = useContractRead({
+  const { data, isError, error, isLoading, refetch } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getStamps',
@@ -147,7 +156,7 @@ const Verification = () => {
   });
 
   // Gets the reverification threshold
-  const { data: rData, refetch } = useContractRead({
+  const { data: rData } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'reverifyThreshold',
@@ -165,7 +174,12 @@ const Verification = () => {
   // Sign our message to verify our address
   const { signMessage } = useSignMessage({
     onError(error) {
-      toast.error(error.message.substr(0, 100));
+      toast({
+        title: `Wait at least ${Math.round(
+          reverifyThreshold
+        )} days after previous verification to verify again`,
+        variant: 'error',
+      });
     },
     async onSuccess(data) {
       try {
@@ -196,7 +210,10 @@ const Verification = () => {
           throw new Error('Verification failed: ' + message);
         }
       } catch (error: any) {
-        toast.error(error.message.substr(0, 100));
+        toast({
+          title: error.message.substring(0, 100),
+          variant: 'error',
+        });
       }
     },
   });
@@ -225,8 +242,6 @@ const Verification = () => {
         stamp.verifiedAt,
       ]);
 
-      console.log('stamps', data);
-
       setStamps(stamps);
 
       // Convert stamps to verification history
@@ -247,8 +262,6 @@ const Verification = () => {
       verificationHistory.sort((a, b) => b.timestamp - a.timestamp);
 
       setVerificationHistory(verificationHistory);
-
-      console.log(verificationHistory);
     }
 
     if (vData && Array.isArray(vData)) {
@@ -275,9 +288,9 @@ const Verification = () => {
           Date.now()
         ) {
           throw new Error(
-            `You have already verified with this provider, please wait at least ${Math.round(
+            `Wait at least ${Math.round(
               reverifyThreshold
-            )} days after the initial verification to verify again.`
+            )} days after previous verification to verify again`
           );
         }
       }
@@ -292,7 +305,10 @@ const Verification = () => {
       });
     } catch (error: any) {
       console.log(error);
-      toast.error(error.message.substr(0, 100));
+      toast({
+        title: error.message.substring(0, 100),
+        variant: 'error',
+      });
     }
   };
 

@@ -1,4 +1,12 @@
 /**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
  * This file contains a custom Textarea component that provides a consistent look and feel for textareas
  * throughout an application. The Textarea component is styled and supports error handling with 'react-hook-form'.
  * inspired by https://ui.shadcn.com/docs/primitives/textarea

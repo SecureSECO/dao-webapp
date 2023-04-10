@@ -1,19 +1,22 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import { Button } from '@/src/components/ui/Button';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
-import { useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  useAccount,
-  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
-  useSignMessage,
   useWaitForTransaction,
 } from 'wagmi';
 import { verificationAbi } from '../assets/verificationAbi';
-import StampCard from '../components/ui/StampCard';
-import { Stamp, verificationAddress } from '../pages/Verification';
+import { verificationAddress } from '../pages/Verification';
 import {
   Accordion,
   AccordionContent,
@@ -22,10 +25,9 @@ import {
 } from '@/src/components/ui/Accordion';
 import { HiExclamationCircle } from 'react-icons/hi2';
 import Header from '../components/ui/Header';
+import { useToast } from '@/src/hooks/useToast';
 
 const FinishVerification = () => {
-  const { address } = useAccount();
-
   const [searchParams] = useSearchParams();
   const addressToVerify = searchParams.get('address');
   const hash = searchParams.get('hash');
@@ -51,6 +53,7 @@ const FinishVerification = () => {
   });
 
   const [isBusy, setIsBusy] = useState(false);
+  const { promise: promiseToast } = useToast();
 
   /**
    * Actually makes a write call to the contract to verify the address
@@ -142,10 +145,13 @@ const FinishVerification = () => {
             <Button
               className="mt-4"
               onClick={() => {
-                toast.promise(verify(), {
+                promiseToast(verify(), {
                   loading: 'Verifying, please wait...',
                   success: 'Successfully verified!',
-                  error: (e) => 'Verification failed: ' + e.message,
+                  error: (e) => ({
+                    title: 'Verification failed',
+                    description: e.message,
+                  }),
                 });
               }}
               disabled={
