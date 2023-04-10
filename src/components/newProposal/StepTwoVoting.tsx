@@ -9,14 +9,14 @@ import {
 } from 'react-hook-form';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { Input } from '@/src/components/ui/Input';
-
-export const StepTwo = ({
+import {
   StepNavigator,
-  setStep,
-}: {
-  StepNavigator?: React.ReactNode;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-}) => {
+  useNewProposalFormContext,
+} from '@/src/pages/NewProposal';
+
+export const StepTwo = () => {
+  const { setStep } = useNewProposalFormContext();
+
   const { register, getValues, handleSubmit, control } = useForm();
 
   const onSubmit = (data: any) => {
@@ -36,7 +36,7 @@ export const StepTwo = ({
         />
         <EndTime register={register} getValues={getValues} control={control} />
       </div>
-      {StepNavigator}
+      <StepNavigator />
     </form>
   );
 };
@@ -113,7 +113,6 @@ export const StartTime = ({
     </fieldset>
   );
 };
-
 
 export const EndTime = ({
   register,

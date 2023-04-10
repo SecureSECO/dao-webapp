@@ -1,40 +1,82 @@
-import React, { useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import Header from '@/src/components/ui/Header';
 import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { StepOneMetadata } from '../components/newProposal/newProposalData';
+import {
+  NewProposalFormData,
+  StepOneMetadata,
+  emptyNewProposalFormData,
+} from '../components/newProposal/newProposalData';
 import { StepTwo } from '../components/newProposal/StepTwoVoting';
 import { StepThree } from '../components/newProposal/StepThreeActions';
 import { StepOne } from '../components/newProposal/StepOneMetadata';
+import { StepFour } from '../components/newProposal/StepFourConfirmation';
+import { StepThreeData } from '../components/newProposal/newProposalData';
 
 const totalSteps = 4;
 
 const NewProposal = () => {
-  const [step, setStep] = useState<number>(1);
-
   return (
     <div className="flex flex-col gap-6">
-      <ProgressCard step={step}>
-        <StepContent
-          setStep={setStep}
-          step={step}
-          StepNavigator={<StepNavigator step={step} setStep={setStep} />}
-        />
-      </ProgressCard>
+      <NewProposalFormProvider>
+        <ProgressCard>
+          <StepContent />
+        </ProgressCard>
+      </NewProposalFormProvider>
     </div>
   );
 };
 
 export default NewProposal;
 
-const StepNavigator = ({
-  step,
-  setStep,
-}: {
+export type NewProposalFormContextProps = {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-}) => {
+  dataStep1: StepOneMetadata | undefined;
+  setDataStep1: React.Dispatch<
+    React.SetStateAction<StepOneMetadata | undefined>
+  >;
+  dataStep3: StepThreeData | undefined;
+  setDataStep3: React.Dispatch<React.SetStateAction<StepThreeData | undefined>>;
+};
+
+export const NewProposalFormContext = createContext(
+  {} as NewProposalFormContextProps
+);
+
+export const useNewProposalFormContext = () =>
+  useContext(NewProposalFormContext);
+
+export const NewProposalFormProvider = ({ children }: { children: any }) => {
+  const [step, setStep] = useState<number>(1);
+  const [dataStep1, setDataStep1] = useState<StepOneMetadata | undefined>(
+    undefined
+  );
+  const [dataStep3, setDataStep3] = useState<StepThreeData | undefined>(
+    undefined
+  );
+
+
+  return (
+    <NewProposalFormContext.Provider
+      value={{
+        step,
+        setStep,
+        dataStep1,
+        setDataStep1,
+        dataStep3,
+        setDataStep3,
+      }}
+    >
+      {children}
+    </NewProposalFormContext.Provider>
+  );
+};
+
+export const StepNavigator = () => {
+  const { step, setStep } = useNewProposalFormContext();
+
   const handlePrevStep = () => {
     if (step > 1) {
       setStep(step - 1);
@@ -54,13 +96,8 @@ const StepNavigator = ({
   );
 };
 
-export const ProgressCard = ({
-  step,
-  children,
-}: {
-  step: number;
-  children?: React.ReactNode;
-}) => {
+export const ProgressCard = ({ children }: { children?: React.ReactNode }) => {
+  const { step } = useNewProposalFormContext();
   return (
     <Card className="flex flex-col gap-1">
       <div className="flex w-full items-center justify-between">
@@ -76,30 +113,17 @@ export const ProgressCard = ({
   );
 };
 
-const StepContent = ({
-  step,
-  StepNavigator,
-  setStep,
-}: {
-  step: number;
-  StepNavigator?: React.ReactNode;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-}) => {
-  const [stepOneData, setStepOneData] = useState<StepOneMetadata | null>(null);
-
+const StepContent = () => {
+  const { step } = useNewProposalFormContext();
   switch (step) {
     case 1:
-      return (
-        <StepOne
-          setStep={setStep}
-          setStepOneData={setStepOneData}
-          StepNavigator={StepNavigator}
-        />
-      );
+      return <StepOne />;
     case 2:
-      return <StepTwo StepNavigator={StepNavigator} setStep={setStep} />;
+      return <StepTwo />;
     case 3:
-      return <StepThree StepNavigator={StepNavigator} setStep={setStep} />;
+      return <StepThree />;
+    case 4:
+      return <StepFour />;
     default:
       return null;
   }

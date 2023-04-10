@@ -8,16 +8,14 @@ import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { StepOneMetadata } from './newProposalData';
-
-export const StepOne = ({
+import {
   StepNavigator,
-  setStepOneData,
-  setStep,
-}: {
-  StepNavigator?: React.ReactNode;
-  setStepOneData: React.Dispatch<React.SetStateAction<StepOneMetadata | null>>;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-}) => {
+  useNewProposalFormContext,
+} from '@/src/pages/NewProposal';
+
+export const StepOne = () => {
+  const { setStep, setDataStep1 } = useNewProposalFormContext();
+
   const [resources, setResources] = useState<
     Array<{ name: string; link: string }>
   >([{ name: '', link: '' }]);
@@ -33,9 +31,9 @@ export const StepOne = ({
   } = useForm<StepOneMetadata>({});
 
   const onSubmit = (data: StepOneMetadata) => {
-    console.log('hello');
-    console.log(data);
     // Handle submission
+    console.log(data);
+    setDataStep1(data);
     setStep(2);
   };
 
@@ -148,7 +146,7 @@ export const StepOne = ({
           </Button>
         </fieldset>
       </div>
-      {StepNavigator}
+      <StepNavigator />
     </form>
   );
 };
