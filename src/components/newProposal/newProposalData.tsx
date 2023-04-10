@@ -26,10 +26,10 @@ export interface Media {
 }
 // STEP 2 DATA
 export type StepTwoData = {
-  option: string;
-  start_time_type: string;
+  option: 'yes-no-abstain';
+  start_time_type: 'now' | 'custom';
   start_time?: string;
-  end_time_type: string;
+  end_time_type: 'duration' | 'custom';
   end_time?: string;
   duration_minutes?: number;
   duration_hours?: number;
