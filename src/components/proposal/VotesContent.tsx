@@ -33,7 +33,6 @@ import {
 import { calcBigintPercentage } from '@/src/lib/utils';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
 import { ToastUpdate, useToast } from '@/src/hooks/useToast';
-import { useEffect } from 'react';
 
 type VoteFormData = {
   vote_value: string;
@@ -98,6 +97,7 @@ const VotesContentActive = ({
   // Send the vote to SDK
   const confirmVote = async (
     vote: number,
+    // eslint-disable-next-line no-unused-vars
     updateToast: (props: ToastUpdate) => void
   ) => {
     if (!votingClient) return;
@@ -114,8 +114,6 @@ const VotesContentActive = ({
 
       for await (const step of steps) {
         try {
-          console.log('step', step);
-
           switch (step.key) {
             case VoteProposalStep.VOTING:
               // Show link to transaction on etherscan

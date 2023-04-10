@@ -145,21 +145,21 @@ function dispatch(action: Action) {
 
 interface Toast extends Omit<ToasterToast, 'id'> {}
 
+const updateToast = (props: ToastUpdate, id: string) => {
+  dispatch({
+    type: 'UPDATE_TOAST',
+    toast: { ...props, id },
+  });
+  // Dismiss toast after duration manually to avoid the shenanigens of radix ui toast, causing the toast to remain forever
+  if (props.duration) {
+    setTimeout(() => {
+      dispatch({ type: 'DISMISS_TOAST', toastId: id });
+    }, props.duration);
+  }
+};
+
 function toast({ ...props }: Toast) {
   const id = genId();
-
-  const update = (props: ToastUpdate) => {
-    dispatch({
-      type: 'UPDATE_TOAST',
-      toast: { ...props, id },
-    });
-    // Dismiss toast after duration manually to avoid the shenanigens of radix ui toast, causing the toast to remain forever
-    if (props.duration) {
-      setTimeout(() => {
-        dispatch({ type: 'DISMISS_TOAST', toastId: id });
-      }, props.duration);
-    }
-  };
   const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
 
   dispatch({
@@ -177,7 +177,59 @@ function toast({ ...props }: Toast) {
   return {
     id: id,
     dismiss,
-    update,
+    update: (props: ToastUpdate) => updateToast(props, id),
+  };
+}
+
+type PromiseToast = {
+  loading: string;
+  success: string;
+  error: (err: any) => { title: string; description: string };
+};
+
+function promise(promise: Promise<any>, props: PromiseToast) {
+  const id = genId();
+
+  const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
+
+  dispatch({
+    type: 'ADD_TOAST',
+    toast: {
+      variant: 'loading',
+      duration: Infinity,
+      id,
+      title: props.loading,
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) dismiss();
+      },
+    },
+  });
+
+  promise.then(() => {
+    updateToast(
+      {
+        variant: 'success',
+        title: props.success,
+        duration: 3000,
+      },
+      id
+    );
+  });
+  promise.catch((e) => {
+    const updateProps = props.error(e);
+    updateToast(
+      {
+        variant: 'error',
+        duration: 3000,
+        ...updateProps,
+      },
+      id
+    );
+  });
+
+  return {
+    id: id,
   };
 }
 
@@ -197,6 +249,7 @@ function useToast() {
   return {
     ...state,
     toast,
+    promise,
     dismiss: (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
   };
 }
