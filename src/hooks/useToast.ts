@@ -145,6 +145,10 @@ function dispatch(action: Action) {
 
 interface Toast extends Omit<ToasterToast, 'id'> {}
 
+/**
+ * Update a toast with the given props and id. This will also set a timeout to dismiss the toast after the duration has passed,
+ * overriding the pausing and resuming behavior of the default Toast (to avoid an error causing the toast to remain forever)
+ */
 const updateToast = (props: ToastUpdate, id: string) => {
   dispatch({
     type: 'UPDATE_TOAST',
@@ -158,6 +162,11 @@ const updateToast = (props: ToastUpdate, id: string) => {
   }
 };
 
+/**
+ * Show a toast with the given props
+ * @param props Props for the toast, including duration, variant, title and description
+ * @returns An object containing the id of the toast, a function to dismiss the toast and a function to update the toast
+ */
 function toast({ ...props }: Toast) {
   const id = genId();
   const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
@@ -187,6 +196,12 @@ type PromiseToast = {
   error: (err: any) => { title: string; description: string };
 };
 
+/**
+ * Show a toast that will be updated when the promise resolves or rejects, using the provided content
+ * @param promise The promise to update the toast based off of
+ * @param props An object containing the content to show when the promise is loading, resolves (success) or rejects (error)
+ * @returns An object containing the id of the toast
+ */
 function promise(promise: Promise<any>, props: PromiseToast) {
   const id = genId();
 
@@ -233,6 +248,9 @@ function promise(promise: Promise<any>, props: PromiseToast) {
   };
 }
 
+/**
+ * @returns An object containing the toasts, a function to show a toast, a function to show a promise toast and a function to dismiss a specific toast
+ */
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 
@@ -254,4 +272,4 @@ function useToast() {
   };
 }
 
-export { useToast, toast };
+export { useToast, toast, promise };
