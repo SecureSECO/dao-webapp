@@ -1,4 +1,12 @@
 /**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
  * The Label module provides a pre-styled label component based on @radix-ui/react-label
  *
  * @see https://www.radix-ui.com/docs/primitives/components/label - Radix UI Label Primitive
