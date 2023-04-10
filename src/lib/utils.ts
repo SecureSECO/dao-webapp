@@ -25,22 +25,39 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
+/**
+ * Utility function for checking if a value is null or undefined
+ * @param value The value to check
+ * @returns True iff the value is null or undefined
+ */
 export function isNullOrUndefined(value: any): boolean {
   return value === null || value === undefined;
 }
 
+/**
+ * Utility function for checking if any value of a array of values is Null or Undefined
+ * @param value An array of values to check
+ * @returns True iff any of the values is null or undefined
+ */
 export function anyNullOrUndefined(...values: any[]): boolean {
   return values.some(isNullOrUndefined);
 }
 
+/**
+ * Utility function to create count down text for dates
+ * @param date The date
+ * @returns
+ */
 export const countdownText = (date: Date) => {
   const now = new Date();
-  if (Math.abs(differenceInHours(date, now)) > 24) {
+  const hourDif = Math.abs(differenceInHours(date, now));
+  const minuteDif = Math.abs(differenceInMinutes(date, now));
+  if (hourDif > 24) {
     return formatDistanceToNow(date);
-  } else if (Math.abs(differenceInMinutes(date, now)) > 60) {
-    return `${Math.abs(differenceInHours(date, now))} hours`;
-  } else if (Math.abs(differenceInMinutes(date, now)) > 1) {
-    return `${Math.abs(differenceInMinutes(date, now))} minutes`;
+  } else if (minuteDif > 60) {
+    return `${hourDif} hours`;
+  } else if (minuteDif > 1) {
+    return `${minuteDif} minutes`;
   } else {
     return 'less than a minute';
   }
