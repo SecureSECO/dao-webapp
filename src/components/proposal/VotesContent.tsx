@@ -26,13 +26,13 @@ import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 import { useWeb3Modal } from '@web3modal/react';
-import toast, { CheckmarkIcon, LoaderIcon, ErrorIcon } from 'react-hot-toast';
 import {
   CHAIN_METADATA,
   getChainDataByChainId,
 } from '@/src/lib/constants/chains';
 import { calcBigintPercentage } from '@/src/lib/utils';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
+import { ToastUpdate, useToast } from '@/src/hooks/useToast';
 
 type VoteFormData = {
   vote_value: string;
@@ -92,9 +92,14 @@ const VotesContentActive = ({
   });
   const { votingClient } = useAragonSDKContext();
   const { open } = useWeb3Modal();
+  const { toast } = useToast();
 
   // Send the vote to SDK
-  const confirmVote = async (vote: number, toastId: string) => {
+  const confirmVote = async (
+    vote: number,
+    // eslint-disable-next-line no-unused-vars
+    updateToast: (props: ToastUpdate) => void
+  ) => {
     if (!votingClient) return;
     try {
       const steps = votingClient.methods.voteProposal({
@@ -109,14 +114,12 @@ const VotesContentActive = ({
 
       for await (const step of steps) {
         try {
-          console.log('step', step);
-
           switch (step.key) {
             case VoteProposalStep.VOTING:
               // Show link to transaction on etherscan
-              toast(
-                <div className="flex flex-col">
-                  <span>Awaiting confirmation...</span>
+              updateToast({
+                title: 'Awaiting confirmation...',
+                description: (
                   <a
                     href={`${etherscanURL}/tx/${step.txHash}`}
                     target="_blank"
@@ -125,27 +128,24 @@ const VotesContentActive = ({
                   >
                     View on etherscan
                   </a>
-                </div>,
-                {
-                  icon: <LoaderIcon />,
-                  id: toastId,
-                  duration: Infinity,
-                }
-              );
+                ),
+              });
               break;
             case VoteProposalStep.DONE:
-              toast.success('Vote submitted!', {
-                id: toastId,
+              updateToast({
+                title: 'Vote submitted!',
+                description: '',
+                variant: 'success',
                 duration: 3000,
-                icon: <CheckmarkIcon />,
               });
               break;
           }
         } catch (err) {
-          toast.error('Error submitting vote', {
-            id: toastId,
+          updateToast({
+            title: 'Error submitting vote',
+            description: '',
+            variant: 'error',
             duration: 3000,
-            icon: <ErrorIcon />,
           });
           console.error(err);
         }
@@ -154,22 +154,26 @@ const VotesContentActive = ({
       refetch();
       refetchCanVote();
     } catch (e) {
-      toast.error('Error submitting vote', {
-        id: toastId,
+      updateToast({
+        title: 'Error submitting vote',
+        description: '',
+        variant: 'error',
         duration: 3000,
-        icon: <ErrorIcon />,
       });
     }
   };
 
-  const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
+  const onSubmitVote: SubmitHandler<VoteFormData> = (data) => {
     if (!votingClient) return;
-    // Instead of toast.promise(), use manual updating of toast here, to update the loading message
-    // upon receiving the signature from user
-    const toastId = toast.loading('Awaiting signature...', {
+    const { update: updateToast } = toast({
       duration: Infinity,
+      variant: 'loading',
+      title: 'Awaiting signature...',
     });
-    confirmVote(VoteValues[data.vote_value as VoteValueStringUpper], toastId);
+    confirmVote(
+      VoteValues[data.vote_value as VoteValueStringUpper],
+      updateToast
+    );
   };
 
   const voteValue = watch('vote_value');

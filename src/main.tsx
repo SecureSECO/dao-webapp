@@ -22,7 +22,7 @@ import Settings from '@/src/pages/Settings';
 import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import NewProposal from '@/src/pages/NewProposal';
 import Verification from './pages/Verification';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from '@/src/components/ui/Toaster';
 import ViewProposal from '@/src/pages/ViewProposal';
 import FinishVerification from './pages/FinishVerification';
 import { ganache } from './lib/constants/GanacheChain';

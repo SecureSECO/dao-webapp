@@ -27,12 +27,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/AlertDialog';
-import { toast } from 'react-hot-toast';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { verificationAbi } from '../../assets/verificationAbi';
 import { useState } from 'react';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
+import { useToast } from '@/src/hooks/useToast';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -95,6 +95,7 @@ const StampCard = ({
     expired: boolean;
     timeLeftUntilExpiration: number | null;
   } = isVerified(thresholdHistory, stamp);
+  const { promise: promiseToast } = useToast();
 
   const providerId = stampInfo.id;
 
@@ -143,7 +144,7 @@ const StampCard = ({
               'StampCard ~ unverify ~ txResult.catch ~ Unverification failed',
               error
             );
-            reject(error);
+            reject('Transaction failed');
           });
       } catch (error: any) {
         console.error(
@@ -151,7 +152,7 @@ const StampCard = ({
           error
         );
         setIsBusy(false);
-        reject(error);
+        reject('Unverification failed');
       }
     });
   };
@@ -245,10 +246,13 @@ const StampCard = ({
                   disabled={isBusy}
                   onClick={() => {
                     const promise = unverify();
-                    toast.promise(promise, {
+                    promiseToast(promise, {
                       loading: 'Removing stamp...',
                       success: 'Stamp removed',
-                      error: (err) => 'Failed to remove stamp: ' + err,
+                      error: (err) => ({
+                        title: 'Failed to remove stamp: ',
+                        description: err,
+                      }),
                     });
 
                     promise.finally(() => {
