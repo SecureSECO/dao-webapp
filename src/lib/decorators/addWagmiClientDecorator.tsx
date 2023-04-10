@@ -1,7 +1,7 @@
-import { WagmiConfig, configureChains, createClient } from 'wagmi';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import { goerli, polygon } from 'wagmi/chains';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { WagmiConfig, configureChains, createClient } from 'wagmi';
+import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 
 export const addWagmiClientDecorator = (Story: any) => {
   const projectId = import.meta.env.VITE_APP_PROJECT_ID;

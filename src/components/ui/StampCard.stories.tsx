@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import StampCard from './StampCard';
 import { AiFillGithub } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
+import { addWagmiClientDecorator } from '@/src/lib/decorators/addWagmiClientDecorator';
 
 const meta = {
   component: StampCard,
@@ -24,6 +25,7 @@ export const Verified: Story = {
     thresholdHistory: [[BigNumber.from(0), BigNumber.from(60)]],
     verify: () => {},
   },
+  decorators: [addWagmiClientDecorator],
 };
 
 export const Expired: Story = {
@@ -38,6 +40,7 @@ export const Expired: Story = {
     thresholdHistory: [[BigNumber.from(0), BigNumber.from(0)]],
     verify: () => {},
   },
+  decorators: [addWagmiClientDecorator],
 };
 
 export const Unverified: Story = {
@@ -52,4 +55,5 @@ export const Unverified: Story = {
     thresholdHistory: [[BigNumber.from(0), BigNumber.from(60)]],
     verify: () => {},
   },
+  decorators: [addWagmiClientDecorator],
 };
