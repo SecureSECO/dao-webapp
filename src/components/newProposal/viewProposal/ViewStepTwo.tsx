@@ -11,11 +11,7 @@ import { StepTwoData } from '../newProposalData';
 import { add, format } from 'date-fns';
 import { isNullOrUndefined } from '@/src/lib/utils';
 
-export const ViewStepTwo = ({
-  data,
-}: {
-  data: StepTwoData | undefined;
-}): React.ReactNode => {
+export const ViewStepTwo = ({ data }: { data: StepTwoData | undefined }) => {
   if (!data)
     return (
       <HeaderCard title="Voting">

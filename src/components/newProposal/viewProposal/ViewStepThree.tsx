@@ -28,7 +28,6 @@ export const ViewStepThree = ({
 
   return (
     <HeaderCard title="Actions">
-      <h2 className="text-xl"></h2>
       {data.actions.map((action: ActionFormData, index: number) => (
         <ViewActionSwitch data={action} index={index} />
       ))}

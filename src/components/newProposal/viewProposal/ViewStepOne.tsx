@@ -7,6 +7,7 @@
  */
 
 import { HeaderCard } from '../../ui/HeaderCard';
+import { TextareaWYSIWYG } from '../../ui/TextareaWYSIWYG';
 import { StepOneMetadata } from '../newProposalData';
 
 export const ViewStepOne = ({
@@ -17,9 +18,13 @@ export const ViewStepOne = ({
   return (
     <HeaderCard title={data?.title ?? 'Proposal has no title'}>
       <h3 className="text-xl">{data?.summary ?? 'Proposal has no summary'} </h3>
-      <p className="text-lg">
-        {data?.description ?? 'Proposal has no description'}{' '}
-      </p>
+      <TextareaWYSIWYG
+        setError={() => {}}
+        clearErrors={() => {}}
+        disabled={true}
+        value={data?.description ?? '<p>Proposal has no description </p'}
+      />
+      {}{' '}
     </HeaderCard>
   );
 };

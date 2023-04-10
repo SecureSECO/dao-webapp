@@ -6,18 +6,26 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useNewProposalFormContext } from '@/src/pages/NewProposal';
+import {
+  StepNavigator,
+  useNewProposalFormContext,
+} from '@/src/pages/NewProposal';
 import { StepOneMetadata } from './newProposalData';
 import { HeaderCard } from '../ui/HeaderCard';
 import { ViewStepOne } from './viewProposal/ViewStepOne';
+import { ViewStepTwo } from './viewProposal/ViewStepTwo';
+import { ViewStepThree } from './viewProposal/ViewStepThree';
 
 export const StepFour = () => {
   const { setStep, dataStep1, dataStep2, dataStep3 } =
     useNewProposalFormContext();
 
   return (
-    <div>
-      <ViewStepOne data={dataStep1} />;{/* <ViewStepTwo data={dataStep2} /> */}
+    <div className="flex flex-col gap-4">
+      <ViewStepOne data={dataStep1} />
+      <ViewStepTwo data={dataStep2} />
+      <ViewStepThree data={dataStep3} />
+      <StepNavigator />
     </div>
   );
 };
