@@ -140,7 +140,7 @@ const Verification = () => {
   const { toast } = useToast();
 
   // Gets all the stamps for the current address
-  const { data, isError, error, isLoading } = useContractRead({
+  const { data, isError, error, isLoading, refetch } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getStamps',
@@ -148,7 +148,7 @@ const Verification = () => {
   });
 
   // Gets the reverification threshold
-  const { data: rData, refetch } = useContractRead({
+  const { data: rData } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'reverifyThreshold',

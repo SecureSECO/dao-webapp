@@ -144,7 +144,7 @@ const StampCard = ({
               'StampCard ~ unverify ~ txResult.catch ~ Unverification failed',
               error
             );
-            reject(error);
+            reject('Transaction failed');
           });
       } catch (error: any) {
         console.error(
@@ -152,7 +152,7 @@ const StampCard = ({
           error
         );
         setIsBusy(false);
-        reject(error);
+        reject('Unverification failed');
       }
     });
   };
