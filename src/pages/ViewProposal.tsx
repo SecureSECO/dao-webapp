@@ -25,6 +25,7 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
 import VotingDetails from '@/src/components/proposal/VotingDetails';
+import { ProposalResources } from '../components/proposal/ProposalResources';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -141,17 +142,10 @@ const ViewProposal = () => {
               )}
             </MainCard>
 
-            <MainCard
+            <ProposalResources
               loading={loading}
-              className="col-span-full lg:col-span-3"
-              icon={HiLink}
-              header={
-                <DefaultMainCardHeader
-                  value={proposal?.metadata.resources.length ?? 0}
-                  label="resources"
-                />
-              }
-            ></MainCard>
+              resources={proposal?.metadata.resources}
+            />
           </>
         )}
       </div>
