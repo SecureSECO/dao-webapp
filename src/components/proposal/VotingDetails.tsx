@@ -84,13 +84,16 @@ const VotingDetails = ({ proposal }: { proposal: DetailedProposal | null }) => {
   return (
     <>
       {categories.map((category) => (
-        <div>
+        <div key={category.title}>
           <div className="flex flex-row items-center gap-x-2">
             <p className="font-medium dark:text-slate-300">{category.title}</p>
             <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
           </div>
           {category.items.map((item) => (
-            <div className="flex flex-row justify-between gap-x-2">
+            <div
+              key={item.label}
+              className="flex flex-row justify-between gap-x-2"
+            >
               <p className="text-gray-500 dark:text-slate-400">{item.label}</p>
               <p className="text-primary-300 dark:text-primary-400">
                 {item.value(proposal)}

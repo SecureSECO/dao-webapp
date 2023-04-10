@@ -85,9 +85,8 @@ export const useCanVote = ({
   useEffect(() => {
     if (useDummyData) return setDummyData();
     if (votingClient && address) setLoading(true);
-    // fetchCanVote();
+    fetchCanVote();
     setLoading(false);
-    setCanVote({ YES: true, NO: true, ABSTAIN: true });
   }, [votingClient, proposalId, address]);
 
   return {
