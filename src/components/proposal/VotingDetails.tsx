@@ -18,12 +18,12 @@ const categories = [
     items: [
       {
         label: 'Support threshold',
-        value: (proposal: DetailedProposal) =>
+        value: (proposal: VotingDetailsProposal) =>
           `${proposal.settings.supportThreshold * 100}%`,
       },
       {
         label: 'Minimum participation',
-        value: (proposal: DetailedProposal) =>
+        value: (proposal: VotingDetailsProposal) =>
           `${proposal.settings.minParticipation * 100}%`,
       },
     ],
@@ -33,7 +33,7 @@ const categories = [
     items: [
       {
         label: 'Current participation',
-        value: (proposal: DetailedProposal) => {
+        value: (proposal: VotingDetailsProposal) => {
           const currentParticipation = calcBigintPercentage(
             proposal.usedVotingWeight,
             proposal.totalVotingWeight
@@ -43,7 +43,7 @@ const categories = [
       },
       {
         label: 'Unique voters',
-        value: (proposal: DetailedProposal) => {
+        value: (proposal: VotingDetailsProposal) => {
           const uniqueVoters = proposal.votes.reduce(
             (acc, vote) => acc.add(vote.address),
             new Set<string>()
@@ -58,22 +58,36 @@ const categories = [
     items: [
       {
         label: 'Start date',
-        value: (proposal: DetailedProposal) =>
+        value: (proposal: VotingDetailsProposal) =>
           format(new Date(proposal.startDate), 'Pp'),
       },
       {
         label: 'End date',
-        value: (proposal: DetailedProposal) =>
+        value: (proposal: VotingDetailsProposal) =>
           format(new Date(proposal.endDate), 'Pp'),
       },
     ],
   },
 ];
 
+export type VotingDetailsProposal = Pick<
+  DetailedProposal,
+  | 'settings'
+  | 'startDate'
+  | 'endDate'
+  | 'usedVotingWeight'
+  | 'totalVotingWeight'
+  | 'votes'
+>;
+
 /**
  * @returns Collection of div elements that display details regarding the voting process of the given proposal
  */
-const VotingDetails = ({ proposal }: { proposal: DetailedProposal | null }) => {
+const VotingDetails = ({
+  proposal,
+}: {
+  proposal: VotingDetailsProposal | null;
+}) => {
   if (!proposal)
     return (
       <p className="text-center text-gray-500 dark:text-slate-400">

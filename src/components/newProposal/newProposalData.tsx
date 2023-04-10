@@ -16,6 +16,17 @@ export interface Media {
   logo: string;
   header: string;
 }
+// STEP 2 DATA
+export type StepTwoData = {
+  option: string;
+  start_time_type: string;
+  start_time?: string;
+  end_time_type: string;
+  end_time?: string;
+  duration_minutes?: number;
+  duration_hours?: number;
+  duration_days?: number;
+};
 
 // STEP 3 DATA
 export interface StepThreeData {

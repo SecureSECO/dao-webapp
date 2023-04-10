@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Control,
   Controller,
-  FieldValues,
   UseFormGetValues,
   UseFormRegister,
   useForm,
@@ -13,13 +12,14 @@ import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
+import { StepTwoData } from './newProposalData';
 
 export const StepTwo = () => {
   const { setStep } = useNewProposalFormContext();
 
-  const { register, getValues, handleSubmit, control } = useForm();
+  const { register, getValues, handleSubmit, control } = useForm<StepTwoData>();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: StepTwoData) => {
     console.log(data);
     setStep(3);
     // Handle submission
@@ -45,8 +45,8 @@ export const VotingOption = ({
   register,
   control,
 }: {
-  register: UseFormRegister<FieldValues>;
-  control: Control<FieldValues, any>;
+  register: UseFormRegister<StepTwoData>;
+  control: Control<StepTwoData, any>;
 }) => {
   return (
     <fieldset>
@@ -79,9 +79,9 @@ export const StartTime = ({
   getValues,
   control,
 }: {
-  register: UseFormRegister<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
-  control: Control<FieldValues, any>;
+  register: UseFormRegister<StepTwoData>;
+  getValues: UseFormGetValues<StepTwoData>;
+  control: Control<StepTwoData, any>;
 }) => {
   return (
     <fieldset>
@@ -119,9 +119,9 @@ export const EndTime = ({
   getValues,
   control,
 }: {
-  register: UseFormRegister<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
-  control: Control<FieldValues, any>;
+  register: UseFormRegister<StepTwoData>;
+  getValues: UseFormGetValues<StepTwoData>;
+  control: Control<StepTwoData, any>;
 }) => {
   return (
     <fieldset>

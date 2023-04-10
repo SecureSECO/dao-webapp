@@ -4,9 +4,8 @@ import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import {
-  NewProposalFormData,
   StepOneMetadata,
-  emptyNewProposalFormData,
+  StepTwoData,
 } from '../components/newProposal/newProposalData';
 import { StepTwo } from '../components/newProposal/StepTwoVoting';
 import { StepThree } from '../components/newProposal/StepThreeActions';
@@ -37,6 +36,8 @@ export type NewProposalFormContextProps = {
   setDataStep1: React.Dispatch<
     React.SetStateAction<StepOneMetadata | undefined>
   >;
+  dataStep2: StepTwoData | undefined;
+  setDataStep2: React.Dispatch<React.SetStateAction<StepTwoData | undefined>>;
   dataStep3: StepThreeData | undefined;
   setDataStep3: React.Dispatch<React.SetStateAction<StepThreeData | undefined>>;
 };
@@ -53,10 +54,12 @@ export const NewProposalFormProvider = ({ children }: { children: any }) => {
   const [dataStep1, setDataStep1] = useState<StepOneMetadata | undefined>(
     undefined
   );
+  const [dataStep2, setDataStep2] = useState<StepTwoData | undefined>(
+    undefined
+  );
   const [dataStep3, setDataStep3] = useState<StepThreeData | undefined>(
     undefined
   );
-
 
   return (
     <NewProposalFormContext.Provider
@@ -65,6 +68,8 @@ export const NewProposalFormProvider = ({ children }: { children: any }) => {
         setStep,
         dataStep1,
         setDataStep1,
+        dataStep2,
+        setDataStep2,
         dataStep3,
         setDataStep3,
       }}

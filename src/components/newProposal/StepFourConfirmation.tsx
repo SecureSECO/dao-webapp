@@ -4,8 +4,12 @@ import { HeaderCard } from '../ui/HeaderCard';
 import { ViewStepOne } from './viewProposal/ViewStepOne';
 
 export const StepFour = () => {
-  const { setStep, dataStep1, dataStep3 } = useNewProposalFormContext();
+  const { setStep, dataStep1, dataStep2, dataStep3 } =
+    useNewProposalFormContext();
 
-  return <ViewStepOne data={dataStep1} />;
+  return (
+    <div>
+      <ViewStepOne data={dataStep1} />;{/* <ViewStepTwo data={dataStep2} /> */}
+    </div>
+  );
 };
-
