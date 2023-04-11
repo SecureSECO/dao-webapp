@@ -28,7 +28,7 @@ import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { ProposalCardList } from '@/src/pages/Governance';
 import MembersList from '@/src/components/dashboard/MembersList';
 import { DaoTransfers } from '@/src/pages/Finance';
-import { Link } from '../components/ui/Link';
+import { Link } from '@/src/components/ui/Link';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -124,12 +124,7 @@ const Dashboard = () => {
             label="proposals created"
           />
         }
-        aside={
-          <Button
-            label="New proposal"
-            onClick={() => console.log('New proposal click!')}
-          />
-        }
+        aside={<Link label="New proposal" to="/governance/new-proposal" />}
       >
         <ProposalCardList
           doubleColumn={false}
