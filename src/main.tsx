@@ -122,9 +122,6 @@ const router = createBrowserRouter([
   // If you need a route without the layout, add another object here
 ]);
 
-// export const apiUrl = import.meta.env.VITE_API_URL;
-// export const verificationContractAddress = import.meta.env.VITE_VERIFY_CONTRACT;
-
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Toaster />

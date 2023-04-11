@@ -34,4 +34,9 @@ export const Default: Story = {
     setSortBy: () => {},
     setDirection: () => {},
   },
+  render: () => (
+    <div className="flex flex-row gap-x-2">
+      <SortSelector setSortBy={() => {}} setDirection={() => {}} />
+    </div>
+  ),
 };

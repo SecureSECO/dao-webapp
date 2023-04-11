@@ -84,8 +84,6 @@ export const WithIcon: Story = {
   },
 };
 
-// const Template: ComponentStory<typeof RegistrationForm> = (args) => <RegistrationForm {...args} />;
-
 export const Clicked: Story = {
   ...Default,
   play: async ({ canvasElement }) => {
