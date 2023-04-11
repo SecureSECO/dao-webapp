@@ -10,24 +10,24 @@ import React from 'react';
 import {
   Control,
   Controller,
-  FieldValues,
   UseFormGetValues,
   UseFormRegister,
   useForm,
 } from 'react-hook-form';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { Input } from '@/src/components/ui/Input';
-
-export const StepTwo = ({
+import {
   StepNavigator,
-  setStep,
-}: {
-  StepNavigator?: React.ReactNode;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-}) => {
-  const { register, getValues, handleSubmit, control } = useForm();
+  useNewProposalFormContext,
+} from '@/src/pages/NewProposal';
+import { StepTwoData } from './newProposalData';
 
-  const onSubmit = (data: any) => {
+export const StepTwo = () => {
+  const { setStep } = useNewProposalFormContext();
+
+  const { register, getValues, handleSubmit, control } = useForm<StepTwoData>();
+
+  const onSubmit = (data: StepTwoData) => {
     console.log(data);
     setStep(3);
     // Handle submission
@@ -44,7 +44,7 @@ export const StepTwo = ({
         />
         <EndTime register={register} getValues={getValues} control={control} />
       </div>
-      {StepNavigator}
+      <StepNavigator />
     </form>
   );
 };
@@ -53,8 +53,8 @@ export const VotingOption = ({
   register,
   control,
 }: {
-  register: UseFormRegister<FieldValues>;
-  control: Control<FieldValues, any>;
+  register: UseFormRegister<StepTwoData>;
+  control: Control<StepTwoData, any>;
 }) => {
   return (
     <fieldset>
@@ -87,9 +87,9 @@ export const StartTime = ({
   getValues,
   control,
 }: {
-  register: UseFormRegister<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
-  control: Control<FieldValues, any>;
+  register: UseFormRegister<StepTwoData>;
+  getValues: UseFormGetValues<StepTwoData>;
+  control: Control<StepTwoData, any>;
 }) => {
   return (
     <fieldset>
@@ -122,15 +122,14 @@ export const StartTime = ({
   );
 };
 
-
 export const EndTime = ({
   register,
   getValues,
   control,
 }: {
-  register: UseFormRegister<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
-  control: Control<FieldValues, any>;
+  register: UseFormRegister<StepTwoData>;
+  getValues: UseFormGetValues<StepTwoData>;
+  control: Control<StepTwoData, any>;
 }) => {
   return (
     <fieldset>

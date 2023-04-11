@@ -12,14 +12,11 @@ import { ProposalActionList } from './actions/ProposalActionList';
 import { AddActionButton } from './actions/ui/AddActionButton';
 import { AddActionCard } from './actions/ui/AddActionCard';
 import { StepThreeData } from './newProposalData';
+import { StepNavigator, useNewProposalFormContext } from '@/src/pages/NewProposal';
 
-export const StepThree = ({
-  StepNavigator,
-  setStep,
-}: {
-  StepNavigator?: React.ReactNode;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-}) => {
+export const StepThree = () => {
+  const { setStep, setDataStep3 } = useNewProposalFormContext();
+
   const {
     register,
     formState: { errors },
@@ -34,8 +31,9 @@ export const StepThree = ({
     control: control,
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: StepThreeData) => {
     console.log(data);
+    setDataStep3(data);
     setStep(4);
   };
 
@@ -60,7 +58,7 @@ export const StepThree = ({
           </>
         )}
       </div>
-      {StepNavigator}
+      <StepNavigator />
     </form>
   );
 };
