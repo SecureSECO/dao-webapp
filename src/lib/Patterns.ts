@@ -6,5 +6,5 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-export const NumberPattern = 'd+.?d*';
+export const NumberPattern = '\\d+.?\\d*';
 export const AddressPattern = '0x[a-fA-F0-9]{20,60}';

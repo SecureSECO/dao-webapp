@@ -17,7 +17,7 @@ import {
 } from '../../ui/Dialog';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
-import { AddressPattern, NumberPattern } from '@/src/lib/Patterns';
+import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { ActionWithdrawFormData, StepThreeData } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
