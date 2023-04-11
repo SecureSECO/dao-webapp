@@ -16,7 +16,7 @@ export const ViewStepOne = ({
   data: StepOneMetadata | undefined;
 }) => {
   return (
-    <HeaderCard title={data?.title ?? 'Proposal has no title'}>
+    <HeaderCard variant="light" title={data?.title ?? 'Proposal has no title'}>
       <h3 className="text-xl">{data?.summary ?? 'Proposal has no summary'} </h3>
       <TextareaWYSIWYG
         setError={() => {}}
@@ -24,7 +24,6 @@ export const ViewStepOne = ({
         disabled={true}
         value={data?.description ?? '<p>Proposal has no description </p'}
       />
-      {}{' '}
     </HeaderCard>
   );
 };

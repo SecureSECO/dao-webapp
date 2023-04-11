@@ -77,6 +77,11 @@ const categories = [
   },
 ];
 
+/**
+ * VotingDetailsProposal is a 'subset' of DetailedProposal, through using the typescript utility type Pick.
+ * This is convenient because  DetailedProposal can still be passed as argument,
+ * whilst users of the component are not required to add irrelevant data.
+ */
 export type VotingDetailsProposal = Pick<
   DetailedProposal,
   | 'settings'

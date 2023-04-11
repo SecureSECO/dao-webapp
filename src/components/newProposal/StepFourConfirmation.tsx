@@ -10,8 +10,6 @@ import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import { StepOneMetadata } from './newProposalData';
-import { HeaderCard } from '../ui/HeaderCard';
 import { ViewStepOne } from './viewProposal/ViewStepOne';
 import { ViewStepTwo } from './viewProposal/ViewStepTwo';
 import { ViewStepThree } from './viewProposal/ViewStepThree';

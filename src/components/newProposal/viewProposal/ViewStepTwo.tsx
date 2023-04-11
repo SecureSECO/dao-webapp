@@ -21,7 +21,7 @@ export const ViewStepTwo = ({ data }: { data: StepTwoData | undefined }) => {
 
   const categories = getCategories(data);
   return (
-    <HeaderCard title="Voting">
+    <HeaderCard variant="light" title="Voting">
       {categories.map((category) => (
         <div key={category.title}>
           <div className="flex flex-row items-center gap-x-2">
@@ -45,6 +45,11 @@ export const ViewStepTwo = ({ data }: { data: StepTwoData | undefined }) => {
   );
 };
 
+/**
+ * Gets data to be used to render by ViewStepTwo. The data summerizes the voting options and timing.
+ * @param data The StepTwoData
+ * @returns A JSON object for summarizing step two data
+ */
 const getCategories = (data: StepTwoData) => [
   {
     title: 'Decision rules',
@@ -70,13 +75,21 @@ const getCategories = (data: StepTwoData) => [
   },
 ];
 
-function getStartDate(data: StepTwoData) {
+/**
+ * @param data The StepTwoData
+ * @returns A string to display the start date
+ */
+function getStartDate(data: StepTwoData): string {
   if (data.start_time_type == 'now') return 'now';
   if (isNullOrUndefined(data.start_time)) return 'N/A';
   return format(new Date(data.start_time!), 'Pp');
 }
 
-function getEndDate(data: StepTwoData) {
+/**
+ * @param data The StepTwoData
+ * @returns A string to display the end date
+ */
+function getEndDate(data: StepTwoData): string {
   if (data.end_time_type == 'custom' && isNullOrUndefined(data.end_time))
     return 'N/A';
   if (data.end_time_type == 'custom')

@@ -9,13 +9,11 @@
 import { Address, AddressLength } from '../../ui/Address';
 import { Card } from '../../ui/Card';
 import { HeaderCard } from '../../ui/HeaderCard';
-import TokenAmount from '../../ui/TokenAmount/TokenAmount';
 import {
   ActionFormData,
   ActionMintTokenFormData,
   ActionWithdrawFormData,
   StepThreeData,
-  emptyActionWithdrawFormData,
 } from '../newProposalData';
 
 export const ViewStepThree = ({
@@ -23,11 +21,23 @@ export const ViewStepThree = ({
 }: {
   data: StepThreeData | undefined;
 }) => {
+  // If data is undefined
   if (!data)
-    return <HeaderCard title="Actions">Actions are not available</HeaderCard>;
+    return (
+      <HeaderCard variant="light" title="Actions">
+        Actions are not available
+      </HeaderCard>
+    );
+  // If there are no actions
+  if (data.actions.length == 0)
+    return (
+      <HeaderCard variant="light" title="Actions">
+        This proposal has no actions
+      </HeaderCard>
+    );
 
   return (
-    <HeaderCard title="Actions">
+    <HeaderCard variant="light" title="Actions">
       {data.actions.map((action: ActionFormData, index: number) => (
         <ViewActionSwitch data={action} index={index} />
       ))}
@@ -35,6 +45,9 @@ export const ViewStepThree = ({
   );
 };
 
+/**
+ * Component that switches on the action type to select the corresponding viewer for each specific action.
+ */
 const ViewActionSwitch = ({
   data,
   index,
@@ -62,6 +75,9 @@ const ViewActionSwitch = ({
   }
 };
 
+/**
+ * ActionCard for viewing Withdraw actions
+ */
 const ViewWithdraw = ({
   data,
   index,
@@ -97,6 +113,9 @@ const ViewWithdraw = ({
   );
 };
 
+/**
+ * ActionCard for viewing MintToken actions
+ */
 const ViewMintToken = ({
   data,
   index,
@@ -133,6 +152,9 @@ interface ActionCardProps extends React.HTMLAttributes<typeof Card> {
   index: number;
 }
 
+/**
+ * A wrapping card for actions.
+ */
 const ActionCard = ({
   title,
   description,
@@ -140,7 +162,7 @@ const ActionCard = ({
   children,
   ...props
 }: ActionCardProps) => (
-  <Card key={index} variant="light">
+  <Card key={index}>
     <h2 className="py-2 text-2xl font-bold">{title}</h2>
     <h3 className="py-2 text-xl">{description}</h3>
     <Hbar />
@@ -148,6 +170,9 @@ const ActionCard = ({
   </Card>
 );
 
+/**
+ * A horizontal bar for breaking up content
+ */
 const Hbar = () => (
   <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
 );
