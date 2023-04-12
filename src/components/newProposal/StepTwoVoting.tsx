@@ -14,6 +14,7 @@ import {
   UseFormGetValues,
   UseFormRegister,
   useForm,
+  useWatch,
 } from 'react-hook-form';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { Input } from '@/src/components/ui/Input';
@@ -21,7 +22,12 @@ import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import { StepTwoData } from './newProposalData';
+import {
+  EndTimeType,
+  StartTimeType,
+  StepTwoData,
+  VoteOption,
+} from './newProposalData';
 import { Card } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
 
@@ -40,12 +46,8 @@ export const StepTwo = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <VotingOption register={register} control={control} />
-        <StartTime
-          register={register}
-          getValues={getValues}
-          control={control}
-        />
-        <EndTime register={register} getValues={getValues} control={control} />
+        <StartTime register={register} control={control} />
+        <EndTime register={register} control={control} />
       </div>
       <StepNavigator />
     </form>
@@ -59,7 +61,7 @@ export const VotingOption = ({
   control: Control<StepTwoData, any>;
 }) => {
   return (
-    <fieldset>
+    <fieldset className="space-y-1">
       <legend>Options</legend>
       <Controller
         control={control}
@@ -71,155 +73,200 @@ export const VotingOption = ({
             defaultValue={'yes-no-abstain'}
             name={name}
           >
-            <RadioButtonCard id="yes-no-abstain" value={value} />
+            <RadioButtonCard<VoteOption>
+              id="yes-no-abstain"
+              value={value}
+              title="Yes, no, or abstain"
+              description="Members can vote for, against, or abstain"
+            />
           </RadioGroup>
         )}
       />
     </fieldset>
   );
 };
-export interface RadioButtonCardProps
+
+interface RadioButtonCardProps<T extends string>
   extends React.InputHTMLAttributes<HTMLDivElement> {
   error?: FieldError;
-  id: string;
-  value: 'yes-no-abstain';
+  id: T;
+  value: T;
+  title: string;
+  description?: string;
 }
 
-const RadioButtonCard = React.forwardRef<HTMLDivElement, RadioButtonCardProps>(
-  ({ className, id, error, value, ...props }, ref) => {
-    return (
-      <div
-        className={cn(
-          'flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50  dark:text-slate-50 dark:focus:ring-offset-slate-800',
-          error
-            ? 'border-red-600 focus:ring-red-600 dark:border-red-700 dark:focus:ring-red-700'
-            : value == 'yes-no-abstain'
-            ? 'border-2 border-primary-500 ring-primary-700 dark:border-primary-400 dark:ring-primary-600'
-            : 'border-slate-300 focus:ring-slate-400 dark:border-slate-700 dark:focus:ring-slate-400',
-
-          className
-        )}
-      >
-        <div className="flex items-center space-x-2">
+function RadioButtonCard<T extends string>({
+  className,
+  id,
+  error,
+  value,
+  description,
+  title,
+  ...props
+}: RadioButtonCardProps<T>) {
+  return (
+    <label
+      htmlFor={id}
+      className={cn(
+        'flex w-full cursor-pointer rounded-md border border-slate-300 bg-transparent px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-offset-slate-800',
+        error
+          ? 'border-red-600 focus:ring-red-600 dark:border-red-700 dark:focus:ring-red-700'
+          : value === id && 'ring-2 ring-primary-500 dark:ring-primary-400 ',
+        className
+      )}
+    >
+      <div className="w-full">
+        <div className="flex items-center justify-between">
+          <span className="text-base text-slate-700 dark:text-slate-300">
+            {title}
+          </span>
           <RadioGroupItem value={id} id={id} className="group" />
-
-          <h2>
-            Yes, no, or abstain (Members can vote for, against, or abstain)
-          </h2>
         </div>
+        <p className="text-slate-500 dark:text-slate-400">{description}</p>
       </div>
-    );
-  }
-);
+    </label>
+  );
+}
+
 RadioButtonCard.displayName = 'RadioButtonCard';
 
 export const StartTime = ({
   register,
-  getValues,
   control,
 }: {
   register: UseFormRegister<StepTwoData>;
-  getValues: UseFormGetValues<StepTwoData>;
   control: Control<StepTwoData, any>;
 }) => {
+  const startTimeType = useWatch({
+    control,
+    name: 'start_time_type',
+    defaultValue: 'now',
+  });
+
   return (
-    <fieldset>
+    <fieldset className="space-y-1">
       <legend>Start time</legend>
-      <Controller
-        control={control}
-        name="start_time_type"
-        defaultValue={'now'}
-        render={({ field: { onChange, name } }) => (
-          <RadioGroup onChange={onChange} defaultValue={'now'} name={name}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="now" id="start-now" />
-              <h2>Now</h2>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="custom" id="start-custom" />
-              <h2>Custom</h2>
-            </div>
-          </RadioGroup>
-        )}
-      />
-      {getValues('start_time_type') === 'custom' && (
-        <Input
-          {...register('start_time')}
-          type="datetime-local"
-          placeholder="Start time"
+      <div className=" space-y-2">
+        <Controller
+          control={control}
+          name="start_time_type"
+          defaultValue={'now'}
+          render={({ field: { onChange, name, value } }) => (
+            <RadioGroup
+              onChange={onChange}
+              defaultValue={'now'}
+              name={name}
+              className="flex gap-x-2"
+            >
+              <RadioButtonCard<StartTimeType>
+                title="Now"
+                id={'now'}
+                value={value}
+              />
+              <RadioButtonCard<StartTimeType>
+                title="Custom"
+                id={'custom'}
+                value={value}
+              />
+            </RadioGroup>
+          )}
         />
-      )}
+        {startTimeType === 'custom' && (
+          <Input
+            {...register('start_time')}
+            type="datetime-local"
+            placeholder="Start time"
+            className="text-white"
+          />
+        )}
+      </div>
     </fieldset>
   );
 };
 
 export const EndTime = ({
   register,
-  getValues,
   control,
 }: {
   register: UseFormRegister<StepTwoData>;
-  getValues: UseFormGetValues<StepTwoData>;
   control: Control<StepTwoData, any>;
 }) => {
+  const endTimeType = useWatch({
+    control,
+    name: 'end_time_type',
+    defaultValue: 'duration',
+  });
+
+  const startTime = useWatch({
+    control,
+    name: 'start_time',
+    defaultValue: '',
+  });
+
   return (
-    <fieldset>
+    <fieldset className="space-y-1">
       <legend>End time</legend>
-      <Controller
-        control={control}
-        name="end_time_type"
-        defaultValue={'duration'}
-        render={({ field: { name, onChange } }) => (
-          <RadioGroup defaultValue={'duration'} onChange={onChange} name={name}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem
-                value="duration"
-                id="end-duration"
-                className="group"
+      <div className="space-y-2">
+        <Controller
+          control={control}
+          name="end_time_type"
+          defaultValue={'duration'}
+          render={({ field: { name, onChange, value } }) => (
+            <RadioGroup
+              defaultValue={'duration'}
+              onChange={onChange}
+              name={name}
+              className="flex gap-x-2"
+            >
+              <RadioButtonCard<EndTimeType>
+                title="Now"
+                id={'duration'}
+                value={value}
               />
-              <h2>Duration</h2>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="custom" id="end-custom" />
-              <h2>Custom</h2>
-            </div>
-          </RadioGroup>
+              <RadioButtonCard<EndTimeType>
+                title="Custom"
+                id={'end-custom'}
+                value={value}
+              />
+            </RadioGroup>
+          )}
+        />
+
+        {endTimeType === 'duration' ? (
+          <div className="data-[state=checked] flex gap-2">
+            <Input
+              {...register('duration_minutes')}
+              type="number"
+              placeholder="Minutes"
+              min="0"
+              max="525600" // 365 days in minutes
+            />
+            <Input
+              {...register('duration_hours')}
+              type="number"
+              placeholder="Hours"
+              min="0"
+              max="8760" // 365 days in hours
+            />
+            <Input
+              {...register('duration_days')}
+              type="number"
+              placeholder="Days"
+              min="0"
+              max="365"
+            />
+          </div>
+        ) : (
+          endTimeType === 'end-custom' && (
+            <Input
+              {...register('end_time')}
+              type="datetime-local"
+              placeholder="End time"
+              min={startTime}
+            />
+          )
         )}
-      />
-      {getValues('end_time_type') === 'duration' ? (
-        <div className="data-[state=checked] flex gap-2">
-          <Input
-            {...register('duration_minutes')}
-            type="number"
-            placeholder="Minutes"
-            min="0"
-            max="525600" // 365 days in minutes
-          />
-          <Input
-            {...register('duration_hours')}
-            type="number"
-            placeholder="Hours"
-            min="0"
-            max="8760" // 365 days in hours
-          />
-          <Input
-            {...register('duration_days')}
-            type="number"
-            placeholder="Days"
-            min="0"
-            max="365"
-          />
-        </div>
-      ) : (
-        getValues('end_time_type') === 'custom' && (
-          <input
-            {...register('end_time')}
-            type="datetime-local"
-            placeholder="End time"
-            min={getValues('start_time')}
-          />
-        )
-      )}
+      </div>
     </fieldset>
   );
 };

@@ -24,12 +24,16 @@ export interface Media {
   logo: string;
   header: string;
 }
+
+export type VoteOption = 'yes-no-abstain';
+export type StartTimeType = 'now' | 'custom';
+export type EndTimeType = 'duration' | 'end-custom';
 // STEP 2 DATA
 export type StepTwoData = {
-  option: 'yes-no-abstain';
-  start_time_type: 'now' | 'custom';
+  option: VoteOption;
+  start_time_type: StartTimeType;
   start_time?: string;
-  end_time_type: 'duration' | 'custom';
+  end_time_type: EndTimeType;
   end_time?: string;
   duration_minutes?: number;
   duration_hours?: number;
