@@ -13,8 +13,6 @@ import {
   emptyActionMintTokenFormData,
   emptyActionWithdrawFormData,
 } from '../newProposalData';
-import { addWagmiClientDecorator } from '@/src/lib/decorators/addWagmiClientDecorator';
-import { de } from 'date-fns/locale';
 
 const meta: Meta<typeof ViewStepThree> = {
   component: ViewStepThree,
@@ -29,7 +27,6 @@ export const EmptyActions: Story = {
       actions: [emptyActionMintTokenFormData, emptyActionWithdrawFormData],
     },
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const MintTokens: Story = {
@@ -47,7 +44,6 @@ export const MintTokens: Story = {
       ],
     },
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const WithdrawAssets: Story = {
@@ -63,14 +59,12 @@ export const WithdrawAssets: Story = {
       ],
     },
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const Undefined: Story = {
   args: {
     data: undefined,
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const Primary: Story = {
@@ -82,5 +76,4 @@ export const Primary: Story = {
       ],
     },
   },
-  decorators: [addWagmiClientDecorator],
 };

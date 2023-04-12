@@ -9,7 +9,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Address, AddressLength } from './Address';
-import { addWagmiClientDecorator } from '@/src/lib/decorators/addWagmiClientDecorator';
 
 const meta: Meta<typeof Address> = {
   component: Address,
@@ -28,7 +27,6 @@ export const Medium: Story = {
     hasLink: true,
     showCopy: true,
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const Small: Story = {
@@ -36,7 +34,6 @@ export const Small: Story = {
     ...Medium.args,
     maxLength: AddressLength.Small,
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const Large: Story = {
@@ -44,7 +41,6 @@ export const Large: Story = {
     ...Medium.args,
     maxLength: AddressLength.Large,
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const Full: Story = {
@@ -52,7 +48,6 @@ export const Full: Story = {
     ...Medium.args,
     maxLength: AddressLength.Full,
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const NoLink: Story = {
@@ -60,7 +55,6 @@ export const NoLink: Story = {
     ...Medium.args,
     hasLink: false,
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const NoCopy: Story = {
@@ -68,7 +62,6 @@ export const NoCopy: Story = {
     ...Medium.args,
     showCopy: false,
   },
-  decorators: [addWagmiClientDecorator],
 };
 
 export const NoLinkNoCopy: Story = {
@@ -77,5 +70,4 @@ export const NoLinkNoCopy: Story = {
     showCopy: false,
     hasLink: false,
   },
-  decorators: [addWagmiClientDecorator],
 };

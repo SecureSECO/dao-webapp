@@ -57,16 +57,26 @@ export const NewProposalFormContext = createContext(
 export const useNewProposalFormContext = () =>
   useContext(NewProposalFormContext);
 
-export const NewProposalFormProvider = ({ children }: { children: any }) => {
-  const [step, setStep] = useState<number>(1);
+export type NewProposalFormProviderProps = {
+  children: any;
+  step?: number;
+  dataStep1?: StepOneMetadata | undefined;
+  dataStep2?: StepTwoData | undefined;
+  dataStep3?: StepThreeData | undefined;
+};
+export const NewProposalFormProvider = ({
+  children,
+  ...props
+}: NewProposalFormProviderProps) => {
+  const [step, setStep] = useState<number>(props?.step ?? 1);
   const [dataStep1, setDataStep1] = useState<StepOneMetadata | undefined>(
-    undefined
+    props.dataStep1
   );
   const [dataStep2, setDataStep2] = useState<StepTwoData | undefined>(
-    undefined
+    props.dataStep2
   );
   const [dataStep3, setDataStep3] = useState<StepThreeData | undefined>(
-    undefined
+    props.dataStep3
   );
 
   return (

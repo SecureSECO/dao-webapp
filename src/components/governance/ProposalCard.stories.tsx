@@ -10,8 +10,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import ProposalCard from '@/src/components/governance/ProposalCard';
 import { ProposalStatus, TokenType } from '@aragon/sdk-client';
 import { addDays, subDays } from 'date-fns';
-import { addWagmiClientDecorator } from '@/src/lib/decorators/addWagmiClientDecorator';
-import { addAragonSDKDecorator } from '@/src/lib/decorators/addAragonSDKDecorator';
 
 const meta = {
   component: ProposalCard,
@@ -65,7 +63,6 @@ export const Pending: Story = {
       totalVotingWeight: 1000000000000000000n,
     },
   },
-  decorators: [addWagmiClientDecorator, addAragonSDKDecorator],
 };
 
 export const Active: Story = {
