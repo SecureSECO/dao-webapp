@@ -6,10 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Control,
   Controller,
+  FieldError,
   UseFormGetValues,
   UseFormRegister,
   useForm,
@@ -21,6 +22,8 @@ import {
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 import { StepTwoData } from './newProposalData';
+import { Card } from '@/src/components/ui/Card';
+import { cn } from '@/src/lib/utils';
 
 export const StepTwo = () => {
   const { setStep } = useNewProposalFormContext();
@@ -50,7 +53,6 @@ export const StepTwo = () => {
 };
 
 export const VotingOption = ({
-  register,
   control,
 }: {
   register: UseFormRegister<StepTwoData>;
@@ -63,24 +65,53 @@ export const VotingOption = ({
         control={control}
         name="option"
         defaultValue={'yes-no-abstain'}
-        render={({ field: { onChange, name } }) => (
+        render={({ field: { onChange, name, value } }) => (
           <RadioGroup
             onChange={onChange}
             defaultValue={'yes-no-abstain'}
             name={name}
           >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="yes-no-abstain" id="yes-no-abstain" />
-              <h2>
-                Yes, no, or abstain (Members can vote for, against, or abstain)
-              </h2>
-            </div>
+            <RadioButtonCard id="yes-no-abstain" value={value} />
           </RadioGroup>
         )}
       />
     </fieldset>
   );
 };
+export interface RadioButtonCardProps
+  extends React.InputHTMLAttributes<HTMLDivElement> {
+  error?: FieldError;
+  id: string;
+  value: 'yes-no-abstain';
+}
+
+const RadioButtonCard = React.forwardRef<HTMLDivElement, RadioButtonCardProps>(
+  ({ className, id, error, value, ...props }, ref) => {
+    return (
+      <div
+        className={cn(
+          'flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50  dark:text-slate-50 dark:focus:ring-offset-slate-800',
+          error
+            ? 'border-red-600 focus:ring-red-600 dark:border-red-700 dark:focus:ring-red-700'
+            : value == 'yes-no-abstain'
+            ? 'border-2 border-primary-500 ring-primary-700 dark:border-primary-400 dark:ring-primary-600'
+            : 'border-slate-300 focus:ring-slate-400 dark:border-slate-700 dark:focus:ring-slate-400',
+
+          className
+        )}
+      >
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value={id} id={id} className="group" />
+
+          <h2>
+            Yes, no, or abstain (Members can vote for, against, or abstain)
+          </h2>
+        </div>
+      </div>
+    );
+  }
+);
+RadioButtonCard.displayName = 'RadioButtonCard';
 
 export const StartTime = ({
   register,
