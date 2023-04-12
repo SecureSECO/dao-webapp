@@ -19,7 +19,7 @@ import { WithdrawAssetsAction } from '@/src/components/newProposal/actions/Withd
 import { MintTokensAction } from '@/src/components/newProposal/actions/MintTokensAction';
 
 export const StepThree = () => {
-  const { setStep, setDataStep3 } = useNewProposalFormContext();
+  const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
 
   const {
     register,
