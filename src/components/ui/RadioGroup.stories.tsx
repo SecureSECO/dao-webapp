@@ -19,11 +19,14 @@ export default meta;
 type Story = StoryObj<typeof RadioGroup>;
 
 export const Primary: Story = {
-  render: () => (
-    <RadioGroup defaultValue="2">
-      <RadioGroupItem value="1" />
-      <RadioGroupItem value="2" />
-      <RadioGroupItem value="3" />
-    </RadioGroup>
-  ),
+  args: {
+    defaultValue: '2',
+    children: (
+      <>
+        <RadioGroupItem value="1" />
+        <RadioGroupItem value="2" />
+        <RadioGroupItem value="3" />
+      </>
+    ),
+  },
 };

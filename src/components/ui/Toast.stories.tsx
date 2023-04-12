@@ -25,73 +25,90 @@ const meta: Meta<typeof Toast> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const toastProviderDecorator = (Story: any) => (
+  <ToastProvider>
+    <Story />
+    <ToastViewport />
+  </ToastProvider>
+);
+
 export const Default: Story = {
-  render: () => (
-    <ToastProvider>
-      <Toast variant="default" duration={Infinity}>
+  args: {
+    variant: 'default',
+    duration: Infinity,
+    children: (
+      <>
         <div>
           <ToastTitle>Toast title</ToastTitle>
         </div>
         <ToastClose />
-      </Toast>
-      <ToastViewport />
-    </ToastProvider>
-  ),
+      </>
+    ),
+  },
+  decorators: [toastProviderDecorator],
 };
 
 export const WithDescription: Story = {
-  render: () => (
-    <ToastProvider>
-      <Toast variant="default" duration={Infinity}>
+  args: {
+    variant: 'default',
+    duration: Infinity,
+    children: (
+      <>
         <div>
           <ToastTitle>Toast title</ToastTitle>
           <ToastDescription>Toast description</ToastDescription>
         </div>
         <ToastClose />
-      </Toast>
-      <ToastViewport />
-    </ToastProvider>
-  ),
+      </>
+    ),
+  },
+  decorators: [toastProviderDecorator],
 };
 
 export const Error: Story = {
-  render: () => (
-    <ToastProvider>
-      <Toast variant="error" duration={Infinity}>
+  args: {
+    variant: 'error',
+    duration: Infinity,
+    children: (
+      <>
         <div>
           <ToastTitle>Toast title</ToastTitle>
         </div>
         <ToastClose />
-      </Toast>
-      <ToastViewport />
-    </ToastProvider>
-  ),
+      </>
+    ),
+  },
+  decorators: [toastProviderDecorator],
 };
 
 export const Success: Story = {
-  render: () => (
-    <ToastProvider>
-      <Toast variant="success" duration={Infinity}>
+  args: {
+    variant: 'success',
+    duration: Infinity,
+    children: (
+      <>
         <div>
           <ToastTitle>Toast title</ToastTitle>
         </div>
         <ToastClose />
-      </Toast>
-      <ToastViewport />
-    </ToastProvider>
-  ),
+      </>
+    ),
+  },
+  decorators: [toastProviderDecorator],
 };
 
 export const Loading: Story = {
-  render: () => (
-    <ToastProvider>
-      <Toast variant="loading" duration={Infinity}>
+  args: {
+    variant: 'loading',
+    duration: Infinity,
+    children: (
+      <>
         <div>
           <ToastTitle>Toast title</ToastTitle>
         </div>
         <ToastClose />
-      </Toast>
-      <ToastViewport />
-    </ToastProvider>
-  ),
+      </>
+    ),
+  },
+  decorators: [toastProviderDecorator],
 };
