@@ -28,7 +28,7 @@ export const StepThree = () => {
     setValue,
     getValues,
     control,
-  } = useForm<StepThreeData>();
+  } = useForm<StepThreeData>({ defaultValues: dataStep3 });
 
   const { fields, append, remove } = useFieldArray<StepThreeData>({
     name: 'actions',
@@ -40,6 +40,11 @@ export const StepThree = () => {
     setDataStep3(data);
     setStep(4);
   };
+
+  const handleBack = () => {
+    const data = getValues();
+    setDataStep3(data);
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -89,7 +94,7 @@ export const StepThree = () => {
           </>
         )}
       </div>
-      <StepNavigator />
+      <StepNavigator onBack={handleBack} />
     </form>
   );
 };

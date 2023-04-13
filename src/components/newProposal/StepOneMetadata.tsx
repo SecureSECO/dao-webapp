@@ -22,7 +22,7 @@ import {
 } from '@/src/pages/NewProposal';
 
 export const StepOne = () => {
-  const { setStep, setDataStep1 } = useNewProposalFormContext();
+  const { setStep, setDataStep1, dataStep1 } = useNewProposalFormContext();
 
   const [resources, setResources] = useState<
     Array<{ name: string; link: string }>
@@ -36,7 +36,7 @@ export const StepOne = () => {
     getValues,
     setError,
     clearErrors,
-  } = useForm<StepOneMetadata>({});
+  } = useForm<StepOneMetadata>({ defaultValues: dataStep1 });
 
   const onSubmit = (data: StepOneMetadata) => {
     // Handle submission
@@ -44,6 +44,11 @@ export const StepOne = () => {
     setDataStep1(data);
     setStep(2);
   };
+
+  const handleBack = () => {
+    const data = getValues();
+    setDataStep1(data);
+  }
 
   const onError = (errors: any) => {
     //console.log(errors);
@@ -154,7 +159,7 @@ export const StepOne = () => {
           </Button>
         </fieldset>
       </div>
-      <StepNavigator />
+      <StepNavigator onBack={handleBack} />
     </form>
   );
 };

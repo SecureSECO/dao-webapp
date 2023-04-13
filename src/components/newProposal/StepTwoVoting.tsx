@@ -23,15 +23,21 @@ import {
 import { StepTwoData } from './newProposalData';
 
 export const StepTwo = () => {
-  const { setStep } = useNewProposalFormContext();
+  const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
 
-  const { register, getValues, handleSubmit, control } = useForm<StepTwoData>();
+  const { register, getValues, handleSubmit, control } = useForm<StepTwoData>({ defaultValues: dataStep2 });
 
   const onSubmit = (data: StepTwoData) => {
     console.log(data);
     setStep(3);
+    setDataStep2(data);
     // Handle submission
   };
+
+  const handleBack = () => {
+    const data = getValues();
+    setDataStep2(data);
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -44,7 +50,7 @@ export const StepTwo = () => {
         />
         <EndTime register={register} getValues={getValues} control={control} />
       </div>
-      <StepNavigator />
+      <StepNavigator onBack={handleBack} />
     </form>
   );
 };
