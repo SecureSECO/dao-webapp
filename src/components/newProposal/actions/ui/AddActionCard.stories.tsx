@@ -18,5 +18,7 @@ export default meta;
 type Story = StoryObj<typeof AddActionCard>;
 
 export const Primary: Story = {
-  render: () => <AddActionCard append={() => console.log('Adding actiong')} />,
+  args: {
+    append: () => {},
+  },
 };

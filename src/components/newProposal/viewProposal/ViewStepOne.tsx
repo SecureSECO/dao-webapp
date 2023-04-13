@@ -7,23 +7,23 @@
  */
 
 import { HeaderCard } from '../../ui/HeaderCard';
-import { TextareaWYSIWYG } from '../../ui/TextareaWYSIWYG';
 import { StepOneMetadata } from '../newProposalData';
+import DOMPurify from 'dompurify';
 
 export const ViewStepOne = ({
   data,
 }: {
   data: StepOneMetadata | undefined;
 }) => {
+  const htmlClean = DOMPurify.sanitize(
+    data?.description ?? '<p>Proposal has no description </p>'
+  );
+
   return (
     <HeaderCard variant="light" title={data?.title ?? 'Proposal has no title'}>
       <h3 className="text-xl">{data?.summary ?? 'Proposal has no summary'} </h3>
-      <TextareaWYSIWYG
-        setError={() => {}}
-        clearErrors={() => {}}
-        disabled={true}
-        value={data?.description ?? '<p>Proposal has no description </p'}
-      />
+      {/* Note that since our HTML is sanitized, this dangerous action is safe */}
+      <div dangerouslySetInnerHTML={{ __html: htmlClean }} />
     </HeaderCard>
   );
 };

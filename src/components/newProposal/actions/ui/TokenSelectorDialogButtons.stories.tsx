@@ -17,6 +17,13 @@ const meta: Meta<typeof TokenSelectorDialogButtons> = {
   component: TokenSelectorDialogButtons,
 };
 
+// Required for BigInts to be serialized correctly
+// Taken from: https://stackoverflow.com/questions/65152373/typescript-serialize-bigint-in-json
+// @ts-ignore
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 export default meta;
 type Story = StoryObj<typeof TokenSelectorDialogButtons>;
 
@@ -66,16 +73,16 @@ const data: UseDaoBalanceData = {
 
 export const Primary: Story = {
   args: {
-    setTokenAddress: () => console.log('Address set'),
+    setTokenAddress: () => {},
+    daoBalanceData: data,
   },
-  render: () => (
-    <Dialog>
-      <div className="flex flex-col gap-4">
-        <TokenSelectorDialogButtons
-          setTokenAddress={() => console.log('Address set')}
-          daoBalanceData={data}
-        />
-      </div>
-    </Dialog>
-  ),
+  decorators: [
+    (Story) => (
+      <Dialog>
+        <div className="flex flex-col gap-y-2">
+          <Story />
+        </div>
+      </Dialog>
+    ),
+  ],
 };

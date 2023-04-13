@@ -34,4 +34,11 @@ export const Default: Story = {
     setSortBy: () => {},
     setDirection: () => {},
   },
+  decorators: [
+    (Story) => (
+      <div className="flex flex-row gap-x-2">
+        <Story />
+      </div>
+    ),
+  ],
 };

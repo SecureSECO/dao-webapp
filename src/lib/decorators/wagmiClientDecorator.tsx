@@ -11,7 +11,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { WagmiConfig, configureChains, createClient } from 'wagmi';
 import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 
-export const addWagmiClientDecorator = (Story: any) => {
+export const wagmiClientDecorator = (Story: any) => {
   const projectId = import.meta.env.VITE_APP_PROJECT_ID;
   const chains = [goerli, polygon];
   const { provider } = configureChains(chains, [
