@@ -11,8 +11,10 @@ import {
   Control,
   Controller,
   FieldError,
+  FieldErrors,
   UseFormGetValues,
   UseFormRegister,
+  UseFormSetValue,
   useForm,
   useWatch,
 } from 'react-hook-form';
@@ -30,11 +32,19 @@ import {
 } from './newProposalData';
 import { Card } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
+import { HiMinus, HiPlus } from 'react-icons/hi2';
+import { RadioGroupItemProps } from '@radix-ui/react-radio-group';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 
 export const StepTwo = () => {
   const { setStep } = useNewProposalFormContext();
 
-  const { register, getValues, handleSubmit, control } = useForm<StepTwoData>();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<StepTwoData>();
 
   const onSubmit = (data: StepTwoData) => {
     console.log(data);
@@ -46,8 +56,8 @@ export const StepTwo = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <VotingOption register={register} control={control} />
-        <StartTime register={register} control={control} />
-        <EndTime register={register} control={control} />
+        <StartTime register={register} control={control} errors={errors} />
+        <EndTime register={register} control={control} errors={errors} />
       </div>
       <StepNavigator />
     </form>
@@ -86,8 +96,7 @@ export const VotingOption = ({
   );
 };
 
-interface RadioButtonCardProps<T extends string>
-  extends React.InputHTMLAttributes<HTMLDivElement> {
+interface RadioButtonCardProps<T extends string> extends RadioGroupItemProps {
   error?: FieldError;
   id: T;
   value: T;
@@ -120,7 +129,7 @@ function RadioButtonCard<T extends string>({
           <span className="text-base text-slate-700 dark:text-slate-300">
             {title}
           </span>
-          <RadioGroupItem value={id} id={id} className="group" />
+          <RadioGroupItem value={id} id={id} className="group" {...props} />
         </div>
         <p className="text-slate-500 dark:text-slate-400">{description}</p>
       </div>
@@ -133,9 +142,11 @@ RadioButtonCard.displayName = 'RadioButtonCard';
 export const StartTime = ({
   register,
   control,
+  errors,
 }: {
   register: UseFormRegister<StepTwoData>;
   control: Control<StepTwoData, any>;
+  errors: FieldErrors<StepTwoData>;
 }) => {
   const startTimeType = useWatch({
     control,
@@ -172,12 +183,16 @@ export const StartTime = ({
           )}
         />
         {startTimeType === 'custom' && (
-          <Input
-            {...register('start_time')}
-            type="datetime-local"
-            placeholder="Start time"
-            className="text-white"
-          />
+          <ErrorWrapper name="Custom start time" error={errors.start_time}>
+            <Input
+              {...register('start_time', { required: true })}
+              type="datetime-local"
+              placeholder="Start time"
+              className="text-slate-700 dark:text-slate-300"
+              min={new Date().toISOString()}
+              error={errors.start_time}
+            />
+          </ErrorWrapper>
         )}
       </div>
     </fieldset>
@@ -187,14 +202,22 @@ export const StartTime = ({
 export const EndTime = ({
   register,
   control,
+  errors,
 }: {
   register: UseFormRegister<StepTwoData>;
   control: Control<StepTwoData, any>;
+  errors: FieldErrors<StepTwoData>;
 }) => {
   const endTimeType = useWatch({
     control,
     name: 'end_time_type',
     defaultValue: 'duration',
+  });
+
+  const startTimeType = useWatch({
+    control,
+    name: 'start_time_type',
+    defaultValue: 'now',
   });
 
   const startTime = useWatch({
@@ -219,7 +242,7 @@ export const EndTime = ({
               className="flex gap-x-2"
             >
               <RadioButtonCard<EndTimeType>
-                title="Now"
+                title="Duration"
                 id={'duration'}
                 value={value}
               />
@@ -233,40 +256,80 @@ export const EndTime = ({
         />
 
         {endTimeType === 'duration' ? (
-          <div className="data-[state=checked] flex gap-2">
-            <Input
+          <Card className="flex w-full gap-2 bg-slate-50 dark:bg-slate-700/50">
+            <DurationInput
+              id="duration_minutes"
+              label="Minutes"
               {...register('duration_minutes')}
-              type="number"
-              placeholder="Minutes"
               min="0"
-              max="525600" // 365 days in minutes
+              max="59"
+              defaultValue={0}
+              error={errors.duration_minutes}
             />
-            <Input
+            <DurationInput
+              id="duration_hours"
+              label="Hours"
               {...register('duration_hours')}
-              type="number"
-              placeholder="Hours"
               min="0"
-              max="8760" // 365 days in hours
+              max="23"
+              defaultValue={0}
+              error={errors.duration_hours}
             />
-            <Input
+            <DurationInput
+              id="duration_days"
+              label="Days"
               {...register('duration_days')}
-              type="number"
-              placeholder="Days"
-              min="0"
-              max="365"
+              min="2"
+              max="364"
+              defaultValue={2}
+              error={errors.duration_days}
             />
-          </div>
+          </Card>
         ) : (
           endTimeType === 'end-custom' && (
-            <Input
-              {...register('end_time')}
-              type="datetime-local"
-              placeholder="End time"
-              min={startTime}
-            />
+            <ErrorWrapper name="Custom end time" error={errors.end_time}>
+              <Input
+                {...register('end_time', { required: true })}
+                type="datetime-local"
+                placeholder="End time"
+                className="text-slate-700 dark:text-slate-300"
+                disabled={startTimeType === 'custom' && !startTime}
+                min={startTime}
+                error={errors.end_time}
+              />
+            </ErrorWrapper>
           )
         )}
       </div>
     </fieldset>
   );
 };
+
+export interface DurationInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  id: 'duration_minutes' | 'duration_hours' | 'duration_days';
+  label: string;
+  error?: FieldError;
+}
+
+const DurationInput = React.forwardRef<HTMLInputElement, DurationInputProps>(
+  ({ id, label, error, ...props }, ref) => {
+    return (
+      <div className="w-full">
+        <label htmlFor={id}>{label}</label>
+        <ErrorWrapper name={label} error={error}>
+          <Input
+            id={id}
+            error={error}
+            type="number"
+            placeholder={label}
+            {...props}
+            ref={ref}
+            className="w-full text-center"
+          />
+        </ErrorWrapper>
+      </div>
+    );
+  }
+);
+DurationInput.displayName = 'DurationInput';
