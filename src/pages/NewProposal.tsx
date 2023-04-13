@@ -97,10 +97,13 @@ export const NewProposalFormProvider = ({
   );
 };
 
-export const StepNavigator = () => {
+export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
   const { step, setStep } = useNewProposalFormContext();
 
   const handlePrevStep = () => {
+    if (onBack) {
+      onBack();
+    }
     if (step > 1) {
       setStep(step - 1);
     }
@@ -122,7 +125,7 @@ export const StepNavigator = () => {
 export const ProgressCard = ({ children }: { children?: React.ReactNode }) => {
   const { step } = useNewProposalFormContext();
   return (
-    <Card className="flex flex-col gap-1">
+    <Card className="flex flex-col gap-1 px-1 sm:px-6">
       <div className="flex w-full items-center justify-between">
         <p className="text-primary dark:text-primary-500">New proposal</p>
         <p className="text-sm text-slate-500 dark:text-slate-400">

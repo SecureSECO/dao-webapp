@@ -23,7 +23,7 @@ import { ActionWithdrawFormData, StepThreeData } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
 import { TokenSelectorDialogButtons } from './ui/TokenSelectorDialogButtons';
-import { ActionFormError } from './ProposalActionList';
+import { ActionFormError } from '../StepThreeActions';
 
 const Description = ({ text }: { text: string }) => (
   <p className="text-slate-500">{text}</p>
@@ -90,10 +90,10 @@ export const WithdrawAssetsAction = ({
         </Label>
         <Description text="Token to withdraw" />
       </div>
-      <div className="flex w-full gap-2">
-        <div className="basis-1/3">
+      <div className="flex w-full flex-col gap-2 md:flex-row">
+        <div className="md:basis-1/3">
           <Dialog>
-            <DialogTrigger className="h-full w-full rounded-md border-2 border-solid">
+            <DialogTrigger className="h-10 w-full rounded-md border-2 border-solid md:h-full">
               Select token
             </DialogTrigger>
             <DialogContent>
@@ -108,7 +108,7 @@ export const WithdrawAssetsAction = ({
         <ErrorWrapper name="Token" error={errors?.tokenAddress ?? undefined}>
           <Input
             {...register(`${prefix}.tokenAddress`, { required: true })}
-            className="basis-2/3"
+            className="md:basis-2/3"
             name="tokenAddress"
             pattern={AddressPattern}
             title="An address starting with 0x, followed by 40 address characters"
@@ -125,7 +125,7 @@ export const WithdrawAssetsAction = ({
         </div>
         <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
           <Input
-            {...(register(`${prefix}.amount`), { required: true })}
+            {...register(`${prefix}.amount`, { required: true })}
             type="text"
             id="amount"
             title="A number using a '.' as decimal place, e.g. '3.141'"

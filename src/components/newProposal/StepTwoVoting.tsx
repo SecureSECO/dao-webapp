@@ -37,19 +37,26 @@ import { RadioGroupItemProps } from '@radix-ui/react-radio-group';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 
 export const StepTwo = () => {
-  const { setStep } = useNewProposalFormContext();
+  const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
 
   const {
     register,
+    getValues,
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<StepTwoData>();
+  } = useForm<StepTwoData>({ defaultValues: dataStep2 });
 
   const onSubmit = (data: StepTwoData) => {
     console.log(data);
     setStep(3);
+    setDataStep2(data);
     // Handle submission
+  };
+
+  const handleBack = () => {
+    const data = getValues();
+    setDataStep2(data);
   };
 
   return (
@@ -59,7 +66,7 @@ export const StepTwo = () => {
         <StartTime register={register} control={control} errors={errors} />
         <EndTime register={register} control={control} errors={errors} />
       </div>
-      <StepNavigator />
+      <StepNavigator onBack={handleBack} />
     </form>
   );
 };
