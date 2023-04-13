@@ -23,7 +23,7 @@ import { ActionWithdrawFormData, StepThreeData } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
 import { TokenSelectorDialogButtons } from './ui/TokenSelectorDialogButtons';
-import { ActionFormError } from './ProposalActionList';
+import { ActionFormError } from '../StepThreeActions';
 
 const Description = ({ text }: { text: string }) => (
   <p className="text-slate-500">{text}</p>
@@ -125,7 +125,7 @@ export const WithdrawAssetsAction = ({
         </div>
         <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
           <Input
-            {...(register(`${prefix}.amount`), { required: true })}
+            {...register(`${prefix}.amount`, { required: true })}
             type="text"
             id="amount"
             title="A number using a '.' as decimal place, e.g. '3.141'"

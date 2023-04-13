@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, FieldError, FieldErrors, FieldValues, Merge } from 'react-hook-form';
 import { AddActionButton } from './actions/ui/AddActionButton';
 import { AddActionCard } from './actions/ui/AddActionCard';
 import { ActionFormData, StepThreeData } from './newProposalData';
@@ -93,3 +93,7 @@ export const StepThree = () => {
     </form>
   );
 };
+
+export type ActionFormError<T extends FieldValues> =
+  | Merge<FieldError, FieldErrors<NonNullable<T> | T>>
+  | undefined;
