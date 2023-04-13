@@ -58,7 +58,7 @@ export const useNewProposalFormContext = () =>
   useContext(NewProposalFormContext);
 
 export type NewProposalFormProviderProps = {
-  children: any;w
+  children: any;
   step?: number;
   dataStep1?: StepOneMetadata | undefined;
   dataStep2?: StepTwoData | undefined;
