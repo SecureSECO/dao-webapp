@@ -22,6 +22,10 @@ test('cn with simple && returns correct', () => {
   expect(cn('p-0', false && 'm-1', true && 'grow-0')).toBe('p-0 grow-0');
 });
 
+test('cn ignores null and undefined', () => {
+  expect(cn('p-0', null, undefined, 'm-1')).toBe('p-0 m-1');
+});
+
 // Null undefined tests
 test('anyNullOrUndefined works for null and undefined', () => {
   expect(anyNullOrUndefined(null)).toBeTruthy;
