@@ -6,6 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { jsNumberForAddress } from 'react-jazzicon';
+import Jazzicon from 'react-jazzicon/dist/Jazzicon';
 import { Address, AddressLength } from '../../ui/Address';
 import { Card } from '../../ui/Card';
 import { HeaderCard } from '../../ui/HeaderCard';
@@ -24,20 +26,20 @@ export const ViewStepThree = ({
   // If data is undefined
   if (!data)
     return (
-      <HeaderCard variant="light" title="Actions">
+      <HeaderCard className="px-1 sm:px-6" variant="light" title="Actions">
         Actions are not available
       </HeaderCard>
     );
   // If there are no actions
   if (data.actions.length == 0)
     return (
-      <HeaderCard variant="light" title="Actions">
+      <HeaderCard className="px-1 sm:px-6" variant="light" title="Actions">
         This proposal has no actions
       </HeaderCard>
     );
 
   return (
-    <HeaderCard variant="light" title="Actions">
+    <HeaderCard className="px-1 sm:px-6" variant="light" title="Actions">
       {data.actions.map((action: ActionFormData, index: number) => (
         <ViewActionSwitch data={action} index={index} />
       ))}
@@ -91,24 +93,35 @@ const ViewWithdraw = ({
       description="The Recipient will withdraw funds from the DAO treasury"
       index={index}
     >
-      <div className="grid grid-cols-2">
-        <h4>Recipient</h4>
-        <Address
-          address={data.recipient}
-          maxLength={AddressLength.Full}
-          hasLink={true}
-          showCopy={true}
-        />
-        <h4>Amount</h4>
-        <h4>{data.amount}</h4>
-        <h4>Token Address</h4>
-        <Address
-          address={data.tokenAddress}
-          maxLength={AddressLength.Small}
-          hasLink={true}
-          showCopy={true}
-        />
-      </div>
+      <ul role="list" className="divide-y divide-gray-200">
+        <li className="flex items-center py-4">
+          <Jazzicon diameter={40} seed={jsNumberForAddress(data.recipient)} />
+          <div className="ml-3">
+            <p className="text-base font-medium text-gray-900">
+              <span className="font-bold">Recipient:</span>
+              <Address
+                address={data.recipient}
+                maxLength={AddressLength.Full}
+                hasLink={true}
+                showCopy={true}
+              />
+            </p>
+            <p className="text-base font-medium text-gray-900">
+              <span className="font-bold">Amount: </span>
+              {data.amount}
+            </p>
+            <p className="text-base font-medium text-gray-900">
+              <span className="font-bold">Token Address:</span>
+              <Address
+                address={data.tokenAddress}
+                maxLength={AddressLength.Small}
+                hasLink={true}
+                showCopy={true}
+              />
+            </p>
+          </div>
+        </li>
+      </ul>
     </ActionCard>
   );
 };
@@ -128,21 +141,24 @@ const ViewMintToken = ({
     description="Create a proposal to mint more governance tokens. Select the wallets that should receive tokens and determine how many."
     index={index}
   >
-    <div className="grid grid-cols-2 gap-2">
-      <h3 className="mt-2 text-lg font-semibold">Recipient</h3>
-      <h3 className="mt-2 text-lg font-semibold">amount</h3>
-      {data.wallets.map((item, index2) => (
-        <div key={index2} className="col-span-2 grid grid-cols-2">
-          <Address
-            address={item.address}
-            maxLength={AddressLength.Large}
-            hasLink={true}
-            showCopy={true}
-          />
-          <h3 className="text-lg">{item.amount}</h3>
-        </div>
+    <ul role="list" className="divide-y divide-gray-200">
+      {data.wallets.map((item, index) => (
+        <li key={index} className="flex py-4">
+          <Jazzicon diameter={40} seed={jsNumberForAddress(item.address)} />
+          <div className="ml-3">
+            <p className="text-base font-medium text-gray-900">
+              <span className="font-bold">Amount: {item.amount} </span>
+            </p>
+            <Address
+              address={item.address}
+              maxLength={AddressLength.Large}
+              hasLink={true}
+              showCopy={true}
+            />
+          </div>
+        </li>
       ))}
-    </div>
+    </ul>
   </ActionCard>
 );
 
@@ -162,7 +178,7 @@ const ActionCard = ({
   children,
   ...props
 }: ActionCardProps) => (
-  <Card key={index}>
+  <Card key={index} className="px-1 sm:px-6">
     <h2 className="py-2 text-2xl font-bold">{title}</h2>
     <h3 className="py-2 text-xl">{description}</h3>
     <Hbar />

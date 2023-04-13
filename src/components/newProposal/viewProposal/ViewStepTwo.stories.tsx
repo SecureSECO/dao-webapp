@@ -35,8 +35,8 @@ export const CustomDates: Story = {
       option: 'yes-no-abstain',
       start_time_type: 'custom',
       end_time_type: 'custom',
-      start_time: new Date(2024, 11, 15, 8, 18),
-      end_time: new Date(2025, 0, 15, 6, 30),
+      start_time: new Date(2024, 11, 15, 8, 18).toISOString(),
+      end_time: new Date(2025, 0, 15, 6, 30).toISOString(),
     },
   },
 };

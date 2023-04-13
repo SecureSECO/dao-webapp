@@ -48,7 +48,7 @@ export const StepOne = () => {
   const handleBack = () => {
     const data = getValues();
     setDataStep1(data);
-  }
+  };
 
   const onError = (errors: any) => {
     //console.log(errors);
@@ -178,30 +178,30 @@ const ResourceInput = ({
   prefix: string;
 }) => {
   return (
-    <div className="flex w-full items-center gap-2">
+    <div className="flex w-full flex-col items-center gap-2 md:flex-row">
       <Input
         {...register(`${prefix}.name`)}
         type="text"
         value={resource.name}
         onChange={(e) => onChange('name', e.target.value)}
         placeholder="Resource name"
-        className="..."
       />
-      <Input
-        {...register(`${prefix}.link`, {
-          pattern: {
-            value: /^(https?:\/\/)?[\w\-._~:/?#[\]@!$&'()*+,;=%]+$/,
-            message: 'Invalid URL',
-          },
-        })}
-        type="text"
-        value={resource.link}
-        onChange={(e) => onChange('link', e.target.value)}
-        placeholder="Resource link"
-        className="..."
-      />
-      <div className="shrink-0">
-        <HiXMark className="h-5 w-5 cursor-pointer" onClick={onRemove} />
+      <div className="flex w-full flex-row items-center gap-2">
+        <Input
+          {...register(`${prefix}.link`, {
+            pattern: {
+              value: /^(https?:\/\/)?[\w\-._~:/?#[\]@!$&'()*+,;=%]+$/,
+              message: 'Invalid URL',
+            },
+          })}
+          type="text"
+          value={resource.link}
+          onChange={(e) => onChange('link', e.target.value)}
+          placeholder="Resource link"
+        />
+        <div className="shrink-0">
+          <HiXMark className="h-5 w-5 cursor-pointer" onClick={onRemove} />
+        </div>
       </div>
     </div>
   );
