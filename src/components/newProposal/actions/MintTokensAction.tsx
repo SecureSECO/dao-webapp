@@ -23,7 +23,7 @@ import {
 } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import { ActionFormError } from './ProposalActionList';
+import { ActionFormError } from '../StepThreeActions';
 
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.

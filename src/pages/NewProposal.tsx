@@ -97,10 +97,13 @@ export const NewProposalFormProvider = ({
   );
 };
 
-export const StepNavigator = () => {
+export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
   const { step, setStep } = useNewProposalFormContext();
 
   const handlePrevStep = () => {
+    if (onBack) {
+      onBack();
+    }
     if (step > 1) {
       setStep(step - 1);
     }

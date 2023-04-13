@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, FieldError, FieldErrors, FieldValues, Merge } from 'react-hook-form';
 import { AddActionButton } from './actions/ui/AddActionButton';
 import { AddActionCard } from './actions/ui/AddActionCard';
 import { ActionFormData, StepThreeData } from './newProposalData';
@@ -28,7 +28,7 @@ export const StepThree = () => {
     setValue,
     getValues,
     control,
-  } = useForm<StepThreeData>();
+  } = useForm<StepThreeData>({ defaultValues: dataStep3 });
 
   const { fields, append, remove } = useFieldArray<StepThreeData>({
     name: 'actions',
@@ -40,6 +40,11 @@ export const StepThree = () => {
     setDataStep3(data);
     setStep(4);
   };
+
+  const handleBack = () => {
+    const data = getValues();
+    setDataStep3(data);
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -89,7 +94,11 @@ export const StepThree = () => {
           </>
         )}
       </div>
-      <StepNavigator />
+      <StepNavigator onBack={handleBack} />
     </form>
   );
 };
+
+export type ActionFormError<T extends FieldValues> =
+  | Merge<FieldError, FieldErrors<NonNullable<T> | T>>
+  | undefined;
