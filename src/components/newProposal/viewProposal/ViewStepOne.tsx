@@ -9,6 +9,7 @@
 import { HeaderCard } from '../../ui/HeaderCard';
 import { StepOneMetadata } from '../newProposalData';
 import DOMPurify from 'dompurify';
+import { ProposalResources } from '../../proposal/ProposalResources';
 
 export const ViewStepOne = ({
   data,
@@ -20,10 +21,22 @@ export const ViewStepOne = ({
   );
 
   return (
-    <HeaderCard variant="light" title={data?.title ?? 'Proposal has no title'}>
-      <h3 className="text-xl">{data?.summary ?? 'Proposal has no summary'} </h3>
-      {/* Note that since our HTML is sanitized, this dangerous action is safe */}
-      <div dangerouslySetInnerHTML={{ __html: htmlClean }} />
-    </HeaderCard>
+    <>
+      <HeaderCard
+        variant="light"
+        title={data?.title ?? 'Proposal has no title'}
+      >
+        <h3 className="text-xl">
+          {data?.summary ?? 'Proposal has no summary'}{' '}
+        </h3>
+        {/* Note that since our HTML is sanitized, this dangerous action is safe */}
+        <div dangerouslySetInnerHTML={{ __html: htmlClean }} />
+      </HeaderCard>
+      <ProposalResources
+        className="bg-slate-50 dark:bg-slate-700/50"
+        loading={false}
+        resources={data?.resources ?? []}
+      />
+    </>
   );
 };
