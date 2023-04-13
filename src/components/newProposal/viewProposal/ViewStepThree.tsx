@@ -26,20 +26,20 @@ export const ViewStepThree = ({
   // If data is undefined
   if (!data)
     return (
-      <HeaderCard variant="light" title="Actions">
+      <HeaderCard className="px-1 sm:px-6" variant="light" title="Actions">
         Actions are not available
       </HeaderCard>
     );
   // If there are no actions
   if (data.actions.length == 0)
     return (
-      <HeaderCard variant="light" title="Actions">
+      <HeaderCard className="px-1 sm:px-6" variant="light" title="Actions">
         This proposal has no actions
       </HeaderCard>
     );
 
   return (
-    <HeaderCard variant="light" title="Actions">
+    <HeaderCard className="px-1 sm:px-6" variant="light" title="Actions">
       {data.actions.map((action: ActionFormData, index: number) => (
         <ViewActionSwitch data={action} index={index} />
       ))}
@@ -178,7 +178,7 @@ const ActionCard = ({
   children,
   ...props
 }: ActionCardProps) => (
-  <Card key={index}>
+  <Card key={index} className="px-1 sm:px-6">
     <h2 className="py-2 text-2xl font-bold">{title}</h2>
     <h3 className="py-2 text-xl">{description}</h3>
     <Hbar />
