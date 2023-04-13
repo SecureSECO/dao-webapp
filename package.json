@@ -68,6 +68,7 @@
     "@storybook/react-vite": "^7.0.0-beta.64",
     "@storybook/test-runner": "^0.10.0-next.4",
     "@storybook/testing-library": "^0.0.14-next.1",
+    "@types/dompurify": "^3.0.1",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.54.1",
