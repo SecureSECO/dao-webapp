@@ -61,10 +61,11 @@ export const MintTokensAction = ({
         />
       }
     >
-      <div className="grid grid-cols-3 gap-2">
-        <span className="col-span-1 pl-2">Address</span>
-        <span className="col-span-1 pl-2">Tokens</span>
-        <span className="col-span-1" />
+      <div className="flex w-full max-w-3xl flex-col gap-4">
+        <div className="flex w-full flex-row">
+          <span className="basis-2/5 pl-2">Address</span>
+          <span className="basis-2/5 pl-2">Tokens</span>
+        </div>
         {fields.map((field, index) => (
           <AddressTokensMint
             key={field.id}
@@ -97,20 +98,19 @@ const AddressTokensMint = ({
   errors: ActionFormError<MintAddressAmount>;
   prefix: `actions.${number}.wallets.${number}`;
 }) => (
-  <div className="col-span-3 grid grid-cols-3 gap-4">
-    <div className="flex flex-col gap-2">
-      <ErrorWrapper name="Address" error={errors?.address ?? undefined}>
-        <Input
-          {...register(`${prefix}.address`, { required: true })}
-          type="text"
-          id="address"
-          error={errors?.address ?? undefined}
-          title="An address starting with 0x, followed by 40 address characters"
-          pattern={AddressPattern}
-        />
-      </ErrorWrapper>
-    </div>
-    <div className="flex flex-col gap-2">
+  <div className="flex w-full flex-col items-center gap-2 sm:flex-row">
+    <ErrorWrapper name="Address" error={errors?.address ?? undefined}>
+      <Input
+        {...register(`${prefix}.address`, { required: true })}
+        type="text"
+        id="address"
+        error={errors?.address ?? undefined}
+        title="An address starting with 0x, followed by 40 address characters"
+        pattern={AddressPattern}
+        className="w-full basis-2/5"
+      />
+    </ErrorWrapper>
+    <div className="flex w-full flex-row items-center gap-2">
       <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
         <Input
           {...register(`${prefix}.amount`, { required: true })}
@@ -119,14 +119,15 @@ const AddressTokensMint = ({
           error={errors?.amount ?? undefined}
           title="A number using a '.' as decimal place, e.g. '3.141'"
           pattern={NumberPattern}
+          className="w-full basis-2/3"
           min="0"
           required
         />
       </ErrorWrapper>
+      <HiXMark
+        className="h-5 w-5 cursor-pointer self-center"
+        onClick={onRemove}
+      />
     </div>
-    <HiXMark
-      className="h-5 w-5 cursor-pointer self-center"
-      onClick={onRemove}
-    />
   </div>
 );
