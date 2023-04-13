@@ -90,9 +90,9 @@ function getStartDate(data: StepTwoData): string {
  * @returns A string to display the end date
  */
 function getEndDate(data: StepTwoData): string {
-  if (data.end_time_type == 'custom' && isNullOrUndefined(data.end_time))
+  if (data.end_time_type == 'end-custom' && isNullOrUndefined(data.end_time))
     return 'N/A';
-  if (data.end_time_type == 'custom')
+  if (data.end_time_type == 'end-custom')
     return format(new Date(data.end_time!), 'Pp');
 
   const now = new Date();
