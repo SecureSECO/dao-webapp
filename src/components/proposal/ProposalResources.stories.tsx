@@ -4,6 +4,7 @@ import { ProposalResources } from './ProposalResources';
 
 const meta: Meta<typeof ProposalResources> = {
   component: ProposalResources,
+  tags: ['autodocs'],
 };
 
 export default meta;

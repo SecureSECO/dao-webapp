@@ -101,6 +101,7 @@ const ViewProposal = () => {
             <ProposalResources
               loading={loading}
               resources={proposal?.metadata.resources}
+              className="col-span-full lg:col-span-3"
             />
           </>
         )}

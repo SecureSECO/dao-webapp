@@ -34,7 +34,6 @@ export const ViewStepOne = ({
       </HeaderCard>
       <ProposalResources
         className="bg-slate-50 dark:bg-slate-700/50"
-        loading={false}
         resources={data?.resources ?? []}
       />
     </>
