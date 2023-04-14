@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import ProposalVotes from '@/src/components/proposal/ProposalVotes';
+import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import { dummyProposal } from '@/src/hooks/useProposal';
 import { ProposalStatus } from '@aragon/sdk-client';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  component: ProposalVotes,
+  component: ProposalHistory,
   tags: ['autodocs'],
   argTypes: {
     proposal: {
@@ -21,7 +21,7 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof ProposalVotes>;
+} satisfies Meta<typeof ProposalHistory>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -16,12 +16,11 @@ import { ProposalStatus } from '@aragon/sdk-client';
 
 /**
  * Extract the milestones of a proposal, depending on its status. The following milestones are returned per status:
- * - PENDING: Published, Awaiting start
- * - ACTIVE: Published, Started, Awaiting voting
+ * - PENDING: Published, Pending
+ * - ACTIVE: Published, Started, Running
  * - SUCCEEDED: Published, Started, Succeeded, Awaiting execution
  * - DEFEATED: Published, Started, Defeated
  * - EXECUTED: Published, Started, Succeeded, Executed
- * @example A pending proposal will have a "Published" milestone and "Awaiting start" milestone
  * @param proposal Proposal to extract milestones from
  * @returns A list of ProposalMilestoneProps to be passed to a ProposalMilestone component
  */

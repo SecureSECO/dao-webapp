@@ -60,7 +60,7 @@ export const dummyProposal: DetailedProposal = {
   endDate: new Date('2023-03-23T00:00:00.000Z'),
   creationDate: new Date('2023-03-16T00:00:00.000Z'),
   creationBlockNumber: 812345,
-  executionDate: null,
+  executionDate: new Date('2023-03-25T00:00:00.000Z'),
   executionBlockNumber: 812345,
   actions: [
     {
