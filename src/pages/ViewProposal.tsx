@@ -49,18 +49,14 @@ const ViewProposal = () => {
       />
       <div className="space-y-6">
         {(!loading && !proposal) || error ? (
-          <HeaderCard
-            loading={loading}
-            title={error ?? 'Proposal not found'}
-            className="col-span-full"
-          />
+          <HeaderCard loading={loading} title={error ?? 'Proposal not found'} />
         ) : (
           <>
             <HeaderCard
               loading={loading}
               title={proposal?.metadata.title ?? 'Proposal not found'}
               aside={
-                <div className="flex h-full flex-row-reverse items-center justify-between gap-y-4 sm:flex-col sm:items-end">
+                <div className="flex flex-row-reverse items-center justify-between gap-y-4 sm:flex-col sm:items-end">
                   <ProposalStatusBadge
                     size="md"
                     status={proposal?.status ?? ProposalStatus.PENDING}
