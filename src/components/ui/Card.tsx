@@ -14,7 +14,7 @@ import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '../../lib/utils';
 
-const cardVariants = cva('w-full rounded-lg shadow-md overflow-clip relative', {
+const cardVariants = cva('w-full rounded-lg shadow-md text-clip relative', {
   variants: {
     variant: {
       default: 'bg-white dark:bg-slate-700/50',

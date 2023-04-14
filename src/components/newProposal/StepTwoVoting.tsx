@@ -32,9 +32,9 @@ import {
 } from './newProposalData';
 import { Card } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
-import { HiMinus, HiPlus } from 'react-icons/hi2';
 import { RadioGroupItemProps } from '@radix-ui/react-radio-group';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { TimezoneSelector } from '@/src/components/ui/TimeZoneSelector';
 
 export const StepTwo = () => {
   const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
@@ -190,16 +190,33 @@ export const StartTime = ({
           )}
         />
         {startTimeType === 'custom' && (
-          <ErrorWrapper name="Custom start time" error={errors.start_time}>
-            <Input
-              {...register('start_time', { required: true })}
-              type="datetime-local"
-              placeholder="Start time"
-              className="text-slate-700 dark:text-slate-300"
-              min={new Date().toISOString()}
-              error={errors.start_time}
+          <Card className="flex w-full gap-2 bg-slate-50 dark:bg-slate-700/50">
+            <LabelledInput
+              id="custom_start_date"
+              type="date"
+              label="Date"
+              {...register('custom_start_date')}
+              min={new Date().toISOString().split('T')[0]}
+              error={errors.custom_start_date}
             />
-          </ErrorWrapper>
+            <LabelledInput
+              id="custom_start_time"
+              type="time"
+              label="Time"
+              {...register('custom_start_time')}
+              min={new Date().toISOString().slice(11, 16)}
+              error={errors.custom_start_time}
+            />
+            <div className="w-full">
+              <label htmlFor="custom_start_timezone">Timezone</label>
+              <TimezoneSelector
+                id="custom_start_timezone"
+                control={control}
+                error={errors.custom_start_timezone}
+                name="custom_start_timezone"
+              />
+            </div>
+          </Card>
         )}
       </div>
     </fieldset>
@@ -227,9 +244,9 @@ export const EndTime = ({
     defaultValue: 'now',
   });
 
-  const startTime = useWatch({
+  const startDate = useWatch({
     control,
-    name: 'start_time',
+    name: 'custom_start_date',
     defaultValue: '',
   });
 
@@ -264,8 +281,9 @@ export const EndTime = ({
 
         {endTimeType === 'duration' ? (
           <Card className="flex w-full gap-2 bg-slate-50 dark:bg-slate-700/50">
-            <DurationInput
+            <LabelledInput
               id="duration_minutes"
+              type="number"
               label="Minutes"
               {...register('duration_minutes')}
               min="0"
@@ -273,8 +291,9 @@ export const EndTime = ({
               defaultValue={0}
               error={errors.duration_minutes}
             />
-            <DurationInput
+            <LabelledInput
               id="duration_hours"
+              type="number"
               label="Hours"
               {...register('duration_hours')}
               min="0"
@@ -282,8 +301,9 @@ export const EndTime = ({
               defaultValue={0}
               error={errors.duration_hours}
             />
-            <DurationInput
+            <LabelledInput
               id="duration_days"
+              type="number"
               label="Days"
               {...register('duration_days')}
               min="2"
@@ -294,17 +314,33 @@ export const EndTime = ({
           </Card>
         ) : (
           endTimeType === 'end-custom' && (
-            <ErrorWrapper name="Custom end time" error={errors.end_time}>
-              <Input
-                {...register('end_time', { required: true })}
-                type="datetime-local"
-                placeholder="End time"
-                className="text-slate-700 dark:text-slate-300"
-                disabled={startTimeType === 'custom' && !startTime}
-                min={startTime}
-                error={errors.end_time}
+            <Card className="flex w-full gap-2 bg-slate-50 dark:bg-slate-700/50">
+              <LabelledInput
+                id="custom_end_date"
+                type="date"
+                label="Date"
+                {...register('custom_end_date', { required: true })}
+                min={new Date().toISOString()}
+                error={errors.custom_end_date}
               />
-            </ErrorWrapper>
+              <LabelledInput
+                id="custom_end_time"
+                type="time"
+                label="Time"
+                {...register('custom_end_time', { required: true })}
+                min={new Date().toISOString()}
+                error={errors.custom_end_time}
+              />
+              <div className="w-full">
+                <label htmlFor="custom_end_timezone">Timezone</label>
+                <TimezoneSelector
+                  id={'custom_end_timezone'}
+                  control={control}
+                  error={errors.custom_end_timezone}
+                  name="custom_end_timezone"
+                />
+              </div>
+            </Card>
           )
         )}
       </div>
@@ -312,26 +348,25 @@ export const EndTime = ({
   );
 };
 
-export interface DurationInputProps
+export interface LabelledInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  id: 'duration_minutes' | 'duration_hours' | 'duration_days';
+  id: string;
   label: string;
   error?: FieldError;
 }
 
-const DurationInput = React.forwardRef<HTMLInputElement, DurationInputProps>(
+const LabelledInput = React.forwardRef<HTMLInputElement, LabelledInputProps>(
   ({ id, label, error, ...props }, ref) => {
     return (
       <div className="w-full">
         <label htmlFor={id}>{label}</label>
         <ErrorWrapper name={label} error={error}>
           <Input
+            ref={ref}
             id={id}
             error={error}
-            type="number"
             placeholder={label}
             {...props}
-            ref={ref}
             className="w-full text-center"
           />
         </ErrorWrapper>
@@ -339,4 +374,7 @@ const DurationInput = React.forwardRef<HTMLInputElement, DurationInputProps>(
     );
   }
 );
-DurationInput.displayName = 'DurationInput';
+
+LabelledInput.displayName = 'LabelledInput';
+
+export default LabelledInput;

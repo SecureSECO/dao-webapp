@@ -32,12 +32,16 @@ export type EndTimeType = 'duration' | 'end-custom';
 export type StepTwoData = {
   option: VoteOption;
   start_time_type: StartTimeType;
-  start_time?: string;
   end_time_type: EndTimeType;
-  end_time?: string;
   duration_minutes?: number;
   duration_hours?: number;
   duration_days?: number;
+  custom_end_date?: string;
+  custom_end_time?: string;
+  custom_end_timezone?: string;
+  custom_start_date?: string;
+  custom_start_time?: string;
+  custom_start_timezone?: string;
 };
 
 // STEP 3 DATA
