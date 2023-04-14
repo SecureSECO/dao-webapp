@@ -25,3 +25,10 @@ export const Primary: Story = {
     ],
   },
 };
+
+export const NoResources: Story = {
+  args: {
+    loading: false,
+    resources: [],
+  },
+};

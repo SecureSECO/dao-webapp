@@ -1,9 +1,27 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * The MainCard module provides a customizable card component with an icon, header, and aside section.
+ * It is designed to be used as a main container for other components and elements.
+ */
+
 import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
 import { DefaultMainCardHeader, MainCard } from '../ui/MainCard';
 import { Resource } from '../newProposal/newProposalData';
 import { Card } from '@/src/components/ui/Card';
 import { useEffect } from 'react';
 
+/**
+ * MainCard component for displaying resources
+ * @param props.resources List of resources to be displayed in the card
+ * @param props.loading Whether or not the card should show a loading state
+ */
 export const ProposalResources = ({
   resources,
   loading = false,
@@ -23,7 +41,7 @@ export const ProposalResources = ({
   return (
     <MainCard
       loading={loading ?? resources ? true : false}
-      className={className}
+      className={className + ' shrink'}
       icon={HiLink}
       header={
         <DefaultMainCardHeader
@@ -33,7 +51,7 @@ export const ProposalResources = ({
       }
     >
       {!filtered || filtered.length === 0 ? (
-        <div className="text-slate-500 dark:text-slate-400">
+        <div className="italic text-slate-500 dark:text-slate-400">
           No resources added
         </div>
       ) : (
