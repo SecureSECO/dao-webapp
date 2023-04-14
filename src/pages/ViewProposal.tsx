@@ -22,7 +22,8 @@ import ProposalActions from '@/src/components/proposal/ProposalActions';
 
 const ViewProposal = () => {
   const { id } = useParams();
-  const { proposal, loading, error, refetch } = useProposal({ id });
+  const { proposal, loading, error, refetch, canExecute, execute } =
+    useProposal({ id });
 
   const statusText = (status: ProposalStatus) => {
     if (!proposal) return '';
@@ -97,8 +98,11 @@ const ViewProposal = () => {
                 />
 
                 <ProposalActions
+                  canExecute={canExecute}
+                  execute={execute}
                   loading={loading}
                   actions={proposal?.actions}
+                  refetch={refetch}
                 />
               </div>
 

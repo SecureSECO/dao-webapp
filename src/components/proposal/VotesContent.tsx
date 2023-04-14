@@ -31,8 +31,6 @@ import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { useCanVote } from '@/src/hooks/useCanVote';
 import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { HiOutlineExclamationCircle } from 'react-icons/hi2';
-import { useWeb3Modal } from '@web3modal/react';
 import {
   CHAIN_METADATA,
   getChainDataByChainId,
@@ -40,6 +38,7 @@ import {
 import { calcBigintPercentage } from '@/src/lib/utils';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
 import { ToastUpdate, useToast } from '@/src/hooks/useToast';
+import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 
 type VoteFormData = {
   vote_value: string;
@@ -98,7 +97,6 @@ const VotesContentActive = ({
     address,
   });
   const { votingClient } = useAragonSDKContext();
-  const { open } = useWeb3Modal();
   const { toast } = useToast();
 
   // Send the vote to SDK
@@ -220,21 +218,7 @@ const VotesContentActive = ({
             </span>
           )}
         </Button>
-        {!address && (
-          <div className="flex flex-row items-center gap-x-1 text-slate-500 dark:text-slate-400">
-            <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-            <p>
-              <button
-                type="button"
-                className="hover:underline"
-                onClick={() => open()}
-              >
-                Connect
-              </button>{' '}
-              your wallet to vote
-            </p>
-          </div>
-        )}
+        {!address && <ConnectWalletWarning action="to vote" />}
       </div>
     </form>
   );
@@ -286,7 +270,7 @@ const VoteOption = ({
           </div>
           <Progress value={percentage} size="sm" variant="alt" />
         </AccordionTrigger>
-        <AccordionContent className="grid grid-cols-2 gap-x-4 gap-y-2">
+        <AccordionContent className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
           {votes.length > 0 ? (
             votes.map((vote) => (
               <div

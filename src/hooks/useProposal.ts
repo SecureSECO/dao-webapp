@@ -13,8 +13,10 @@ import {
   TokenType,
   VoteValues,
   TokenVotingProposal,
+  ExecuteProposalStepValue,
 } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
+import { useSigner } from 'wagmi';
 
 export type DetailedProposal = TokenVotingProposal;
 
@@ -23,6 +25,8 @@ export type UseProposalData = {
   error: string | null;
   proposal: DetailedProposal | null;
   refetch: () => void;
+  canExecute: boolean;
+  execute: () => AsyncGenerator<ExecuteProposalStepValue, any, unknown>;
 };
 
 export type UseProposalProps = {
@@ -116,9 +120,11 @@ export const useProposal = ({
   useDummyData = false,
 }: UseProposalProps): UseProposalData => {
   const [proposal, setProposal] = useState<DetailedProposal | null>(null);
+  const [canExecute, setCanExecute] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { votingClient } = useAragonSDKContext();
+  const { data: signer } = useSigner();
 
   const fetchProposal = async () => {
     if (!votingClient) return;
@@ -150,6 +156,24 @@ export const useProposal = ({
       setError(getErrorMessage(e));
       setLoading(false);
     }
+
+    // Fetch if the current proposal can be executed
+    try {
+      // Will fail if no signer is available, so check for signer existence first
+      if (signer) {
+        const canExecuteProposal = await votingClient.methods.canExecute(id);
+        if (canExecuteProposal) setCanExecute(true);
+        else setCanExecute(false);
+      }
+    } catch (e) {
+      console.error('Error fetching canExecute', e);
+    }
+  };
+
+  const execute = () => {
+    if (!votingClient || !proposal || !id)
+      throw new Error('Cannot execute proposal');
+    return votingClient.methods.executeProposal(id);
   };
 
   //** Set dummy data for development without querying Aragon API */
@@ -169,6 +193,8 @@ export const useProposal = ({
     loading,
     error,
     proposal,
+    canExecute,
+    execute,
     // Only allow refetching if not using dummy data
     refetch: () => (!useDummyData ? fetchProposal() : void 0),
   };
