@@ -15,8 +15,6 @@ import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
 import { DefaultMainCardHeader, MainCard } from '../ui/MainCard';
 import { Resource } from '../newProposal/newProposalData';
 import { Card } from '@/src/components/ui/Card';
-import { useEffect } from 'react';
-
 /**
  * MainCard component for displaying resources
  * @param props.resources List of resources to be displayed in the card
@@ -33,10 +31,6 @@ export const ProposalResources = ({
 }) => {
   // Filter out empty entries in resources array
   const filtered = resources?.filter((resource) => resource.url !== '');
-
-  useEffect(() => {
-    console.log('resources', resources);
-  }, [resources]);
 
   return (
     <MainCard

@@ -17,6 +17,8 @@ import { Link } from '@/src/components/ui/Link';
 import { countdownText } from '@/src/lib/utils';
 import { ProposalResources } from '../components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
+import ProposalHistory from '@/src/components/proposal/ProposalHistory';
+import ProposalActions from '@/src/components/proposal/ProposalActions';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -45,8 +47,7 @@ const ViewProposal = () => {
         label="All proposals"
         className="text-lg"
       />
-      <div className="grid grid-cols-7 gap-6">
-        {/* Content */}
+      <div className="space-y-6">
         {(!loading && !proposal) || error ? (
           <HeaderCard
             loading={loading}
@@ -70,7 +71,6 @@ const ViewProposal = () => {
                   </div>
                 </div>
               }
-              className="col-span-full"
             >
               {proposal && (
                 <div className="flex flex-col gap-y-3">
@@ -92,17 +92,29 @@ const ViewProposal = () => {
               )}
             </HeaderCard>
 
-            <ProposalVotes
-              loading={loading}
-              proposal={proposal}
-              refetch={refetch}
-            />
+            <div className="grid grid-cols-7 gap-x-6">
+              <div className="col-span-full flex flex-col gap-y-6 lg:col-span-4">
+                <ProposalVotes
+                  loading={loading}
+                  proposal={proposal}
+                  refetch={refetch}
+                />
 
-            <ProposalResources
-              loading={loading}
-              resources={proposal?.metadata.resources}
-              className="col-span-full lg:col-span-3"
-            />
+                <ProposalActions
+                  loading={loading}
+                  actions={proposal?.actions}
+                />
+              </div>
+
+              <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
+                <ProposalResources
+                  loading={loading}
+                  resources={proposal?.metadata.resources}
+                />
+
+                <ProposalHistory proposal={proposal} loading={loading} />
+              </div>
+            </div>
           </>
         )}
       </div>
