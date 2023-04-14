@@ -11,29 +11,12 @@ import { useProposal } from '@/src/hooks/useProposal';
 import { useParams } from 'react-router';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { ProposalStatus } from '@aragon/sdk-client';
-import VotesContent from '@/src/components/proposal/VotesContent';
 import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
-import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import {
-  HiChatBubbleLeftRight,
-  HiChevronLeft,
-  HiLink,
-  HiOutlineClock,
-} from 'react-icons/hi2';
+import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
 import { Link } from '@/src/components/ui/Link';
 import { countdownText } from '@/src/lib/utils';
-import { Button } from '@/src/components/ui/Button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/src/components/ui/Dialog';
-import VotingDetails from '@/src/components/proposal/VotingDetails';
 import { ProposalResources } from '../components/proposal/ProposalResources';
+import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -109,46 +92,11 @@ const ViewProposal = () => {
               )}
             </HeaderCard>
 
-            <MainCard
-              className="col-span-full flex flex-col gap-y-4 lg:col-span-4"
-              icon={HiChatBubbleLeftRight}
-              header={
-                <DefaultMainCardHeader
-                  value={proposal?.votes.length ?? 0}
-                  label="votes"
-                />
-              }
-              aside={
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="subtle" label="View details" />
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Voting details</DialogTitle>
-                      <DialogDescription asChild>
-                        <div className="flex flex-col gap-y-4">
-                          <VotingDetails proposal={proposal} />
-                        </div>
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogClose asChild>
-                      <div className="flex items-end justify-end">
-                        <Button
-                          variant="subtle"
-                          label="Close"
-                          className="self-end"
-                        />
-                      </div>
-                    </DialogClose>
-                  </DialogContent>
-                </Dialog>
-              }
-            >
-              {proposal && (
-                <VotesContent proposal={proposal} refetch={refetch} />
-              )}
-            </MainCard>
+            <ProposalVotes
+              loading={loading}
+              proposal={proposal}
+              refetch={refetch}
+            />
 
             <ProposalResources
               loading={loading}
