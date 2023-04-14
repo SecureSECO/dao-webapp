@@ -15,7 +15,12 @@ import { DetailedProposal } from '@/src/hooks/useProposal';
 import { ProposalStatus } from '@aragon/sdk-client';
 
 /**
- * Extract the milestones of a proposal, depending on its status
+ * Extract the milestones of a proposal, depending on its status. The following milestones are returned per status:
+ * - PENDING: Published, Awaiting start
+ * - ACTIVE: Published, Started, Awaiting voting
+ * - SUCCEEDED: Published, Started, Succeeded, Awaiting execution
+ * - DEFEATED: Published, Started, Defeated
+ * - EXECUTED: Published, Started, Succeeded, Executed
  * @example A pending proposal will have a "Published" milestone and "Awaiting start" milestone
  * @param proposal Proposal to extract milestones from
  * @returns A list of ProposalMilestoneProps to be passed to a ProposalMilestone component
@@ -40,14 +45,14 @@ const getProposalMilestones = (proposal: DetailedProposal) => {
   switch (proposal.status) {
     case ProposalStatus.PENDING:
       res.push({
-        label: 'Awaiting start',
+        label: 'Pending',
         variant: 'loading',
         date: proposal.startDate,
       });
       break;
     case ProposalStatus.ACTIVE:
       res.push({
-        label: 'Awaiting voting',
+        label: 'Running',
         variant: 'loading',
         date: proposal.endDate,
       });
@@ -91,6 +96,12 @@ const getProposalMilestones = (proposal: DetailedProposal) => {
   return res;
 };
 
+/**
+ * Shows the history of a proposal, including milestones and dates, in a MainCard
+ * @param props.proposal Proposal to show the history of
+ * @param props.loading Whether the proposal is loading
+ * @returns MainCard component with the history of a proposal
+ */
 const ProposalHistory = ({
   proposal,
   loading = false,
@@ -107,11 +118,14 @@ const ProposalHistory = ({
       icon={History}
       header={<p className="text-2xl font-medium">History</p>}
     >
-      <div className="flex flex-col gap-y-6">
-        {proposal &&
-          getProposalMilestones(proposal).map((milestone, i) => (
-            <ProposalMilestone key={i} {...milestone} />
-          ))}
+      <div className="relative">
+        <div className="absolute bottom-6 left-[0.5625rem] top-2 w-0.5 bg-slate-400 dark:bg-slate-500" />
+        <div className="relative z-10 flex flex-col gap-y-6">
+          {proposal &&
+            getProposalMilestones(proposal).map((milestone, i) => (
+              <ProposalMilestone key={i} {...milestone} className="" />
+            ))}
+        </div>
       </div>
     </MainCard>
   );

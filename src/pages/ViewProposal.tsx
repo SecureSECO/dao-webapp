@@ -92,7 +92,7 @@ const ViewProposal = () => {
               )}
             </HeaderCard>
 
-            <div className="grid grid-cols-7 gap-x-6">
+            <div className="grid grid-cols-7 gap-6">
               <div className="col-span-full flex flex-col gap-y-6 lg:col-span-4">
                 <ProposalVotes
                   loading={loading}
