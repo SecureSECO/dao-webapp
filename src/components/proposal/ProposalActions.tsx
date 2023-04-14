@@ -28,9 +28,10 @@ const ProposalActions = ({
         </div>
       ) : (
         <ul className="space-y-2">
-          {actions.map((action) => (
-            <li key={action.data.reduce((acc, v) => acc + v, '')}>
+          {actions.map((action, i) => (
+            <li key={i}>
               <Card padding="sm" variant="light">
+                {/* Placeholder */}
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   {action.to}
                 </p>

@@ -58,7 +58,7 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
           <Header>{title}</Header>
           {props.children}
         </div>
-        <>{aside}</>
+        <div>{aside}</div>
       </Card>
     );
   }

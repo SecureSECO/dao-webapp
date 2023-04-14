@@ -320,7 +320,7 @@ const VoteOption = ({
               </div>
             ))
           ) : (
-            <p className="col-span-full text-center text-gray-500 dark:text-slate-400">
+            <p className="col-span-full text-center italic text-slate-500 dark:text-slate-400">
               No votes
             </p>
           )}
