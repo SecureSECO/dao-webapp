@@ -1,54 +1,48 @@
-import { useState, useEffect } from 'react';
-import { getAuthor, uploadProject } from '../services/databaseApi'
+import { useState, useCallback } from 'react';
+import { TCPClient, RequestType, TCPResponse } from '../TCPClient';
 
-type Author = string;
-type ProjectData = string
+type UseDatabaseAPIConfig = {
+  host: string;
+  port: number;
+  clientName: string;
+};
 
-export function useGetAuthor(authorId: Author) {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
-    const [author, setAuthor] = useState<Author | null>(null);
+type UseDatabaseAPIResult = {
+  loading: boolean;
+  error: Error | null;
+  response: TCPResponse | null;
+  sendRequest: (type: RequestType, data: string[]) => Promise<void>;
+};
 
-    useEffect(() => {
-        const fetchAuthor = async () => {
-          setLoading(true);
-          try {
-            const fetchedAuthor = await getAuthor(authorId);
-            setAuthor(fetchedAuthor);
-          } catch (error) {
-            setError((error as Error).message);
-          } finally {
-            setLoading(false);
-          }
-        };
-    
-        fetchAuthor();
-      }, [authorId]);
-    
-      return { loading, error, author };
-}
+export const useDatabaseAPI = (config: UseDatabaseAPIConfig): UseDatabaseAPIResult => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [response, setResponse] = useState<TCPResponse | null>(null);
 
-export function useUploadProject(projectData: ProjectData){
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
-    const [author, setAuthor] = useState<Author | null>(null);
+  const client = new TCPClient(config.clientName, config.port, config.host);
 
-    useEffect(() => {
-      const upload = async () => {
-        setLoading(true);
-        try {
-          const fetchedAuthor = await uploadProject(projectData);
-          setAuthor(fetchedAuthor);
-        } catch (error) {
-          setError((error as Error).message);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      upload();
-    }, [projectData]);
-  
-    return { loading, error, author };
+  const sendRequest = useCallback(
+    async (type: RequestType, data: string[]) => {
+      setLoading(true);
+      setError(null);
+      setResponse(null);
+      try {
+        const resp = await client.Fetch(type, data);
+        setResponse(resp);
+        setLoading(false);
+      } catch (error) {
+        const err = error as Error;
+        setError(err);
+        setLoading(false);
+      }
+    },
+    [client]
+  );
 
-}
+  return {
+    loading,
+    error,
+    response,
+    sendRequest,
+  };
+};
