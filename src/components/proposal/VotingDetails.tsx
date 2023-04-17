@@ -64,12 +64,12 @@ const categories = [
     title: 'Voting period',
     items: [
       {
-        label: 'Start date',
+        label: 'Start',
         value: (proposal: VotingDetailsProposal) =>
           format(new Date(proposal.startDate), 'Pp'),
       },
       {
-        label: 'End date',
+        label: 'End',
         value: (proposal: VotingDetailsProposal) =>
           format(new Date(proposal.endDate), 'Pp'),
       },
