@@ -19,6 +19,11 @@ import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
 import { Accordion, AccordionItem } from '@/src/components/ui/Accordion';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { contractInteraction } from '@/src/hooks/useToast';
 import {
   DefaultMainCardHeader,
   MainCard,
