@@ -101,7 +101,7 @@ export type ActionMintToken = {
   };
 };
 
-export const emptyActionWithdrawFormData: ActionWithdrawFormData = {
+export const emptyWithdrawForm: ActionWithdrawFormData = {
   name: 'withdraw_assets',
   recipient: '',
   tokenAddress: '',
@@ -125,7 +125,7 @@ export type MintAddressAmount = {
   amount: number;
 };
 
-export const emptyActionMintTokenFormData: ActionMintTokenFormData = {
+export const emptyMintTokenForm: ActionMintTokenFormData = {
   name: 'mint_tokens',
   wallets: [emptyMintAddressAmount],
 };

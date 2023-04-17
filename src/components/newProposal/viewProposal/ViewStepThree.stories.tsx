@@ -9,10 +9,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { ViewStepThree } from './ViewStepThree';
-import {
-  emptyActionMintTokenFormData,
-  emptyActionWithdrawFormData,
-} from '../newProposalData';
+import { emptyMintTokenForm, emptyWithdrawForm } from '../newProposalData';
 
 const meta: Meta<typeof ViewStepThree> = {
   component: ViewStepThree,
@@ -24,7 +21,7 @@ type Story = StoryObj<typeof ViewStepThree>;
 export const EmptyActions: Story = {
   args: {
     data: {
-      actions: [emptyActionMintTokenFormData, emptyActionWithdrawFormData],
+      actions: [emptyMintTokenForm, emptyWithdrawForm],
     },
   },
 };

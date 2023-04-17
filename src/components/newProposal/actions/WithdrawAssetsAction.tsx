@@ -25,10 +25,6 @@ import { MainCard } from '../../ui/MainCard';
 import { TokenSelectorDialogButtons } from './ui/TokenSelectorDialogButtons';
 import { ActionFormError } from '../StepThreeActions';
 
-const Description = ({ text }: { text: string }) => (
-  <p className="text-slate-500">{text}</p>
-);
-
 /**
  * @returns Component to be used within a form to describe the action of withdrawing assets.
  */
@@ -65,14 +61,13 @@ export const WithdrawAssetsAction = ({
         />
       }
     >
-      <Description text="Withdraw assets from the DAO treasury" />
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-col">
-          <Label className="text-lg" htmlFor="recipient">
-            Recipient
-          </Label>
-          <Description text="The wallet that receives the tokens" />
-        </div>
+      <div className="flex flex-col gap-y-1">
+        <Label
+          htmlFor="recipient"
+          tooltip="Address of the wallet to receive the tokens"
+        >
+          Recipient
+        </Label>
         <ErrorWrapper name="Recipient" error={errors?.recipient ?? undefined}>
           <Input
             {...register(`${prefix}.recipient`, { required: true })}
@@ -81,58 +76,41 @@ export const WithdrawAssetsAction = ({
             pattern={AddressPattern}
             title="An address starting with 0x, followed by 40 address characters"
             error={errors?.recipient ?? undefined}
+            placeholder="0x..."
           />
         </ErrorWrapper>
       </div>
-      <div className="flex flex-col">
-        <Label className="text-lg" htmlFor="tokenAddress">
-          Token
-        </Label>
-        <Description text="Token to withdraw" />
-      </div>
-      <div className="flex w-full flex-col gap-2 md:flex-row">
-        <div className="md:basis-1/3">
-          <Dialog>
-            <DialogTrigger className="h-10 w-full rounded-md border-2 border-solid md:h-full">
-              Select token
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>Select token to withdraw</DialogHeader>
-              <TokenSelectorDialogButtons
-                daoBalanceData={daoBalanceData}
-                setTokenAddress={handleSetTokenAddress}
-              />
-            </DialogContent>
-          </Dialog>
+      <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-y-1 ">
+          <Label tooltip="Token to withdraw" htmlFor="tokenAddress">
+            Token
+          </Label>
+          {/* To be replaced with <Select> component, which is currently, conveniently located in another branch */}
+          <ErrorWrapper name="Token" error={errors?.tokenAddress ?? undefined}>
+            <Input
+              {...register(`${prefix}.tokenAddress`, { required: true })}
+              name="tokenAddress"
+              pattern={AddressPattern}
+              title="An address starting with 0x, followed by 40 address characters"
+              error={errors?.tokenAddress ?? undefined}
+            />
+          </ErrorWrapper>
         </div>
-        <ErrorWrapper name="Token" error={errors?.tokenAddress ?? undefined}>
-          <Input
-            {...register(`${prefix}.tokenAddress`, { required: true })}
-            className="md:basis-2/3"
-            name="tokenAddress"
-            pattern={AddressPattern}
-            title="An address starting with 0x, followed by 40 address characters"
-            error={errors?.tokenAddress ?? undefined}
-          />
-        </ErrorWrapper>
-      </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-col">
-          <Label className="text-lg" htmlFor="amount">
+        <div className="flex flex-col gap-y-1">
+          <Label tooltip="Amount of tokens to withdraw" htmlFor="amount">
             Amount
           </Label>
-          <Description text="Amount is calculated in number of tokens, not dollar value" />
+          <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
+            <Input
+              {...register(`${prefix}.amount`, { required: true })}
+              type="number"
+              id="amount"
+              title="A number using a '.' as decimal place, e.g. '3.141'"
+              pattern={NumberPattern}
+              error={errors?.amount ?? undefined}
+            />
+          </ErrorWrapper>
         </div>
-        <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
-          <Input
-            {...register(`${prefix}.amount`, { required: true })}
-            type="text"
-            id="amount"
-            title="A number using a '.' as decimal place, e.g. '3.141'"
-            pattern={NumberPattern}
-            error={errors?.amount ?? undefined}
-          />
-        </ErrorWrapper>
       </div>
     </MainCard>
   );

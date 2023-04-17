@@ -7,16 +7,35 @@
  */
 
 import React from 'react';
-import { useForm, useFieldArray, FieldError, FieldErrors, FieldValues, Merge } from 'react-hook-form';
-import { AddActionButton } from './actions/ui/AddActionButton';
-import { AddActionCard } from './actions/ui/AddActionCard';
-import { ActionFormData, StepThreeData } from './newProposalData';
+import {
+  useForm,
+  useFieldArray,
+  FieldError,
+  FieldErrors,
+  FieldValues,
+  Merge,
+} from 'react-hook-form';
+import {
+  ActionFormData,
+  StepThreeData,
+  emptyMintTokenForm as emptyMintTokensForm,
+  emptyWithdrawForm,
+} from './newProposalData';
 import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 import { WithdrawAssetsAction } from '@/src/components/newProposal/actions/WithdrawAssetsAction';
 import { MintTokensAction } from '@/src/components/newProposal/actions/MintTokensAction';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from '@/src/components/ui/Dropdown';
+import { Button } from '@/src/components/ui/Button';
+import { HiBanknotes, HiCircleStack, HiPlus } from 'react-icons/hi2';
 
 export const StepThree = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
@@ -44,17 +63,19 @@ export const StepThree = () => {
   const handleBack = () => {
     const data = getValues();
     setDataStep3(data);
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-4">
-        <span>If option yes wins</span>
+      <div className="flex flex-col">
+        <p>Actions</p>
         {fields.length === 0 ? (
-          <AddActionCard append={append} />
+          <p className="italic text-slate-500 dark:text-slate-400">
+            No actions
+          </p>
         ) : (
           <>
-            {/* List op proposal actions */}
+            {/* List of proposal actions */}
             <div className="flex flex-col gap-6">
               {fields.map((field: Record<'id', string>, index: number) => {
                 const prefix: `actions.${number}` = `actions.${index}`;
@@ -90,10 +111,10 @@ export const StepThree = () => {
                 }
               })}
             </div>
-            <AddActionButton append={append} />
           </>
         )}
       </div>
+      <AddActionButton append={append} />
       <StepNavigator onBack={handleBack} />
     </form>
   );
@@ -102,3 +123,40 @@ export const StepThree = () => {
 export type ActionFormError<T extends FieldValues> =
   | Merge<FieldError, FieldErrors<NonNullable<T> | T>>
   | undefined;
+
+/**
+ * @param append function that is called with ActionFormData to be appended to some parent-like component.
+ * @returns A dropdown component to add proposal action input cards
+ */
+export const AddActionButton = ({
+  append,
+}: {
+  // eslint-disable-next-line no-unused-vars
+  append: (fn: ActionFormData) => void;
+}) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" icon={HiPlus} label="Add action" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            onClick={() => append(emptyWithdrawForm)}
+            className="gap-x-2 hover:cursor-pointer"
+          >
+            <HiBanknotes className="h-5 w-5 shrink-0" />
+            <span>Withdraw assets</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => append(emptyMintTokensForm)}
+            className="gap-x-2 hover:cursor-pointer"
+          >
+            <HiCircleStack className="h-5 w-5 shrink-0" />
+            <span>Mint tokens</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};

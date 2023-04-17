@@ -11,8 +11,8 @@ import { StepThree } from './StepThreeActions';
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
 import {
   StepThreeData,
-  emptyActionMintTokenFormData,
-  emptyActionWithdrawFormData,
+  emptyMintTokenForm,
+  emptyWithdrawForm,
 } from './newProposalData';
 
 const meta: Meta<typeof StepThree> = {
@@ -32,7 +32,7 @@ const FormProviderDecoratorFactory = (data: StepThreeData): any => {
 };
 
 const emptyActions = {
-  actions: [emptyActionMintTokenFormData, emptyActionWithdrawFormData],
+  actions: [emptyMintTokenForm, emptyWithdrawForm],
 };
 
 export const Primary: Story = {
