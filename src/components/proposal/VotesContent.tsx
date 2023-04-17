@@ -15,6 +15,7 @@ import { DetailedProposal } from '@/src/hooks/useProposal';
 import {
   ProposalStatus,
   VoteProposalStep,
+  VoteProposalStepValue,
   VoteValues,
 } from '@aragon/sdk-client';
 import {
@@ -37,7 +38,11 @@ import {
 } from '@/src/lib/constants/chains';
 import { calcBigintPercentage } from '@/src/lib/utils';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
-import { ToastUpdate, useToast } from '@/src/hooks/useToast';
+import {
+  ToastUpdate,
+  contractInteraction,
+  useToast,
+} from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 
 type VoteFormData = {
@@ -99,85 +104,33 @@ const VotesContentActive = ({
   const { votingClient } = useAragonSDKContext();
   const { toast } = useToast();
 
-  // Send the vote to SDK
-  const confirmVote = async (
-    vote: number,
-    // eslint-disable-next-line no-unused-vars
-    updateToast: (props: ToastUpdate) => void
-  ) => {
-    if (!votingClient) return;
-    try {
-      const steps = votingClient.methods.voteProposal({
-        proposalId: proposal.id,
-        vote,
-      });
-
-      // Get etherscan url for the currently preferred network
-      // Use +chainId to convert string to number
-      const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
-      const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
-
-      for await (const step of steps) {
-        try {
-          switch (step.key) {
-            case VoteProposalStep.VOTING:
-              // Show link to transaction on etherscan
-              updateToast({
-                title: 'Awaiting confirmation...',
-                description: (
-                  <a
-                    href={`${etherscanURL}/tx/${step.txHash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs text-primary"
-                  >
-                    View on etherscan
-                  </a>
-                ),
-              });
-              break;
-            case VoteProposalStep.DONE:
-              updateToast({
-                title: 'Vote submitted!',
-                description: '',
-                variant: 'success',
-                duration: 3000,
-              });
-              break;
-          }
-        } catch (err) {
-          updateToast({
-            title: 'Error submitting vote',
-            description: '',
-            variant: 'error',
-            duration: 3000,
-          });
-          console.error(err);
-        }
-      }
-      // Refetch proposal data after submitting vote to update the number of votes
-      refetch();
-      refetchCanVote();
-    } catch (e) {
-      updateToast({
-        title: 'Error submitting vote',
-        description: '',
-        variant: 'error',
-        duration: 3000,
-      });
-    }
-  };
-
   const onSubmitVote: SubmitHandler<VoteFormData> = (data) => {
-    if (!votingClient) return;
-    const { update: updateToast } = toast({
-      duration: Infinity,
-      variant: 'loading',
-      title: 'Awaiting signature...',
-    });
-    confirmVote(
-      VoteValues[data.vote_value as VoteValueStringUpper],
-      updateToast
+    if (!votingClient)
+      return toast({
+        title: 'Error submitting vote',
+        description: 'Voting client not found',
+        variant: 'error',
+      });
+    contractInteraction<VoteProposalStep, VoteProposalStepValue>(
+      () =>
+        votingClient.methods.voteProposal({
+          proposalId: proposal.id,
+          vote: VoteValues[data.vote_value as VoteValueStringUpper],
+        }),
+      {
+        steps: {
+          confirmed: VoteProposalStep.DONE,
+          signed: VoteProposalStep.VOTING,
+        },
+        messages: {
+          error: 'Error submitting vote',
+          success: 'Vote submitted!',
+        },
+        onFinish: () => {
+          refetch();
+          refetchCanVote();
+        },
+      }
     );
   };
 

@@ -15,8 +15,7 @@ import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { useToast } from '@/src/hooks/useToast';
-import { getChainDataByChainId } from '@/src/lib/constants/chains';
+import { contractInteraction } from '@/src/hooks/useToast';
 import {
   DaoAction,
   ExecuteProposalStep,
@@ -51,71 +50,25 @@ const ProposalActions = ({
   className?: string;
 }) => {
   const { address } = useAccount();
-  const { toast } = useToast();
 
   const executeProposal = async () => {
     if (!execute) return;
-    const { update: updateToast } = toast({
-      duration: Infinity,
-      variant: 'loading',
-      title: 'Awaiting signature...',
-    });
-    try {
-      const steps = execute();
-
-      // Get etherscan url for the currently preferred network
-      // Use +chainId to convert string to number
-      const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
-      const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
-
-      for await (const step of steps) {
-        try {
-          switch (step.key) {
-            case ExecuteProposalStep.EXECUTING:
-              // Show link to transaction on etherscan
-              updateToast({
-                title: 'Awaiting confirmation...',
-                description: (
-                  <a
-                    href={`${etherscanURL}/tx/${step.txHash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs text-primary"
-                  >
-                    View on etherscan
-                  </a>
-                ),
-              });
-              break;
-            case ExecuteProposalStep.DONE:
-              updateToast({
-                title: 'Execution successful!',
-                description: '',
-                variant: 'success',
-                duration: 3000,
-              });
-              break;
-          }
-        } catch (err) {
-          updateToast({
-            title: 'Error executing proposal',
-            description: '',
-            variant: 'error',
-            duration: 3000,
-          });
-          console.error(err);
-        }
+    contractInteraction<ExecuteProposalStep, ExecuteProposalStepValue>(
+      () => execute(),
+      {
+        steps: {
+          confirmed: ExecuteProposalStep.DONE,
+          signed: ExecuteProposalStep.EXECUTING,
+        },
+        messages: {
+          error: 'Error executing proposal',
+          success: 'Proposal executed!',
+        },
+        onFinish: () => {
+          refetch();
+        },
       }
-      // Refetch proposal data after executing to update UI
-      refetch();
-    } catch (e) {
-      updateToast({
-        title: 'Error executing proposal',
-        description: '',
-        variant: 'error',
-        duration: 3000,
-      });
-    }
+    );
   };
 
   return (
