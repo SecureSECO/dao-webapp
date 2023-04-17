@@ -29,6 +29,8 @@ import { ProposalCardList } from '@/src/pages/Governance';
 import MembersList from '@/src/components/dashboard/MembersList';
 import { DaoTransfers } from '@/src/pages/Finance';
 import { Link } from '@/src/components/ui/Link';
+import { getSupportedNetworkByChainId } from '@/src/lib/constants/chains';
+import { getChainDataByChainId } from '@/src/lib/constants/chains';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -52,14 +54,15 @@ const Dashboard = () => {
     memberCount,
   } = useMembers({ limit: 5 });
 
-  // if (daoLoading) {
-  //   return <Loader />;
-  // }
   if (daoError) {
     console.log(daoError);
 
     return <p>error: {daoError}</p>;
   }
+
+  const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
+  const currentNetwork = getSupportedNetworkByChainId(+chainId);
+  const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
 
   return (
     <div className="grid grid-cols-7 gap-6">
@@ -156,9 +159,11 @@ const Dashboard = () => {
             />
           }
           aside={
-            <Button
+            <Link
               label="New transfer"
-              onClick={() => console.log('New transfer click!')}
+              target="_blank"
+              rel="noreferrer"
+              to={`https://app.aragon.org/#/daos/${currentNetwork}/${dao?.address}/finance/new-deposit`}
             />
           }
         >
@@ -182,12 +187,7 @@ const Dashboard = () => {
           loading={membersLoading}
           icon={HiUserGroup}
           header={<DefaultMainCardHeader value={memberCount} label="members" />}
-          aside={
-            <Button
-              label="Add members"
-              onClick={() => console.log('Add members click!')}
-            />
-          }
+          aside={<Link label="Add members" to="/governance/new-proposal" />}
         >
           <MembersList
             members={members}
@@ -197,8 +197,11 @@ const Dashboard = () => {
           <Link
             variant="outline"
             className="flex flex-row items-center gap-x-2"
-            onClick={() => console.log('View all members click!')}
-            to="/community"
+            target="_blank"
+            rel="noreferrer"
+            to={`${etherscanURL}/token/tokenholderchart/${
+              import.meta.env.VITE_REP_CONTRACT
+            }`}
           >
             <p>View all members</p>
             <HiArrowRight className="h-5 w-5" />
