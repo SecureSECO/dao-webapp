@@ -20,6 +20,18 @@ import {
 const meta: Meta<typeof Toast> = {
   component: Toast,
   tags: ['autodocs'],
+  argTypes: {
+    children: {
+      table: {
+        disable: true,
+      },
+    },
+    asChild: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 };
 
 export default meta;

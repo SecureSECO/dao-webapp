@@ -15,7 +15,7 @@ import { Label } from '@/src/components/ui/Label';
 import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
-import { StepOneMetadata } from './newProposalData';
+import { Resource, StepOneMetadata } from './newProposalData';
 import {
   StepNavigator,
   useNewProposalFormContext,
@@ -24,9 +24,9 @@ import {
 export const StepOne = () => {
   const { setStep, setDataStep1, dataStep1 } = useNewProposalFormContext();
 
-  const [resources, setResources] = useState<
-    Array<{ name: string; link: string }>
-  >([{ name: '', link: '' }]);
+  const [resources, setResources] = useState<Resource[]>([
+    { name: '', url: '' },
+  ]);
 
   const {
     register,
@@ -57,12 +57,12 @@ export const StepOne = () => {
   };
 
   const handleAddResource = () => {
-    setResources([...resources, { name: '', link: '' }]);
+    setResources([...resources, { name: '', url: '' }]);
   };
 
   const handleResourceChange = (
     index: number,
-    key: 'name' | 'link',
+    key: 'name' | 'url',
     value: string
   ) => {
     const newResources = [...resources];
@@ -137,7 +137,7 @@ export const StepOne = () => {
           </ErrorWrapper>
         </div>
         <fieldset className="flex flex-col gap-2">
-          <Label htmlFor="recources">Links and resources</Label>
+          <Label htmlFor="recources">Resources</Label>
           {resources.map((resource, index) => (
             <ResourceInput
               key={index}
@@ -171,8 +171,8 @@ const ResourceInput = ({
   register,
   prefix,
 }: {
-  resource: { name: string; link: string };
-  onChange: (key: 'name' | 'link', value: string) => void;
+  resource: { name: string; url: string };
+  onChange: (key: 'name' | 'url', value: string) => void;
   onRemove: () => void;
   register: any;
   prefix: string;
@@ -188,16 +188,16 @@ const ResourceInput = ({
       />
       <div className="flex w-full flex-row items-center gap-2">
         <Input
-          {...register(`${prefix}.link`, {
+          {...register(`${prefix}.url`, {
             pattern: {
               value: /^(https?:\/\/)?[\w\-._~:/?#[\]@!$&'()*+,;=%]+$/,
               message: 'Invalid URL',
             },
           })}
           type="text"
-          value={resource.link}
-          onChange={(e) => onChange('link', e.target.value)}
-          placeholder="Resource link"
+          value={resource.url}
+          onChange={(e) => onChange('url', e.target.value)}
+          placeholder="Resource url"
         />
         <div className="shrink-0">
           <HiXMark className="h-5 w-5 cursor-pointer" onClick={onRemove} />

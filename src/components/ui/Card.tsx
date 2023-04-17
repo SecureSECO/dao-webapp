@@ -14,24 +14,27 @@ import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '../../lib/utils';
 
-const cardVariants = cva('w-full rounded-lg shadow-md overflow-clip relative', {
-  variants: {
-    variant: {
-      default: 'bg-white dark:bg-slate-700/50',
-      warning: 'bg-red-500/80 text-slate-50 shadow-lg',
-      light: 'bg-slate-50 dark:bg-slate-700/50',
+const cardVariants = cva(
+  'w-full rounded-lg h-fit shadow-md text-clip relative',
+  {
+    variants: {
+      variant: {
+        default: 'bg-white dark:bg-slate-700/50',
+        warning: 'bg-red-500/80 text-slate-50 shadow-lg',
+        light: 'bg-slate-50 dark:bg-slate-700/50',
+      },
+      padding: {
+        default: 'px-6 py-4',
+        sm: 'px-4 py-2',
+        lg: 'px-6 sm:px-10 py-4 sm:py-8',
+      },
     },
-    padding: {
-      default: 'px-6 py-4',
-      sm: 'px-4 py-2',
-      lg: 'px-6 sm:px-10 py-4 sm:py-8',
+    defaultVariants: {
+      variant: 'default',
+      padding: 'default',
     },
-  },
-  defaultVariants: {
-    variant: 'default',
-    padding: 'default',
-  },
-});
+  }
+);
 
 /**
  * Card component properties.

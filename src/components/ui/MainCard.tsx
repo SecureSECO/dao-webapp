@@ -91,11 +91,13 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
             <div className="rounded-md bg-slate-100 p-2 dark:bg-slate-700/50">
               <IconWrapper.icon className="h-5 w-5 text-primary dark:text-primary-500" />
             </div>
-            <div className="hidden xs:block">{header}</div>
+            {/* Only split move the header to next line if content for aside was provided */}
+            <div className={cn(aside && 'hidden xs:block')}>{header}</div>
           </div>
           <>{aside && aside}</>
         </div>
-        <div className="xs:hidden">{header}</div>
+        {aside && <div className="xs:hidden">{header}</div>}
+
         <div className="space-y-3">{props.children}</div>
       </Card>
     );

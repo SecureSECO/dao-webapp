@@ -61,8 +61,7 @@ const iconVariants = cva('w-6 h-6 shrink-0', {
   variants: {
     variant: {
       default: 'text-slate-400',
-      // Loading icons gets smaller size (because it's a custom icon) and therefore margin to compensate for different size
-      loading: 'text-slate-400 w-5 h-5 m-0.5',
+      loading: 'text-slate-400',
       success: 'text-green-400 dark:text-green-300',
       error: 'text-red-400 dark:text-red-300',
     },

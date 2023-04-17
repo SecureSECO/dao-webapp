@@ -68,6 +68,7 @@ Below is a list of colors used for specific elements, both for light mode and da
 - Text colors:
   - default: text-slate-700
   - subtext: text-slate-500
+  - link: text-primary-500 (hover: text-primary-700)
 - Highlight color: text-primary
 ```
 
@@ -82,6 +83,7 @@ Below is a list of colors used for specific elements, both for light mode and da
 - Text colors:
   - default: text-slate-300
   - subtext: text-slate-400
+  - link: text-primary-500 (hover: text-primary-400)
 - Highlight color: text-primary-500
 ```
 

@@ -4,6 +4,7 @@ import { ProposalResources } from './ProposalResources';
 
 const meta: Meta<typeof ProposalResources> = {
   component: ProposalResources,
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -22,5 +23,12 @@ export const Primary: Story = {
         url: 'https://www.example.com/2',
       },
     ],
+  },
+};
+
+export const NoResources: Story = {
+  args: {
+    loading: false,
+    resources: [],
   },
 };
