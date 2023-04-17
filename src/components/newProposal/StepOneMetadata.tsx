@@ -137,7 +137,7 @@ export const StepOne = () => {
           </ErrorWrapper>
         </div>
         <fieldset className="flex flex-col gap-2">
-          <Label htmlFor="recources">urls and resources</Label>
+          <Label htmlFor="recources">Resources</Label>
           {resources.map((resource, index) => (
             <ResourceInput
               key={index}
