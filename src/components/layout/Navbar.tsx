@@ -40,6 +40,10 @@ const navItems: NavItem[] = [
     url: '/finance',
   },
   {
+    label: 'Verification',
+    url: '/verification',
+  },
+  {
     label: 'Settings',
     url: '/settings',
   },

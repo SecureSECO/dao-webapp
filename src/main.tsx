@@ -114,7 +114,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // If you need a route without the layout, add another object here
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
