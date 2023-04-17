@@ -15,24 +15,25 @@ import {
 import { useProvider, useSigner } from 'wagmi';
 import { Contract } from 'ethers';
 import { erc20ABI } from 'wagmi';
+import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 
 type SDKContext = {
   context?: Context;
   client?: Client;
-  votingClient?: TokenVotingClient;
+  votingClient?: DiamondGovernanceClient;
   votingPluginAddress?: string;
   repTokenContract?: Contract;
 };
 
 const AragonSDKContext = createContext<SDKContext>({});
-const votingPluginAddress = '0xfc9ef7e0ea890e86864137e49282b21a0a1f6e5e';
-const repTokenAddress = '0xdAC85cFabEF4da96D426185Ea050d9A947bE1C5f';
+const votingPluginAddress = '0x6f8029BbB95E290cDCeFBf9Feb0b53bed427229C';
+const repTokenAddress = '0x6f8029BbB95E290cDCeFBf9Feb0b53bed427229C';
 
 export function AragonSDKWrapper({ children }: any): JSX.Element {
   const [context, setContext] = useState<Context | undefined>(undefined);
   const [client, setClient] = useState<Client | undefined>(undefined);
   const [votingClient, setVotingClient] = useState<
-    TokenVotingClient | undefined
+    DiamondGovernanceClient | undefined
   >(undefined);
   const [repTokenContract, setRepTokenContract] = useState<
     Contract | undefined
@@ -44,8 +45,6 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   });
 
   useEffect(() => {
-
-
     const aragonSDKContextParams: ContextParams = {
       network: 'goerli',
       signer,
@@ -68,11 +67,11 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   }, [signer]);
 
   useEffect(() => {
-    if (!context) return;
+    if (!context || !signer) return;
     setClient(new Client(context));
-    const contextPlugin = ContextPlugin.fromContext(context);
-    setVotingClient(new TokenVotingClient(contextPlugin));
-  }, [context]);
+    // const contextPlugin = ContextPlugin.fromContext(context);
+    setVotingClient(new DiamondGovernanceClient(votingPluginAddress, signer));
+  }, [context, signer]);
 
   useEffect(() => {
     setRepTokenContract(new Contract(repTokenAddress, erc20ABI, provider));
