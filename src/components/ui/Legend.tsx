@@ -7,7 +7,7 @@
  */
 
 import { cn } from '@/src/lib/utils';
-import React, { BaseHTMLAttributes } from 'react';
+import { BaseHTMLAttributes } from 'react';
 
 interface LegendProps extends BaseHTMLAttributes<HTMLLegendElement> {}
 

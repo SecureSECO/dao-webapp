@@ -78,12 +78,6 @@ export const NoActions: Story = {
   },
 };
 
-export const Executable: Story = {
-  args: {
-    actions: dummyActions,
-  },
-};
-
 export const Loading: Story = {
   args: {
     actions: dummyActions,

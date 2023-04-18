@@ -11,10 +11,27 @@ import { Label } from '../../ui/Label';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
 import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
-import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import {
+  Control,
+  Controller,
+  UseFormRegister,
+  UseFormSetValue,
+} from 'react-hook-form';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
 import { ActionFormError, ProposalFormActions } from '../steps/Actions';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/src/components/ui/Select';
+import { useDaoBalance } from '@/src/hooks/useDaoBalance';
+import { anyNullOrUndefined } from '@/src/lib/utils';
+import TokenAmount from '@/src/components/ui/TokenAmount/TokenAmount';
 
 export type ProposalFormWithdrawData = {
   name: 'withdraw_assets';
@@ -65,13 +82,30 @@ export const WithdrawAssetsInput = ({
   prefix,
   errors,
   onRemove,
+  control,
 }: {
   register: UseFormRegister<ProposalFormActions>;
   setValue: UseFormSetValue<ProposalFormActions>;
   prefix: `actions.${number}`;
   errors: ActionFormError<ProposalFormWithdrawData>;
   onRemove: any;
+  control: Control<ProposalFormActions, any>;
 }) => {
+  // if (daoBalanceData.error) return <span> {daoBalanceData.error} </span>;
+  const { daoBalances, error, loading } = useDaoBalance({});
+  const filteredDaoBalances =
+    error || loading
+      ? []
+      : daoBalances.filter(
+          (token) =>
+            !anyNullOrUndefined(
+              token.name,
+              token.symbol,
+              token.address,
+              token.balance
+            )
+        );
+
   return (
     <MainCard
       className="flex flex-col gap-4"
@@ -113,13 +147,51 @@ export const WithdrawAssetsInput = ({
           </Label>
           {/* To be replaced with <Select> component, which is currently, conveniently located in another branch */}
           <ErrorWrapper name="Token" error={errors?.tokenAddress ?? undefined}>
-            <Input
+            <Controller
+              control={control}
+              name={`${prefix}.tokenAddress`}
+              render={({ field: { onChange, name, value } }) => (
+                <Select
+                  defaultValue={value}
+                  onValueChange={onChange}
+                  name={name}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Timezone" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Token</SelectLabel>
+                      {filteredDaoBalances.map((token, i) => (
+                        <SelectItem key={i} value={token.address ?? ''}>
+                          <div className="flex flex-row items-center gap-x-1">
+                            <p>
+                              {!token.name || token.name === ''
+                                ? 'Unknown'
+                                : token.name}{' '}
+                              -{' '}
+                            </p>
+                            <TokenAmount
+                              amount={token.balance}
+                              tokenDecimals={token.decimals}
+                              symbol={token.symbol}
+                            />
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {/* <Input
               {...register(`${prefix}.tokenAddress`, { required: true })}
               name="tokenAddress"
               pattern={AddressPattern}
               title="An address starting with 0x, followed by 40 address characters"
               error={errors?.tokenAddress ?? undefined}
-            />
+            /> */}
           </ErrorWrapper>
         </div>
         <div className="flex flex-col gap-y-1">

@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React from 'react';
 import {
   useForm,
   useFieldArray,
@@ -107,6 +106,7 @@ export const Actions = () => {
                             errors.actions ? errors.actions[index] : undefined
                           }
                           onRemove={() => remove(index)}
+                          control={control}
                         />
                       );
                     case 'mint_tokens':

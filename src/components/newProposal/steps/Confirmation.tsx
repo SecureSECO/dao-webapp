@@ -96,7 +96,6 @@ export const Confirmation = () => {
           {/* View actions */}
           <ProposalActions
             actions={actions}
-            variant="light"
             className="bg-slate-100 dark:bg-slate-700/50"
           />
         </div>
