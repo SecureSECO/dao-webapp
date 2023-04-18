@@ -61,7 +61,7 @@ export const MintTokensAction = ({
         />
       }
     >
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 justify-start gap-2 ">
         <Label tooltip="Address of the wallet to receive the tokens">
           Address
         </Label>
@@ -112,9 +112,10 @@ const MintListItem = ({
         title="An address starting with 0x, followed by 40 address characters"
         pattern={AddressPattern}
         className="w-full basis-2/5"
+        placeholder="0x..."
       />
     </ErrorWrapper>
-    <div className="flex w-full flex-row items-center gap-2">
+    <div className="flex w-full flex-row gap-2">
       <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
         <Input
           {...register(`${prefix}.amount`, { required: true })}

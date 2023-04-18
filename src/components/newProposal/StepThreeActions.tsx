@@ -18,7 +18,7 @@ import {
 import {
   ActionFormData,
   StepThreeData,
-  emptyMintTokenForm as emptyMintTokensForm,
+  emptyMintTokensForm,
   emptyWithdrawForm,
 } from './newProposalData';
 import {
@@ -36,6 +36,7 @@ import {
 } from '@/src/components/ui/Dropdown';
 import { Button } from '@/src/components/ui/Button';
 import { HiBanknotes, HiCircleStack, HiPlus } from 'react-icons/hi2';
+import { Label } from '@/src/components/ui/Label';
 
 export const StepThree = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
@@ -67,54 +68,58 @@ export const StepThree = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <div className="flex flex-col">
-        <p>Actions</p>
-        {fields.length === 0 ? (
-          <p className="italic text-slate-500 dark:text-slate-400">
-            No actions
-          </p>
-        ) : (
-          <>
-            {/* List of proposal actions */}
-            <div className="flex flex-col gap-6">
-              {fields.map((field: Record<'id', string>, index: number) => {
-                const prefix: `actions.${number}` = `actions.${index}`;
-                const action: ActionFormData = getValues(prefix);
+      <div className="space-y-2">
+        <div className="flex flex-col gap-y-1">
+          <Label tooltip="These actions can be executed after a vote successfully passes">
+            Actions
+          </Label>
+          {fields.length === 0 ? (
+            <p className="italic text-slate-500 dark:text-slate-400">
+              No actions
+            </p>
+          ) : (
+            <>
+              {/* List of proposal actions */}
+              <div className="flex flex-col gap-6">
+                {fields.map((field: Record<'id', string>, index: number) => {
+                  const prefix: `actions.${number}` = `actions.${index}`;
+                  const action: ActionFormData = getValues(prefix);
 
-                switch (action.name) {
-                  case 'withdraw_assets':
-                    return (
-                      <WithdrawAssetsAction
-                        register={register}
-                        prefix={prefix}
-                        key={field.id}
-                        setValue={setValue}
-                        errors={
-                          errors.actions ? errors.actions[index] : undefined
-                        }
-                        onRemove={() => remove(index)}
-                      />
-                    );
-                  case 'mint_tokens':
-                    return (
-                      <MintTokensAction
-                        register={register}
-                        control={control}
-                        prefix={prefix}
-                        key={field.id}
-                        errors={
-                          errors.actions ? errors.actions[index] : undefined
-                        }
-                        onRemove={() => remove(index)}
-                      />
-                    );
-                }
-              })}
-            </div>
-          </>
-        )}
+                  switch (action.name) {
+                    case 'withdraw_assets':
+                      return (
+                        <WithdrawAssetsAction
+                          register={register}
+                          prefix={prefix}
+                          key={field.id}
+                          setValue={setValue}
+                          errors={
+                            errors.actions ? errors.actions[index] : undefined
+                          }
+                          onRemove={() => remove(index)}
+                        />
+                      );
+                    case 'mint_tokens':
+                      return (
+                        <MintTokensAction
+                          register={register}
+                          control={control}
+                          prefix={prefix}
+                          key={field.id}
+                          errors={
+                            errors.actions ? errors.actions[index] : undefined
+                          }
+                          onRemove={() => remove(index)}
+                        />
+                      );
+                  }
+                })}
+              </div>
+            </>
+          )}
+        </div>
+        <AddActionButton append={append} />
       </div>
-      <AddActionButton append={append} />
       <StepNavigator onBack={handleBack} />
     </form>
   );

@@ -83,7 +83,7 @@ export const StepOne = () => {
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="title">Title of the proposal</Label>
+          <Label htmlFor="title">Title</Label>
           <ErrorWrapper name="Title" error={errors.title}>
             <Input
               {...register('title', { required: true })}

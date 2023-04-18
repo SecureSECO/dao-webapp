@@ -125,7 +125,7 @@ export type MintAddressAmount = {
   amount: number;
 };
 
-export const emptyMintTokenForm: ActionMintTokenFormData = {
+export const emptyMintTokensForm: ActionMintTokenFormData = {
   name: 'mint_tokens',
   wallets: [emptyMintAddressAmount],
 };
