@@ -175,7 +175,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
         ))}
       </div>
       <div className="flex items-center gap-x-1 text-xs">
-        <span className="text-gray-500 dark:text-slate-400">Published by</span>
+        <span className="text-slate-500 dark:text-slate-400">Published by</span>
         <Address
           address={creatorAddress}
           maxLength={AddressLength.Medium}

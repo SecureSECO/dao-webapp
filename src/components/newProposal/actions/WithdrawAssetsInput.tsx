@@ -12,10 +12,49 @@ import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
 import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
-import { ActionWithdrawFormData, StepThreeData } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import { ActionFormError } from '../steps/Actions';
+import { ActionFormError, ProposalFormActions } from '../steps/Actions';
+
+export type ProposalFormWithdrawData = {
+  name: 'withdraw_assets';
+  recipient: string;
+  tokenAddress: string;
+  amount: string;
+};
+
+export type ProposalFormWithdraw = {
+  amount: number;
+  name: 'withdraw_assets';
+  to: string;
+  tokenAddress: string;
+  tokenBalance: number;
+  tokenDecimals: number;
+  tokenImgUrl: string;
+  tokenName: string;
+  tokenSymbol: string;
+  isCustomToken: boolean;
+};
+
+export const emptyWithdrawData: ProposalFormWithdrawData = {
+  name: 'withdraw_assets',
+  recipient: '',
+  tokenAddress: '',
+  amount: '',
+};
+
+export const emptyWithdraw: ProposalFormWithdraw = {
+  amount: 0,
+  name: 'withdraw_assets',
+  to: '',
+  tokenAddress: '',
+  tokenBalance: 0,
+  tokenDecimals: 0,
+  tokenImgUrl: '',
+  tokenName: '',
+  tokenSymbol: '',
+  isCustomToken: true,
+};
 
 /**
  * @returns Component to be used within a form to describe the action of withdrawing assets.
@@ -27,10 +66,10 @@ export const WithdrawAssetsInput = ({
   errors,
   onRemove,
 }: {
-  register: UseFormRegister<StepThreeData>;
-  setValue: UseFormSetValue<StepThreeData>;
+  register: UseFormRegister<ProposalFormActions>;
+  setValue: UseFormSetValue<ProposalFormActions>;
   prefix: `actions.${number}`;
-  errors: ActionFormError<ActionWithdrawFormData>;
+  errors: ActionFormError<ProposalFormWithdrawData>;
   onRemove: any;
 }) => {
   return (

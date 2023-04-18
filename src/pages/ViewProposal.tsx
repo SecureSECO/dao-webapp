@@ -117,7 +117,6 @@ const ViewProposal = () => {
       {/* Back button */}
       <Link
         to="/governance"
-        type="button"
         icon={HiChevronLeft}
         variant="outline"
         label="All proposals"
@@ -150,7 +149,7 @@ const ViewProposal = () => {
                     {proposal.metadata.summary}
                   </p>
                   <div className="flex items-center gap-x-1 text-sm">
-                    <span className="text-gray-500 dark:text-slate-400">
+                    <span className="text-slate-500 dark:text-slate-400">
                       Published by
                     </span>
                     <Address
@@ -172,7 +171,17 @@ const ViewProposal = () => {
                   refetch={refetch}
                 />
 
-                <ProposalActions loading={loading} actions={proposal?.actions}>
+                <ProposalActions
+                  loading={loading}
+                  // Will be replaced with proper actions when switching to custom SDK
+                  actions={proposal?.actions.map(() => {
+                    return {
+                      method: '',
+                      interface: '',
+                      params: {},
+                    };
+                  })}
+                >
                   {/* Execute button */}
                   {canExecute &&
                     proposal?.actions &&

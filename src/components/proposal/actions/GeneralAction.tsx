@@ -5,6 +5,14 @@ import {
 import { ReactNode, createElement } from 'react';
 import { IconType } from 'react-icons';
 
+/**
+ * General wrapper for a proposal action that includes an icon and title inside of an accordion
+ * @param props.icon Icon to show in the AccordionTrigger
+ * @param props.title Title to show in the AccordionTrigger
+ * @param props.subtitle Subtitle to show in the AccordionTrigger
+ * @param props.children Children to show in the AccordionContent
+ * @returns A wrapper for a proposal action constituting an AccordionTrigger and AccordionContent component
+ */
 const GeneralAction = ({
   icon,
   title,

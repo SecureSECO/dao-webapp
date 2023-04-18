@@ -20,12 +20,6 @@ import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import {
-  EndTimeType,
-  StartTimeType,
-  StepTwoData,
-  VoteOption,
-} from '../newProposalData';
 import { Card } from '@/src/components/ui/Card';
 import { TimezoneSelector } from '@/src/components/ui/TimeZoneSelector';
 import { useVotingSettings } from '@/src/hooks/useVotingSettings';
@@ -39,6 +33,27 @@ import {
   isGapEnough,
   timezoneOffsetDifference,
 } from '@/src/lib/date-utils';
+import { Label } from '@/src/components/ui/Label';
+import Legend from '@/src/components/ui/Legend';
+
+export type ProposalFormVotingSettings = {
+  option: VoteOption;
+  start_time_type: StartTimeType;
+  end_time_type: EndTimeType;
+  duration_minutes?: number;
+  duration_hours?: number;
+  duration_days?: number;
+  custom_end_date?: string;
+  custom_end_time?: string;
+  custom_end_timezone?: string;
+  custom_start_date?: string;
+  custom_start_time?: string;
+  custom_start_timezone?: string;
+};
+
+export type VoteOption = 'yes-no-abstain';
+export type StartTimeType = 'now' | 'custom';
+export type EndTimeType = 'duration' | 'end-custom';
 
 export const Voting = () => {
   const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
@@ -53,7 +68,7 @@ export const Voting = () => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<StepTwoData>({
+  } = useForm<ProposalFormVotingSettings>({
     defaultValues: dataStep2 ?? {
       //Defaut values for when the user first opens the form.
       option: 'yes-no-abstain',
@@ -73,7 +88,7 @@ export const Voting = () => {
     },
   });
 
-  const onSubmit = (data: StepTwoData) => {
+  const onSubmit = (data: ProposalFormVotingSettings) => {
     console.log(data);
     setStep(3);
     setDataStep2(data);
@@ -106,12 +121,12 @@ export const Voting = () => {
 export const VotingOption = ({
   control,
 }: {
-  register: UseFormRegister<StepTwoData>;
-  control: Control<StepTwoData, any>;
+  register: UseFormRegister<ProposalFormVotingSettings>;
+  control: Control<ProposalFormVotingSettings, any>;
 }) => {
   return (
     <fieldset className="space-y-1">
-      <legend>Options</legend>
+      <Legend>Options</Legend>
       <Controller
         control={control}
         name="option"
@@ -135,16 +150,16 @@ export const StartTime = ({
   control,
   errors,
 }: {
-  register: UseFormRegister<StepTwoData>;
-  control: Control<StepTwoData, any>;
-  errors: FieldErrors<StepTwoData>;
+  register: UseFormRegister<ProposalFormVotingSettings>;
+  control: Control<ProposalFormVotingSettings, any>;
+  errors: FieldErrors<ProposalFormVotingSettings>;
 }) => {
   //watch the start time type so that the custom start time input can be hidden when the user selects "now"
   const { startTimeType, startDate } = getWatchers(control);
 
   return (
     <fieldset className="space-y-1">
-      <legend>Start time</legend>
+      <Legend>Start time</Legend>
       <div className=" space-y-2">
         <Controller
           control={control}
@@ -190,7 +205,7 @@ export const StartTime = ({
               error={errors.custom_start_time}
             />
             <div className="w-full">
-              <label htmlFor="custom_start_timezone">Timezone</label>
+              <Label htmlFor="custom_start_timezone">Timezone</Label>
               <TimezoneSelector
                 id="custom_start_timezone"
                 control={control}
@@ -210,9 +225,9 @@ export const EndTime = ({
   control,
   errors,
 }: {
-  register: UseFormRegister<StepTwoData>;
-  control: Control<StepTwoData, any>;
-  errors: FieldErrors<StepTwoData>;
+  register: UseFormRegister<ProposalFormVotingSettings>;
+  control: Control<ProposalFormVotingSettings, any>;
+  errors: FieldErrors<ProposalFormVotingSettings>;
 }) => {
   // getWatchers for minEndDate and minEndTime calculations (and also max)
   const {
@@ -266,7 +281,7 @@ export const EndTime = ({
 
   return (
     <fieldset className="space-y-1">
-      <legend>End time</legend>
+      <Legend>End time</Legend>
       <div className="space-y-2">
         <Controller
           control={control}
@@ -378,7 +393,7 @@ export const EndTime = ({
                 error={errors.custom_end_time}
               />
               <div className="w-full">
-                <label htmlFor="custom_end_timezone">Timezone</label>
+                <Label htmlFor="custom_end_timezone">Timezone</Label>
                 <TimezoneSelector
                   id={'custom_end_timezone'}
                   control={control}
@@ -394,7 +409,7 @@ export const EndTime = ({
   );
 };
 
-function getWatchers(control: Control<StepTwoData, any>) {
+function getWatchers(control: Control<ProposalFormVotingSettings, any>) {
   const endTimeType = useWatch({
     control,
     name: 'end_time_type',

@@ -10,21 +10,63 @@ import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import { Input } from '../../ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
-import {
-  Control,
-  FieldErrors,
-  UseFormRegister,
-  useFieldArray,
-} from 'react-hook-form';
-import {
-  ActionMintTokenFormData,
-  MintAddressAmount,
-  StepThreeData,
-} from '../newProposalData';
+import { Control, UseFormRegister, useFieldArray } from 'react-hook-form';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import { ActionFormError } from '../steps/Actions';
+import { ActionFormError, ProposalFormActions } from '../steps/Actions';
 import { Label } from '@/src/components/ui/Label';
+
+export type ProposalFormMint = {
+  name: 'mint_tokens';
+  inputs: {
+    mintTokensToWallets: {
+      address: string;
+      amount: string | number;
+    }[];
+  };
+  summary: {
+    newTokens: number;
+    tokenSupply: number;
+    newHoldersCount: number;
+    daoTokenSymbol: string;
+    daoTokenAddress: string;
+    totalMembers?: number;
+  };
+};
+
+export const emptyMintAction: ProposalFormMint = {
+  name: 'mint_tokens',
+  inputs: {
+    mintTokensToWallets: [{ address: '', amount: 0 }],
+  },
+  summary: {
+    newTokens: 0,
+    tokenSupply: 0,
+    newHoldersCount: 0,
+    daoTokenSymbol: '',
+    daoTokenAddress: '',
+  },
+};
+
+export type ProposalFormMintData = {
+  name: 'mint_tokens';
+  wallets: ProposalFormMintWallet[];
+};
+
+export type ProposalFormMintWallet = {
+  address: string;
+  amount: number;
+};
+
+export const emptyMintWallet: ProposalFormMintWallet = {
+  address: '',
+  amount: 0,
+};
+
+export const emptyMintData: ProposalFormMintData = {
+  name: 'mint_tokens',
+  wallets: [emptyMintWallet],
+};
 
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.
@@ -36,10 +78,10 @@ export const MintTokensInput = ({
   errors,
   onRemove,
 }: {
-  register: UseFormRegister<StepThreeData>;
-  control: Control<StepThreeData>;
+  register: UseFormRegister<ProposalFormActions>;
+  control: Control<ProposalFormActions>;
   prefix: `actions.${number}`;
-  errors: ActionFormError<ActionMintTokenFormData>;
+  errors: ActionFormError<ProposalFormMintData>;
   onRemove: () => void;
 }) => {
   const { fields, append, remove } = useFieldArray({
@@ -99,7 +141,7 @@ const MintListItem = ({
 }: {
   register: any;
   onRemove: () => void;
-  errors: ActionFormError<MintAddressAmount>;
+  errors: ActionFormError<ProposalFormMintWallet>;
   prefix: `actions.${number}.wallets.${number}`;
 }) => (
   <>

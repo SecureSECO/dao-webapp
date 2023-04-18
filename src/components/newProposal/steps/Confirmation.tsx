@@ -13,10 +13,6 @@ import {
 import DOMPurify from 'dompurify';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
-import {
-  ActionFormData,
-  StepTwoData,
-} from '@/src/components/newProposal/newProposalData';
 import { add, format } from 'date-fns';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
@@ -24,13 +20,15 @@ import ProposalActions, {
   IProposalAction,
 } from '@/src/components/proposal/ProposalActions';
 import { inputToDate } from '@/src/lib/date-utils';
+import { ProposalFormAction } from '@/src/components/newProposal/steps/Actions';
+import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
 
   // Map the actions to the IProposalAction interface
   const actions: IProposalAction[] = dataStep3
-    ? dataStep3?.actions.map((action: ActionFormData) => {
+    ? dataStep3?.actions.map((action: ProposalFormAction) => {
         switch (action.name) {
           case 'withdraw_assets':
             return {
@@ -126,7 +124,7 @@ export const Confirmation = () => {
                       key={item.label}
                       className="flex flex-row justify-between gap-x-2"
                     >
-                      <p className="text-gray-500 dark:text-slate-400">
+                      <p className="text-slate-500 dark:text-slate-400">
                         {item.label}
                       </p>
                       <p className="text-primary-300 dark:text-primary-400">
@@ -150,7 +148,7 @@ export const Confirmation = () => {
  * @param data The StepTwoData
  * @returns A JSON object for summarizing step two data
  */
-const getCategories = (data: StepTwoData) => {
+const getCategories = (data: ProposalFormVotingSettings) => {
   // Convert start date to correct string
   let startDate;
   if (data.start_time_type === 'now') startDate = 'now';

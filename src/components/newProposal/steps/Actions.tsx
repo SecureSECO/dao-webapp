@@ -16,17 +16,19 @@ import {
   Merge,
 } from 'react-hook-form';
 import {
-  ActionFormData,
-  StepThreeData,
-  emptyMintTokensForm,
-  emptyWithdrawForm,
-} from '../newProposalData';
-import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import { WithdrawAssetsInput } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
-import { MintTokensInput } from '@/src/components/newProposal/actions/MintTokensInput';
+import {
+  ProposalFormWithdrawData,
+  WithdrawAssetsInput,
+  emptyWithdrawData,
+} from '@/src/components/newProposal/actions/WithdrawAssetsInput';
+import {
+  MintTokensInput,
+  ProposalFormMintData,
+  emptyMintData,
+} from '@/src/components/newProposal/actions/MintTokensInput';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +40,14 @@ import { Button } from '@/src/components/ui/Button';
 import { HiBanknotes, HiCircleStack, HiPlus } from 'react-icons/hi2';
 import { Label } from '@/src/components/ui/Label';
 
+export interface ProposalFormActions {
+  actions: ProposalFormAction[];
+}
+
+export type ProposalFormAction =
+  | ProposalFormWithdrawData
+  | ProposalFormMintData;
+
 export const Actions = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
 
@@ -48,14 +58,14 @@ export const Actions = () => {
     setValue,
     getValues,
     control,
-  } = useForm<StepThreeData>({ defaultValues: dataStep3 });
+  } = useForm<ProposalFormActions>({ defaultValues: dataStep3 });
 
-  const { fields, append, remove } = useFieldArray<StepThreeData>({
+  const { fields, append, remove } = useFieldArray<ProposalFormActions>({
     name: 'actions',
     control: control,
   });
 
-  const onSubmit = (data: StepThreeData) => {
+  const onSubmit = (data: ProposalFormActions) => {
     console.log(data);
     setDataStep3(data);
     setStep(4);
@@ -83,7 +93,7 @@ export const Actions = () => {
               <div className="flex flex-col gap-6">
                 {fields.map((field: Record<'id', string>, index: number) => {
                   const prefix: `actions.${number}` = `actions.${index}`;
-                  const action: ActionFormData = getValues(prefix);
+                  const action: ProposalFormAction = getValues(prefix);
 
                   switch (action.name) {
                     case 'withdraw_assets':
@@ -137,7 +147,7 @@ export const AddActionButton = ({
   append,
 }: {
   // eslint-disable-next-line no-unused-vars
-  append: (fn: ActionFormData) => void;
+  append: (fn: ProposalFormAction) => void;
 }) => {
   return (
     <DropdownMenu>
@@ -147,14 +157,14 @@ export const AddActionButton = ({
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <DropdownMenuItem
-            onClick={() => append(emptyWithdrawForm)}
+            onClick={() => append(emptyWithdrawData)}
             className="gap-x-2 hover:cursor-pointer"
           >
             <HiBanknotes className="h-5 w-5 shrink-0" />
             <span>Withdraw assets</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => append(emptyMintTokensForm)}
+            onClick={() => append(emptyMintData)}
             className="gap-x-2 hover:cursor-pointer"
           >
             <HiCircleStack className="h-5 w-5 shrink-0" />

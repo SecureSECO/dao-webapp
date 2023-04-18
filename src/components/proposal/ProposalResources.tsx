@@ -13,8 +13,9 @@
 
 import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
 import { DefaultMainCardHeader, MainCard } from '../ui/MainCard';
-import { Resource } from '../newProposal/newProposalData';
 import { Card } from '@/src/components/ui/Card';
+import { ProposalResource } from '@/src/hooks/useProposal';
+
 /**
  * MainCard component for displaying resources
  * @param props.resources List of resources to be displayed in the card
@@ -25,7 +26,7 @@ export const ProposalResources = ({
   loading = false,
   className,
 }: {
-  resources: Resource[] | undefined;
+  resources: ProposalResource[] | undefined;
   loading?: boolean;
   className?: string;
 }) => {

@@ -108,7 +108,7 @@ export const Address: React.FC<AddressProps> = ({
       {showCopy && (
         <button
           onClick={handleClick}
-          className="ml-2 text-gray-500 hover:text-gray-700"
+          className="ml-2 text-slate-500 hover:text-gray-700"
         >
           <HiClipboardCopy size={18} />
         </button>

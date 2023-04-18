@@ -7,13 +7,10 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Actions } from './Actions';
+import { Actions, ProposalFormActions } from './Actions';
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
-import {
-  StepThreeData,
-  emptyMintTokenForm,
-  emptyWithdrawForm,
-} from '../newProposalData';
+import { emptyWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
+import { emptyMintData } from '@/src/components/newProposal/actions/MintTokensInput';
 
 const meta: Meta<typeof Actions> = {
   component: Actions,
@@ -22,7 +19,7 @@ const meta: Meta<typeof Actions> = {
 export default meta;
 type Story = StoryObj<typeof Actions>;
 
-const FormProviderDecoratorFactory = (data: StepThreeData): any => {
+const FormProviderDecoratorFactory = (data: ProposalFormActions): any => {
   // eslint-disable-next-line react/display-name
   return (Story: any) => (
     <NewProposalFormProvider step={3} dataStep3={data}>
@@ -32,14 +29,14 @@ const FormProviderDecoratorFactory = (data: StepThreeData): any => {
 };
 
 const emptyActions = {
-  actions: [emptyMintTokenForm, emptyWithdrawForm],
+  actions: [emptyMintData, emptyWithdrawData],
 };
 
 export const Primary: Story = {
   decorators: [FormProviderDecoratorFactory(emptyActions)],
 };
 
-const mintTokensAction: StepThreeData = {
+const mintTokensAction: ProposalFormActions = {
   actions: [
     { name: 'mint_tokens', wallets: [{ address: '0x123', amount: 1 }] },
   ],

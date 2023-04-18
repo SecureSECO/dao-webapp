@@ -17,6 +17,11 @@ export type ProposalMintAction = IProposalAction & {
   };
 };
 
+/**
+ * Shows the details of a mint action
+ * @param props.action Action of type ProposalMintAction to be shown
+ * @returns Details of a mint action wrapped in a GeneralAction component
+ */
 const MintAction = ({ action }: { action: ProposalMintAction }) => {
   return (
     <GeneralAction icon={HiCircleStack} title="Mint tokens">
@@ -35,7 +40,7 @@ const MintAction = ({ action }: { action: ProposalMintAction }) => {
                 showCopy={false}
                 replaceYou={false}
               />
-              <p className="text-gray-500 ">
+              <p className="text-slate-500 ">
                 {toAbbreviatedTokenAmount(
                   item.amount,
                   CHAIN_METADATA.rep.nativeCurrency.decimals,

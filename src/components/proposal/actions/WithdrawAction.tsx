@@ -11,6 +11,11 @@ export type ProposalWithdrawAction = IProposalAction & {
   };
 };
 
+/**
+ * Shows the details of a withdraw assets action
+ * @param props.action Action of type ProposalWithdrawAction to be shown
+ * @returns Details of a withdraw assets action wrapped in a GeneralAction component
+ */
 const WithdrawAction = ({ action }: { action: ProposalWithdrawAction }) => {
   return (
     <GeneralAction icon={HiBanknotes} title="Mint tokens">
