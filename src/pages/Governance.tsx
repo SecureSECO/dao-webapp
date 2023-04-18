@@ -43,7 +43,6 @@ const Governance = () => {
             to="/governance/new-proposal"
             variant="default"
             label="New proposal"
-            onClick={() => console.log('New Proposal Clicked')}
           />
         }
       />

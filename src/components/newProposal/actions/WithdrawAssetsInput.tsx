@@ -8,13 +8,6 @@
 
 import { Input } from '../../ui/Input';
 import { Label } from '../../ui/Label';
-import { useDaoBalance } from '@/src/hooks/useDaoBalance';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-} from '../../ui/Dialog';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
 import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
@@ -22,13 +15,12 @@ import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { ActionWithdrawFormData, StepThreeData } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import { TokenSelectorDialogButtons } from './ui/TokenSelectorDialogButtons';
 import { ActionFormError } from '../StepThreeActions';
 
 /**
  * @returns Component to be used within a form to describe the action of withdrawing assets.
  */
-export const WithdrawAssetsAction = ({
+export const WithdrawAssetsInput = ({
   register,
   setValue,
   prefix,
@@ -41,11 +33,6 @@ export const WithdrawAssetsAction = ({
   errors: ActionFormError<ActionWithdrawFormData>;
   onRemove: any;
 }) => {
-  const daoBalanceData = useDaoBalance({});
-
-  const handleSetTokenAddress = (value: string) =>
-    setValue(`${prefix}.tokenAddress`, value);
-
   return (
     <MainCard
       className="flex flex-col gap-4"

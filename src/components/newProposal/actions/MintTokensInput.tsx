@@ -29,7 +29,7 @@ import { Label } from '@/src/components/ui/Label';
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.
  */
-export const MintTokensAction = ({
+export const MintTokensInput = ({
   register,
   control,
   prefix,

@@ -25,8 +25,8 @@ import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import { WithdrawAssetsAction } from '@/src/components/newProposal/actions/WithdrawAssetsAction';
-import { MintTokensAction } from '@/src/components/newProposal/actions/MintTokensAction';
+import { WithdrawAssetsInput } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
+import { MintTokensInput } from '@/src/components/newProposal/actions/MintTokensInput';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -88,7 +88,7 @@ export const StepThree = () => {
                   switch (action.name) {
                     case 'withdraw_assets':
                       return (
-                        <WithdrawAssetsAction
+                        <WithdrawAssetsInput
                           register={register}
                           prefix={prefix}
                           key={field.id}
@@ -101,7 +101,7 @@ export const StepThree = () => {
                       );
                     case 'mint_tokens':
                       return (
-                        <MintTokensAction
+                        <MintTokensInput
                           register={register}
                           control={control}
                           prefix={prefix}

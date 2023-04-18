@@ -112,7 +112,7 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
   const isLastStep = step === totalSteps;
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
       <Button onClick={handlePrevStep} type="button" disabled={step === 1}>
         Back
       </Button>
