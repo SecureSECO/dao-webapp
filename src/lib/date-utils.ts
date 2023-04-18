@@ -101,6 +101,14 @@ export function timezoneOffsetDifference(
   return sign1 * timezone1OffsetMinutes - sign2 * timezone2OffsetMinutes;
 }
 
+/**
+ * @param startDate The start date in the format "yyyy-MM-dd"
+ * @param startTime The start time in the format "HH:mm"
+ * @param endDate The end date in the format "yyyy-MM-dd"
+ * @param endTime The end time in the format "HH:mm"
+ * @param minDurationSeconds The minimum duration in seconds
+ * @returns Whether the gap between the start and end date is at least minDurationSeconds seconds (boolean)
+ */
 export function isGapEnough(
   startDate: string,
   startTime: string,
