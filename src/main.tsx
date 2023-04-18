@@ -8,6 +8,7 @@
 
 import ErrorPage from './pages/ErrorPage';
 import Governance from './pages/Governance';
+import Query from './pages/Query';
 import Dashboard from './pages/Dashboard';
 import Layout from './components/layout/Layout';
 import React from 'react';
@@ -107,6 +108,10 @@ const router = createBrowserRouter([
             element: <FinishVerification />,
           },
         ],
+      },
+      {
+        path: '/query',
+        element: <Query />,
       },
       {
         path: '/settings',
