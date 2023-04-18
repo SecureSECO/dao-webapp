@@ -24,8 +24,8 @@ export function getDurationDateAhead(
   startDate?: string
 ) {
   const today = new Date(startDate ?? getTodayDateString());
-  const twoDaysAhead = add(today, { seconds: durationSeconds });
-  return format(twoDaysAhead, 'yyyy-MM-dd');
+  const durationAhead = add(today, { seconds: durationSeconds });
+  return format(durationAhead, 'yyyy-MM-dd');
 }
 
 // returns the time in string format that is 10 minutes ahead of the current time. (for some leadway while someone is filling out the form)
