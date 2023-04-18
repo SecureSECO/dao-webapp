@@ -14,6 +14,7 @@
 import * as React from 'react';
 import { cn } from '@/src/lib/utils';
 import { FieldError } from 'react-hook-form';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 
 /**
  * InputProps interface represents the props for the Input component.
@@ -52,4 +53,33 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = 'Input';
 
-export { Input };
+export interface LabelledInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  id: string;
+  label: string;
+  error?: FieldError;
+}
+
+const LabelledInput = React.forwardRef<HTMLInputElement, LabelledInputProps>(
+  ({ id, label, error, className, ...props }, ref) => {
+    return (
+      <div className="w-full">
+        <label htmlFor={id}>{label}</label>
+        <ErrorWrapper name={label} error={error}>
+          <Input
+            ref={ref}
+            id={id}
+            error={error}
+            placeholder={label}
+            {...props}
+            className={cn('w-full text-center', className)}
+          />
+        </ErrorWrapper>
+      </div>
+    );
+  }
+);
+
+LabelledInput.displayName = 'LabelledInput';
+
+export { Input, LabelledInput };
