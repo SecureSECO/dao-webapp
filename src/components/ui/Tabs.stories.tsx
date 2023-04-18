@@ -70,28 +70,4 @@ export const Primary: Story = {
       </>
     ),
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    // For documentation on queries on the canvas, see: https://testing-library.com/docs/queries/byplaceholdertext
-    const name = canvas.getByText('Name').nextSibling as Element;
-    const username = canvas.getByText('Username').nextSibling as Element;
-    const d = 10;
-
-    userEvent.clear(name);
-    userEvent.type(name, 'Firstname2, Lastname2', { delay: d });
-    userEvent.clear(username);
-    userEvent.type(username, 'username', { delay: d });
-    userEvent.click(canvas.getByText('Save changes'));
-
-    // move to next tab
-    userEvent.click(canvas.getByText('Password'));
-    const curPass = canvas.getByText('Current password').nextSibling as Element;
-    const newPass = canvas.getByText('New password').nextSibling as Element;
-    userEvent.clear(curPass);
-    userEvent.type(curPass, 'Old Password', { delay: d });
-    userEvent.clear(newPass);
-    userEvent.type(newPass, 'New Password that is a lot longer', {
-      delay: d,
-    });
-  },
 };
