@@ -12,14 +12,18 @@ import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import {
-  ProposalFormMetadata,
   ProposalFormVotingSettings,
-} from '../components/newProposal/newProposalData';
-import { Voting } from '../components/newProposal/steps/Voting';
-import { Actions } from '../components/newProposal/steps/Actions';
-import { Metadata } from '../components/newProposal/steps/Metadata';
+  Voting,
+} from '../components/newProposal/steps/Voting';
+import {
+  Actions,
+  ProposalFormActions,
+} from '../components/newProposal/steps/Actions';
+import {
+  Metadata,
+  ProposalFormMetadata,
+} from '../components/newProposal/steps/Metadata';
 import { Confirmation } from '../components/newProposal/steps/Confirmation';
-import { ProposalFormActions } from '../components/newProposal/newProposalData';
 import { Link } from '@/src/components/ui/Link';
 import { HiChevronLeft } from 'react-icons/hi2';
 
