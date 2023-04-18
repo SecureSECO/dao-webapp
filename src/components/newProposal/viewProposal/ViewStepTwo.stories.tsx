@@ -10,9 +10,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ViewStepTwo } from './ViewStepTwo';
 import {
   getDurationDateAhead,
+  getTimeIn10Minutes,
+  getTodayDateString,
   getUserTimezone,
-  timeString,
-  todayDateString,
 } from '@/src/lib/date-utils';
 
 const meta: Meta<typeof ViewStepTwo> = {
@@ -42,14 +42,14 @@ export const CustomDates: Story = {
       option: 'yes-no-abstain',
       start_time_type: 'custom',
       end_time_type: 'duration',
-      custom_start_time: timeString,
-      custom_start_date: todayDateString,
+      custom_start_time: getTimeIn10Minutes(),
+      custom_start_date: getTodayDateString(),
       custom_start_timezone: getUserTimezone(),
       duration_days: 7,
       duration_hours: 0,
       duration_minutes: 0,
       custom_end_date: getDurationDateAhead(24 * 60 * 60),
-      custom_end_time: timeString,
+      custom_end_time: getTimeIn10Minutes(),
       custom_end_timezone: getUserTimezone(),
     },
   },

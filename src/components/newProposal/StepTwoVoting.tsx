@@ -32,12 +32,12 @@ import { useVotingSettings } from '@/src/hooks/useVotingSettings';
 import { add, format, isToday } from 'date-fns';
 import {
   getDurationDateAhead,
+  getTimeIn10Minutes,
+  getTodayDateString,
   getUserTimezone,
   inputToDate,
   isGapEnough,
-  timeString,
   timezoneOffsetDifference,
-  todayDateString,
 } from '@/src/lib/date-utils';
 
 export const StepTwo = () => {
@@ -59,8 +59,8 @@ export const StepTwo = () => {
       option: 'yes-no-abstain',
       start_time_type: 'now',
       end_time_type: 'duration',
-      custom_start_time: timeString,
-      custom_start_date: todayDateString,
+      custom_start_time: getTimeIn10Minutes(),
+      custom_start_date: getTodayDateString(),
       custom_start_timezone: getUserTimezone(),
       duration_days: 7,
       duration_hours: 0,
@@ -68,7 +68,7 @@ export const StepTwo = () => {
       custom_end_date: getDurationDateAhead(
         settings ? settings.minDuration : 24 * 60 * 60
       ),
-      custom_end_time: timeString,
+      custom_end_time: getTimeIn10Minutes(),
       custom_end_timezone: getUserTimezone(),
     },
   });
@@ -176,7 +176,7 @@ export const StartTime = ({
               type="date"
               label="Date"
               {...register('custom_start_date', { required: true })}
-              min={todayDateString} //the minimum date is today, cannot start in the past
+              min={getTodayDateString()} //the minimum date is today, cannot start in the past
               error={errors.custom_start_date}
             />
             <LabelledInput
@@ -184,7 +184,9 @@ export const StartTime = ({
               type="time"
               label="Time"
               {...register('custom_start_time', { required: true })}
-              min={isToday(new Date(startDate!)) ? timeString : '00:00'} //the minimum time is now (+10 minutes, so you have some more time to fill in the form, get), cannot start in the past
+              min={
+                isToday(new Date(startDate!)) ? getTimeIn10Minutes() : '00:00'
+              } //the minimum time is now (+10 minutes, so you have some more time to fill in the form, get), cannot start in the past
               error={errors.custom_start_time}
             />
             <div className="w-full">

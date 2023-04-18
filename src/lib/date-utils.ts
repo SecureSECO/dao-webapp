@@ -11,23 +11,27 @@
  * mainly used for step 2 of the new proposal form.
  */
 
-import { add, format, isBefore, isToday, parse } from 'date-fns';
+import { add, format, isBefore, parse } from 'date-fns';
 
 //Today's date in yyyy-MM-dd format for the default value and minimum valuable in the forms later.
-export const todayDateString = format(new Date(), 'yyyy-MM-dd');
+export function getTodayDateString() {
+  return format(new Date(), 'yyyy-MM-dd');
+}
 
 // Returns the date in yyyy-MM-dd format that is durationSeconds seconds ahead of the startDate, or now if startDate is not provided.
 export function getDurationDateAhead(
   durationSeconds: number,
   startDate?: string
 ) {
-  const today = new Date(startDate ?? todayDateString);
+  const today = new Date(startDate ?? getTodayDateString());
   const twoDaysAhead = add(today, { seconds: durationSeconds });
   return format(twoDaysAhead, 'yyyy-MM-dd');
 }
 
 // returns the time in string format that is 10 minutes ahead of the current time. (for some leadway while someone is filling out the form)
-export const timeString = format(add(new Date(), { minutes: 10 }), 'HH:mm');
+export function getTimeIn10Minutes(): string {
+  return format(add(new Date(), { minutes: 10 }), 'HH:mm');
+}
 
 /**
  * @param date The date in yyyy-MM-dd format
