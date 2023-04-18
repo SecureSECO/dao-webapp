@@ -29,7 +29,12 @@ export function getDurationDateAhead(
 // returns the time in string format that is 10 minutes ahead of the current time. (for some leadway while someone is filling out the form)
 export const timeString = format(add(new Date(), { minutes: 10 }), 'HH:mm');
 
-// Convert the timezone string to the IANA timezone format
+/**
+ * @param date The date in yyyy-MM-dd format
+ * @param time The time in HH:mm format
+ * @param timezone The timezone string in the format "UTC±HH:mm"
+ * @returns  The date as a Date object in the format "yyyy-MM-dd'T'HH:mm:ssxxx"
+ */
 export function inputToDate(
   date: string,
   time: string,
