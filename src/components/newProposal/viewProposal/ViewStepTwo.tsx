@@ -87,11 +87,14 @@ function getStartDate(data: StepTwoData): string {
     data.custom_start_time &&
     data.custom_start_timezone
   ) {
-    return inputToDate(
-      data.custom_start_date,
-      data.custom_start_time,
-      data.custom_start_timezone
-    ).toISOString();
+    return format(
+      inputToDate(
+        data.custom_start_date,
+        data.custom_start_time,
+        data.custom_start_timezone
+      ),
+      'Pp'
+    );
   }
   return 'N/A';
 }
