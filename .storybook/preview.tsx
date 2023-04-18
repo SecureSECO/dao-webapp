@@ -17,7 +17,7 @@ import { AragonSDKWrapper } from '../src/context/AragonSDK';
 const preview: Preview = {
   parameters: {
     backgrounds: {
-      default: 'transparent',
+      default: 'light',
       values: [
         { name: 'light', value: '#f8fafc', class: 'light' },
         { name: 'dark', value: '#0d1323', class: 'dark' },

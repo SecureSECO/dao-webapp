@@ -20,6 +20,7 @@ import TokenAmount, {
   transfertypeToSign,
 } from '../components/ui/TokenAmount/TokenAmount';
 import { useState } from 'react';
+import { Link } from '@/src/components/ui/Link';
 
 type DaoTokenProps = {
   daoBalances: DaoBalances;
@@ -176,7 +177,10 @@ const Finance = () => {
   return (
     <div>
       <div className="flex flex-col gap-6">
-        <HeaderCard title="Finance" aside={<Button label="New transfer" />} />
+        <HeaderCard
+          title="Finance"
+          aside={<Link to="/governance/new-proposal" label="New transfer" />}
+        />
       </div>
       <div className="gap-4 md:grid md:grid-cols-2">
         <Card className="my-6">

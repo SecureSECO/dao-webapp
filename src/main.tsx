@@ -25,7 +25,6 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { goerli, polygon } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import Finance from '@/src/pages/Finance';
-import Community from '@/src/pages/Community';
 import Settings from '@/src/pages/Settings';
 import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import NewProposal from '@/src/pages/NewProposal';
@@ -97,10 +96,6 @@ const router = createBrowserRouter([
         element: <Finance />,
       },
       {
-        path: '/community',
-        element: <Community />,
-      },
-      {
         path: '/verification',
         children: [
           {
@@ -119,7 +114,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // If you need a route without the layout, add another object here
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

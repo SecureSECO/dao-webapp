@@ -7,12 +7,11 @@
  */
 
 import React from 'react';
-import { IconType } from 'react-icons';
 
 /**
- * @returns Icon representing activity as heart pulse
+ * @returns Icon representing a history as arrow around a clock
  */
-const Activity: IconType = (props: React.BaseHTMLAttributes<SVGElement>) => {
+const History = (props: React.BaseHTMLAttributes<SVGElement>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -26,9 +25,11 @@ const Activity: IconType = (props: React.BaseHTMLAttributes<SVGElement>) => {
       strokeLinejoin="round"
       {...props}
     >
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+      <path d="M3 3v5h5"></path>
+      <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
+      <path d="M12 7v5l4 2"></path>
     </svg>
   );
 };
 
-export default Activity;
+export default History;

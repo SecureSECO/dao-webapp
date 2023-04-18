@@ -342,12 +342,9 @@ const Verification = () => {
               </div>
             ) : isError ? (
               <div>
-                <p>
+                <p className="italic text-slate-500 dark:text-slate-400">
                   There was an error fetching your stamps. Please try again
                   later.
-                </p>
-                <p className="mt-4">
-                  Information: <code>{error?.message}</code>
                 </p>
               </div>
             ) : (
@@ -378,9 +375,15 @@ const Verification = () => {
               />
             }
           >
-            {verificationHistory?.map((history, index) => (
-              <RecentVerificationCard key={index} history={history} />
-            ))}
+            {verificationHistory.length > 0 ? (
+              verificationHistory?.map((history, index) => (
+                <RecentVerificationCard key={index} history={history} />
+              ))
+            ) : (
+              <p className="italic text-slate-500 dark:text-slate-400">
+                No verifications
+              </p>
+            )}
           </MainCard>
         </div>
       ) : (

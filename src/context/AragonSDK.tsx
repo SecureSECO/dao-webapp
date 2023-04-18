@@ -33,8 +33,8 @@ type SDKContext = {
 };
 
 const AragonSDKContext = createContext<SDKContext>({});
-const votingPluginAddress = '0xfc9ef7e0ea890e86864137e49282b21a0a1f6e5e';
-const repTokenAddress = '0xdAC85cFabEF4da96D426185Ea050d9A947bE1C5f';
+const votingPluginAddress = import.meta.env.VITE_VOTING_PLUGIN;
+const repTokenAddress = import.meta.env.VITE_REP_CONTRACT;
 
 export function AragonSDKWrapper({ children }: any): JSX.Element {
   const [context, setContext] = useState<Context | undefined>(undefined);

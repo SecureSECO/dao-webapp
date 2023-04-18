@@ -40,8 +40,8 @@ const navItems: NavItem[] = [
     url: '/finance',
   },
   {
-    label: 'Community',
-    url: '/community',
+    label: 'Verification',
+    url: '/verification',
   },
   {
     label: 'Settings',
@@ -62,7 +62,7 @@ const Navitem = ({
       to={item.url}
       className={({ isActive, isPending }) =>
         cn(
-          'rounded-md py-2 px-4 text-lg font-semibold dark:text-slate-400',
+          'rounded-md px-4 py-2 text-lg font-semibold dark:text-slate-400',
           isActive && ' text-primary shadow-md dark:text-primary-500',
           isPending && '',
           isActive && mobile && 'bg-slate-50 dark:bg-slate-700/50',
