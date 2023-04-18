@@ -107,6 +107,7 @@ export const WithdrawAssetsAction = ({
               id="amount"
               title="A number using a '.' as decimal place, e.g. '3.141'"
               pattern={NumberPattern}
+              placeholder="0"
               error={errors?.amount ?? undefined}
             />
           </ErrorWrapper>

@@ -24,6 +24,7 @@ import {
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
 import { ActionFormError } from '../StepThreeActions';
+import { Label } from '@/src/components/ui/Label';
 
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.
@@ -48,7 +49,6 @@ export const MintTokensAction = ({
 
   return (
     <MainCard
-      className="flex flex-col gap-4"
       header="Mint tokens"
       variant="light"
       icon={HiCircleStack}
@@ -61,13 +61,14 @@ export const MintTokensAction = ({
         />
       }
     >
-      <div className="flex w-full max-w-3xl flex-col gap-4">
-        <div className="flex w-full flex-row">
-          <span className="basis-2/5 pl-2">Address</span>
-          <span className="basis-2/5 pl-2">Tokens</span>
-        </div>
+      <div className="grid grid-cols-2 gap-2">
+        <Label tooltip="Address of the wallet to receive the tokens">
+          Address
+        </Label>
+        <Label tooltip="Amount of tokens to mint">Amount</Label>
+        {/* List of wallets mint tokens to */}
         {fields.map((field, index) => (
-          <AddressTokensMint
+          <MintListItem
             key={field.id}
             prefix={`${prefix}.wallets.${index}`}
             register={register}
@@ -87,7 +88,10 @@ export const MintTokensAction = ({
   );
 };
 
-const AddressTokensMint = ({
+/**
+ * @returns Two elements to be used within a form to describe the action of minting tokens to one specific wallet
+ */
+const MintListItem = ({
   register,
   onRemove,
   errors,
@@ -98,7 +102,7 @@ const AddressTokensMint = ({
   errors: ActionFormError<MintAddressAmount>;
   prefix: `actions.${number}.wallets.${number}`;
 }) => (
-  <div className="flex w-full flex-col items-center gap-2 sm:flex-row">
+  <>
     <ErrorWrapper name="Address" error={errors?.address ?? undefined}>
       <Input
         {...register(`${prefix}.address`, { required: true })}
@@ -129,5 +133,5 @@ const AddressTokensMint = ({
         onClick={onRemove}
       />
     </div>
-  </div>
+  </>
 );
