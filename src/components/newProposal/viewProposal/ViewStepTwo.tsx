@@ -10,6 +10,7 @@ import { HeaderCard } from '../../ui/HeaderCard';
 import { StepTwoData } from '../newProposalData';
 import { add, format } from 'date-fns';
 import { isNullOrUndefined } from '@/src/lib/utils';
+import { inputToDate } from '@/src/lib/date-utils';
 
 export const ViewStepTwo = ({ data }: { data: StepTwoData | undefined }) => {
   if (!data)
@@ -81,8 +82,21 @@ const getCategories = (data: StepTwoData) => [
  */
 function getStartDate(data: StepTwoData): string {
   if (data.start_time_type == 'now') return 'now';
-  if (isNullOrUndefined(data.start_time)) return 'N/A';
-  return format(new Date(data.start_time!), 'Pp');
+  if (
+    data.custom_start_date &&
+    data.custom_start_time &&
+    data.custom_start_timezone
+  ) {
+    return format(
+      inputToDate(
+        data.custom_start_date,
+        data.custom_start_time,
+        data.custom_start_timezone
+      ),
+      'Pp'
+    );
+  }
+  return 'N/A';
 }
 
 /**
@@ -90,10 +104,28 @@ function getStartDate(data: StepTwoData): string {
  * @returns A string to display the end date
  */
 function getEndDate(data: StepTwoData): string {
-  if (data.end_time_type == 'custom' && isNullOrUndefined(data.end_time))
+  if (
+    data.end_time_type == 'end-custom' &&
+    data.custom_end_date &&
+    data.custom_end_time &&
+    data.custom_end_timezone
+  ) {
+    return format(
+      inputToDate(
+        data.custom_end_date,
+        data.custom_end_time,
+        data.custom_end_timezone
+      ),
+      'Pp'
+    );
+  } else if (
+    (data.end_time_type == 'end-custom' &&
+      isNullOrUndefined(data.custom_end_date)) ||
+    isNullOrUndefined(data.custom_end_time) ||
+    isNullOrUndefined(data.custom_end_timezone)
+  ) {
     return 'N/A';
-  if (data.end_time_type == 'custom')
-    return format(new Date(data.end_time!), 'Pp');
+  }
 
   const now = new Date();
   const duration = {
