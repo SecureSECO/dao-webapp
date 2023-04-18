@@ -17,15 +17,15 @@ import {
   ActionFormData,
   StepTwoData,
 } from '@/src/components/newProposal/newProposalData';
-import { isNullOrUndefined } from '@/src/lib/utils';
 import { add, format } from 'date-fns';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import ProposalActions, {
   IProposalAction,
 } from '@/src/components/proposal/ProposalActions';
+import { inputToDate } from '@/src/lib/date-utils';
 
-export const StepFour = () => {
+export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
 
   // Map the actions to the IProposalAction interface
@@ -155,16 +155,36 @@ const getCategories = (data: StepTwoData) => {
   let startDate;
   if (data.start_time_type === 'now') startDate = 'now';
   else
-    startDate = isNullOrUndefined(data.start_time)
-      ? 'N/A'
-      : format(new Date(data.start_time!), 'Pp');
+    startDate =
+      !data.custom_start_date ||
+      !data.custom_start_time ||
+      !data.custom_start_timezone
+        ? 'N/A'
+        : format(
+            inputToDate(
+              data.custom_start_date,
+              data.custom_start_time,
+              data.custom_start_timezone
+            ),
+            'Pp'
+          );
 
   // Convert end time to correct string
   let endDate;
-  if (data.end_time_type == 'custom')
-    endDate = isNullOrUndefined(data.end_time)
-      ? 'N/A'
-      : format(new Date(data.end_time!), 'Pp');
+  if (data.end_time_type == 'end-custom')
+    endDate =
+      !data.custom_end_date ||
+      !data.custom_end_time ||
+      !data.custom_end_timezone
+        ? 'N/A'
+        : format(
+            inputToDate(
+              data.custom_end_date,
+              data.custom_end_time,
+              data.custom_end_timezone
+            ),
+            'Pp'
+          );
   else {
     const now = new Date();
     const duration = {

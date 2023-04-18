@@ -15,13 +15,13 @@ import { Label } from '@/src/components/ui/Label';
 import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
-import { Resource, StepOneMetadata } from './newProposalData';
+import { Resource, StepOneMetadata } from '../newProposalData';
 import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 
-export const StepOne = () => {
+export const Metadata = () => {
   const { setStep, setDataStep1, dataStep1 } = useNewProposalFormContext();
 
   const [resources, setResources] = useState<Resource[]>([

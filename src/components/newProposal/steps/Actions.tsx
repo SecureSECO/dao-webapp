@@ -20,7 +20,7 @@ import {
   StepThreeData,
   emptyMintTokensForm,
   emptyWithdrawForm,
-} from './newProposalData';
+} from '../newProposalData';
 import {
   StepNavigator,
   useNewProposalFormContext,
@@ -38,7 +38,7 @@ import { Button } from '@/src/components/ui/Button';
 import { HiBanknotes, HiCircleStack, HiPlus } from 'react-icons/hi2';
 import { Label } from '@/src/components/ui/Label';
 
-export const StepThree = () => {
+export const Actions = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
 
   const {

@@ -8,16 +8,20 @@
 
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
 import type { Meta, StoryObj } from '@storybook/react';
-import { StepOneMetadata, StepThreeData, StepTwoData } from './newProposalData';
+import {
+  StepOneMetadata,
+  StepThreeData,
+  StepTwoData,
+} from '../newProposalData';
 
-import { StepFour } from './StepFourConfirmation';
+import { Confirmation } from './Confirmation';
 
-const meta: Meta<typeof StepFour> = {
-  component: StepFour,
+const meta: Meta<typeof Confirmation> = {
+  component: Confirmation,
 };
 
 export default meta;
-type Story = StoryObj<typeof StepFour>;
+type Story = StoryObj<typeof Confirmation>;
 
 const FormProviderDecoratorFactory = (
   data1: StepOneMetadata | undefined,

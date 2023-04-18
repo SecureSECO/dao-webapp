@@ -15,10 +15,10 @@ import {
   StepOneMetadata,
   StepTwoData,
 } from '../components/newProposal/newProposalData';
-import { StepTwo } from '../components/newProposal/StepTwoVoting';
-import { StepThree } from '../components/newProposal/StepThreeActions';
-import { StepOne } from '../components/newProposal/StepOneMetadata';
-import { StepFour } from '../components/newProposal/StepFourConfirmation';
+import { Voting } from '../components/newProposal/steps/Voting';
+import { Actions } from '../components/newProposal/steps/Actions';
+import { Metadata } from '../components/newProposal/steps/Metadata';
+import { Confirmation } from '../components/newProposal/steps/Confirmation';
 import { StepThreeData } from '../components/newProposal/newProposalData';
 
 const totalSteps = 4;
@@ -143,13 +143,13 @@ const StepContent = () => {
   const { step } = useNewProposalFormContext();
   switch (step) {
     case 1:
-      return <StepOne />;
+      return <Metadata />;
     case 2:
-      return <StepTwo />;
+      return <Voting />;
     case 3:
-      return <StepThree />;
+      return <Actions />;
     case 4:
-      return <StepFour />;
+      return <Confirmation />;
     default:
       return null;
   }

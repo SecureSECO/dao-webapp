@@ -7,20 +7,20 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { StepThree } from './StepThreeActions';
+import { Actions } from './Actions';
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
 import {
   StepThreeData,
   emptyMintTokenForm,
   emptyWithdrawForm,
-} from './newProposalData';
+} from '../newProposalData';
 
-const meta: Meta<typeof StepThree> = {
-  component: StepThree,
+const meta: Meta<typeof Actions> = {
+  component: Actions,
 };
 
 export default meta;
-type Story = StoryObj<typeof StepThree>;
+type Story = StoryObj<typeof Actions>;
 
 const FormProviderDecoratorFactory = (data: StepThreeData): any => {
   // eslint-disable-next-line react/display-name

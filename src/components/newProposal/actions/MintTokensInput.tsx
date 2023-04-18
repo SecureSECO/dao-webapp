@@ -23,7 +23,7 @@ import {
 } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import { ActionFormError } from '../StepThreeActions';
+import { ActionFormError } from '../steps/Actions';
 import { Label } from '@/src/components/ui/Label';
 
 /**

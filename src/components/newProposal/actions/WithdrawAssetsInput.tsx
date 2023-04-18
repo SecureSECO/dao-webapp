@@ -15,7 +15,7 @@ import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { ActionWithdrawFormData, StepThreeData } from '../newProposalData';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import { ActionFormError } from '../StepThreeActions';
+import { ActionFormError } from '../steps/Actions';
 
 /**
  * @returns Component to be used within a form to describe the action of withdrawing assets.

@@ -25,7 +25,7 @@ import {
   StartTimeType,
   StepTwoData,
   VoteOption,
-} from './newProposalData';
+} from '../newProposalData';
 import { Card } from '@/src/components/ui/Card';
 import { TimezoneSelector } from '@/src/components/ui/TimeZoneSelector';
 import { useVotingSettings } from '@/src/hooks/useVotingSettings';
@@ -40,7 +40,7 @@ import {
   timezoneOffsetDifference,
 } from '@/src/lib/date-utils';
 
-export const StepTwo = () => {
+export const Voting = () => {
   const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
 
   const { settings, error } = useVotingSettings({});
