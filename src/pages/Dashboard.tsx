@@ -19,6 +19,7 @@ import {
   HiHome,
   HiInboxStack,
   HiUserGroup,
+  HiXMark,
 } from 'react-icons/hi2';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { useDao } from '@/src/hooks/useDao';
@@ -66,6 +67,10 @@ const Dashboard = () => {
 
   return (
     <div className="grid grid-cols-7 gap-6">
+      {/* Banner on top showing optional information about membership status */}
+      {/* TODO: Hidde will make a nice banner styling */}
+
+      {/* Card showing metadata about the DAO */}
       <Card
         loading={daoLoading}
         padding="lg"
@@ -118,6 +123,7 @@ const Dashboard = () => {
         )}
       </Card>
 
+      {/* Proposal Card */}
       <MainCard
         className="col-span-full lg:col-span-4"
         loading={allProposalsLoading}
@@ -147,7 +153,9 @@ const Dashboard = () => {
         </Link>
       </MainCard>
 
+      {/* div containing the right column of the dashboard */}
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
+        {/* Card containing the latest dao transfers */}
         <MainCard
           className=""
           loading={daoTransfersLoading}
@@ -184,6 +192,7 @@ const Dashboard = () => {
           </Link>
         </MainCard>
 
+        {/* Card containing DAO members */}
         <MainCard
           className=""
           loading={membersLoading}
