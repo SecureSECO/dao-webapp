@@ -6,20 +6,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React, { useState } from 'react';
 import {
   Control,
   Controller,
-  FieldError,
   FieldErrors,
-  UseFormGetValues,
   UseFormRegister,
-  UseFormSetValue,
   useForm,
   useWatch,
 } from 'react-hook-form';
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
-import { Input } from '@/src/components/ui/Input';
+import { RadioButtonCard, RadioGroup } from '@/src/components/ui/RadioGroup';
+import { LabelledInput } from '@/src/components/ui/Input';
 import {
   StepNavigator,
   useNewProposalFormContext,
@@ -31,13 +27,25 @@ import {
   VoteOption,
 } from './newProposalData';
 import { Card } from '@/src/components/ui/Card';
-import { cn } from '@/src/lib/utils';
-import { RadioGroupItemProps } from '@radix-ui/react-radio-group';
-import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { TimezoneSelector } from '@/src/components/ui/TimeZoneSelector';
+import { useVotingSettings } from '@/src/hooks/useVotingSettings';
+import { add, format, isToday } from 'date-fns';
+import {
+  getDurationDateAhead,
+  getUserTimezone,
+  inputToDate,
+  isGapEnough,
+  timeString,
+  timezoneOffsetDifference,
+  todayDateString,
+} from '@/src/lib/date-utils';
 
 export const StepTwo = () => {
   const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
+
+  const { settings, error } = useVotingSettings({});
+
+  if (error) console.error('Voting settings fetching error', error);
 
   const {
     register,
@@ -45,7 +53,25 @@ export const StepTwo = () => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<StepTwoData>({ defaultValues: dataStep2 });
+  } = useForm<StepTwoData>({
+    defaultValues: dataStep2 ?? {
+      //Defaut values for when the user first opens the form.
+      option: 'yes-no-abstain',
+      start_time_type: 'now',
+      end_time_type: 'duration',
+      custom_start_time: timeString,
+      custom_start_date: todayDateString,
+      custom_start_timezone: getUserTimezone(),
+      duration_days: 7,
+      duration_hours: 0,
+      duration_minutes: 0,
+      custom_end_date: getDurationDateAhead(
+        settings ? settings.minDuration : 24 * 60 * 60
+      ),
+      custom_end_time: timeString,
+      custom_end_timezone: getUserTimezone(),
+    },
+  });
 
   const onSubmit = (data: StepTwoData) => {
     console.log(data);
@@ -54,6 +80,7 @@ export const StepTwo = () => {
     // Handle submission
   };
 
+  //rember the values of the inputs when the user clicks back, so it can be used when the user clicks next again.
   const handleBack = () => {
     const data = getValues();
     setDataStep2(data);
@@ -71,6 +98,11 @@ export const StepTwo = () => {
   );
 };
 
+/**
+ *
+ * @param control control from react-hook-form
+ * @returns a component with all the voting options (currently only yes/no/abstain)
+ */
 export const VotingOption = ({
   control,
 }: {
@@ -83,13 +115,8 @@ export const VotingOption = ({
       <Controller
         control={control}
         name="option"
-        defaultValue={'yes-no-abstain'}
         render={({ field: { onChange, name, value } }) => (
-          <RadioGroup
-            onChange={onChange}
-            defaultValue={'yes-no-abstain'}
-            name={name}
-          >
+          <RadioGroup onChange={onChange} defaultValue={value} name={name}>
             <RadioButtonCard<VoteOption>
               id="yes-no-abstain"
               value={value}
@@ -103,49 +130,6 @@ export const VotingOption = ({
   );
 };
 
-interface RadioButtonCardProps<T extends string> extends RadioGroupItemProps {
-  error?: FieldError;
-  id: T;
-  value: T;
-  title: string;
-  description?: string;
-}
-
-function RadioButtonCard<T extends string>({
-  className,
-  id,
-  error,
-  value,
-  description,
-  title,
-  ...props
-}: RadioButtonCardProps<T>) {
-  return (
-    <label
-      htmlFor={id}
-      className={cn(
-        'flex w-full cursor-pointer rounded-md border border-slate-300 bg-transparent px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-offset-slate-800',
-        error
-          ? 'border-red-600 focus:ring-red-600 dark:border-red-700 dark:focus:ring-red-700'
-          : value === id && 'ring-2 ring-primary-500 dark:ring-primary-400 ',
-        className
-      )}
-    >
-      <div className="w-full">
-        <div className="flex items-center justify-between">
-          <span className="text-base text-slate-700 dark:text-slate-300">
-            {title}
-          </span>
-          <RadioGroupItem value={id} id={id} className="group" {...props} />
-        </div>
-        <p className="text-slate-500 dark:text-slate-400">{description}</p>
-      </div>
-    </label>
-  );
-}
-
-RadioButtonCard.displayName = 'RadioButtonCard';
-
 export const StartTime = ({
   register,
   control,
@@ -155,11 +139,8 @@ export const StartTime = ({
   control: Control<StepTwoData, any>;
   errors: FieldErrors<StepTwoData>;
 }) => {
-  const startTimeType = useWatch({
-    control,
-    name: 'start_time_type',
-    defaultValue: 'now',
-  });
+  //watch the start time type so that the custom start time input can be hidden when the user selects "now"
+  const { startTimeType, startDate } = getWatchers(control);
 
   return (
     <fieldset className="space-y-1">
@@ -168,11 +149,10 @@ export const StartTime = ({
         <Controller
           control={control}
           name="start_time_type"
-          defaultValue={'now'}
           render={({ field: { onChange, name, value } }) => (
             <RadioGroup
               onChange={onChange}
-              defaultValue={'now'}
+              defaultValue={value}
               name={name}
               className="flex gap-x-2"
             >
@@ -195,16 +175,16 @@ export const StartTime = ({
               id="custom_start_date"
               type="date"
               label="Date"
-              {...register('custom_start_date')}
-              min={new Date().toISOString().split('T')[0]}
+              {...register('custom_start_date', { required: true })}
+              min={todayDateString} //the minimum date is today, cannot start in the past
               error={errors.custom_start_date}
             />
             <LabelledInput
               id="custom_start_time"
               type="time"
               label="Time"
-              {...register('custom_start_time')}
-              min={new Date().toISOString().slice(11, 16)}
+              {...register('custom_start_time', { required: true })}
+              min={isToday(new Date(startDate!)) ? timeString : '00:00'} //the minimum time is now (+10 minutes, so you have some more time to fill in the form, get), cannot start in the past
               error={errors.custom_start_time}
             />
             <div className="w-full">
@@ -232,23 +212,55 @@ export const EndTime = ({
   control: Control<StepTwoData, any>;
   errors: FieldErrors<StepTwoData>;
 }) => {
-  const endTimeType = useWatch({
-    control,
-    name: 'end_time_type',
-    defaultValue: 'duration',
-  });
+  // getWatchers for minEndDate and minEndTime calculations (and also max)
+  const {
+    endTimeType,
+    startTimeType,
+    startDate,
+    startTime,
+    startTimezone,
+    endTimezone,
+  } = getWatchers(control);
 
-  const startTimeType = useWatch({
-    control,
-    name: 'start_time_type',
-    defaultValue: 'now',
-  });
+  //retrieve settings for the minDuration
+  const { settings, error } = useVotingSettings({});
+  if (error) console.error('Voting settings fetching error', error);
 
-  const startDate = useWatch({
-    control,
-    name: 'custom_start_date',
-    defaultValue: '',
-  });
+  //initialize minEndDate and minEndTime
+  let minEndDate = undefined;
+  let minEndTime = undefined;
+
+  if (startDate && startTime && startTimezone && endTimezone) {
+    //if the user has selected a custom start time, calculate the minimum end time. If they don't they get a required error.
+    const now = new Date();
+
+    //check if the date is custom or not. If it is, use the custom date, if not, use now.
+    const startDateTime =
+      startTimeType === 'custom'
+        ? inputToDate(startDate!, startTime!, startTimezone!)
+        : now;
+
+    //add the duration on top of the startTime
+    const minEndDateTime = new Date(
+      startDateTime.getTime() +
+        (settings ? settings.minDuration * 1000 : 24 * 60 * 60 * 1000)
+    );
+
+    //Convert the minEndDateTime to the selected endTimezone
+    const userTimezone = 'UTC' + format(new Date(), 'xxx'); // Get the user's timezone offset in ±HH:mm format
+    const totalOffsetMinutes = timezoneOffsetDifference(
+      userTimezone,
+      endTimezone!
+    );
+
+    const minEndDateTimeWithOffset = add(minEndDateTime, {
+      minutes: -totalOffsetMinutes,
+    });
+
+    minEndDate = format(minEndDateTimeWithOffset, 'yyyy-MM-dd');
+
+    minEndTime = format(minEndDateTimeWithOffset, 'HH:mm');
+  }
 
   return (
     <fieldset className="space-y-1">
@@ -257,10 +269,9 @@ export const EndTime = ({
         <Controller
           control={control}
           name="end_time_type"
-          defaultValue={'duration'}
           render={({ field: { name, onChange, value } }) => (
             <RadioGroup
-              defaultValue={'duration'}
+              defaultValue={value}
               onChange={onChange}
               name={name}
               className="flex gap-x-2"
@@ -282,34 +293,48 @@ export const EndTime = ({
         {endTimeType === 'duration' ? (
           <Card className="flex w-full gap-2 bg-slate-50 dark:bg-slate-700/50">
             <LabelledInput
-              id="duration_minutes"
+              id="duration_days"
               type="number"
-              label="Minutes"
-              {...register('duration_minutes')}
-              min="0"
-              max="59"
-              defaultValue={0}
-              error={errors.duration_minutes}
+              label="Days"
+              {...register('duration_days', { required: true })}
+              min={
+                //calculates the minimum hours, rounded down, based on the minimum duration
+                settings ? Math.floor(settings.minDuration / 60 / 60 / 24) : 1
+              }
+              max="364"
+              error={errors.duration_days}
             />
             <LabelledInput
               id="duration_hours"
               type="number"
               label="Hours"
-              {...register('duration_hours')}
-              min="0"
+              {...register('duration_hours', { required: true })}
+              min={
+                settings
+                  ? //calculates the minimum hours, rounded down, based on the minimum duration
+                    Math.floor(
+                      (settings.minDuration % (60 * 60 * 24)) / 60 / 60
+                    )
+                  : 0
+              }
               max="23"
-              defaultValue={0}
               error={errors.duration_hours}
             />
             <LabelledInput
-              id="duration_days"
+              id="duration_minutes"
               type="number"
-              label="Days"
-              {...register('duration_days')}
-              min="2"
-              max="364"
-              defaultValue={2}
-              error={errors.duration_days}
+              label="Minutes"
+              {...register('duration_minutes', { required: true })}
+              min={
+                settings
+                  ? //calculates the minimum minutes, rounded up, based on the minimum duration
+                    Math.ceil(
+                      ((settings.minDuration % (60 * 60 * 24)) % (60 * 60)) / 60
+                    )
+                  : 0
+              }
+              max="59"
+              error={errors.duration_minutes}
             />
           </Card>
         ) : (
@@ -320,15 +345,34 @@ export const EndTime = ({
                 type="date"
                 label="Date"
                 {...register('custom_end_date', { required: true })}
-                min={new Date().toISOString()}
+                min={minEndDate}
                 error={errors.custom_end_date}
+                max={getDurationDateAhead(364 * 24 * 60 * 60, minEndDate)} //max 364 days ahead
               />
               <LabelledInput
                 id="custom_end_time"
                 type="time"
                 label="Time"
                 {...register('custom_end_time', { required: true })}
-                min={new Date().toISOString()}
+                min={
+                  //if the user has selected a custom start time, calculate the minimum end time.
+                  // If they don't they get a required error.
+                  startDate &&
+                  startTime &&
+                  minEndTime &&
+                  minEndDate &&
+                  //this is done so you don't need to have a minimum time if it is weeks apart
+                  isGapEnough(
+                    //if the gap between the start and end time is big enough, set the min time to 00:00
+                    startDate,
+                    startTime,
+                    minEndDate,
+                    minEndTime,
+                    settings ? settings.minDuration : 24 * 60 * 60
+                  )
+                    ? '00:00'
+                    : minEndTime //else if the gap is not big enough, set the min time to the minEndTime
+                }
                 error={errors.custom_end_time}
               />
               <div className="w-full">
@@ -348,33 +392,55 @@ export const EndTime = ({
   );
 };
 
-export interface LabelledInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  id: string;
-  label: string;
-  error?: FieldError;
+function getWatchers(control: Control<StepTwoData, any>) {
+  const endTimeType = useWatch({
+    control,
+    name: 'end_time_type',
+  });
+
+  const startTimeType = useWatch({
+    control,
+    name: 'start_time_type',
+  });
+
+  const startDate = useWatch({
+    control,
+    name: 'custom_start_date',
+  });
+
+  const endDate = useWatch({
+    control,
+    name: 'custom_end_date',
+  });
+
+  const startTime = useWatch({
+    control,
+    name: 'custom_start_time',
+  });
+
+  const endTime = useWatch({
+    control,
+    name: 'custom_end_time',
+  });
+
+  const startTimezone = useWatch({
+    control,
+    name: 'custom_start_timezone',
+  });
+
+  const endTimezone = useWatch({
+    control,
+    name: 'custom_end_timezone',
+  });
+
+  return {
+    endTimeType,
+    startTimeType,
+    startDate,
+    endDate,
+    startTime,
+    endTime,
+    startTimezone,
+    endTimezone,
+  };
 }
-
-const LabelledInput = React.forwardRef<HTMLInputElement, LabelledInputProps>(
-  ({ id, label, error, ...props }, ref) => {
-    return (
-      <div className="w-full">
-        <label htmlFor={id}>{label}</label>
-        <ErrorWrapper name={label} error={error}>
-          <Input
-            ref={ref}
-            id={id}
-            error={error}
-            placeholder={label}
-            {...props}
-            className="w-full text-center"
-          />
-        </ErrorWrapper>
-      </div>
-    );
-  }
-);
-
-LabelledInput.displayName = 'LabelledInput';
-
-export default LabelledInput;

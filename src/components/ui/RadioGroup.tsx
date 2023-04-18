@@ -17,6 +17,7 @@ import * as React from 'react';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 
 import { cn } from '@/src/lib/utils';
+import { FieldError } from 'react-hook-form';
 
 /**
  * The RadioGroup component wraps a group of RadioGroupItems, providing a layout and common properties for the items.
@@ -64,4 +65,51 @@ const RadioGroupItem = React.forwardRef<
 });
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
-export { RadioGroup, RadioGroupItem };
+interface RadioButtonCardProps<T extends string>
+  extends RadioGroupPrimitive.RadioGroupItemProps {
+  error?: FieldError;
+  id: T;
+  value: T;
+  title: string;
+  description?: string;
+}
+
+/**
+ * Radio button card for the designof the radio buttons
+ */
+function RadioButtonCard<T extends string>({
+  className,
+  id,
+  error,
+  value,
+  description,
+  title,
+  ...props
+}: RadioButtonCardProps<T>) {
+  return (
+    <label
+      htmlFor={id}
+      className={cn(
+        'flex w-full cursor-pointer rounded-md border border-slate-300 bg-transparent px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-offset-slate-800',
+        error
+          ? 'border-red-600 focus:ring-red-600 dark:border-red-700 dark:focus:ring-red-700'
+          : value === id && 'ring-2 ring-primary-500 dark:ring-primary-400 ',
+        className
+      )}
+    >
+      <div className="w-full">
+        <div className="flex items-center justify-between">
+          <span className="text-base text-slate-700 dark:text-slate-300">
+            {title}
+          </span>
+          <RadioGroupItem value={id} id={id} className="group" {...props} />
+        </div>
+        <p className="text-slate-500 dark:text-slate-400">{description}</p>
+      </div>
+    </label>
+  );
+}
+
+RadioButtonCard.displayName = 'RadioButtonCard';
+
+export { RadioGroup, RadioGroupItem, RadioButtonCard };

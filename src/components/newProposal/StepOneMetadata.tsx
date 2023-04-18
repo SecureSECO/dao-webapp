@@ -114,7 +114,6 @@ export const StepOne = () => {
             <Controller
               control={control}
               name="description" // Replace this with the name of the field you want to store the WYSIWYG content
-              rules={{ required: true }} // Add any validation rules you need
               defaultValue=""
               render={({ field }) => (
                 <TextareaWYSIWYG<StepOneMetadata>
@@ -137,7 +136,7 @@ export const StepOne = () => {
           </ErrorWrapper>
         </div>
         <fieldset className="flex flex-col gap-2">
-          <Label htmlFor="recources">Links and resources</Label>
+          <Label htmlFor="resources">Resources</Label>
           {resources.map((resource, index) => (
             <ResourceInput
               key={index}

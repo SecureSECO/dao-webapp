@@ -189,6 +189,7 @@ export type TextareaWYSIWYGProps<T extends FieldValues> = {
   error?: FieldError;
   setError: () => void;
   clearErrors: () => void;
+  isRequired?: boolean;
 };
 
 export const TextareaWYSIWYG = <T extends FieldValues>({
@@ -201,6 +202,7 @@ export const TextareaWYSIWYG = <T extends FieldValues>({
   error,
   setError,
   clearErrors,
+  isRequired = false,
 }: TextareaWYSIWYGProps<T>) => {
   // State for handling expanded mode
   const [isExpanded, setIsExpanded] = useState(false);
@@ -226,10 +228,12 @@ export const TextareaWYSIWYG = <T extends FieldValues>({
           onBlur(editor.getHTML());
         }
 
-        if (isEmptyContent(editor.getHTML())) {
-          setError();
-        } else {
-          clearErrors();
+        if (isRequired) {
+          if (isEmptyContent(editor.getHTML())) {
+            setError();
+          } else {
+            clearErrors();
+          }
         }
 
         setIsFocused(false);

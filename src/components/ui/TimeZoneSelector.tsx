@@ -19,6 +19,35 @@ import {
 } from './Select';
 import { ErrorWrapper } from './ErrorWrapper';
 
+function generateUtcOptions(): string[] {
+  const utcOptions: string[] = [];
+
+  for (let i = -12; i <= 14; i++) {
+    if (i === 0) {
+      utcOptions.push('UTC+0');
+      continue;
+    }
+
+    const sign = i < 0 ? '-' : '+';
+    const hour = Math.abs(i);
+    const hourString = hour.toString();
+    utcOptions.push(`UTC${sign}${hourString}`);
+
+    if (hour === 3 && sign === '-') {
+      // Newfoundland Standard Time (UTC-3:30)
+      utcOptions.push(`UTC${sign}${hourString}:30`);
+    } else if (hour === 8 && sign === '+') {
+      // Australian Central Western Standard Time (UTC+8:45)
+      utcOptions.push(`UTC${sign}${hourString}:45`);
+    } else if (hour === 5 && sign === '+') {
+      // Indian Standard Time (UTC+5:30)
+      utcOptions.push(`UTC${sign}${hourString}:30`);
+    }
+  }
+
+  return utcOptions;
+}
+
 export const TimezoneSelector = ({
   control,
   error,
@@ -30,28 +59,23 @@ export const TimezoneSelector = ({
   name: string;
   id?: string;
 }) => (
-  <ErrorWrapper name="Timezone" error={error} id={id}>
+  <ErrorWrapper name={name} error={error} id={id}>
     <Controller
       control={control}
       name={name}
-      defaultValue="UTC+0"
-      render={({ field: { onChange, name } }) => (
-        <Select onValueChange={onChange} name={name}>
+      render={({ field: { onChange, name, value } }) => (
+        <Select defaultValue={value} onValueChange={onChange} name={name}>
           <SelectTrigger>
             <SelectValue placeholder="Timezone" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>UTC</SelectLabel>
-              {Array.from({ length: 25 }, (_, i) => {
-                const offset = i - 12;
-                const value = `UTC${offset >= 0 ? `+${offset}` : offset}`;
-                return (
-                  <SelectItem key={value} value={value}>
-                    {value}
-                  </SelectItem>
-                );
-              })}
+              {generateUtcOptions().map((value) => (
+                <SelectItem key={value} value={value}>
+                  {value}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
