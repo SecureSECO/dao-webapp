@@ -1,4 +1,4 @@
-import { AddressPattern, NumberPattern } from './patterns';
+import { AddressPattern, NumberPattern, UrlPattern } from './patterns';
 
 test('Success cases for Number Pattern', () => {
   const successes = [
@@ -52,6 +52,29 @@ test('Failure cases for Address Pattern', () => {
     '0x7f2z04dZE3a529BB6z27cF4C33FZ7F5A87b4zB2f', //contains z and Z
   ];
   testFailures(AddressPattern, failures);
+});
+
+test('Succes cases for Url Pattern', () => {
+  const successes = [
+    'http://MVSXX.COMPANY.COM:04445/CICSPLEXSM//JSMITH/VIEW/OURTASK?A_PRIORITY=200&O_PRIORITY=GT',
+    'http://MVSXX.COMPANY.COM:04445/CICSPLEXSM//JSMITH/VIEW/OURWLMAWAOR.TABLE1?P_WORKLOAD=WLDPAY01',
+    'https://www.example.com/123',
+    'example.nl/example',
+    'http://example.com',
+  ];
+  testSuccesses(UrlPattern, successes);
+});
+
+test('Failures cases for Url Pattern', () => {
+  const failures = [
+    '', // empty string
+    ' ', //Only space
+    ' www.example.com/123', // space at start
+    'www.examp le.com/123', // space at middle
+    'www.example.com/123 ', // space at end
+    'www.example.com/😎', // invalid url character 😎
+  ];
+  testFailures(UrlPattern, failures);
 });
 
 function testSuccesses(pattern: string, successes: string[]) {
