@@ -48,23 +48,23 @@
   outline: none;
 }
 
-.styled-editor-content .ProseMirror ul {
-  list-style-type: decimal;
-  padding: 0 1rem;
-}
-
-.styled-editor-content .ProseMirror ol {
+.styled-editor-content ul {
   list-style-type: disc;
   padding: 0 1rem;
 }
 
-.styled-editor-content .ProseMirror a {
+.styled-editor-content ol {
+  list-style-type: decimal;
+  padding: 0 1rem;
+}
+
+.styled-editor-content a {
   color: #003bf5;
   cursor: pointer;
   font-weight: 700;
 }
 
-.styled-editor-content .ProseMirror a:hover {
+.styled-editor-content a:hover {
   color: #0031ad;
 }
 
