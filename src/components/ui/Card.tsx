@@ -23,7 +23,7 @@ const cardVariants = cva(
         warning: 'bg-red-500/80 text-slate-50 shadow-lg',
         light: 'bg-slate-50 dark:bg-slate-700/50',
         outline:
-          'bg-transparent border border-slate-200 dark:border-slate-700/50 shadow-none',
+          'bg-transparent border border-slate-300 dark:border-slate-600 shadow-none',
       },
       padding: {
         default: 'px-6 py-4',
