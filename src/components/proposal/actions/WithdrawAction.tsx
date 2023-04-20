@@ -7,7 +7,7 @@
  */
 
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
-import GeneralAction from '@/src/components/proposal/actions/GeneralAction';
+import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { HiBanknotes } from 'react-icons/hi2';
 
@@ -26,7 +26,7 @@ export type ProposalWithdrawAction = IProposalAction & {
  */
 const WithdrawAction = ({ action }: { action: ProposalWithdrawAction }) => {
   return (
-    <GeneralAction icon={HiBanknotes} title="Mint tokens">
+    <ActionWrapper icon={HiBanknotes} title="Withdraw assets">
       <div className="space-y-2">
         <p>Withdraw assets from the DAO treasury.</p>
         <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
@@ -39,7 +39,7 @@ const WithdrawAction = ({ action }: { action: ProposalWithdrawAction }) => {
           />
         </div>
       </div>
-    </GeneralAction>
+    </ActionWrapper>
   );
 };
 

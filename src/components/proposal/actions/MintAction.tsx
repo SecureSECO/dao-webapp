@@ -7,7 +7,7 @@
  */
 
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
-import GeneralAction from '@/src/components/proposal/actions/GeneralAction';
+import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
@@ -30,7 +30,7 @@ export type ProposalMintAction = IProposalAction & {
  */
 const MintAction = ({ action }: { action: ProposalMintAction }) => {
   return (
-    <GeneralAction icon={HiCircleStack} title="Mint tokens">
+    <ActionWrapper icon={HiCircleStack} title="Mint tokens">
       <div className="space-y-2">
         <p>Mint tokens to a selection of wallets.</p>
         <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
@@ -58,7 +58,7 @@ const MintAction = ({ action }: { action: ProposalMintAction }) => {
           ))}
         </div>
       </div>
-    </GeneralAction>
+    </ActionWrapper>
   );
 };
 

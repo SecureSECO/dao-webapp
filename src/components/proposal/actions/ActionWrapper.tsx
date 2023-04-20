@@ -21,7 +21,7 @@ import { IconType } from 'react-icons';
  * @param props.children Children to show in the AccordionContent
  * @returns A wrapper for a proposal action constituting an AccordionTrigger and AccordionContent component
  */
-const GeneralAction = ({
+const ActionWrapper = ({
   icon,
   title,
   subtitle,
@@ -54,4 +54,4 @@ const GeneralAction = ({
   );
 };
 
-export default GeneralAction;
+export default ActionWrapper;

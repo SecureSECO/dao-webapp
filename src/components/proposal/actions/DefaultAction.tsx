@@ -7,7 +7,7 @@
  */
 
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
-import GeneralAction from '@/src/components/proposal/actions/GeneralAction';
+import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 /**
@@ -16,9 +16,9 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
  */
 const DefaultAction = ({ action }: { action: IProposalAction }) => {
   return (
-    <GeneralAction icon={HiQuestionMarkCircle} title="Unknown action">
+    <ActionWrapper icon={HiQuestionMarkCircle} title="Unknown action">
       <p>This action is not supported in the web-app yet.</p>
-    </GeneralAction>
+    </ActionWrapper>
   );
 };
 
