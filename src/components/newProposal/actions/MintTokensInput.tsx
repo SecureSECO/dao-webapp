@@ -169,8 +169,8 @@ const MintListItem = ({
               message:
                 'Please enter an address starting with 0x, followed by 40 address characters',
             },
+            // Custom validation function to prevent duplicate addresses
             validate: (value: string) => {
-              console.log(getValues(walletsPrefix));
               let anyDuplicates = someUntill(
                 getValues(walletsPrefix),
                 (a) => a.address === value,
