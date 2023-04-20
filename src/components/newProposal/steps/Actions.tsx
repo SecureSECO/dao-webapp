@@ -120,6 +120,7 @@ export const Actions = () => {
                             errors.actions ? errors.actions[index] : undefined
                           }
                           onRemove={() => remove(index)}
+                          getValues={getValues}
                         />
                       );
                   }
@@ -128,7 +129,7 @@ export const Actions = () => {
             </>
           )}
         </div>
-        <AddActionButton append={append} />
+        <AddActionButton append={append} actions={getValues()} />
       </div>
       <StepNavigator onBack={handleBack} />
     </form>
@@ -145,9 +146,11 @@ export type ActionFormError<T extends FieldValues> =
  */
 export const AddActionButton = ({
   append,
+  actions,
 }: {
   // eslint-disable-next-line no-unused-vars
   append: (fn: ProposalFormAction) => void;
+  actions: ProposalFormActions;
 }) => {
   return (
     <DropdownMenu>
@@ -166,6 +169,9 @@ export const AddActionButton = ({
           <DropdownMenuItem
             onClick={() => append(emptyMintData)}
             className="gap-x-2 hover:cursor-pointer"
+            disabled={
+              actions?.actions?.some((x) => x.name == 'mint_tokens') ?? false
+            }
           >
             <HiCircleStack className="h-5 w-5 shrink-0" />
             <span>Mint tokens</span>
