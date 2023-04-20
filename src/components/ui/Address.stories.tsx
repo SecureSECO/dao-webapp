@@ -71,3 +71,24 @@ export const NoLinkNoCopy: Story = {
     hasLink: false,
   },
 };
+
+export const WithJazziconSmall: Story = {
+  args: {
+    ...Medium.args,
+    jazziconSize: 'sm',
+  },
+};
+
+export const WithJazziconMedium: Story = {
+  args: {
+    ...Medium.args,
+    jazziconSize: 'md',
+  },
+};
+
+export const WithJazziconLarge: Story = {
+  args: {
+    ...Medium.args,
+    jazziconSize: 'lg',
+  },
+};

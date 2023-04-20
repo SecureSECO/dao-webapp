@@ -45,3 +45,14 @@ export const Primary: Story = {
     ),
   ],
 };
+
+export const NoDelay: Story = {
+  args: Primary.args,
+  decorators: [
+    (Story) => (
+      <TooltipProvider delayDuration={0}>
+        <Story />
+      </TooltipProvider>
+    ),
+  ],
+};

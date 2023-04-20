@@ -22,17 +22,13 @@ const MemberCard = ({ member }: { member: Member }) => {
       padding="sm"
       className="flex flex-row items-center justify-between bg-slate-50 dark:bg-slate-700/50"
     >
-      <div className="flex flex-row items-center gap-x-2">
-        <div className="h-fit w-fit">
-          <Jazzicon diameter={25} seed={jsNumberForAddress(member.address!)} />
-        </div>
-        <Address
-          address={member.address}
-          hasLink={true}
-          maxLength={AddressLength.Medium}
-          showCopy={false}
-        />
-      </div>
+      <Address
+        address={member.address}
+        hasLink={true}
+        maxLength={AddressLength.Medium}
+        showCopy={false}
+        jazziconSize="md"
+      />
       {member.bal !== null && (
         <p className="whitespace-nowrap">
           {member.bal} {CHAIN_METADATA.rep.nativeCurrency.symbol}
