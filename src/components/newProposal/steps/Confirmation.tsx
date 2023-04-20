@@ -19,13 +19,64 @@ import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import ProposalActions, {
   IProposalAction,
 } from '@/src/components/proposal/ProposalActions';
-import { inputToDate } from '@/src/lib/date-utils';
+import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/date-utils';
 import { ProposalFormAction } from '@/src/components/newProposal/steps/Actions';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
+import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useToast } from '@/src/hooks/useToast';
+import { useForm } from 'react-hook-form';
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
+import { errors } from 'ethers';
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
 
+  const { votingClient, votingPluginAddress } = useAragonSDKContext();
+  const { toast } = useToast();
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      step1: dataStep1,
+      step2: dataStep2,
+      step3: dataStep3,
+      step4: { startTimevalidation: '' },
+    },
+  });
+
+  const onSubmit = async (data: any) => {
+    console.log(data);
+
+    if (!votingClient || !votingPluginAddress)
+      return toast({
+        title: 'Error submitting proposal',
+        description: 'Voting client not found',
+        variant: 'error',
+      });
+    // contractInteraction<ProposalCreationSteps, ProposalCreationStepValue>(
+    //   () =>
+    //     votingClient.methods.createProposal({
+    //       pluginAddress: votingPluginAddress,
+    //       actions: dataStep3?.actions ?? [],
+    //     }),
+    //   {
+    //     steps: {
+    //       confirmed: ProposalCreationSteps.DONE,
+    //       signed: ProposalCreationSteps.CREATING,
+    //     },
+    //     messages: {
+    //       error: 'Error creating proposal',
+    //       success: 'Proposal created!',
+    //     },
+    //     onFinish: () => {
+    //       // Send user to proposal page
+    //     },
+    //   }
+    // );
+  };
   // Map the actions to the IProposalAction interface
   const actions: IProposalAction[] = dataStep3
     ? dataStep3?.actions.map((action: ProposalFormAction) => {
@@ -69,8 +120,28 @@ export const Confirmation = () => {
     dataStep1?.description ?? '<p>Proposal has no description </p>'
   );
 
+  if (dataStep2) {
+    register('step4.startTimevalidation', {
+      validate: () => {
+        if (dataStep2.start_time_type === 'custom') {
+          let start = inputToDate(
+            dataStep2.custom_start_date!,
+            dataStep2.custom_start_time!,
+            dataStep2.custom_start_timezone!
+          );
+          let minStart = getTimeInxMinutesAsDate(15);
+          // Start needs to be at least the minimum start time
+          return (
+            minStart <= start ||
+            'Your proposal start time must be at least 10 minutes in the future'
+          );
+        }
+        return true;
+      },
+    });
+  }
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* View proposal details */}
         <HeaderCard
@@ -109,36 +180,38 @@ export const Confirmation = () => {
           {!dataStep2 ? (
             <p>No data available</p>
           ) : (
-            <>
-              {getCategories(dataStep2).map((category) => (
-                <div key={category.title}>
-                  <div className="flex flex-row items-center gap-x-2">
-                    <p className="font-medium dark:text-slate-300">
-                      {category.title}
-                    </p>
-                    <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
-                  </div>
-                  {category.items.map((item) => (
-                    <div
-                      key={item.label}
-                      className="flex flex-row justify-between gap-x-2"
-                    >
-                      <p className="text-slate-500 dark:text-slate-400">
-                        {item.label}
+            <ErrorWrapper name="step4.startTimevalidation" error={errors}>
+              <>
+                {getCategories(dataStep2).map((category) => (
+                  <div key={category.title}>
+                    <div className="flex flex-row items-center gap-x-2">
+                      <p className="font-medium dark:text-slate-300">
+                        {category.title}
                       </p>
-                      <p className="text-primary-300 dark:text-primary-400">
-                        {item.value}
-                      </p>
+                      <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
                     </div>
-                  ))}
-                </div>
-              ))}
-            </>
+                    {category.items.map((item) => (
+                      <div
+                        key={item.label}
+                        className="flex flex-row justify-between gap-x-2"
+                      >
+                        <p className="text-slate-500 dark:text-slate-400">
+                          {item.label}
+                        </p>
+                        <p className="text-primary-300 dark:text-primary-400">
+                          {item.value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </>
+            </ErrorWrapper>
           )}
         </MainCard>
       </div>
       <StepNavigator />
-    </div>
+    </form>
   );
 };
 

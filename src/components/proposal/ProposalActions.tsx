@@ -19,17 +19,11 @@ import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
 import { Accordion, AccordionItem } from '@/src/components/ui/Accordion';
-import { Button } from '@/src/components/ui/Button';
-import { Card } from '@/src/components/ui/Card';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
-import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { contractInteraction } from '@/src/hooks/useToast';
 import {
   DefaultMainCardHeader,
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
-import { cn } from '@/src/lib/utils';
 
 export interface IProposalAction {
   interface: string;
@@ -40,7 +34,6 @@ export interface IProposalAction {
 export interface ProposalActionsProps
   extends Omit<MainCardProps, 'icon' | 'header'> {
   actions: IProposalAction[] | undefined;
-  accordionVariant?: 'default' | 'dark';
   loading?: boolean;
 }
 
@@ -69,14 +62,7 @@ const ProposalActions = ({
           No actions attached
         </div>
       ) : (
-        <Accordion
-          type="single"
-          collapsible
-          className={cn(
-            'space-y-2',
-            accordionVariant === 'dark' && 'bg-slate-100 dark:bg-slate-700/50'
-          )}
-        >
+        <Accordion type="single" collapsible className={'space-y-2'}>
           {actions.map((action, i) => (
             <ProposalAction key={i} action={action} index={i} />
           ))}
