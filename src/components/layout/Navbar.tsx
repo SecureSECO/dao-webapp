@@ -90,7 +90,7 @@ const Navbar = () => {
                   key={item.label}
                   className="hover:cursor-pointer"
                 >
-                  <Navitem item={item} mobile />
+                  <Navitem item={item} />
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>
