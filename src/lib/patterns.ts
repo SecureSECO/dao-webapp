@@ -16,3 +16,10 @@ export const NumberPattern = '\\d+.?\\d*';
  * See the test cases for examples.
  */
 export const AddressPattern = '0x[a-fA-F0-9]{20,60}';
+
+/**
+ * UrlPattern is a pattern for urls. See the test cases for examples.
+ *  taken from: https://urlregex.com/
+ */
+export const UrlPattern =
+  '((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\??(?:[\\-\\+=&;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?)';
