@@ -214,11 +214,9 @@ const ResourceInput = ({
             })}
             type="text"
             value={resource.url}
-            // pattern={UrlPattern}
             onChange={(e) => onChange('url', e.target.value)}
             placeholder="Resource url"
             error={errors?.url}
-            novalidate
           />
         </ErrorWrapper>
         <div className="shrink-0">
