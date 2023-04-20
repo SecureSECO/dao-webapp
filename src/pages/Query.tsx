@@ -9,7 +9,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Card } from '@/src/components/ui/Card';
-import Header from '@/src/components/ui/Header';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
@@ -32,39 +32,46 @@ const Query = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-6">
-      <Card padding="lg" className="relative col-span-full">
-        <Header>Query Page</Header>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-4 flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="searchUrl">Query the SearchSECO database</Label>
-            <ErrorWrapper name="URL" error={errors.searchUrl}>
-              <Input
-                {...register('searchUrl', {
-                  required: true,
-                  pattern: {
-                    value: /^(https?:\/\/)(\w+:{0,1}\w*@)?([\w.-]+\.[a-zA-Z]{2,6}|[\d.]+)(:[0-9]{1,5})?(\/.*)?$/,
-                    message: 'Invalid URL',
-                  },
-                })}
-                type="text"
-                placeholder="Enter a valid URL"
-                id="searchUrl"
-                className="..."
-                aria-invalid={errors.searchUrl ? 'true' : 'false'}
-                error={errors.searchUrl}
-              />
-            </ErrorWrapper>
-          </div>
-          <Button type="submit" className="...">
-            Submit
-          </Button>
-        </form>
-      </Card>
-      <Card padding="lg" className="relative col-span-full">
-        <h2 className="text-xl font-bold">Result</h2>
-        <p className="text-base font-normal text-slate-500 dark:text-slate-400">Result text of query</p>
-      </Card>
+    <div>
+      <div className="flex flex-col gap-6">
+        <HeaderCard
+          title="SearchSECO"
+        />
+      </div>
+      <div className="gap-4 md:grid md:grid-cols-2">
+        <Card className="my-6">
+          <h2 className="text-xl font-bold">Query the SearchSECO database</h2>
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-4 flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="searchUrl">Enter a valid URL</Label>
+              <ErrorWrapper name="URL" error={errors.searchUrl}>
+                <Input
+                  {...register('searchUrl', {
+                    required: true,
+                    pattern: {
+                      value: /^(https?:\/\/)(\w+:{0,1}\w*@)?([\w.-]+\.[a-zA-Z]{2,6}|[\d.]+)(:[0-9]{1,5})?(\/.*)?$/,
+                      message: 'Invalid URL',
+                    },
+                  })}
+                  type="text"
+                  placeholder="Enter a valid URL"
+                  id="searchUrl"
+                  className="..."
+                  aria-invalid={errors.searchUrl ? 'true' : 'false'}
+                  error={errors.searchUrl}
+                />
+              </ErrorWrapper>
+            </div>
+            <Button type="submit" className="...">
+              Submit
+            </Button>
+          </form>
+        </Card>
+        <Card className="my-6">
+          <h2 className="text-xl font-bold">Rewards</h2>
+          <p className="text-base font-normal text-slate-500 dark:text-slate-400">This card will be used for claiming rewards</p>
+        </Card>
+      </div>
     </div>
   );
 };
