@@ -46,3 +46,19 @@ export const Primary: Story = {
     ),
   ],
 };
+
+export const WithTooltip: Story = {
+  args: {
+    htmlFor: 'test',
+    children: 'This is a label for the below input',
+    tooltip: 'This is a tooltip',
+  },
+  decorators: [
+    (Story) => (
+      <div>
+        <Story />
+        <Input id="test" />
+      </div>
+    ),
+  ],
+};

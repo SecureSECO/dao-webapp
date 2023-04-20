@@ -26,7 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
-import { HiInformationCircle } from 'react-icons/hi2';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 interface LabelProps
   extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {
@@ -56,7 +56,7 @@ const Label = React.forwardRef<
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger className="hover:cursor-help">
-            <HiInformationCircle className="h-5 w-5 shrink-0 text-slate-500 dark:text-slate-400" />
+            <HiQuestionMarkCircle className="h-5 w-5 shrink-0 text-slate-500 dark:text-slate-400" />
           </TooltipTrigger>
           <TooltipContent className="font-normal">{tooltip}</TooltipContent>
         </Tooltip>
