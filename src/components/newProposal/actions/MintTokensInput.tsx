@@ -10,7 +10,12 @@ import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import { Input } from '../../ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
-import { Control, UseFormRegister, useFieldArray } from 'react-hook-form';
+import {
+  Control,
+  UseFormRegister,
+  useFieldArray,
+  UseFormGetValues,
+} from 'react-hook-form';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
 import { ActionFormError, ProposalFormActions } from '../steps/Actions';
@@ -77,12 +82,14 @@ export const MintTokensInput = ({
   prefix,
   errors,
   onRemove,
+  getValues,
 }: {
   register: UseFormRegister<ProposalFormActions>;
   control: Control<ProposalFormActions>;
   prefix: `actions.${number}`;
   errors: ActionFormError<ProposalFormMintData>;
   onRemove: () => void;
+  getValues: UseFormGetValues<ProposalFormActions>;
 }) => {
   const { fields, append, remove } = useFieldArray({
     name: `${prefix}.wallets`,
@@ -112,10 +119,12 @@ export const MintTokensInput = ({
         {fields.map((field, index) => (
           <MintListItem
             key={field.id}
-            prefix={`${prefix}.wallets.${index}`}
+            walletsPrefix={`${prefix}.wallets`}
+            index={index}
             register={register}
-            errors={errors?.wallets?.[index] ?? undefined}
+            errors={errors?.wallets?.[index]}
             onRemove={() => remove(index)}
+            getValues={getValues}
           />
         ))}
       </div>
@@ -137,53 +146,86 @@ const MintListItem = ({
   register,
   onRemove,
   errors,
-  prefix,
+  walletsPrefix,
+  index,
+  getValues,
 }: {
   register: any;
   onRemove: () => void;
   errors: ActionFormError<ProposalFormMintWallet>;
-  prefix: `actions.${number}.wallets.${number}`;
-}) => (
-  <>
-    <ErrorWrapper name="Address" error={errors?.address}>
-      <Input
-        {...register(`${prefix}.address`, {
-          required: true,
-          pattern: {
-            value: AddressPattern,
-            message:
-              'Please enter an address starting with 0x, followed by 40 address characters',
-          },
-        })}
-        type="text"
-        id="address"
-        error={errors?.address}
-        className="w-full basis-2/5"
-        placeholder="0x..."
-      />
-    </ErrorWrapper>
-    <div className="flex w-full flex-row gap-2">
-      <ErrorWrapper name="Amount" error={errors?.amount}>
+  walletsPrefix: `actions.${number}.wallets`;
+  index: number;
+  getValues: UseFormGetValues<ProposalFormActions>;
+}) => {
+  const prefix = `${walletsPrefix}.${index}`;
+  return (
+    <>
+      <ErrorWrapper name="Address" error={errors?.address}>
         <Input
-          {...register(`${prefix}.amount`, {
+          {...register(`${prefix}.address`, {
             required: true,
             pattern: {
-              value: NumberPattern,
-              message: 'Please enter a number, e.g. 3.141',
+              value: AddressPattern,
+              message:
+                'Please enter an address starting with 0x, followed by 40 address characters',
+            },
+            validate: (value: string) => {
+              console.log(getValues(walletsPrefix));
+              let anyDuplicates = someUntill(
+                getValues(walletsPrefix),
+                (a) => a.address === value,
+                index
+              );
+              return !anyDuplicates || 'Duplicate address';
             },
           })}
-          type="number"
-          id="tokens"
-          error={errors?.amount}
-          className="w-full basis-2/3"
-          min="0"
-          required
+          type="text"
+          id="address"
+          error={errors?.address}
+          className="w-full basis-2/5"
+          placeholder="0x..."
         />
       </ErrorWrapper>
-      <HiXMark
-        className="h-5 w-5 cursor-pointer self-center"
-        onClick={onRemove}
-      />
-    </div>
-  </>
-);
+      <div className="flex w-full flex-row gap-2">
+        <ErrorWrapper name="Amount" error={errors?.amount}>
+          <Input
+            {...register(`${prefix}.amount`, {
+              required: true,
+              pattern: {
+                value: NumberPattern,
+                message: 'Please enter a number, e.g. 3.141',
+              },
+            })}
+            type="number"
+            id="tokens"
+            error={errors?.amount}
+            className="w-full basis-2/3"
+            min="0"
+            required
+          />
+        </ErrorWrapper>
+        <HiXMark
+          className="h-5 w-5 cursor-pointer self-center"
+          onClick={onRemove}
+        />
+      </div>
+    </>
+  );
+};
+
+/**
+ * Performs the same logical task as the standard some method for lists.
+ * However, it does not test the entire list, but from the start (index 0) untill (exclusive) the given index.
+ */
+function someUntill<T>(
+  list: T[],
+  predicate: (arg: T) => Boolean,
+  untillExclusive: number
+): Boolean {
+  for (let i = 0; i < list.length && i < untillExclusive; i++) {
+    if (predicate(list[i])) {
+      return true;
+    }
+  }
+  return false;
+}
