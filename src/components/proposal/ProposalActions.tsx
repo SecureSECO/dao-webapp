@@ -19,6 +19,11 @@ import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
 import { Accordion, AccordionItem } from '@/src/components/ui/Accordion';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { contractInteraction } from '@/src/hooks/useToast';
 import {
   DefaultMainCardHeader,
   MainCard,
@@ -47,10 +52,39 @@ export interface ProposalActionsProps
  */
 const ProposalActions = ({
   actions,
-  accordionVariant = 'default',
-  children,
-  ...props
-}: ProposalActionsProps) => {
+  loading = false,
+  refetch,
+  className,
+}: {
+  canExecute: boolean;
+  execute?: () => AsyncGenerator<ExecuteProposalStepValue, any, unknown>;
+  actions: DaoAction[] | undefined;
+  loading?: boolean;
+  refetch: () => void;
+  className?: string;
+}) => {
+  const { address } = useAccount();
+
+  const executeProposal = async () => {
+    if (!execute) return;
+    contractInteraction<ExecuteProposalStep, ExecuteProposalStepValue>(
+      () => execute(),
+      {
+        steps: {
+          confirmed: ExecuteProposalStep.DONE,
+          signed: ExecuteProposalStep.EXECUTING,
+        },
+        messages: {
+          error: 'Error executing proposal',
+          success: 'Proposal executed!',
+        },
+        onFinish: () => {
+          refetch();
+        },
+      }
+    );
+  };
+
   return (
     <MainCard
       icon={CheckList}
