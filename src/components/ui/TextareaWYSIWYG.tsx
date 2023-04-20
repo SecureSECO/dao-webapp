@@ -140,10 +140,9 @@ const MenuBar: React.FC<MenuBarProps> = ({
         <Toggle
           //isActive={editor.isActive('bulletList')}
           disabled={disabled}
-          //although this is toggleBulletList and the icon below is Ol, it is correct for now, apperently the toggleBulletList is the ordered list 1.2.3.
           onClick={() => editor.chain().focus().toggleBulletList().run()}
         >
-          <FaListOl />
+          <FaListUl />
         </Toggle>
         <Toggle
           //isActive={editor.isActive('orderedList')}
@@ -151,7 +150,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
           //
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
         >
-          <FaListUl />
+          <FaListOl />
         </Toggle>
       </div>
 

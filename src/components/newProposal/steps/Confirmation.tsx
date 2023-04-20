@@ -83,7 +83,10 @@ export const Confirmation = () => {
           </p>
           {/* Note that since our HTML is sanitized, this dangerous action is safe */}
           {dataStep1?.description !== '<p></p>' && (
-            <div dangerouslySetInnerHTML={{ __html: htmlClean }} />
+            <div
+              className="styled-editor-content"
+              dangerouslySetInnerHTML={{ __html: htmlClean }}
+            />
           )}
         </HeaderCard>
 
