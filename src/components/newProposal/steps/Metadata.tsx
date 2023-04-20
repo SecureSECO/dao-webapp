@@ -7,7 +7,7 @@
  */
 
 import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, FieldErrors } from 'react-hook-form';
 import { Button } from '@/src/components/ui/Button';
 import { HiPlus, HiXMark } from 'react-icons/hi2';
 import { Input } from '@/src/components/ui/Input';
@@ -20,6 +20,7 @@ import {
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 import { ProposalResource } from '@/src/hooks/useProposal';
+import { UrlPattern } from '@/src/lib/patterns';
 
 export interface ProposalFormMetadata {
   title: string;
@@ -158,6 +159,7 @@ export const Metadata = () => {
               onRemove={() => handleRemoveResource(index)}
               register={register}
               prefix={`resources[${index}]`}
+              errors={errors?.resources?.[index] as FieldErrors<Resource>}
             />
           ))}
           <Button
@@ -176,18 +178,21 @@ export const Metadata = () => {
   );
 };
 
+type Resource = { name: string; url: string };
 const ResourceInput = ({
   resource,
   onChange,
   onRemove,
   register,
   prefix,
+  errors,
 }: {
-  resource: { name: string; url: string };
+  resource: Resource;
   onChange: (key: 'name' | 'url', value: string) => void;
   onRemove: () => void;
   register: any;
   prefix: string;
+  errors: FieldErrors<Resource> | undefined;
 }) => {
   return (
     <div className="flex w-full flex-col items-center gap-2 md:flex-row">
@@ -199,18 +204,23 @@ const ResourceInput = ({
         placeholder="Resource name"
       />
       <div className="flex w-full flex-row items-center gap-2">
-        <Input
-          {...register(`${prefix}.url`, {
-            pattern: {
-              value: /^(https?:\/\/)?[\w\-._~:/?#[\]@!$&'()*+,;=%]+$/,
-              message: 'Invalid URL',
-            },
-          })}
-          type="text"
-          value={resource.url}
-          onChange={(e) => onChange('url', e.target.value)}
-          placeholder="Resource url"
-        />
+        <ErrorWrapper name="Url" error={errors?.url}>
+          <Input
+            {...register(`${prefix}.url`, {
+              pattern: {
+                value: UrlPattern,
+                message: 'Invalid Url',
+              },
+            })}
+            type="text"
+            value={resource.url}
+            // pattern={UrlPattern}
+            onChange={(e) => onChange('url', e.target.value)}
+            placeholder="Resource url"
+            error={errors?.url}
+            novalidate
+          />
+        </ErrorWrapper>
         <div className="shrink-0">
           <HiXMark className="h-5 w-5 cursor-pointer" onClick={onRemove} />
         </div>
