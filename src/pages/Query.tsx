@@ -61,6 +61,10 @@ const Query = () => {
           </Button>
         </form>
       </Card>
+      <Card padding="lg" className="relative col-span-full">
+        <h2 className="text-xl font-bold">Result</h2>
+        <p className="text-base font-normal text-slate-500 dark:text-slate-400">Result text of query</p>
+      </Card>
     </div>
   );
 };
