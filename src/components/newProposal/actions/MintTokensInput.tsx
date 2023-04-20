@@ -145,27 +145,36 @@ const MintListItem = ({
   prefix: `actions.${number}.wallets.${number}`;
 }) => (
   <>
-    <ErrorWrapper name="Address" error={errors?.address ?? undefined}>
+    <ErrorWrapper name="Address" error={errors?.address}>
       <Input
-        {...register(`${prefix}.address`, { required: true })}
+        {...register(`${prefix}.address`, {
+          required: true,
+          pattern: {
+            value: AddressPattern,
+            message:
+              'Please enter an address starting with 0x, followed by 40 address characters',
+          },
+        })}
         type="text"
         id="address"
-        error={errors?.address ?? undefined}
-        title="An address starting with 0x, followed by 40 address characters"
-        pattern={AddressPattern}
+        error={errors?.address}
         className="w-full basis-2/5"
         placeholder="0x..."
       />
     </ErrorWrapper>
     <div className="flex w-full flex-row gap-2">
-      <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
+      <ErrorWrapper name="Amount" error={errors?.amount}>
         <Input
-          {...register(`${prefix}.amount`, { required: true })}
+          {...register(`${prefix}.amount`, {
+            required: true,
+            pattern: {
+              value: NumberPattern,
+              message: 'Please enter a number, e.g. 3.141',
+            },
+          })}
           type="number"
           id="tokens"
-          error={errors?.amount ?? undefined}
-          title="A number using a '.' as decimal place, e.g. '3.141'"
-          pattern={NumberPattern}
+          error={errors?.amount}
           className="w-full basis-2/3"
           min="0"
           required
