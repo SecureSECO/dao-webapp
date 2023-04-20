@@ -44,6 +44,10 @@ const navItems: NavItem[] = [
     url: '/verification',
   },
   {
+    label: 'Query',
+    url: '/query',
+  },
+  {
     label: 'Settings',
     url: '/settings',
   },
