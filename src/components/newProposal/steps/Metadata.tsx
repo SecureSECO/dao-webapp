@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from '@/src/components/ui/Button';
 import { HiPlus, HiXMark } from 'react-icons/hi2';
@@ -15,16 +15,29 @@ import { Label } from '@/src/components/ui/Label';
 import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
-import { Resource, StepOneMetadata } from './newProposalData';
 import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
+import { ProposalResource } from '@/src/hooks/useProposal';
 
-export const StepOne = () => {
+export interface ProposalFormMetadata {
+  title: string;
+  summary: string;
+  description: string;
+  resources: ProposalResource[];
+  media: Media;
+}
+
+export interface Media {
+  logo: string;
+  header: string;
+}
+
+export const Metadata = () => {
   const { setStep, setDataStep1, dataStep1 } = useNewProposalFormContext();
 
-  const [resources, setResources] = useState<Resource[]>([
+  const [resources, setResources] = useState<ProposalResource[]>([
     { name: '', url: '' },
   ]);
 
@@ -36,9 +49,9 @@ export const StepOne = () => {
     getValues,
     setError,
     clearErrors,
-  } = useForm<StepOneMetadata>({ defaultValues: dataStep1 });
+  } = useForm<ProposalFormMetadata>({ defaultValues: dataStep1 });
 
-  const onSubmit = (data: StepOneMetadata) => {
+  const onSubmit = (data: ProposalFormMetadata) => {
     // Handle submission
     console.log(data);
     setDataStep1(data);
@@ -82,8 +95,8 @@ export const StepOne = () => {
       className="flex flex-col gap-4"
     >
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="title">Title of the proposal</Label>
+        <div className="space-y-1">
+          <Label htmlFor="title">Title</Label>
           <ErrorWrapper name="Title" error={errors.title}>
             <Input
               {...register('title', { required: true })}
@@ -96,7 +109,7 @@ export const StepOne = () => {
             />
           </ErrorWrapper>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="space-y-1">
           <Label htmlFor="summary">Summary</Label>
           <ErrorWrapper name="Summary" error={errors.summary}>
             <Textarea
@@ -108,7 +121,7 @@ export const StepOne = () => {
             />
           </ErrorWrapper>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="space-y-1">
           <Label htmlFor="body">Body</Label>
           <ErrorWrapper name="Description" error={errors.description}>
             <Controller
@@ -116,7 +129,7 @@ export const StepOne = () => {
               name="description" // Replace this with the name of the field you want to store the WYSIWYG content
               defaultValue=""
               render={({ field }) => (
-                <TextareaWYSIWYG<StepOneMetadata>
+                <TextareaWYSIWYG<ProposalFormMetadata>
                   value={field.value}
                   onChange={field.onChange}
                   onBlur={() => field.onBlur()}
@@ -135,7 +148,7 @@ export const StepOne = () => {
             />
           </ErrorWrapper>
         </div>
-        <fieldset className="flex flex-col gap-2">
+        <fieldset className="space-y-1">
           <Label htmlFor="resources">Resources</Label>
           {resources.map((resource, index) => (
             <ResourceInput

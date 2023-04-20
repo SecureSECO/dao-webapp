@@ -115,7 +115,7 @@ const ProposalHistory = ({
       loading={loading}
       className={className}
       icon={History}
-      header={<p className="text-2xl font-medium">History</p>}
+      header="History"
     >
       <div className="relative">
         <div className="absolute bottom-6 left-[0.5625rem] top-2 w-0.5 bg-slate-400 dark:bg-slate-500" />

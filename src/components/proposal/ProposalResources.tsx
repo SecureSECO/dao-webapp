@@ -12,9 +12,16 @@
  */
 
 import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
-import { DefaultMainCardHeader, MainCard } from '../ui/MainCard';
-import { Resource } from '../newProposal/newProposalData';
+import { DefaultMainCardHeader, MainCard, MainCardProps } from '../ui/MainCard';
 import { Card } from '@/src/components/ui/Card';
+import { ProposalResource } from '@/src/hooks/useProposal';
+
+export interface ProposalResourcesProps
+  extends Omit<MainCardProps, 'icon' | 'header'> {
+  resources: ProposalResource[] | undefined;
+  loading?: boolean;
+}
+
 /**
  * MainCard component for displaying resources
  * @param props.resources List of resources to be displayed in the card
@@ -24,11 +31,8 @@ export const ProposalResources = ({
   resources,
   loading = false,
   className,
-}: {
-  resources: Resource[] | undefined;
-  loading?: boolean;
-  className?: string;
-}) => {
+  ...props
+}: ProposalResourcesProps) => {
   // Filter out empty entries in resources array
   const filtered = resources?.filter((resource) => resource.url !== '');
 
@@ -43,6 +47,7 @@ export const ProposalResources = ({
           label="resources"
         />
       }
+      {...props}
     >
       {!filtered || filtered.length === 0 ? (
         <div className="italic text-slate-500 dark:text-slate-400">

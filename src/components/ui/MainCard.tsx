@@ -42,12 +42,12 @@ export const DefaultMainCardHeader = ({
   const split = label.split(' ');
 
   return (
-    <div className="flex flex-row items-end gap-x-2">
+    <div className="flex flex-row items-end gap-x-2 font-normal">
       <span className="text-3xl">{value}</span>
       {!truncateMobile ? (
-        <p className="mb-1 leading-4">{label}</p>
+        <p className="mb-1 text-base leading-4">{label}</p>
       ) : (
-        <p className="mb-1 leading-4">
+        <p className="mb-1 text-base leading-4">
           {split[0]}{' '}
           <span className="hidden xs:inline">{split.slice(1).join(' ')}</span>
         </p>
@@ -92,7 +92,11 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
               <IconWrapper.icon className="h-5 w-5 text-primary dark:text-primary-500" />
             </div>
             {/* Only split move the header to next line if content for aside was provided */}
-            <div className={cn(aside && 'hidden xs:block')}>{header}</div>
+            <div
+              className={cn('text-2xl font-medium', aside && 'hidden xs:block')}
+            >
+              {header}
+            </div>
           </div>
           <>{aside && aside}</>
         </div>

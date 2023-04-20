@@ -10,7 +10,7 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useProposal } from '@/src/hooks/useProposal';
 import { useParams } from 'react-router';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { ProposalStatus } from '@aragon/sdk-client';
+import { ExecuteProposalStep, ProposalStatus } from '@aragon/sdk-client';
 import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
 import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
 import { Link } from '@/src/components/ui/Link';
@@ -19,9 +19,16 @@ import { ProposalResources } from '../components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import ProposalActions from '@/src/components/proposal/ProposalActions';
+import { useToast } from '@/src/hooks/useToast';
+import { useAccount } from 'wagmi';
+import { getChainDataByChainId } from '@/src/lib/constants/chains';
+import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import { Button } from '@/src/components/ui/Button';
 
 const ViewProposal = () => {
   const { id } = useParams();
+  const { address } = useAccount();
+  const { toast } = useToast();
   const { proposal, loading, error, refetch, canExecute, execute } =
     useProposal({ id });
 
@@ -37,12 +44,79 @@ const ViewProposal = () => {
     }
   };
 
+  /**
+   * Execute current proposal's actions
+   */
+  const executeProposal = async () => {
+    if (!execute) return;
+    const { update: updateToast } = toast({
+      duration: Infinity,
+      variant: 'loading',
+      title: 'Awaiting signature...',
+    });
+    try {
+      const steps = execute();
+
+      // Get etherscan url for the currently preferred network
+      // Use +chainId to convert string to number
+      const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
+      const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
+
+      for await (const step of steps) {
+        try {
+          switch (step.key) {
+            case ExecuteProposalStep.EXECUTING:
+              // Show link to transaction on etherscan
+              updateToast({
+                title: 'Awaiting confirmation...',
+                description: (
+                  <a
+                    href={`${etherscanURL}/tx/${step.txHash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-primary"
+                  >
+                    View on etherscan
+                  </a>
+                ),
+              });
+              break;
+            case ExecuteProposalStep.DONE:
+              updateToast({
+                title: 'Execution successful!',
+                description: '',
+                variant: 'success',
+                duration: 3000,
+              });
+              break;
+          }
+        } catch (err) {
+          updateToast({
+            title: 'Error executing proposal',
+            description: '',
+            variant: 'error',
+            duration: 3000,
+          });
+          console.error(err);
+        }
+      }
+      // Refetch proposal data after executing to update UI
+      refetch();
+    } catch (e) {
+      updateToast({
+        title: 'Error executing proposal',
+        description: '',
+        variant: 'error',
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <div className="space-y-2">
       {/* Back button */}
       <Link
         to="/governance"
-        type="button"
         icon={HiChevronLeft}
         variant="outline"
         label="All proposals"
@@ -75,7 +149,7 @@ const ViewProposal = () => {
                     {proposal.metadata.summary}
                   </p>
                   <div className="flex items-center gap-x-1 text-sm">
-                    <span className="text-gray-500 dark:text-slate-400">
+                    <span className="text-slate-500 dark:text-slate-400">
                       Published by
                     </span>
                     <Address
@@ -98,12 +172,33 @@ const ViewProposal = () => {
                 />
 
                 <ProposalActions
-                  canExecute={canExecute}
-                  execute={execute}
                   loading={loading}
-                  actions={proposal?.actions}
-                  refetch={refetch}
-                />
+                  // Will be replaced with proper actions when switching to custom SDK
+                  actions={proposal?.actions.map(() => {
+                    return {
+                      method: '',
+                      interface: '',
+                      params: {},
+                    };
+                  })}
+                >
+                  {/* Execute button */}
+                  {canExecute &&
+                    proposal?.actions &&
+                    proposal.actions.length > 0 && (
+                      <div className="flex flex-row items-center gap-x-4">
+                        <Button
+                          disabled={!canExecute || !address}
+                          type="submit"
+                          label="Execute"
+                          onClick={() => executeProposal()}
+                        />
+                        {!address && (
+                          <ConnectWalletWarning action="to execute this proposal" />
+                        )}
+                      </div>
+                    )}
+                </ProposalActions>
               </div>
 
               <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">

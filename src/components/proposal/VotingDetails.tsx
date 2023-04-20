@@ -102,7 +102,7 @@ const VotingDetails = ({
 }) => {
   if (!proposal)
     return (
-      <p className="text-center text-gray-500 dark:text-slate-400">
+      <p className="text-center text-slate-500 dark:text-slate-400">
         Proposal details not found
       </p>
     );
@@ -120,7 +120,7 @@ const VotingDetails = ({
               key={item.label}
               className="flex flex-row justify-between gap-x-2"
             >
-              <p className="text-gray-500 dark:text-slate-400">{item.label}</p>
+              <p className="text-slate-500 dark:text-slate-400">{item.label}</p>
               <p className="text-primary-300 dark:text-primary-400">
                 {item.value(proposal)}
               </p>

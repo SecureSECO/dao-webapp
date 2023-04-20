@@ -285,7 +285,7 @@ const VoteOption = ({
                   replaceYou={false}
                 />
                 <div className="grid grid-cols-2 text-right">
-                  <p className="text-gray-500 ">
+                  <p className="text-slate-500 ">
                     {toAbbreviatedTokenAmount(
                       vote.weight,
                       CHAIN_METADATA.rep.nativeCurrency.decimals,

@@ -27,6 +27,22 @@ export const Default: Story = {
   },
 };
 
+export const Light: Story = {
+  args: {
+    variant: 'light',
+    padding: 'lg',
+    children: <Header>Card</Header>,
+  },
+};
+
+export const Outline: Story = {
+  args: {
+    variant: 'outline',
+    padding: 'lg',
+    children: <Header>Card</Header>,
+  },
+};
+
 export const Warning: Story = {
   args: {
     variant: 'warning',

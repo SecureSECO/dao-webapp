@@ -10,35 +10,78 @@ import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import { Input } from '../../ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
-import {
-  Control,
-  FieldErrors,
-  UseFormRegister,
-  useFieldArray,
-} from 'react-hook-form';
-import {
-  ActionMintTokenFormData,
-  MintAddressAmount,
-  StepThreeData,
-} from '../newProposalData';
+import { Control, UseFormRegister, useFieldArray } from 'react-hook-form';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import { ActionFormError } from '../StepThreeActions';
+import { ActionFormError, ProposalFormActions } from '../steps/Actions';
+import { Label } from '@/src/components/ui/Label';
+
+export type ProposalFormMint = {
+  name: 'mint_tokens';
+  inputs: {
+    mintTokensToWallets: {
+      address: string;
+      amount: string | number;
+    }[];
+  };
+  summary: {
+    newTokens: number;
+    tokenSupply: number;
+    newHoldersCount: number;
+    daoTokenSymbol: string;
+    daoTokenAddress: string;
+    totalMembers?: number;
+  };
+};
+
+export const emptyMintAction: ProposalFormMint = {
+  name: 'mint_tokens',
+  inputs: {
+    mintTokensToWallets: [{ address: '', amount: 0 }],
+  },
+  summary: {
+    newTokens: 0,
+    tokenSupply: 0,
+    newHoldersCount: 0,
+    daoTokenSymbol: '',
+    daoTokenAddress: '',
+  },
+};
+
+export type ProposalFormMintData = {
+  name: 'mint_tokens';
+  wallets: ProposalFormMintWallet[];
+};
+
+export type ProposalFormMintWallet = {
+  address: string;
+  amount: number;
+};
+
+export const emptyMintWallet: ProposalFormMintWallet = {
+  address: '',
+  amount: 0,
+};
+
+export const emptyMintData: ProposalFormMintData = {
+  name: 'mint_tokens',
+  wallets: [emptyMintWallet],
+};
 
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.
  */
-export const MintTokensAction = ({
+export const MintTokensInput = ({
   register,
   control,
   prefix,
   errors,
   onRemove,
 }: {
-  register: UseFormRegister<StepThreeData>;
-  control: Control<StepThreeData>;
+  register: UseFormRegister<ProposalFormActions>;
+  control: Control<ProposalFormActions>;
   prefix: `actions.${number}`;
-  errors: ActionFormError<ActionMintTokenFormData>;
+  errors: ActionFormError<ProposalFormMintData>;
   onRemove: () => void;
 }) => {
   const { fields, append, remove } = useFieldArray({
@@ -48,7 +91,6 @@ export const MintTokensAction = ({
 
   return (
     <MainCard
-      className="flex flex-col gap-4"
       header="Mint tokens"
       variant="light"
       icon={HiCircleStack}
@@ -61,13 +103,14 @@ export const MintTokensAction = ({
         />
       }
     >
-      <div className="flex w-full max-w-3xl flex-col gap-4">
-        <div className="flex w-full flex-row">
-          <span className="basis-2/5 pl-2">Address</span>
-          <span className="basis-2/5 pl-2">Tokens</span>
-        </div>
+      <div className="grid grid-cols-2 justify-start gap-2 ">
+        <Label tooltip="Address of the wallet to receive the tokens">
+          Address
+        </Label>
+        <Label tooltip="Amount of tokens to mint">Amount</Label>
+        {/* List of wallets mint tokens to */}
         {fields.map((field, index) => (
-          <AddressTokensMint
+          <MintListItem
             key={field.id}
             prefix={`${prefix}.wallets.${index}`}
             register={register}
@@ -87,7 +130,10 @@ export const MintTokensAction = ({
   );
 };
 
-const AddressTokensMint = ({
+/**
+ * @returns Two elements to be used within a form to describe the action of minting tokens to one specific wallet
+ */
+const MintListItem = ({
   register,
   onRemove,
   errors,
@@ -95,10 +141,10 @@ const AddressTokensMint = ({
 }: {
   register: any;
   onRemove: () => void;
-  errors: ActionFormError<MintAddressAmount>;
+  errors: ActionFormError<ProposalFormMintWallet>;
   prefix: `actions.${number}.wallets.${number}`;
 }) => (
-  <div className="flex w-full flex-col items-center gap-2 sm:flex-row">
+  <>
     <ErrorWrapper name="Address" error={errors?.address ?? undefined}>
       <Input
         {...register(`${prefix}.address`, { required: true })}
@@ -108,9 +154,10 @@ const AddressTokensMint = ({
         title="An address starting with 0x, followed by 40 address characters"
         pattern={AddressPattern}
         className="w-full basis-2/5"
+        placeholder="0x..."
       />
     </ErrorWrapper>
-    <div className="flex w-full flex-row items-center gap-2">
+    <div className="flex w-full flex-row gap-2">
       <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
         <Input
           {...register(`${prefix}.amount`, { required: true })}
@@ -129,5 +176,5 @@ const AddressTokensMint = ({
         onClick={onRemove}
       />
     </div>
-  </div>
+  </>
 );

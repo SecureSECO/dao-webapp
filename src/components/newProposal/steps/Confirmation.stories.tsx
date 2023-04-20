@@ -8,21 +8,23 @@
 
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
 import type { Meta, StoryObj } from '@storybook/react';
-import { StepOneMetadata, StepThreeData, StepTwoData } from './newProposalData';
 
-import { StepFour } from './StepFourConfirmation';
+import { Confirmation } from './Confirmation';
+import { ProposalFormMetadata } from '@/src/components/newProposal/steps/Metadata';
+import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
+import { ProposalFormActions } from '@/src/components/newProposal/steps/Actions';
 
-const meta: Meta<typeof StepFour> = {
-  component: StepFour,
+const meta: Meta<typeof Confirmation> = {
+  component: Confirmation,
 };
 
 export default meta;
-type Story = StoryObj<typeof StepFour>;
+type Story = StoryObj<typeof Confirmation>;
 
 const FormProviderDecoratorFactory = (
-  data1: StepOneMetadata | undefined,
-  data2: StepTwoData | undefined,
-  data3: StepThreeData | undefined
+  data1: ProposalFormMetadata | undefined,
+  data2: ProposalFormVotingSettings | undefined,
+  data3: ProposalFormActions | undefined
 ): any => {
   // eslint-disable-next-line react/display-name
   return (Story: any) => (

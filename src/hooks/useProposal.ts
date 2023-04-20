@@ -19,6 +19,10 @@ import { useEffect, useState } from 'react';
 import { useSigner } from 'wagmi';
 
 export type DetailedProposal = TokenVotingProposal;
+export type ProposalResource = {
+  name: string;
+  url: string;
+};
 
 export type UseProposalData = {
   loading: boolean;
