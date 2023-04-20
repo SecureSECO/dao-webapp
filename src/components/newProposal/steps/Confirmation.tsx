@@ -74,7 +74,7 @@ export const Confirmation = () => {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* View proposal details */}
         <HeaderCard
-          variant="light"
+          variant="outline"
           title={dataStep1?.title ?? 'No title'}
           className="md:col-span-2"
         >
@@ -89,21 +89,18 @@ export const Confirmation = () => {
 
         <div className="flex flex-col gap-y-4">
           <ProposalResources
-            className="bg-slate-50 dark:bg-slate-700/50"
+            variant="outline"
             resources={dataStep1?.resources ?? []}
           />
 
           {/* View actions */}
-          <ProposalActions
-            actions={actions}
-            className="bg-slate-100 dark:bg-slate-700/50"
-          />
+          <ProposalActions variant="outline" actions={actions} />
         </div>
 
         {/* View voting settings */}
         <MainCard
           icon={HiChatBubbleLeftRight}
-          variant="light"
+          variant="outline"
           header="Voting settings"
         >
           {!dataStep2 ? (
