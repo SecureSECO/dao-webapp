@@ -27,6 +27,9 @@
     --border: 214 32% 91%; /* hsl(214, 32%, 91%) */
     --input: 214 32% 91%; /* hsl(214, 32%, 91%) */
 
+    --success: 120 100% 50%; /* hsl(120, 100%, 50%) */
+    --success-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
+
     --primary: 222 47% 11%; /* hsl(222, 47%, 11%) */
     --primary-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
 
@@ -54,11 +57,14 @@
     --popover: 224 71% 4%; /* hsl(224, 71%, 4%) */
     --popover-foreground: 215 20% 65%; /* hsl(215, 20%, 65%) */
 
-    --highlight: 0 0% 100%; /* hsl(0, 0%, 100%) */
-    --highlight-foreground: 222 47% 11%; /* hsl(222, 47%, 11%) */
+    --highlight: 224 71% 4%; /* hsl(224, 71%, 4%) */
+    --highlight-foreground: 213 31% 91%; /* hsl(213, 31%, 91%) */
 
     --border: 216 34% 17%; /* hsl(216, 34%, 17%) */
     --input: 216 34% 17%; /* hsl(216, 34%, 17%) */
+
+    --success: 120 100% 50%; /* hsl(120, 100%, 50%) */
+    --success-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
 
     --primary: 210 40% 98%; /* hsl(210, 40%, 98%) */
     --primary-foreground: 222 47% 2%; /* hsl(222, 47%, 2%) */
@@ -100,7 +106,7 @@
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    @apply text-gray-100 shadow-[inset_0_0_0_30px] shadow-white dark:shadow-red-800;
+    @apply text-gray-100 shadow-[inset_0_0_0_30px] shadow-white dark:shadow-destructive;
     -webkit-text-fill-color: #aaa !important;
   }
 }
