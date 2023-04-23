@@ -93,7 +93,7 @@ function RadioButtonCard<T extends string>({
       className={cn(
         'flex w-full cursor-pointer rounded-md border border-slate-300 bg-transparent px-3 py-2 text-sm font-normal placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-offset-slate-800',
         error
-          ? 'border-red-600 focus:ring-red-600 dark:border-red-700 dark:focus:ring-red-700'
+          ? 'border-destructive focus:ring-destructive'
           : value === id && 'ring-2 ring-primary-500 dark:ring-primary-400 ',
         className
       )}

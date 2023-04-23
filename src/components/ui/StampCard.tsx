@@ -208,7 +208,7 @@ const StampCard = ({
               <div
                 className={`flex items-center gap-x-2 ${
                   expired || timeLeftUntilExpiration / 86400 < 7
-                    ? 'text-red-500'
+                    ? 'text-destructive'
                     : 'text-slate-600 dark:text-slate-400'
                 }`}
               >

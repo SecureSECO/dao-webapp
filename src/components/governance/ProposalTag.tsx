@@ -16,13 +16,13 @@ import {
 } from 'react-icons/hi2';
 
 const proposalTagVariants = cva(
-  'flex flex-row min-w-fit w-fit gap-x-1 items-center rounded-full px-2 py-0.5 text-slate-500 dark:text-slate-400 text-sm',
+  'flex flex-row min-w-fit w-fit gap-x-1 items-center rounded-full px-2 py-0.5 text-sm',
   {
     variants: {
       variant: {
         countdown: 'bg-slate-200 dark:bg-slate-600',
         yes: 'bg-green-200/50 dark:bg-green-300/50 dark:text-slate-800',
-        no: 'bg-red-200/50 dark:bg-red-300/50 dark:text-slate-800',
+        no: 'bg-destructive text-destructive-foreground',
       },
     },
     defaultVariants: {

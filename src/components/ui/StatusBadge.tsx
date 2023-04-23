@@ -19,7 +19,7 @@ const statusVariants = cva(
         primary: 'bg-primary-200 dark:bg-primary-400 dark:text-slate-900',
         secondary: 'bg-slate-200 dark:bg-slate-600',
         green: 'bg-green-200 dark:bg-green-300 dark:text-slate-900',
-        red: 'bg-red-200 dark:bg-red-300 dark:text-slate-900',
+        red: 'bg-destructive text-destructive-foreground',
       },
       size: {
         sm: 'text-sm px-2 py-1 gap-x-1',

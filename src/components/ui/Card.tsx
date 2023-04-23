@@ -20,7 +20,7 @@ const cardVariants = cva(
     variants: {
       variant: {
         default: 'bg-white dark:bg-slate-700/50',
-        warning: 'bg-red-500/80 text-slate-50 shadow-lg',
+        warning: 'bg-destructive text-destructive-foreground shadow-lg',
         light: 'bg-slate-50 dark:bg-slate-700/50',
         outline:
           'bg-transparent border border-slate-300 dark:border-slate-600 shadow-none',

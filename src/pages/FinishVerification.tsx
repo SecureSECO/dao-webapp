@@ -170,7 +170,7 @@ const FinishVerification = () => {
           <div>{data?.hash && <p>Transaction hash: {data.hash}</p>}</div>
           {(isPrepareError || isError) && (
             <div>
-              <div className="mb-2 flex items-center gap-x-2 text-red-400">
+              <div className="mb-2 flex items-center gap-x-2 text-destructive">
                 <HiExclamationCircle />
                 <p>Verification Error</p>
               </div>

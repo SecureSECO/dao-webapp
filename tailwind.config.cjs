@@ -63,6 +63,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--highlight))',
           foreground: 'hsl(var(--highlight-foreground))',
         },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
         slate: {
           950: '#0D1323',
         },

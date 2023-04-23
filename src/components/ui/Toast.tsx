@@ -48,7 +48,7 @@ const toastVariants = cva(
         default: '',
         loading: '',
         success: '',
-        error: '',
+        error: 'bg-destructive',
       },
     },
     defaultVariants: {
@@ -63,7 +63,7 @@ const iconVariants = cva('w-6 h-6 shrink-0', {
       default: 'text-slate-400',
       loading: 'text-slate-400',
       success: 'text-green-400 dark:text-green-300',
-      error: 'text-red-400 dark:text-red-300',
+      error: 'text-destructive-foreground fill-destructive ',
     },
   },
   defaultVariants: {
@@ -75,7 +75,24 @@ const icons = {
   default: null,
   loading: Loading,
   success: HiCheckCircle,
-  error: HiXCircle,
+  error: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" x2="9" y1="9" y2="15"></line>
+      <line x1="9" x2="15" y1="9" y2="15"></line>
+    </svg>
+  ),
 };
 
 const Toast = React.forwardRef<
@@ -112,7 +129,7 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      'inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-transparent px-3 text-sm font-medium transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-red-100 group-[.destructive]:hover:border-slate-50 group-[.destructive]:hover:bg-red-100 group-[.destructive]:hover:text-red-600 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 dark:data-[state=open]:bg-slate-800',
+      'inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-destructive/30 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive',
       className
     )}
     {...props}

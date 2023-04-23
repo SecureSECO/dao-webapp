@@ -321,12 +321,10 @@ export const TextareaWYSIWYG = <T extends FieldValues>({
         disabled
           ? 'cursor-not-allowed opacity-50'
           : error
-          ? 'border border-red-600 dark:border-red-700'
+          ? 'border border-destructive'
           : 'border border-slate-300 dark:border-slate-700',
 
-        error
-          ? 'ring-red-600  dark:ring-red-700 '
-          : ' ring-slate-400  dark:ring-slate-400 ',
+        error ? 'ring-destructive' : ' ring-slate-400  dark:ring-slate-400 ',
         isFocused &&
           'outline-none ring-2 ring-offset-2 dark:ring-offset-slate-900'
       )}
