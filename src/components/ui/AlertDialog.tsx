@@ -70,8 +70,7 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed z-50 grid w-full max-w-lg scale-100 gap-4 bg-white px-6 py-4 opacity-100 animate-in fade-in-90 slide-in-from-bottom-10 sm:rounded-lg sm:zoom-in-90 sm:slide-in-from-bottom-0 md:w-full',
-        'dark:bg-slate-800',
+        'fixed z-50 grid w-full max-w-lg scale-100 gap-4 bg-background px-6 py-4 text-foreground opacity-100 animate-in fade-in-90 slide-in-from-bottom-10 sm:rounded-lg sm:zoom-in-90 sm:slide-in-from-bottom-0 md:w-full',
         className
       )}
       {...props}
@@ -123,11 +122,7 @@ const AlertDialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Title
     ref={ref}
-    className={cn(
-      'text-xl font-semibold text-slate-900',
-      'dark:text-slate-50',
-      className
-    )}
+    className={cn('text-xl font-semibold', className)}
     {...props}
   />
 ));
@@ -142,7 +137,7 @@ const AlertDialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Description
     ref={ref}
-    className={cn('text-sm text-slate-500', 'dark:text-slate-400', className)}
+    className={cn('text-sm opacity-80', className)}
     {...props}
   />
 ));
