@@ -37,7 +37,7 @@ const MintAction = ({ action }: { action: ProposalMintAction }) => {
           {action.params.to.map((item, index) => (
             <div
               key={index}
-              className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-border px-3 py-1 text-right "
+              className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-border px-3 py-1 text-right"
             >
               <Address
                 address={item.to}
@@ -46,7 +46,7 @@ const MintAction = ({ action }: { action: ProposalMintAction }) => {
                 showCopy={false}
                 replaceYou={false}
               />
-              <p className="text-slate-500 ">
+              <p className="text-popover-foreground/80">
                 {toAbbreviatedTokenAmount(
                   item.amount,
                   CHAIN_METADATA.rep.nativeCurrency.decimals,
