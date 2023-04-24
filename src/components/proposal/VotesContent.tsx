@@ -255,7 +255,7 @@ const VoteOption = ({
               {voteValueString}
             </p>
             <div className="flex flex-row items-center gap-x-4 text-right">
-              <p className="text-slate-500 dark:text-slate-400">
+              <p className="text-popover-foreground/80">
                 {toAbbreviatedTokenAmount(
                   proposal.result[voteValueLower],
                   CHAIN_METADATA.rep.nativeCurrency.decimals,
@@ -263,9 +263,7 @@ const VoteOption = ({
                 )}{' '}
                 REP
               </p>
-              <p className="w-12 text-right text-primary-500 dark:text-primary-400">
-                {percentage}%
-              </p>
+              <p className="w-12 text-right text-primary">{percentage}%</p>
             </div>
           </div>
           <Progress value={percentage} size="sm" variant="alt" />
@@ -304,7 +302,7 @@ const VoteOption = ({
               </div>
             ))
           ) : (
-            <p className="col-span-full text-center italic text-slate-500 dark:text-slate-400">
+            <p className="col-span-full text-center italic text-popover-foreground/80">
               No votes
             </p>
           )}

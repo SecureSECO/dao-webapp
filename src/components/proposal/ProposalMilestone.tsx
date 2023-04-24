@@ -27,7 +27,7 @@ const variants = cva('flex flex-row gap-x-2 items-start', {
       loading: 'text-highlight-foreground/80',
       done: 'text-highlight-foreground/80',
       executed: 'text-success',
-      failed: 'text-destructive text-red-400 dark:text-red-300',
+      failed: 'text-destructive',
     },
   },
   defaultVariants: {

@@ -50,7 +50,7 @@ export const ProposalResources = ({
       {...props}
     >
       {!filtered || filtered.length === 0 ? (
-        <div className="italic text-slate-500 dark:text-slate-400">
+        <div className="italic text-highlight-foreground/80">
           No resources added
         </div>
       ) : (
@@ -62,12 +62,12 @@ export const ProposalResources = ({
                   href={resource.url}
                   rel="noreferrer"
                   target="_blank"
-                  className="flex flex-row items-center gap-x-2 font-medium text-primary-500 transition-colors duration-200 hover:text-primary dark:hover:text-primary-400"
+                  className="flex flex-row items-center gap-x-2 font-medium text-primary transition-colors duration-200 hover:text-primary/80"
                 >
                   {resource.name}
                   <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
                 </a>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-popover-foreground/80">
                   {resource.url}
                 </p>
               </Card>
