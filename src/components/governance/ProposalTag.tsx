@@ -20,9 +20,9 @@ const proposalTagVariants = cva(
   {
     variants: {
       variant: {
-        countdown: 'bg-secondary',
-        yes: 'bg-success-background/80 text-success-foreground ',
-        no: 'bg-destructive-background/80 text-destructive-foreground',
+        countdown: 'bg-secondary/80 text-secondary-foreground/80',
+        yes: 'bg-success-background/60 text-success-foreground',
+        no: 'bg-destructive-background/60 text-destructive-foreground',
       },
     },
     defaultVariants: {

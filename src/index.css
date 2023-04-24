@@ -35,8 +35,8 @@
     --primary-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
     --primary-highlight: 213 52% 60%; /* hsl(213, 52%, 60%) */
 
-    --secondary: 214 32% 91%; /* hsl(214, 32%, 91%) */
-    --secondary-foreground: 222 47% 11%; /* hsl(222, 47%, 11%) */
+    --secondary: 213 27% 84%; /* hsl(213, 27%, 84%) */
+    --secondary-foreground: 216 34% 15%; /* hsl(216, 34%, 17%) */
 
     --accent: 210 40% 96%; /* hsl(210, 40%, 96%) */
     --accent-foreground: 222 47% 11%; /* hsl(222, 47%, 11%) */
@@ -77,7 +77,7 @@
     --primary-highlight: 213 52% 60%; /* hsl(213, 52%, 60%) */
 
     --secondary: 215 19% 35%; /* hsl(215, 19%, 35%) */
-    --secondary-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
+    --secondary-foreground: 213 27% 84%; /* hsl(213, 27%, 84%) */
 
     --accent: 216 34% 17%; /* hsl(216, 34%, 17%) */
     --accent-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
