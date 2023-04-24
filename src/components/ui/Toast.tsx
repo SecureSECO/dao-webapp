@@ -63,7 +63,7 @@ const iconVariants = cva('w-6 h-6 shrink-0', {
       default: 'text-slate-400',
       loading: 'text-slate-400',
       success: 'text-green-400 dark:text-green-300',
-      error: 'text-destructive-foreground fill-destructive ',
+      error: 'text-destructive-foreground ',
     },
   },
   defaultVariants: {
