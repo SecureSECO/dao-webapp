@@ -42,7 +42,7 @@ const ConnectButton = () => {
   let jazznumber = address ? jsNumberForAddress(address!) : 0;
 
   return address ? (
-    <div className="flex items-center text-slate-900">
+    <div className="flex items-center">
       <DropdownMenu>
         <DropdownMenuTrigger className="relative flex rounded-full text-sm focus:outline-none">
           <span className="sr-only">Open wallet menu</span>
@@ -52,7 +52,7 @@ const ConnectButton = () => {
               <Tooltip>
                 <TooltipTrigger asChild className="absolute -right-2 -top-2">
                   <div>
-                    <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgba(0,0,0,0.4)] dark:text-primary-500" />
+                    <HiExclamationCircle className="text-xl text-primary text-primary-500 drop-shadow-[0_0_8px_rgba(0,0,0,0.4)]" />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>

@@ -6,14 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import ThemePicker from '@/src/components/layout/ThemePicker';
+import ConnectButton from '@/src/components/layout/ConnectButton';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  component: ThemePicker,
+  component: ConnectButton,
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof ThemePicker>;
+} satisfies Meta<typeof ConnectButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
