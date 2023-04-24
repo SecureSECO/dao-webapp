@@ -7,7 +7,12 @@
  */
 
 import { useState } from 'react';
-import { useForm, Controller, FieldErrors } from 'react-hook-form';
+import {
+  useForm,
+  Controller,
+  FieldErrors,
+  UseFormGetValues,
+} from 'react-hook-form';
 import { Button } from '@/src/components/ui/Button';
 import { HiPlus, HiXMark } from 'react-icons/hi2';
 import { Input } from '@/src/components/ui/Input';
@@ -64,12 +69,6 @@ export const Metadata = () => {
     setDataStep1(data);
   };
 
-  const onError = (errors: any) => {
-    //console.log(errors);
-    console.log(getValues('title'));
-    console.log('error');
-  };
-
   const handleAddResource = () => {
     setResources([...resources, { name: '', url: '' }]);
   };
@@ -91,10 +90,7 @@ export const Metadata = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit, onError)}
-      className="flex flex-col gap-4"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <div className="space-y-1">
           <Label htmlFor="title">Title</Label>
@@ -158,7 +154,8 @@ export const Metadata = () => {
               onChange={(key, value) => handleResourceChange(index, key, value)}
               onRemove={() => handleRemoveResource(index)}
               register={register}
-              prefix={`resources[${index}]`}
+              getValues={getValues}
+              prefix={`resources.${index}`}
               errors={errors?.resources?.[index] as FieldErrors<Resource>}
             />
           ))}
@@ -183,6 +180,7 @@ const ResourceInput = ({
   resource,
   onChange,
   onRemove,
+  getValues,
   register,
   prefix,
   errors,
@@ -190,38 +188,61 @@ const ResourceInput = ({
   resource: Resource;
   onChange: (key: 'name' | 'url', value: string) => void;
   onRemove: () => void;
+  getValues: UseFormGetValues<ProposalFormMetadata>;
   register: any;
-  prefix: string;
+  prefix: `resources.${number}`;
   errors: FieldErrors<Resource> | undefined;
 }) => {
   return (
     <div className="flex w-full flex-col gap-2 md:flex-row">
-      <Input
-        {...register(`${prefix}.name`)}
-        type="text"
-        value={resource.name}
-        onChange={(e) => onChange('name', e.target.value)}
-        placeholder="Resource name"
-      />
-      <div className="flex w-full flex-row items-center gap-2">
-        <ErrorWrapper name="Url" error={errors?.url}>
+      <div className="w-full">
+        <ErrorWrapper name="Name" error={errors?.name}>
           <Input
-            {...register(`${prefix}.url`, {
-              pattern: {
-                value: UrlPattern,
-                message: 'Invalid URL',
+            {...register(`${prefix}.name`, {
+              validate: (v: any) => {
+                return (
+                  !getValues(`${prefix}.url`) ||
+                  Boolean(v) ||
+                  'You must enter a name'
+                );
               },
             })}
             type="text"
-            value={resource.url}
-            onChange={(e) => onChange('url', e.target.value)}
-            placeholder="Resource URL"
-            error={errors?.url}
+            value={resource.name}
+            error={errors?.name}
+            onChange={(e) => onChange('name', e.target.value)}
+            placeholder="Resource name"
           />
         </ErrorWrapper>
-        <div className="shrink-0">
-          <HiXMark className="h-5 w-5 cursor-pointer" onClick={onRemove} />
-        </div>
+      </div>
+      <div className="w-full">
+        <ErrorWrapper name="Url" error={errors?.url}>
+          <div className="flex h-fit w-full flex-row items-center gap-2">
+            <Input
+              {...register(`${prefix}.url`, {
+                pattern: {
+                  value: UrlPattern,
+                  message: 'Invalid URL',
+                },
+                validate: (v: any) => {
+                  return (
+                    !getValues(`${prefix}.name`) ||
+                    Boolean(v) ||
+                    'You must enter a URL'
+                  );
+                },
+              })}
+              type="text"
+              value={resource.url}
+              onChange={(e) => onChange('url', e.target.value)}
+              placeholder="Resource URL"
+              error={errors?.url}
+            />
+            <button type="button" onClick={onRemove} className="shrink-0">
+              <HiXMark className="h-5 w-5 cursor-pointer" />
+            </button>
+          </div>
+        </ErrorWrapper>
       </div>
     </div>
   );
