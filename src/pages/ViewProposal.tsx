@@ -136,7 +136,7 @@ const ViewProposal = () => {
                     size="md"
                     status={proposal?.status ?? ProposalStatus.PENDING}
                   />
-                  <div className="flex flex-row items-center gap-x-2 text-slate-400 dark:text-slate-500">
+                  <div className="flex flex-row items-center gap-x-2 text-highlight-foreground/60">
                     <HiOutlineClock className="h-5 w-5 shrink-0" />
                     {statusText(proposal?.status ?? ProposalStatus.PENDING)}
                   </div>
@@ -145,11 +145,11 @@ const ViewProposal = () => {
             >
               {proposal && (
                 <div className="flex flex-col gap-y-3">
-                  <p className="text-lg font-medium leading-5 text-slate-500 dark:text-slate-400">
+                  <p className="text-lg font-medium leading-5 text-highlight-foreground/80">
                     {proposal.metadata.summary}
                   </p>
                   <div className="flex items-center gap-x-1 text-sm">
-                    <span className="text-slate-500 dark:text-slate-400">
+                    <span className="text-highlight-foreground/60">
                       Published by
                     </span>
                     <Address

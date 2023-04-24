@@ -147,8 +147,8 @@ export const ProgressCard = ({ children }: { children?: React.ReactNode }) => {
   return (
     <Card className="flex flex-col gap-1 px-1 sm:px-6">
       <div className="flex w-full items-center justify-between">
-        <p className="text-primary dark:text-primary-500">New proposal</p>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-primary">New proposal</p>
+        <p className="text-sm text-highlight-foreground/80">
           Step {step} of {totalSteps}
         </p>
       </div>

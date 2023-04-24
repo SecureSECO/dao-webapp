@@ -164,8 +164,8 @@ export const ProposalCardList = ({
           doubleColumn && 'lg:grid-cols-2'
         )}
       >
-        <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
-        <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
+        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
       </div>
     );
   if (error)

@@ -315,7 +315,7 @@ const Verification = () => {
   return (
     <div className="flex flex-col gap-6">
       <HeaderCard title="Verification" aside={<></>}>
-        <p className="text-base font-normal text-slate-500 dark:text-slate-400">
+        <p className="text-base font-normal text-highlight-foreground/80">
           You can verify your identity on a variety platforms to prove that you
           are a real person.
         </p>
@@ -336,13 +336,13 @@ const Verification = () => {
           >
             {isLoading ? (
               <div className="flex flex-col gap-4">
-                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
-                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
-                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-300"></div>
+                <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
+                <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
+                <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
               </div>
             ) : isError ? (
               <div>
-                <p className="italic text-slate-500 dark:text-slate-400">
+                <p className="italic text-highlight-foreground/80">
                   There was an error fetching your stamps. Please try again
                   later.
                 </p>
@@ -380,7 +380,7 @@ const Verification = () => {
                 <RecentVerificationCard key={index} history={history} />
               ))
             ) : (
-              <p className="italic text-slate-500 dark:text-slate-400">
+              <p className="italic text-highlight-foreground/80">
                 No verifications
               </p>
             )}
@@ -389,8 +389,8 @@ const Verification = () => {
       ) : (
         <div className="mt-10 flex flex-col items-center justify-center gap-6">
           <div className="flex flex-col items-center justify-center gap-4">
-            <HiOutlineLockClosed className="text-6xl text-slate-500 dark:text-slate-400" />
-            <p className="text-xl font-medium text-slate-500 dark:text-slate-400">
+            <HiOutlineLockClosed className="text-6xl text-highlight-foreground/80" />
+            <p className="text-xl font-medium text-highlight-foreground/80">
               Connect your wallet to verify your identity
             </p>
           </div>

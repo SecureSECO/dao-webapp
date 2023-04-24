@@ -181,7 +181,7 @@ const FinishVerification = () => {
             </div>
           )}
           {isSuccess && (
-            <a href="/verification" className="text-blue-500">
+            <a href="/verification" className="text-primary-highlight">
               Go back to stamps
             </a>
           )}
