@@ -59,7 +59,9 @@ const ProposalActions = ({
       {...props}
     >
       {!actions || actions.length === 0 ? (
-        <div className="italic text-subtext">No actions attached</div>
+        <div className="italic text-popover-foreground/80">
+          No actions attached
+        </div>
       ) : (
         <Accordion type="single" collapsible className={cn('space-y-2')}>
           {actions.map((action, i) => (

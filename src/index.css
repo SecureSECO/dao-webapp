@@ -22,7 +22,7 @@
     --popover-foreground: 215 25% 27%; /* hsl(215, 25%, 27%) */
 
     --highlight: 0 0% 100%; /* hsl(0, 0%, 100%) */
-    --highlight-foreground: 222 47% 11%; /* hsl(222, 47%, 11%) */
+    --highlight-foreground: 215 25% 27%; /* hsl(215, 25%, 27%) */
 
     --border: 214 32% 91%; /* hsl(214, 32%, 91%) */
     --input: 214 32% 91%; /* hsl(214, 32%, 91%) */
@@ -45,8 +45,6 @@
     --destructive-background: 0 96% 89%; /* hsl(0, 96%, 89%) */
     --destructive-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
 
-    --subtext: 215 16% 47%; /* hsl(215, 16%, 47%) */
-
     --ring: 215 20% 65%; /* hsl(215, 20%, 65%) */
 
     --radius: 0.5rem; /* 8px */
@@ -63,7 +61,7 @@
     --popover-foreground: 213 27% 84%; /* hsl(213, 27%, 84%) */
 
     --highlight: 224 28% 18%; /* hsl(224, 28%, 18%) */
-    --highlight-foreground: 213 31% 91%; /* hsl(213, 31%, 91%) */
+    --highlight-foreground: 213 27% 84%; /* hsl(213, 27%, 84%) */
 
     --border: 216 34% 17%; /* hsl(216, 34%, 17%) */
     --input: 216 34% 17%; /* hsl(216, 34%, 17%) */
@@ -85,8 +83,6 @@
     --destructive: 0 94% 82%; /* hsl(0, 94%, 82%) */
     --destructive-background: 0 94% 82%; /* hsl(0, 94%, 82%) */
     --destructive-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
-
-    --subtext: 215 20% 65%; /* hsl(215, 20%, 65%) */
 
     --ring: 216 34% 17%; /* hsl(216, 34%, 17%) */
 

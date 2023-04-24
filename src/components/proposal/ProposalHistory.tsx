@@ -118,7 +118,7 @@ const ProposalHistory = ({
       header="History"
     >
       <div className="relative">
-        <div className="absolute bottom-6 left-[0.5625rem] top-2 w-0.5 bg-subtext" />
+        <div className="absolute bottom-6 left-[0.5625rem] top-2 w-0.5 bg-popover-foreground/60" />
         <div className="relative z-10 flex flex-col gap-y-6">
           {proposal &&
             getProposalMilestones(proposal).map((milestone, i) => (

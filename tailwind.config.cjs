@@ -70,7 +70,6 @@ module.exports = {
           background: 'hsl(var(--success-background))',
           foreground: 'hsl(var(--success-foreground))',
         },
-        subtext: 'hsl(var(--subtext))',
         slate: {
           950: '#0D1323',
         },

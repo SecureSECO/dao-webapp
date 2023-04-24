@@ -78,7 +78,7 @@ export const Confirmation = () => {
           title={dataStep1?.title ?? 'No title'}
           className="md:col-span-2"
         >
-          <p className="text-lg font-medium leading-5 text-subtext">
+          <p className="text-lg font-medium leading-5 text-highlight-foreground/80">
             {dataStep1?.summary ?? 'No summary'}{' '}
           </p>
           {/* Note that since our HTML is sanitized, this dangerous action is safe */}
@@ -121,7 +121,9 @@ export const Confirmation = () => {
                       key={item.label}
                       className="flex flex-row justify-between gap-x-2"
                     >
-                      <p className="text-subtext">{item.label}</p>
+                      <p className="text-highlight-foreground/80">
+                        {item.label}
+                      </p>
                       <p className="text-primary">{item.value}</p>
                     </div>
                   ))}
