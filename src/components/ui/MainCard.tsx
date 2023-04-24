@@ -14,7 +14,7 @@
 import React, { ReactNode } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 
-import { cn } from '../../lib/utils';
+import { cn } from '@/src/lib/utils';
 import { Card, CardProps } from '@/src/components/ui/Card';
 import { IconType } from 'react-icons/lib';
 

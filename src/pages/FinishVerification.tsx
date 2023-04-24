@@ -15,8 +15,8 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import { verificationAbi } from '../assets/verificationAbi';
-import { verificationAddress } from '../pages/Verification';
+import { verificationAbi } from '@/src/assets/verificationAbi';
+import { verificationAddress } from '@/src/pages/Verification';
 import {
   Accordion,
   AccordionContent,
@@ -24,7 +24,7 @@ import {
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
 import { HiExclamationCircle } from 'react-icons/hi2';
-import Header from '../components/ui/Header';
+import Header from '@/src/components/ui/Header';
 import { useToast } from '@/src/hooks/useToast';
 
 const FinishVerification = () => {

@@ -7,12 +7,16 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
 
-import { Button } from './Button';
-import { Input } from './Input';
+import { Button } from '@/src/components/ui/Button';
+import { Input } from '@/src/components/ui/Input';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/src/components/ui/Tabs';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,

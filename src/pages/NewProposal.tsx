@@ -14,16 +14,16 @@ import { Card } from '@/src/components/ui/Card';
 import {
   ProposalFormVotingSettings,
   Voting,
-} from '../components/newProposal/steps/Voting';
+} from '@/src/components/newProposal/steps/Voting';
 import {
   Actions,
   ProposalFormActions,
-} from '../components/newProposal/steps/Actions';
+} from '@/src/components/newProposal/steps/Actions';
 import {
   Metadata,
   ProposalFormMetadata,
-} from '../components/newProposal/steps/Metadata';
-import { Confirmation } from '../components/newProposal/steps/Confirmation';
+} from '@/src/components/newProposal/steps/Metadata';
+import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import { Link } from '@/src/components/ui/Link';
 import { HiChevronLeft } from 'react-icons/hi2';
 

@@ -8,7 +8,10 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Actions, ProposalFormActions } from './Actions';
+import {
+  Actions,
+  ProposalFormActions,
+} from '@/src/components/newProposal/steps/Actions';
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
 import { emptyWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import { emptyMintData } from '@/src/components/newProposal/actions/MintTokensInput';

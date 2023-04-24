@@ -7,10 +7,10 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Input } from './Input';
+import { Input } from '@/src/components/ui/Input';
 import React from 'react';
 
-import { Label } from './Label';
+import { Label } from '@/src/components/ui/Label';
 
 const meta: Meta<typeof Label> = {
   tags: ['autodocs'],

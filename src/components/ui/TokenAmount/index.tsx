@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { anyNullOrUndefined } from '../../../lib/utils';
+import { anyNullOrUndefined } from '@/src/lib/utils';
 import { TransferType } from '@aragon/sdk-client';
 import React from 'react';
 

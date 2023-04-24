@@ -8,7 +8,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import TokenAmount from './TokenAmount';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 
 const meta: Meta<typeof TokenAmount> = {
   component: TokenAmount,

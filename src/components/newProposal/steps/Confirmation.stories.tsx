@@ -9,7 +9,7 @@
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Confirmation } from './Confirmation';
+import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import { ProposalFormMetadata } from '@/src/components/newProposal/steps/Metadata';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
 import { ProposalFormActions } from '@/src/components/newProposal/steps/Actions';

@@ -9,9 +9,9 @@
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
 import { useAccount, useContractRead, useSignMessage } from 'wagmi';
-import { verificationAbi } from '../assets/verificationAbi';
-import StampCard from '../components/ui/StampCard';
-import { DefaultMainCardHeader, MainCard } from '../components/ui/MainCard';
+import { verificationAbi } from '@/src/assets/verificationAbi';
+import StampCard from '@/src/components/ui/StampCard';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import {
   HiCheckBadge,
   HiClock,
@@ -20,7 +20,7 @@ import {
 } from 'react-icons/hi2';
 import { AiFillGithub, AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
-import RecentVerificationCard from '../components/ui/RecentVerificationCard';
+import RecentVerificationCard from '@/src/components/ui/RecentVerificationCard';
 import { FaDiscord } from 'react-icons/fa';
 import { useToast } from '@/src/hooks/useToast';
 

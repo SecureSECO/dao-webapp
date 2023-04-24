@@ -12,18 +12,17 @@
  * If the stamp is verified, a checkmark icon will be displayed next to the providerId.
  */
 
-import React from 'react';
 import {
   Stamp,
   StampInfo,
   VerificationThreshold,
   isVerified,
-} from '../../pages/Verification';
-import { Button } from './Button';
-import { Card } from './Card';
+} from '@/src/pages/Verification';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
 import { HiCalendar, HiChartBar, HiLink } from 'react-icons/hi2';
 import { FaHourglass } from 'react-icons/fa';
-import { StatusBadge, StatusBadgeProps } from './StatusBadge';
+import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,9 +33,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '../ui/AlertDialog';
+} from '@/src/components/ui/AlertDialog';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { verificationAbi } from '../../assets/verificationAbi';
+import { verificationAbi } from '@/src/assets/verificationAbi';
 import { useState } from 'react';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { HiXMark, HiOutlineClock } from 'react-icons/hi2';

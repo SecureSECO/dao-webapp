@@ -12,7 +12,11 @@
  */
 
 import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
-import { DefaultMainCardHeader, MainCard, MainCardProps } from '../ui/MainCard';
+import {
+  DefaultMainCardHeader,
+  MainCard,
+  MainCardProps,
+} from '@/src/components/ui/MainCard';
 import { Card } from '@/src/components/ui/Card';
 import { ProposalResource } from '@/src/hooks/useProposal';
 

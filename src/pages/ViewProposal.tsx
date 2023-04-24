@@ -15,7 +15,7 @@ import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
 import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
 import { Link } from '@/src/components/ui/Link';
 import { countdownText } from '@/src/lib/utils';
-import { ProposalResources } from '../components/proposal/ProposalResources';
+import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import ProposalActions from '@/src/components/proposal/ProposalActions';

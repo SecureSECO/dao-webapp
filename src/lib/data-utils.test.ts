@@ -4,7 +4,7 @@ import {
   isGapEnough,
   timezoneOffsetDifference,
   timezoneStringFormat,
-} from './date-utils';
+} from '@/src/lib/date-utils';
 
 test("'2022-12-15' + 1 day (=86400 secs) to be 2022-12-16", () => {
   expect(getDurationDateAhead(86400, '2022-12-15')).toBe('2022-12-16');

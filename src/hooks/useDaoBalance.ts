@@ -10,8 +10,8 @@ import { useAragonSDKContext } from '@/src/context/AragonSDK';
 
 import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
-import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
-import { getErrorMessage } from '../lib/utils';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { getErrorMessage } from '@/src/lib/utils';
 
 export type UseDaoBalanceData = {
   daoBalances: DaoBalance[];

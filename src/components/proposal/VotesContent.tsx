@@ -36,7 +36,7 @@ import {
   getChainDataByChainId,
 } from '@/src/lib/constants/chains';
 import { calcBigintPercentage } from '@/src/lib/utils';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
+import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { ToastUpdate, useToast } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 

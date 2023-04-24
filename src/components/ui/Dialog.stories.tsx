@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './Dialog';
+} from '@/src/components/ui/Dialog';
 import { Button } from '@/src/components/ui/Button';
 
 const meta: Meta<typeof Dialog> = {
