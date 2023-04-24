@@ -6,20 +6,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import Navbar from '@/src/components/layout/Navbar';
 import type { Meta, StoryObj } from '@storybook/react';
-import Loading from '@/src/components/icons/Loading';
 
 const meta = {
-  component: Loading,
+  component: Navbar,
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof Loading>;
+} satisfies Meta<typeof Navbar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    className: 'w-5 h-5',
-  },
+  args: {},
 };
