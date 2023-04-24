@@ -20,6 +20,7 @@ import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
 import { ActionFormError, ProposalFormActions } from '../steps/Actions';
 import { Label } from '@/src/components/ui/Label';
+import { someUntil } from '@/src/lib/utils';
 
 export type ProposalFormMint = {
   name: 'mint_tokens';
@@ -171,7 +172,7 @@ const MintListItem = ({
             },
             // Custom validation function to prevent duplicate addresses
             validate: (value: string) => {
-              let anyDuplicates = someUntill(
+              let anyDuplicates = someUntil(
                 getValues(walletsPrefix),
                 (a) => a.address === value,
                 index
@@ -212,20 +213,3 @@ const MintListItem = ({
     </>
   );
 };
-
-/**
- * Performs the same logical task as the standard some method for lists.
- * However, it does not test the entire list, but from the start (index 0) untill (exclusive) the given index.
- */
-function someUntill<T>(
-  list: T[],
-  predicate: (arg: T) => Boolean,
-  untillExclusive: number
-): Boolean {
-  for (let i = 0; i < list.length && i < untillExclusive; i++) {
-    if (predicate(list[i])) {
-      return true;
-    }
-  }
-  return false;
-}
