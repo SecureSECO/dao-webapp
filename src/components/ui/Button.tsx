@@ -27,7 +27,7 @@ const buttonVariants = cva(
         default:
           'bg-primary text-white dark:text-slate-300 hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary focus:ring-primary-400 dark:focus:ring-slate-400', // for button that opens some menu: data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-slate-800
         destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/80 focus:ring-destructive',
+          'bg-destructive-background text-destructive-foreground hover:bg-destructive-background/80 focus:ring-destructive',
         outline:
           'bg-transparent border border-slate-300 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800 dark:text-slate-100 focus:ring-primary-100 dark:focus:ring-primary-400',
         subtle:

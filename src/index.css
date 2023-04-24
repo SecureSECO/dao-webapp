@@ -39,7 +39,8 @@
     --accent: 210 40% 96%; /* hsl(210, 40%, 96%) */
     --accent-foreground: 222 47% 11%; /* hsl(222, 47%, 11%) */
 
-    --destructive: 0 96% 89%; /* hsl(0, 96%, 89%) */
+    --destructive: 0 96% 70%; /* hsl(0, 96%, 70%) */
+    --destructive-background: 0 96% 89%; /* hsl(0, 96%, 89%) */
     --destructive-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
 
     --ring: 215 20% 65%; /* hsl(215, 20%, 65%) */
@@ -75,7 +76,8 @@
     --accent: 216 34% 17%; /* hsl(216, 34%, 17%) */
     --accent-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
 
-    --destructive: 0 94% 82%; /* hsl(0, 94%, 82%) */
+    --destructive: 0 96% 70%; /* hsl(0, 96%, 70%) */
+    --destructive-background: 0 94% 82%; /* hsl(0, 94%, 82%) */
     --destructive-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
 
     --ring: 216 34% 17%; /* hsl(216, 34%, 17%) */
