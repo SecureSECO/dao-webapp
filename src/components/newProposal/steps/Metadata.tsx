@@ -209,13 +209,13 @@ const ResourceInput = ({
             {...register(`${prefix}.url`, {
               pattern: {
                 value: UrlPattern,
-                message: 'Invalid Url',
+                message: 'Invalid URL',
               },
             })}
             type="text"
             value={resource.url}
             onChange={(e) => onChange('url', e.target.value)}
-            placeholder="Resource url"
+            placeholder="Resource URL"
             error={errors?.url}
           />
         </ErrorWrapper>
