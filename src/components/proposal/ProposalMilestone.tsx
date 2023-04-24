@@ -24,8 +24,8 @@ import { HiCheckCircle, HiCube, HiXCircle } from 'react-icons/hi2';
 const variants = cva('flex flex-row gap-x-2 items-start', {
   variants: {
     variant: {
-      loading: 'text-slate-500 dark:text-slate-400',
-      done: 'text-slate-500 dark:text-slate-400',
+      loading: 'text-highlight-foreground/80',
+      done: 'text-highlight-foreground/80',
       executed: 'text-success',
       failed: 'text-destructive text-red-400 dark:text-red-300',
     },
@@ -73,7 +73,7 @@ const ProposalMilestone = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild className="hover:cursor-help">
-                  <div className="flex flex-row items-center gap-x-1 text-subtext/80">
+                  <div className="flex flex-row items-center gap-x-1 text-highlight-foreground/60">
                     <p className="text-sm">{blockNumber.toLocaleString()}</p>
                     <HiCube className="h-4 w-4 shrink-0" />
                   </div>
@@ -86,7 +86,9 @@ const ProposalMilestone = ({
           )}
         </div>
         {date && (
-          <p className="text-xs text-subtext/80">{format(date, 'Pp O')}</p>
+          <p className="text-xs text-highlight-foreground/60">
+            {format(date, 'Pp O')}
+          </p>
         )}
       </div>
     </div>

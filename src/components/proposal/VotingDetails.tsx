@@ -102,7 +102,9 @@ const VotingDetails = ({
 }) => {
   if (!proposal)
     return (
-      <p className="text-center text-subtext">Proposal details not found</p>
+      <p className="text-center text-popover-foreground/80">
+        Proposal details not found
+      </p>
     );
 
   return (
@@ -118,7 +120,7 @@ const VotingDetails = ({
               key={item.label}
               className="flex flex-row justify-between gap-x-2"
             >
-              <p className="text-subtext">{item.label}</p>
+              <p className="text-popover-foreground/80">{item.label}</p>
               <p className="text-primary-highlight">{item.value(proposal)}</p>
             </div>
           ))}

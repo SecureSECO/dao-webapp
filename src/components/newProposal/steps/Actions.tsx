@@ -82,7 +82,7 @@ export const Actions = () => {
             Actions
           </Label>
           {fields.length === 0 ? (
-            <p className="italic text-subtext">No actions</p>
+            <p className="italic text-highlight-foreground/80">No actions</p>
           ) : (
             <>
               {/* List of proposal actions */}
