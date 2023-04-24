@@ -156,7 +156,9 @@ export const Metadata = () => {
               register={register}
               getValues={getValues}
               prefix={`resources.${index}`}
-              errors={errors?.resources?.[index] as FieldErrors<Resource>}
+              errors={
+                errors?.resources?.[index] as FieldErrors<ProposalResource>
+              }
             />
           ))}
           <Button
@@ -175,7 +177,6 @@ export const Metadata = () => {
   );
 };
 
-type Resource = { name: string; url: string };
 const ResourceInput = ({
   resource,
   onChange,
@@ -185,13 +186,13 @@ const ResourceInput = ({
   prefix,
   errors,
 }: {
-  resource: Resource;
+  resource: ProposalResource;
   onChange: (key: 'name' | 'url', value: string) => void;
   onRemove: () => void;
   getValues: UseFormGetValues<ProposalFormMetadata>;
   register: any;
   prefix: `resources.${number}`;
-  errors: FieldErrors<Resource> | undefined;
+  errors: FieldErrors<ProposalResource> | undefined;
 }) => {
   return (
     <div className="flex w-full flex-col gap-2 md:flex-row">
