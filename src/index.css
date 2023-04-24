@@ -30,7 +30,7 @@
     --success: 120 100% 50%; /* hsl(120, 100%, 50%) */
     --success-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
 
-    --primary: 213 50% 48%; /* hsl(213, 50%, 48%) */
+    --primary: 215 54% 34%; /* hsl(215, 54%, 34%) */
     --primary-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
 
     --secondary: 210 40% 96%; /* hsl(210, 40%, 96%) */
@@ -66,8 +66,8 @@
     --success: 120 100% 50%; /* hsl(120, 100%, 50%) */
     --success-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
 
-    --primary: 210 40% 98%; /* hsl(210, 40%, 98%) */
-    --primary-foreground: 222 47% 2%; /* hsl(222, 47%, 2%) */
+    --primary: 213 50% 48%; /* hsl(213, 50%, 48%) */
+    --primary-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
 
     --secondary: 222 47% 11%; /* hsl(222, 47%, 11%) */
     --secondary-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
