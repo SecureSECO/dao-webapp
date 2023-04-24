@@ -38,7 +38,7 @@ const AccordionItem = React.forwardRef<
     <AccordionPrimitive.Item
       ref={ref}
       className={cn(
-        'relative w-full overflow-clip rounded-lg bg-background px-4 text-foreground shadow-md',
+        'relative w-full overflow-clip rounded-lg bg-popover px-4 text-popover-foreground shadow-md',
         className
       )}
       {...props}

@@ -22,7 +22,7 @@ const proposalTagVariants = cva(
       variant: {
         countdown: 'bg-slate-200 dark:bg-slate-600',
         yes: 'bg-green-200/50 dark:bg-green-300/50 dark:text-slate-800',
-        no: 'bg-destructive text-destructive-foreground',
+        no: 'bg-destructive-background text-destructive-foreground',
       },
     },
     defaultVariants: {
