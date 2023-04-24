@@ -47,7 +47,6 @@ export interface ProposalActionsProps
  */
 const ProposalActions = ({
   actions,
-  accordionVariant = 'default',
   children,
   ...props
 }: ProposalActionsProps) => {
@@ -60,18 +59,9 @@ const ProposalActions = ({
       {...props}
     >
       {!actions || actions.length === 0 ? (
-        <div className="italic text-slate-500 dark:text-slate-400">
-          No actions attached
-        </div>
+        <div className="italic text-subtext">No actions attached</div>
       ) : (
-        <Accordion
-          type="single"
-          collapsible
-          className={cn(
-            'space-y-2',
-            accordionVariant === 'dark' && 'bg-slate-100 dark:bg-slate-700/50'
-          )}
-        >
+        <Accordion type="single" collapsible className={cn('space-y-2')}>
           {actions.map((action, i) => (
             <ProposalAction key={i} action={action} index={i} />
           ))}

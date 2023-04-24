@@ -26,8 +26,8 @@ const variants = cva('flex flex-row gap-x-2 items-start', {
     variant: {
       loading: 'text-slate-500 dark:text-slate-400',
       done: 'text-slate-500 dark:text-slate-400',
-      executed: 'text-green-400 dark:text-green-300',
-      failed: 'text-destructive',
+      executed: 'text-success',
+      failed: 'text-destructive text-red-400 dark:text-red-300',
     },
   },
   defaultVariants: {

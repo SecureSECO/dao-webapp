@@ -45,7 +45,7 @@ export const Secondary: Story = {
   },
 };
 
-export const Green: Story = {
+export const Success: Story = {
   args: {
     variant: 'green',
     icon: Check,
@@ -54,7 +54,7 @@ export const Green: Story = {
   },
 };
 
-export const Red: Story = {
+export const Destructive: Story = {
   args: {
     variant: 'red',
     icon: HiXMark,

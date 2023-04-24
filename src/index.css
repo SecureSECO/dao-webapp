@@ -27,7 +27,7 @@
     --border: 214 32% 91%; /* hsl(214, 32%, 91%) */
     --input: 214 32% 91%; /* hsl(214, 32%, 91%) */
 
-    --success: 120 100% 50%; /* hsl(120, 100%, 50%) */
+    --success: 142 69% 58%; /* hsl(142, 69%, 58%) */
     --success-background: 120 100% 90%; /* hsl(120, 100%, 90%) */
     --success-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
 
@@ -41,7 +41,7 @@
     --accent: 210 40% 96%; /* hsl(210, 40%, 96%) */
     --accent-foreground: 222 47% 11%; /* hsl(222, 47%, 11%) */
 
-    --destructive: 0 96% 70%; /* hsl(0, 96%, 70%) */
+    --destructive: 0 91% 71%; /* hsl(0, 91%, 71%) */
     --destructive-background: 0 96% 89%; /* hsl(0, 96%, 89%) */
     --destructive-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
 
@@ -68,7 +68,7 @@
     --border: 216 34% 17%; /* hsl(216, 34%, 17%) */
     --input: 216 34% 17%; /* hsl(216, 34%, 17%) */
 
-    --success: 134 77% 86%; /* hsl(134, 77%, 86%) */
+    --success: 142 77% 73%; /* hsl(142, 77%, 73%) */
     --success-background: 134 77% 86%; /* hsl(134, 77%, 86%) */
     --success-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
 
@@ -82,7 +82,7 @@
     --accent: 216 34% 17%; /* hsl(216, 34%, 17%) */
     --accent-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
 
-    --destructive: 0 96% 70%; /* hsl(0, 96%, 70%) */
+    --destructive: 0 94% 82%; /* hsl(0, 94%, 82%) */
     --destructive-background: 0 94% 82%; /* hsl(0, 94%, 82%) */
     --destructive-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
 

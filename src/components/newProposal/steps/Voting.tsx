@@ -185,7 +185,7 @@ export const StartTime = ({
           )}
         />
         {startTimeType === 'custom' && (
-          <Card className="flex w-full gap-2 bg-slate-50 dark:bg-slate-700/50">
+          <Card variant="light">
             <LabelledInput
               id="custom_start_date"
               type="date"
