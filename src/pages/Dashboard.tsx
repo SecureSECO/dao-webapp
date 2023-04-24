@@ -27,7 +27,7 @@ import { useMembers } from '@/src/hooks/useMembers';
 import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { ProposalCardList } from '@/src/pages/Governance';
 import MembersList from '@/src/components/dashboard/MembersList';
-import { DaoTransfers } from '@/src/pages/Finance';
+import { DaoTransfersList } from '@/src/pages/Finance';
 import { Link } from '@/src/components/ui/Link';
 import { getSupportedNetworkByChainId } from '@/src/lib/constants/chains';
 import { getChainDataByChainId } from '@/src/lib/constants/chains';
@@ -168,13 +168,12 @@ const Dashboard = () => {
             />
           }
         >
-          {!daoTransfers ? (
-            <p className="text-center font-normal text-highlight-foreground/80">
-              No transfers found
-            </p>
-          ) : (
-            <DaoTransfers daoTransfers={daoTransfers} limit={3} />
-          )}
+          <DaoTransfersList
+            daoTransfers={daoTransfers}
+            limit={3}
+            loading={daoTransfersLoading}
+            error={daoTransfersError}
+          />
           <Link
             variant="outline"
             className="flex flex-row items-center gap-x-2"

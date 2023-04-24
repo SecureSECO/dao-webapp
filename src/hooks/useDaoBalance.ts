@@ -14,12 +14,10 @@ import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
 import { getErrorMessage } from '../lib/utils';
 
 export type UseDaoBalanceData = {
-  daoBalances: DaoBalances;
+  daoBalances: DaoBalance[];
   loading: boolean;
   error: string | null;
 };
-
-export type DaoBalances = DaoBalance[];
 
 export type DaoBalance = {
   type: TokenType;
@@ -38,7 +36,7 @@ export type UseDaoBalanceProps = {
 export const useDaoBalance = ({
   useDummyData = false,
 }: UseDaoBalanceProps): UseDaoBalanceData => {
-  const [daoBalances, setDaoBalances] = useState<DaoBalances>([]);
+  const [daoBalances, setDaoBalances] = useState<DaoBalance[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,7 +53,7 @@ export const useDaoBalance = ({
       const daoBal: AssetBalance[] | null = await client.methods.getDaoBalances(
         { daoAddressOrEns }
       );
-      let balances: DaoBalances = [];
+      let balances: DaoBalance[] = [];
       if (daoBal != null) {
         balances = daoBal.map(assetBalanceToDaoBalance);
       }
