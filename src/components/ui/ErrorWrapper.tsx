@@ -42,8 +42,8 @@ export const ErrorWrapper = React.forwardRef<HTMLDivElement, ErrorWrapperProps>(
               : error?.type == 'maxLength'
               ? `${name} is too long`
               : error?.type == 'pattern'
-              ? `${name} is invalid`
-              : error?.message}
+              ? error?.message ?? `${name} is invalid`
+              : error?.message ?? `${name} is invalid`}
           </span>
         )}
       </div>

@@ -124,14 +124,19 @@ export const WithdrawAssetsInput = ({
         >
           Recipient
         </Label>
-        <ErrorWrapper name="Recipient" error={errors?.recipient ?? undefined}>
+        <ErrorWrapper name="Recipient" error={errors?.recipient}>
           <Input
-            {...register(`${prefix}.recipient`, { required: true })}
+            {...register(`${prefix}.recipient`, {
+              required: true,
+              pattern: {
+                value: AddressPattern,
+                message:
+                  'Please enter an address starting with 0x, followed by 40 address characters',
+              },
+            })}
             type="text"
             id="recipient"
-            pattern={AddressPattern}
-            title="An address starting with 0x, followed by 40 address characters"
-            error={errors?.recipient ?? undefined}
+            error={errors?.recipient}
             placeholder="0x..."
           />
         </ErrorWrapper>
@@ -142,7 +147,7 @@ export const WithdrawAssetsInput = ({
             Token
           </Label>
           {/* To be replaced with <Select> component, which is currently, conveniently located in another branch */}
-          <ErrorWrapper name="Token" error={errors?.tokenAddress ?? undefined}>
+          <ErrorWrapper name="Token" error={errors?.tokenAddress}>
             <Controller
               control={control}
               name={`${prefix}.tokenAddress`}
@@ -154,7 +159,7 @@ export const WithdrawAssetsInput = ({
                   required
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Timezone" />
+                    <SelectValue placeholder="Token" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -181,28 +186,25 @@ export const WithdrawAssetsInput = ({
                 </Select>
               )}
             />
-            {/* <Input
-              {...register(`${prefix}.tokenAddress`, { required: true })}
-              name="tokenAddress"
-              pattern={AddressPattern}
-              title="An address starting with 0x, followed by 40 address characters"
-              error={errors?.tokenAddress ?? undefined}
-            /> */}
           </ErrorWrapper>
         </div>
         <div className="flex flex-col gap-y-1">
           <Label tooltip="Amount of tokens to withdraw" htmlFor="amount">
             Amount
           </Label>
-          <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
+          <ErrorWrapper name="Amount" error={errors?.amount}>
             <Input
-              {...register(`${prefix}.amount`, { required: true })}
-              type="number"
+              {...register(`${prefix}.amount`, {
+                required: true,
+                pattern: {
+                  value: NumberPattern,
+                  message: 'Please enter a number, e.g. 3.141',
+                },
+              })}
+              type="text"
               id="amount"
-              title="A number using a '.' as decimal place, e.g. '3.141'"
-              pattern={NumberPattern}
               placeholder="0"
-              error={errors?.amount ?? undefined}
+              error={errors?.amount}
             />
           </ErrorWrapper>
         </div>

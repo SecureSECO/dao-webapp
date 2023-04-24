@@ -9,15 +9,18 @@
 import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import { Input } from '@/src/components/ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
-import { Button } from '@/src/components/ui/Button';
-import { Control, UseFormRegister, useFieldArray } from 'react-hook-form';
-import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
-import { MainCard } from '@/src/components/ui/MainCard';
+import { Button } from '../../ui/Button';
 import {
-  ActionFormError,
-  ProposalFormActions,
-} from '@/src/components/newProposal/steps/Actions';
+  Control,
+  UseFormRegister,
+  useFieldArray,
+  UseFormGetValues,
+} from 'react-hook-form';
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
+import { MainCard } from '../../ui/MainCard';
+import { ActionFormError, ProposalFormActions } from '../steps/Actions';
 import { Label } from '@/src/components/ui/Label';
+import { someUntil } from '@/src/lib/utils';
 
 export type ProposalFormMint = {
   name: 'mint_tokens';
@@ -80,12 +83,14 @@ export const MintTokensInput = ({
   prefix,
   errors,
   onRemove,
+  getValues,
 }: {
   register: UseFormRegister<ProposalFormActions>;
   control: Control<ProposalFormActions>;
   prefix: `actions.${number}`;
   errors: ActionFormError<ProposalFormMintData>;
   onRemove: () => void;
+  getValues: UseFormGetValues<ProposalFormActions>;
 }) => {
   const { fields, append, remove } = useFieldArray({
     name: `${prefix}.wallets`,
@@ -115,10 +120,12 @@ export const MintTokensInput = ({
         {fields.map((field, index) => (
           <MintListItem
             key={field.id}
-            prefix={`${prefix}.wallets.${index}`}
+            walletsPrefix={`${prefix}.wallets`}
+            index={index}
             register={register}
-            errors={errors?.wallets?.[index] ?? undefined}
+            errors={errors?.wallets?.[index]}
             onRemove={() => remove(index)}
+            getValues={getValues}
           />
         ))}
       </div>
@@ -140,44 +147,69 @@ const MintListItem = ({
   register,
   onRemove,
   errors,
-  prefix,
+  walletsPrefix,
+  index,
+  getValues,
 }: {
   register: any;
   onRemove: () => void;
   errors: ActionFormError<ProposalFormMintWallet>;
-  prefix: `actions.${number}.wallets.${number}`;
-}) => (
-  <>
-    <ErrorWrapper name="Address" error={errors?.address ?? undefined}>
-      <Input
-        {...register(`${prefix}.address`, { required: true })}
-        type="text"
-        id="address"
-        error={errors?.address ?? undefined}
-        title="An address starting with 0x, followed by 40 address characters"
-        pattern={AddressPattern}
-        className="w-full basis-2/5"
-        placeholder="0x..."
-      />
-    </ErrorWrapper>
-    <div className="flex w-full flex-row gap-2">
-      <ErrorWrapper name="Amount" error={errors?.amount ?? undefined}>
+  walletsPrefix: `actions.${number}.wallets`;
+  index: number;
+  getValues: UseFormGetValues<ProposalFormActions>;
+}) => {
+  const prefix = `${walletsPrefix}.${index}`;
+  return (
+    <>
+      <ErrorWrapper name="Address" error={errors?.address}>
         <Input
-          {...register(`${prefix}.amount`, { required: true })}
-          type="number"
-          id="tokens"
-          error={errors?.amount ?? undefined}
-          title="A number using a '.' as decimal place, e.g. '3.141'"
-          pattern={NumberPattern}
-          className="w-full basis-2/3"
-          min="0"
-          required
+          {...register(`${prefix}.address`, {
+            required: true,
+            pattern: {
+              value: AddressPattern,
+              message:
+                'Please enter an address starting with 0x, followed by 40 address characters',
+            },
+            // Custom validation function to prevent duplicate addresses
+            validate: (value: string) => {
+              let anyDuplicates = someUntil(
+                getValues(walletsPrefix),
+                (a) => a.address === value,
+                index
+              );
+              return !anyDuplicates || 'Duplicate address';
+            },
+          })}
+          type="text"
+          id="address"
+          error={errors?.address}
+          className="w-full basis-2/5"
+          placeholder="0x..."
         />
       </ErrorWrapper>
-      <HiXMark
-        className="h-5 w-5 cursor-pointer self-center"
-        onClick={onRemove}
-      />
-    </div>
-  </>
-);
+      <div className="flex w-full flex-row gap-2">
+        <ErrorWrapper name="Amount" error={errors?.amount}>
+          <Input
+            {...register(`${prefix}.amount`, {
+              required: true,
+              pattern: {
+                value: NumberPattern,
+                message: 'Please enter a number, e.g. 3.141',
+              },
+            })}
+            type="number"
+            id="tokens"
+            error={errors?.amount}
+            className="w-full basis-2/3"
+            min="0"
+            required
+          />
+        </ErrorWrapper>
+        <HiXMark
+          className="h-5 w-5 cursor-pointer self-center"
+          onClick={onRemove}
+        />
+      </div>
+    </>
+  );
+};
