@@ -37,7 +37,7 @@ const MintAction = ({ action }: { action: ProposalMintAction }) => {
           {action.params.to.map((item, index) => (
             <div
               key={index}
-              className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-slate-200 px-3 py-1 text-right dark:border-slate-700"
+              className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-border px-3 py-1 text-right "
             >
               <Address
                 address={item.to}

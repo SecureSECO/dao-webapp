@@ -174,8 +174,8 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
           <ProposalTag key={i} {...tagProps} />
         ))}
       </div>
-      <div className="flex items-center gap-x-1 text-xs">
-        <span className="text-slate-500 dark:text-slate-400">Published by</span>
+      <div className="flex items-center gap-x-1 text-xs text-popover-foreground/80">
+        <span>Published by</span>
         <Address
           address={creatorAddress}
           maxLength={AddressLength.Medium}

@@ -275,7 +275,7 @@ const VoteOption = ({
             votes.map((vote) => (
               <div
                 key={vote.address}
-                className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-slate-200 px-3 py-1 dark:border-slate-700"
+                className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-border px-3 py-1"
               >
                 <Address
                   address={vote.address}
@@ -284,8 +284,8 @@ const VoteOption = ({
                   showCopy={false}
                   replaceYou={false}
                 />
-                <div className="grid grid-cols-2 text-right">
-                  <p className="text-slate-500 ">
+                <div className="grid grid-cols-2 text-right opacity-80">
+                  <p>
                     {toAbbreviatedTokenAmount(
                       vote.weight,
                       CHAIN_METADATA.rep.nativeCurrency.decimals,
@@ -293,7 +293,7 @@ const VoteOption = ({
                     )}{' '}
                     REP
                   </p>
-                  <p className="text-slate-500 dark:text-slate-400">
+                  <p>
                     {calcBigintPercentage(
                       vote.weight,
                       proposal.totalVotingWeight

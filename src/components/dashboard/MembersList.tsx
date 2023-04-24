@@ -20,7 +20,7 @@ const MemberCard = ({ member }: { member: Member }) => {
   return (
     <Card
       padding="sm"
-      className="flex flex-row items-center justify-between bg-slate-50 dark:bg-slate-700/50"
+      className="flex flex-row items-center justify-between bg-popover"
     >
       <Address
         address={member.address}

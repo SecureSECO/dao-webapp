@@ -53,7 +53,7 @@ const DaoTokens = ({
               symbol={balance.symbol}
             />
             <span className="px-2">•</span>
-            <span>
+            <span className="text-popover-foreground/80">
               <Address
                 address={balance.address ?? '-'}
                 maxLength={AddressLength.Small}
@@ -122,12 +122,14 @@ export const DaoTransfers = ({
                 symbol={transfer.tokenSymbol}
                 sign={transfertypeToSign(transfer.type)}
               />
-              <Address
-                address={daoTransferAddress(transfer)}
-                maxLength={AddressLength.Small}
-                hasLink={true}
-                showCopy={true}
-              />
+              <div className="text-popover-foreground/80">
+                <Address
+                  address={daoTransferAddress(transfer)}
+                  maxLength={AddressLength.Small}
+                  hasLink={true}
+                  showCopy={true}
+                />
+              </div>
             </div>
           </div>
         </Card>
