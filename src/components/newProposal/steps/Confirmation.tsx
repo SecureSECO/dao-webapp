@@ -54,6 +54,16 @@ export const Confirmation = () => {
                 }),
               },
             };
+          case 'merge_pr':
+            return {
+              method: 'mergePullRequest',
+              interface: 'IMerge', // FIXME: This is not the correct interface
+              params: {
+                _owner: action.inputs.owner,
+                _repo: action.inputs.repo,
+                _pull_number: action.inputs.pull_number,
+              },
+            };
           default:
             return {
               method: '',

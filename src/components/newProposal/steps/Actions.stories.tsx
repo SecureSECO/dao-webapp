@@ -12,6 +12,7 @@ import { Actions, ProposalFormActions } from './Actions';
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
 import { emptyWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import { emptyMintData } from '@/src/components/newProposal/actions/MintTokensInput';
+import { emptyMergeData } from '../actions/MergePRInput';
 
 const meta: Meta<typeof Actions> = {
   component: Actions,
@@ -30,7 +31,7 @@ const FormProviderDecoratorFactory = (data: ProposalFormActions): any => {
 };
 
 const emptyActions = {
-  actions: [emptyMintData, emptyWithdrawData],
+  actions: [emptyMintData, emptyWithdrawData, emptyMergeData],
 };
 
 export const Primary: Story = {
@@ -44,4 +45,18 @@ const mintTokensAction: ProposalFormActions = {
 };
 export const MintTokensAction: Story = {
   decorators: [FormProviderDecoratorFactory(mintTokensAction)],
+};
+
+const mergeAction: ProposalFormActions = {
+  actions: [
+    {
+      name: 'merge_pr',
+      inputs: { pull_number: 1, repo: 'dao-webapp', owner: 'SecureSECO-DAO' },
+      summary: {},
+    },
+  ],
+};
+
+export const PullRequestAction: Story = {
+  decorators: [FormProviderDecoratorFactory(mergeAction)],
 };

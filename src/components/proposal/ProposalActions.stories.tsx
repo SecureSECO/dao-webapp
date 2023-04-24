@@ -60,6 +60,15 @@ const dummyActions = [
     },
   },
   {
+    method: 'mergePullRequest',
+    interface: 'IMerge',
+    params: {
+      _owner: 'SecureSECO-DAO',
+      _repo: 'dao-webapp',
+      _pull_number: 420,
+    },
+  },
+  {
     method: 'unknown',
     interface: 'IUnknown',
     params: {},
