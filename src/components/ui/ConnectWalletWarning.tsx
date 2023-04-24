@@ -19,7 +19,7 @@ const ConnectWalletWarning = ({ action }: { action: string }) => {
   const { open } = useWeb3Modal();
 
   return (
-    <div className="flex flex-row items-center gap-x-1 text-slate-500 dark:text-slate-400">
+    <div className="flex flex-row items-center gap-x-1 opacity-80">
       <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
       <p>
         <button
