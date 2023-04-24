@@ -45,7 +45,9 @@ const DaoTokens = ({
           variant="light"
           className="p-4 dark:bg-slate-700/50"
         >
-          <h2 className="font-bold">{balance.name}</h2>
+          <h2 className="font-bold">
+            {balance.name != '' && balance.name ? balance.name : 'Unkown Token'}
+          </h2>
           <div className="flex flex-row items-center">
             <TokenAmount
               amount={balance.balance}
