@@ -195,7 +195,7 @@ const ResourceInput = ({
   errors: FieldErrors<Resource> | undefined;
 }) => {
   return (
-    <div className="flex w-full flex-col items-center gap-2 md:flex-row">
+    <div className="flex w-full flex-col gap-2 md:flex-row">
       <Input
         {...register(`${prefix}.name`)}
         type="text"
