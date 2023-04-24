@@ -30,7 +30,11 @@ export function getDurationDateAhead(
 
 // returns the time in string format that is 10 minutes ahead of the current time. (for some leadway while someone is filling out the form)
 export function getTimeIn10Minutes(): string {
-  return format(add(new Date(), { minutes: 10 }), 'HH:mm');
+  return format(getTimeInxMinutesAsDate(10), 'HH:mm');
+}
+
+export function getTimeInxMinutesAsDate(x: number): Date {
+  return add(new Date(), { minutes: x });
 }
 
 /**
