@@ -55,7 +55,7 @@ const getStatusProps = (
   if (verified)
     return {
       icon: DoubleCheck,
-      variant: 'green',
+      variant: 'success',
       text: 'Verified',
     };
 
@@ -63,7 +63,7 @@ const getStatusProps = (
     return {
       icon: HiOutlineClock,
       text: 'Expired',
-      variant: 'red',
+      variant: 'destructive',
     };
 
   return {

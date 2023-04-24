@@ -43,17 +43,17 @@ const statusBadgeProps: StatusBadgePropsMap = {
   },
   Succeeded: {
     icon: Check,
-    variant: 'green',
+    variant: 'success',
     text: 'Succeeded',
   },
   Executed: {
     icon: DoubleCheck,
-    variant: 'green',
+    variant: 'success',
     text: 'Executed',
   },
   Defeated: {
     icon: HiXMark,
-    variant: 'red',
+    variant: 'destructive',
     text: 'Defeated',
   },
 };
@@ -103,6 +103,7 @@ export const ProposalStatusBadge = ({
  */
 const getProposalTags = (proposal: Proposal) => {
   const res: ProposalTagProps[] = [];
+
   if (proposal.status === ProposalStatus.PENDING)
     res.push(
       {

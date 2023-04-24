@@ -47,7 +47,7 @@ export const Secondary: Story = {
 
 export const Success: Story = {
   args: {
-    variant: 'green',
+    variant: 'success',
     icon: Check,
     size: 'md',
     text: 'Succeeded',
@@ -56,7 +56,7 @@ export const Success: Story = {
 
 export const Destructive: Story = {
   args: {
-    variant: 'red',
+    variant: 'destructive',
     icon: HiXMark,
     size: 'md',
     text: 'Defeated',
