@@ -45,7 +45,7 @@ AlertDialogPortal.displayName = AlertDialogPrimitive.Portal.displayName;
 const AlertDialogOverlay = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
->(({ className, children, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
     className={cn(
       'fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity animate-in fade-in',
@@ -137,7 +137,7 @@ const AlertDialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Description
     ref={ref}
-    className={cn('text-sm opacity-80', className)}
+    className={cn('text-sm text-popover-foreground/80', className)}
     {...props}
   />
 ));
@@ -151,7 +151,12 @@ const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
 >(({ className, children, ...props }, ref) => (
-  <AlertDialogPrimitive.Action ref={ref} asChild {...props}>
+  <AlertDialogPrimitive.Action
+    ref={ref}
+    asChild
+    {...props}
+    className={cn(className)}
+  >
     <Button variant="default">{children}</Button>
   </AlertDialogPrimitive.Action>
 ));
@@ -164,7 +169,12 @@ const AlertDialogCancel = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
 >(({ className, children, ...props }, ref) => (
-  <AlertDialogPrimitive.Cancel ref={ref} {...props} asChild>
+  <AlertDialogPrimitive.Cancel
+    ref={ref}
+    {...props}
+    asChild
+    className={cn(className)}
+  >
     <Button variant="subtle">{children}</Button>
   </AlertDialogPrimitive.Cancel>
 ));
