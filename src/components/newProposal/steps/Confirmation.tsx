@@ -66,7 +66,7 @@ export const Confirmation = () => {
 
   // Sanitize the HTML of the body
   const htmlClean = DOMPurify.sanitize(
-    dataStep1?.description ?? '<p>Proposal has no description </p>'
+    dataStep1?.description ?? '<p>Proposal has no body</p>'
   );
 
   return (
@@ -78,7 +78,7 @@ export const Confirmation = () => {
           title={dataStep1?.title ?? 'No title'}
           className="md:col-span-2"
         >
-          <p className="text-lg font-medium leading-5 text-slate-500 dark:text-slate-400">
+          <p className="text-lg font-medium leading-5 text-subtext">
             {dataStep1?.summary ?? 'No summary'}{' '}
           </p>
           {/* Note that since our HTML is sanitized, this dangerous action is safe */}
@@ -113,22 +113,16 @@ export const Confirmation = () => {
               {getCategories(dataStep2).map((category) => (
                 <div key={category.title}>
                   <div className="flex flex-row items-center gap-x-2">
-                    <p className="font-medium dark:text-slate-300">
-                      {category.title}
-                    </p>
-                    <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
+                    <p className="font-medium opacity-90">{category.title}</p>
+                    <div className="mt-1 h-0.5 grow rounded-full bg-accent" />
                   </div>
                   {category.items.map((item) => (
                     <div
                       key={item.label}
                       className="flex flex-row justify-between gap-x-2"
                     >
-                      <p className="text-slate-500 dark:text-slate-400">
-                        {item.label}
-                      </p>
-                      <p className="text-primary-300 dark:text-primary-400">
-                        {item.value}
-                      </p>
+                      <p className="text-subtext">{item.label}</p>
+                      <p className="text-primary">{item.value}</p>
                     </div>
                   ))}
                 </div>

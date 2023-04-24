@@ -11,12 +11,7 @@ import { Label } from '../../ui/Label';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
 import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
-import {
-  Control,
-  Controller,
-  UseFormRegister,
-  UseFormSetValue,
-} from 'react-hook-form';
+import { Control, Controller, UseFormRegister } from 'react-hook-form';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
 import { ActionFormError, ProposalFormActions } from '../steps/Actions';
@@ -78,14 +73,12 @@ export const emptyWithdraw: ProposalFormWithdraw = {
  */
 export const WithdrawAssetsInput = ({
   register,
-  setValue,
   prefix,
   errors,
   onRemove,
   control,
 }: {
   register: UseFormRegister<ProposalFormActions>;
-  setValue: UseFormSetValue<ProposalFormActions>;
   prefix: `actions.${number}`;
   errors: ActionFormError<ProposalFormWithdrawData>;
   onRemove: any;
@@ -124,7 +117,7 @@ export const WithdrawAssetsInput = ({
       <div className="flex flex-col gap-y-1">
         <Label
           htmlFor="recipient"
-          tooltip="Address of the wallet to receive the tokens"
+          tooltip="Address of the wallet to receive the assets"
         >
           Recipient
         </Label>

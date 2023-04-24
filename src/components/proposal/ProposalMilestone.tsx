@@ -65,10 +65,7 @@ const ProposalMilestone = ({
 
   return (
     <div {...props} className={cn(variants({ variant }), className)}>
-      {/* #202a3c is the background color, slate-700/50, but without transparency */}
-      <div className="mt-0.5 rounded-full bg-white dark:bg-[#202a3c]">
-        {icon}
-      </div>
+      <div className="mt-0.5 rounded-full bg-highlight">{icon}</div>
       <div className="flex w-full flex-col">
         <div className="flex w-full flex-row items-center justify-between">
           <p className="font-medium">{label}</p>
@@ -76,7 +73,7 @@ const ProposalMilestone = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild className="hover:cursor-help">
-                  <div className="flex flex-row items-center gap-x-1 text-slate-400 dark:text-slate-500">
+                  <div className="flex flex-row items-center gap-x-1 text-subtext/80">
                     <p className="text-sm">{blockNumber.toLocaleString()}</p>
                     <HiCube className="h-4 w-4 shrink-0" />
                   </div>
@@ -89,9 +86,7 @@ const ProposalMilestone = ({
           )}
         </div>
         {date && (
-          <p className="text-xs text-slate-400 dark:text-slate-500">
-            {format(date, 'Pp O')}
-          </p>
+          <p className="text-xs text-subtext/80">{format(date, 'Pp O')}</p>
         )}
       </div>
     </div>

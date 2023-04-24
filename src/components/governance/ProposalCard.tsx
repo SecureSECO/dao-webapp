@@ -165,16 +165,14 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
           </Link>
           <ProposalStatusBadge status={status} className="hidden xs:flex" />
         </div>
-        <p className="leading-5 text-slate-500 dark:text-slate-400">
-          {summary}
-        </p>
+        <p className="leading-5 text-subtext">{summary}</p>
       </div>
       <div className="flex flex-wrap gap-1">
         {getProposalTags(proposal).map((tagProps, i) => (
           <ProposalTag key={i} {...tagProps} />
         ))}
       </div>
-      <div className="flex items-center gap-x-1 text-xs text-popover-foreground/80">
+      <div className="flex items-center gap-x-1 text-xs text-subtext/80">
         <span>Published by</span>
         <Address
           address={creatorAddress}

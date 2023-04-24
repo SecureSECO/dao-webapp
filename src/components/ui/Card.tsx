@@ -19,12 +19,11 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-white dark:bg-slate-700/50',
+        default: 'bg-highlight ',
         warning:
           'bg-destructive-background text-destructive-foreground shadow-lg',
-        light: 'bg-slate-50 dark:bg-slate-700/50',
-        outline:
-          'bg-transparent border border-slate-300 dark:border-slate-600 shadow-none',
+        light: 'bg-popover',
+        outline: 'bg-transparent border border-border shadow-none',
       },
       padding: {
         default: 'px-6 py-4',

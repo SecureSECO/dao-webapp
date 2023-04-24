@@ -102,9 +102,7 @@ const VotingDetails = ({
 }) => {
   if (!proposal)
     return (
-      <p className="text-center text-slate-500 dark:text-slate-400">
-        Proposal details not found
-      </p>
+      <p className="text-center text-subtext">Proposal details not found</p>
     );
 
   return (
@@ -112,18 +110,16 @@ const VotingDetails = ({
       {categories.map((category) => (
         <div key={category.title}>
           <div className="flex flex-row items-center gap-x-2">
-            <p className="font-medium dark:text-slate-300">{category.title}</p>
-            <div className="mt-1 h-0.5 grow rounded-full bg-slate-200 dark:bg-slate-700" />
+            <p className="font-medium opacity-90">{category.title}</p>
+            <div className="mt-1 h-0.5 grow rounded-full bg-accent" />
           </div>
           {category.items.map((item) => (
             <div
               key={item.label}
               className="flex flex-row justify-between gap-x-2"
             >
-              <p className="text-slate-500 dark:text-slate-400">{item.label}</p>
-              <p className="text-primary-300 dark:text-primary-400">
-                {item.value(proposal)}
-              </p>
+              <p className="text-subtext">{item.label}</p>
+              <p className="text-primary-highlight">{item.value(proposal)}</p>
             </div>
           ))}
         </div>

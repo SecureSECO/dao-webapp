@@ -55,6 +55,9 @@ Code that gives an error upon linting (using `npm run lint`) should not be commi
 
 ### Colors
 
+text-subtext - for `slate-500 dark:slate-400`
+text-secondary - for `slate-200 dark:slate-600`
+
 Below is a list of colors used for specific elements, both for light mode and dark mode. Colors are represented as tailwind classes here. The corresponding hex codes can be found in the [tailwind.config.cjs](tailwind.config.cjs) file.
 
 #### Light mode:

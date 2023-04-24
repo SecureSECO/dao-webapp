@@ -133,7 +133,7 @@ export const Address: React.FC<AddressProps> = ({
                   href={etherscanURL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary underline transition-colors duration-200 hover:text-primary/80"
+                  className="text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
                 >
                   {content}
                 </a>
@@ -151,7 +151,10 @@ export const Address: React.FC<AddressProps> = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button onClick={handleClick} className="ml-2 hover:opacity-80">
+                <button
+                  onClick={handleClick}
+                  className="ml-2 transition-opacity duration-200 hover:opacity-80"
+                >
                   {status === 'copied' ? (
                     <HiCheck className="text-[1.15em]" />
                   ) : (

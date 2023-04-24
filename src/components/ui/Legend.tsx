@@ -21,7 +21,7 @@ const Legend = ({ className, children, ...props }: LegendProps) => {
     <legend
       {...props}
       className={cn(
-        'font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+        'font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-80',
         className
       )}
     >

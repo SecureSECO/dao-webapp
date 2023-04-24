@@ -28,6 +28,7 @@ module.exports = {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
+          highlight: 'hsl(var(--primary-highlight))',
           50: '#f3f6fc',
           100: '#e7edf7',
           200: '#c9d8ee',
@@ -66,8 +67,10 @@ module.exports = {
         },
         success: {
           DEFAULT: 'hsl(var(--success))',
+          background: 'hsl(var(--success-background))',
           foreground: 'hsl(var(--success-foreground))',
         },
+        subtext: 'hsl(var(--subtext))',
         slate: {
           950: '#0D1323',
         },
