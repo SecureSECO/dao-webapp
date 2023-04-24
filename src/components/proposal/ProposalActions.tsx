@@ -34,7 +34,6 @@ export interface IProposalAction {
 export interface ProposalActionsProps
   extends Omit<MainCardProps, 'icon' | 'header'> {
   actions: IProposalAction[] | undefined;
-  accordionVariant?: 'default' | 'dark';
   loading?: boolean;
 }
 
@@ -46,7 +45,6 @@ export interface ProposalActionsProps
  */
 const ProposalActions = ({
   actions,
-  accordionVariant = 'default',
   children,
   ...props
 }: ProposalActionsProps) => {
