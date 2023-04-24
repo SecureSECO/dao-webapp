@@ -82,11 +82,6 @@ export const MergePRInput = ({
   errors: ActionFormError<ProposalFormMergeData>;
   onRemove: () => void;
 }) => {
-  //   const x = useFormState({
-  //     name: `${prefix}.inputs.owner`,
-  //     control: control,
-  //   });
-
   return (
     <MainCard
       header="Merge Pull Request"
