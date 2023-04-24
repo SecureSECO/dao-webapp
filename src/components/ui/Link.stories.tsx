@@ -9,7 +9,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { Link } from './Link';
+import { Link } from '@/src/components/ui/Link';
 
 const meta = {
   component: Link,

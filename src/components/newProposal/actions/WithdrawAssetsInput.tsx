@@ -6,15 +6,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Input } from '../../ui/Input';
-import { Label } from '../../ui/Label';
+import { Input } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
-import { Button } from '../../ui/Button';
+import { Button } from '@/src/components/ui/Button';
 import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import { Control, Controller, UseFormRegister } from 'react-hook-form';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { MainCard } from '../../ui/MainCard';
-import { ActionFormError, ProposalFormActions } from '../steps/Actions';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { MainCard } from '@/src/components/ui/MainCard';
+import {
+  ActionFormError,
+  ProposalFormActions,
+} from '@/src/components/newProposal/steps/Actions';
 import {
   Select,
   SelectContent,
@@ -26,7 +29,7 @@ import {
 } from '@/src/components/ui/Select';
 import { useDaoBalance } from '@/src/hooks/useDaoBalance';
 import { anyNullOrUndefined } from '@/src/lib/utils';
-import TokenAmount from '@/src/components/ui/TokenAmount/TokenAmount';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 
 export type ProposalFormWithdrawData = {
   name: 'withdraw_assets';

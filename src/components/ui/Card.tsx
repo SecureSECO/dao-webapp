@@ -12,7 +12,7 @@
 import * as React from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 
-import { cn } from '../../lib/utils';
+import { cn } from '@/src/lib/utils';
 
 const cardVariants = cva(
   'w-full rounded-lg h-fit shadow-md text-clip relative',

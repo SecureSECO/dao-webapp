@@ -8,7 +8,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ProposalResources } from './ProposalResources';
+import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 
 const meta: Meta<typeof ProposalResources> = {
   component: ProposalResources,

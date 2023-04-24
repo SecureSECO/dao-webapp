@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { bigIntToFloat } from './TokenAmount';
+import { bigIntToFloat } from '.';
 
 // These are very simplistic tests, mostly meant as example tests.
 

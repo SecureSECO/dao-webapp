@@ -15,7 +15,7 @@ import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
 import { calcBigintPercentage, countdownText } from '@/src/lib/utils';
-import { StatusBadge, StatusBadgeProps } from '../ui/StatusBadge';
+import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { Link } from 'react-router-dom';
 import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import Activity from '@/src/components/icons/Actitivy';

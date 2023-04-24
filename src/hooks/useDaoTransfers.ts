@@ -18,8 +18,8 @@ import {
   TransferType,
 } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
-import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
-import { getErrorMessage } from '../lib/utils';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { getErrorMessage } from '@/src/lib/utils';
 
 export type UseDaoTransfersData = {
   daoTransfers: DaoTransfer[] | null;

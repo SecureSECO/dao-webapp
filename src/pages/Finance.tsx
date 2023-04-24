@@ -12,16 +12,14 @@ import {
   HiArrowsRightLeft,
   HiCircleStack,
 } from 'react-icons/hi2';
-import { Address, AddressLength } from '../components/ui/Address';
-import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
-import { HeaderCard } from '../components/ui/HeaderCard';
-import { DaoBalance, useDaoBalance } from '../hooks/useDaoBalance';
+import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
 import { formatRelative } from 'date-fns';
-import { DaoTransfer, useDaoTransfers } from '../hooks/useDaoTransfers';
-import TokenAmount, {
-  transfertypeToSign,
-} from '../components/ui/TokenAmount/TokenAmount';
+import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
+import TokenAmount, { transfertypeToSign } from '@/src/components/ui/TokenAmount';
 import { useState } from 'react';
 import { Link } from '@/src/components/ui/Link';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';

@@ -7,8 +7,8 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import Logo from '../Logo';
-import { Button } from './Button';
+import Logo from '@/src/components/Logo';
+import { Button } from '@/src/components/ui/Button';
 
 import {
   DropdownMenu,
@@ -23,7 +23,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from './Dropdown';
+} from '@/src/components/ui/Dropdown';
 
 const meta: Meta<typeof DropdownMenu> = {
   tags: ['autodocs'],

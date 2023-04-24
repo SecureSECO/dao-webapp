@@ -7,7 +7,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import StampCard from './StampCard';
+import StampCard from '@/src/components/ui/StampCard';
 import { AiFillGithub } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
 

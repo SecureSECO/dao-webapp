@@ -1,4 +1,4 @@
-import { AddressPattern, NumberPattern } from './patterns';
+import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 
 test('Success cases for Number Pattern', () => {
   const successes = [

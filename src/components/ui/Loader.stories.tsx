@@ -7,7 +7,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import Loader from './Loader';
+import Loader from '@/src/components/ui/Loader';
 
 const meta: Meta<typeof Loader> = {
   component: Loader,

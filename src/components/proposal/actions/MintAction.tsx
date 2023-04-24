@@ -9,7 +9,7 @@
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
+import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { HiCircleStack } from 'react-icons/hi2';
 

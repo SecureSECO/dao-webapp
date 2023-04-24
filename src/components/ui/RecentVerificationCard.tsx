@@ -6,14 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Card } from './Card';
+import { Card } from '@/src/components/ui/Card';
 import { availableStamps } from '@/src/pages/Verification';
 import { HiCalendar, HiQuestionMarkCircle } from 'react-icons/hi2';
-import {
-  StampInfo,
-  VerificationHistory,
-  VerificationThreshold,
-} from '../../pages/Verification';
+import { StampInfo, VerificationHistory } from '@/src/pages/Verification';
 
 const RecentVerificationCard = ({
   history,

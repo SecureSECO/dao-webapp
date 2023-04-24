@@ -7,9 +7,9 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { StatusBadge } from './StatusBadge';
-import Check from '../icons/Check';
-import Activity from '../icons/Actitivy';
+import { StatusBadge } from '@/src/components/ui/StatusBadge';
+import Check from '@/src/components/icons/Check';
+import Activity from '@/src/components/icons/Actitivy';
 import { HiOutlineClock, HiXMark } from 'react-icons/hi2';
 
 const meta = {

@@ -8,7 +8,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Address, AddressLength } from './Address';
+import { Address, AddressLength } from '@/src/components/ui/Address';
 
 const meta: Meta<typeof Address> = {
   component: Address,

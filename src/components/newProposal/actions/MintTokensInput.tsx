@@ -7,13 +7,16 @@
  */
 
 import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
-import { Input } from '../../ui/Input';
+import { Input } from '@/src/components/ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
-import { Button } from '../../ui/Button';
+import { Button } from '@/src/components/ui/Button';
 import { Control, UseFormRegister, useFieldArray } from 'react-hook-form';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { MainCard } from '../../ui/MainCard';
-import { ActionFormError, ProposalFormActions } from '../steps/Actions';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { MainCard } from '@/src/components/ui/MainCard';
+import {
+  ActionFormError,
+  ProposalFormActions,
+} from '@/src/components/newProposal/steps/Actions';
 import { Label } from '@/src/components/ui/Label';
 
 export type ProposalFormMint = {
