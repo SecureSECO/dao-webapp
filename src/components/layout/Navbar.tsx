@@ -56,9 +56,8 @@ const Navitem = ({ item }: { item: NavItem }) => {
       to={item.url}
       className={({ isActive, isPending }) =>
         cn(
-          'rounded-md px-4 py-2 text-lg font-semibold dark:text-slate-400',
-          isActive &&
-            ' bg-slate-50 text-primary shadow-md dark:bg-slate-700/50 dark:text-primary-500 lg:bg-white lg:dark:bg-slate-800',
+          'rounded-md px-4 py-2 text-lg font-semibold',
+          isActive && 'bg-highlight text-primary shadow-md',
           isPending && ''
         )
       }

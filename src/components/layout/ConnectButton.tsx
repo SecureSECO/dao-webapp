@@ -52,7 +52,7 @@ const ConnectButton = () => {
               <Tooltip>
                 <TooltipTrigger asChild className="absolute -right-2 -top-2">
                   <div>
-                    <HiExclamationCircle className="text-xl text-primary text-primary-500 drop-shadow-[0_0_8px_rgba(0,0,0,0.4)]" />
+                    <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgba(0,0,0,0.4)]" />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -70,7 +70,7 @@ const ConnectButton = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <p className=" text-sm font-medium dark:text-gray-200">
+                    <p className="text-sm font-medium text-popover-foreground">
                       {address?.slice(0, 5) + '...' + address?.slice(-4)}
                     </p>
                   </TooltipTrigger>
@@ -85,7 +85,7 @@ const ConnectButton = () => {
           <DropdownMenuItem className="group">
             <button
               onClick={() => disconnect()}
-              className="flex w-full items-center gap-x-2 text-sm dark:text-gray-300"
+              className="flex w-full items-center gap-x-2 text-sm text-popover-foreground"
             >
               <HiOutlineLogout className="text-xl" />
               <span>Sign Out</span>
@@ -102,8 +102,7 @@ const ConnectButton = () => {
       className="gap-x-2"
       icon={FaWallet}
       label="Connect Wallet"
-      //className="flex shrink-0 grow-0 items-center gap-x-2 rounded-md bg-primary-500 p-3 hover:bg-primary-800 lg:rounded-md lg:py-1.5 lg:px-4"
-    ></Button>
+    />
   );
 };
 
