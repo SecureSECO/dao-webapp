@@ -212,7 +212,7 @@ const VoteOption = ({
               <p className="w-12 text-right text-primary">{percentage}%</p>
             </div>
           </div>
-          <Progress value={percentage} size="sm" variant="alt" />
+          <Progress value={percentage} size="sm" />
         </AccordionTrigger>
         <AccordionContent className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
           {votes.length > 0 ? (

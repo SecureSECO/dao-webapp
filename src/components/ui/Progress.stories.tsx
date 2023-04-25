@@ -49,17 +49,9 @@ export const AlmostDone: Story = {
   },
 };
 
-export const Alt: Story = {
-  args: {
-    value: 33,
-    variant: 'alt',
-  },
-};
-
 export const Small: Story = {
   args: {
     value: 33,
     size: 'sm',
-    variant: 'alt',
   },
 };

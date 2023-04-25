@@ -41,7 +41,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           error
             ? 'border-destructive focus:ring-destructive'
-            : 'border-input focus:ring-primary-highlight/50',
+            : 'border-input focus:ring-primary/50',
 
           className
         )}

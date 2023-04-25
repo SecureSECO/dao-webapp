@@ -23,37 +23,20 @@ import { VariantProps, cva } from 'class-variance-authority';
  * `progressVariants` defines the available variants and sizes for the Progress component.
  * It includes configuration for default and alternative variants, as well as small and medium sizes.
  */
-const progressVariants = cva('relative w-full overflow-hidden rounded-full', {
-  variants: {
-    size: {
-      sm: 'h-2',
-      md: 'h-4',
+const progressVariants = cva(
+  'relative w-full overflow-hidden rounded-full bg-muted',
+  {
+    variants: {
+      size: {
+        sm: 'h-2',
+        md: 'h-4',
+      },
     },
-    variant: {
-      default: 'bg-slate-200 dark:bg-slate-950',
-      alt: 'bg-slate-200 dark:bg-slate-900',
+    defaultVariants: {
+      size: 'md',
     },
-  },
-  defaultVariants: {
-    size: 'md',
-    variant: 'default',
-  },
-});
-
-/**
- * `indicatorVariants` defines the available indicator variants for the Progress component.
- */
-const indicatorVariants = cva('h-full w-full flex-1 transition-all', {
-  variants: {
-    variant: {
-      default: 'bg-primary dark:bg-primary-500',
-      alt: 'bg-primary-400 dark:bg-primary-500',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-});
+  }
+);
 
 /**
  * The Progress component is a customizable progress bar that supports different sizes and variants.
@@ -64,14 +47,14 @@ const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> &
     VariantProps<typeof progressVariants>
->(({ className, size, variant, value, ...props }, ref) => (
+>(({ className, size, value, ...props }, ref) => (
   <ProgressPrimitive.Root
     ref={ref}
-    className={cn(progressVariants({ size, variant, className }))}
+    className={cn(progressVariants({ size, className }))}
     {...props}
   >
     <ProgressPrimitive.Indicator
-      className={cn(indicatorVariants({ variant }))}
+      className="h-full w-full flex-1 bg-primary transition-all"
       style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
     />
   </ProgressPrimitive.Root>
