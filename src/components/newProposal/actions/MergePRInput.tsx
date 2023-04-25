@@ -6,16 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import { Input } from '../../ui/Input';
-import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
+import { HiCircleStack, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
-import {
-  Control,
-  UseFormRegister,
-  useFieldArray,
-  useFormState,
-} from 'react-hook-form';
+import { Control, UseFormRegister } from 'react-hook-form';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
 import { ActionFormError, ProposalFormActions } from '../steps/Actions';
@@ -96,7 +90,7 @@ export const MergePRInput = ({
               id="owner"
               error={errors?.inputs?.owner ?? undefined}
               title="Username of the owner of the GitHub repository"
-              placeholder="GitHub Username"
+              placeholder="GitHub username"
               className="w-full basis-2/3"
               required
             />
