@@ -7,7 +7,7 @@
  */
 
 import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
-import { Input } from '../../ui/Input';
+import { Input } from '@/src/components/ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
 import {
@@ -111,7 +111,7 @@ export const MintTokensInput = ({
         />
       }
     >
-      <div className="grid grid-cols-2 justify-start gap-2 ">
+      <div className="grid grid-cols-2 justify-start gap-2">
         <Label tooltip="Address of the wallet to receive the tokens">
           Address
         </Label>

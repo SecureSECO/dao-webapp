@@ -7,9 +7,9 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { StatusBadge } from './StatusBadge';
-import Check from '../icons/Check';
-import Activity from '../icons/Actitivy';
+import { StatusBadge } from '@/src/components/ui/StatusBadge';
+import Check from '@/src/components/icons/Check';
+import Activity from '@/src/components/icons/Actitivy';
 import { HiOutlineClock, HiXMark } from 'react-icons/hi2';
 
 const meta = {
@@ -45,18 +45,18 @@ export const Secondary: Story = {
   },
 };
 
-export const Green: Story = {
+export const Success: Story = {
   args: {
-    variant: 'green',
+    variant: 'success',
     icon: Check,
     size: 'md',
     text: 'Succeeded',
   },
 };
 
-export const Red: Story = {
+export const Destructive: Story = {
   args: {
-    variant: 'red',
+    variant: 'destructive',
     icon: HiXMark,
     size: 'md',
     text: 'Defeated',

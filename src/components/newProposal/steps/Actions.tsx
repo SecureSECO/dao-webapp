@@ -61,7 +61,6 @@ export const Actions = () => {
     register,
     formState: { errors },
     handleSubmit,
-    setValue,
     getValues,
     control,
   } = useForm<ProposalFormActions>({ defaultValues: dataStep3 });
@@ -90,9 +89,7 @@ export const Actions = () => {
             Actions
           </Label>
           {fields.length === 0 ? (
-            <p className="italic text-slate-500 dark:text-slate-400">
-              No actions
-            </p>
+            <p className="italic text-highlight-foreground/80">No actions</p>
           ) : (
             <>
               {/* List of proposal actions */}
@@ -108,7 +105,6 @@ export const Actions = () => {
                           register={register}
                           prefix={prefix}
                           key={field.id}
-                          setValue={setValue}
                           errors={
                             errors.actions ? errors.actions[index] : undefined
                           }

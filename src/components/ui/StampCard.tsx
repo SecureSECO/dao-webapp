@@ -12,18 +12,17 @@
  * If the stamp is verified, a checkmark icon will be displayed next to the providerId.
  */
 
-import React from 'react';
 import {
   Stamp,
   StampInfo,
   VerificationThreshold,
   isVerified,
-} from '../../pages/Verification';
-import { Button } from './Button';
-import { Card } from './Card';
+} from '@/src/pages/Verification';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
 import { HiCalendar, HiChartBar, HiLink } from 'react-icons/hi2';
 import { FaHourglass } from 'react-icons/fa';
-import { StatusBadge, StatusBadgeProps } from './StatusBadge';
+import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,9 +33,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '../ui/AlertDialog';
+} from '@/src/components/ui/AlertDialog';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { verificationAbi } from '../../assets/verificationAbi';
+import { verificationAbi } from '@/src/assets/verificationAbi';
 import { useState } from 'react';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
@@ -55,7 +54,7 @@ const getStatusProps = (
   if (verified)
     return {
       icon: DoubleCheck,
-      variant: 'green',
+      variant: 'success',
       text: 'Verified',
     };
 
@@ -63,7 +62,7 @@ const getStatusProps = (
     return {
       icon: HiOutlineClock,
       text: 'Expired',
-      variant: 'red',
+      variant: 'destructive',
     };
 
   return {
@@ -178,7 +177,7 @@ const StampCard = ({
         </div>
         <StatusBadge {...getStatusProps(verified, expired)} />
       </div>
-      <div className="flex items-center gap-x-2 text-slate-600 dark:text-slate-400">
+      <div className="flex items-center gap-x-2 text-popover-foreground">
         <HiLink />
         <p className="font-normal">
           {/* Url:{' '} */}
@@ -186,7 +185,7 @@ const StampCard = ({
             href={stampInfo.url}
             target="_blank"
             rel="noreferrer"
-            className="text-blue-500 hover:underline"
+            className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
           >
             {stampInfo.url}
           </a>
@@ -195,7 +194,7 @@ const StampCard = ({
       {stamp && stamp[2] && stamp[2].length > 0 && (
         <>
           <div className="flex items-center gap-x-6">
-            <div className="flex items-center gap-x-2 text-slate-600 dark:text-slate-400">
+            <div className="flex items-center gap-x-2 text-popover-foreground">
               <HiCalendar />
               <p className="font-normal">
                 {/* Last verified at:{' '} */}
@@ -208,8 +207,8 @@ const StampCard = ({
               <div
                 className={`flex items-center gap-x-2 ${
                   expired || timeLeftUntilExpiration / 86400 < 7
-                    ? 'text-red-500'
-                    : 'text-slate-600 dark:text-slate-400'
+                    ? 'text-destructive'
+                    : 'text-popover-foreground'
                 }`}
               >
                 <FaHourglass size={14} />
@@ -220,7 +219,7 @@ const StampCard = ({
               </div>
             )}
           </div>
-          <div className="flex items-center gap-x-2 text-slate-600 dark:text-slate-400">
+          <div className="flex items-center gap-x-2 text-popover-foreground">
             <HiChartBar />
             <p className="font-normal">
               {/* Last verified at:{' '} */}

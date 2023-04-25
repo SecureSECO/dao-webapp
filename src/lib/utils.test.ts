@@ -7,7 +7,7 @@
  */
 
 import { addDays, addHours, addMinutes, addSeconds } from 'date-fns';
-import { anyNullOrUndefined, cn, countdownText } from './utils';
+import { anyNullOrUndefined, cn, countdownText } from '@/src/lib/utils';
 
 // These are very simplistic tests, mostly meant as example tests.
 

@@ -32,17 +32,10 @@ import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { useCanVote } from '@/src/hooks/useCanVote';
 import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import {
-  CHAIN_METADATA,
-  getChainDataByChainId,
-} from '@/src/lib/constants/chains';
+import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { calcBigintPercentage } from '@/src/lib/utils';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
-import {
-  ToastUpdate,
-  contractInteraction,
-  useToast,
-} from '@/src/hooks/useToast';
+import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
+import { contractInteraction, useToast } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 
 type VoteFormData = {
@@ -208,7 +201,7 @@ const VoteOption = ({
               {voteValueString}
             </p>
             <div className="flex flex-row items-center gap-x-4 text-right">
-              <p className="text-slate-500 dark:text-slate-400">
+              <p className="text-popover-foreground/80">
                 {toAbbreviatedTokenAmount(
                   proposal.result[voteValueLower],
                   CHAIN_METADATA.rep.nativeCurrency.decimals,
@@ -216,19 +209,17 @@ const VoteOption = ({
                 )}{' '}
                 REP
               </p>
-              <p className="w-12 text-right text-primary-500 dark:text-primary-400">
-                {percentage}%
-              </p>
+              <p className="w-12 text-right text-primary">{percentage}%</p>
             </div>
           </div>
-          <Progress value={percentage} size="sm" variant="alt" />
+          <Progress value={percentage} size="sm" />
         </AccordionTrigger>
         <AccordionContent className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
           {votes.length > 0 ? (
             votes.map((vote) => (
               <div
                 key={vote.address}
-                className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-slate-200 px-3 py-1 dark:border-slate-700"
+                className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-border px-3 py-1"
               >
                 <Address
                   address={vote.address}
@@ -237,8 +228,8 @@ const VoteOption = ({
                   showCopy={false}
                   replaceYou={false}
                 />
-                <div className="grid grid-cols-2 text-right">
-                  <p className="text-slate-500 ">
+                <div className="grid grid-cols-2 text-right opacity-80">
+                  <p>
                     {toAbbreviatedTokenAmount(
                       vote.weight,
                       CHAIN_METADATA.rep.nativeCurrency.decimals,
@@ -246,7 +237,7 @@ const VoteOption = ({
                     )}{' '}
                     REP
                   </p>
-                  <p className="text-slate-500 dark:text-slate-400">
+                  <p>
                     {calcBigintPercentage(
                       vote.weight,
                       proposal.totalVotingWeight
@@ -257,7 +248,7 @@ const VoteOption = ({
               </div>
             ))
           ) : (
-            <p className="col-span-full text-center italic text-slate-500 dark:text-slate-400">
+            <p className="col-span-full text-center italic text-popover-foreground/80">
               No votes
             </p>
           )}

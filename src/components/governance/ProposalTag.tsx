@@ -9,20 +9,24 @@
 import { cn } from '@/src/lib/utils';
 import { cva, VariantProps } from 'class-variance-authority';
 import React from 'react';
+import { FaGithub } from 'react-icons/fa';
 import {
+  HiOutlineBanknotes,
+  HiOutlineCircleStack,
   HiOutlineClock,
   HiOutlineHandThumbDown,
   HiOutlineHandThumbUp,
 } from 'react-icons/hi2';
 
 const proposalTagVariants = cva(
-  'flex flex-row min-w-fit w-fit gap-x-1 items-center rounded-full px-2 py-0.5 text-slate-500 dark:text-slate-400 text-sm',
+  'flex flex-row min-w-fit w-fit gap-x-1 items-center rounded-full px-2 py-0.5 text-sm',
   {
     variants: {
       variant: {
-        countdown: 'bg-slate-200 dark:bg-slate-600',
-        yes: 'bg-green-200/50 dark:bg-green-300/50 dark:text-slate-800',
-        no: 'bg-red-200/50 dark:bg-red-300/50 dark:text-slate-800',
+        countdown: 'bg-secondary/80 text-secondary-foreground/80',
+        yes: 'bg-success-background/60 text-success-foreground',
+        no: 'bg-destructive-background/60 text-destructive-foreground',
+        action: 'bg-primary-highlight/50 text-success-foreground',
       },
     },
     defaultVariants: {
@@ -32,14 +36,19 @@ const proposalTagVariants = cva(
 );
 
 const proposalTagIcon = {
-  countdown: <HiOutlineClock className="h-4 w-4" />,
-  yes: <HiOutlineHandThumbUp className="h-4 w-4" />,
-  no: <HiOutlineHandThumbDown className="h-4 w-4" />,
+  countdown: <HiOutlineClock className="h-4 w-4 shrink-0" />,
+  yes: <HiOutlineHandThumbUp className="h-4 w-4 shrink-0" />,
+  no: <HiOutlineHandThumbDown className="h-4 w-4 shrink-0" />,
+  mint: <HiOutlineCircleStack className="h-4 w-4 shrink-0" />,
+  withdraw: <HiOutlineBanknotes className="h-4 w-4 shrink-0" />,
+  merge: <FaGithub className="h-4 w-4 shrink-0" />,
 };
 
 export interface ProposalTagProps
   extends React.BaseHTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof proposalTagVariants> {}
+    VariantProps<typeof proposalTagVariants> {
+  icon?: 'mint' | 'withdraw' | 'merge' | 'countdown' | 'yes' | 'no';
+}
 
 /**
  * @returns A pill shaped tag showing some information about a proposal, in the given style variant
@@ -48,11 +57,12 @@ const ProposalTag = ({
   className,
   variant,
   children,
+  icon,
   ...props
 }: ProposalTagProps) => {
   return (
     <div {...props} className={cn(proposalTagVariants({ variant }), className)}>
-      {proposalTagIcon[variant as keyof typeof proposalTagIcon]}
+      {proposalTagIcon[(icon || variant) as keyof typeof proposalTagIcon]}
       <div className="break-inside-avoid">{children}</div>
     </div>
   );

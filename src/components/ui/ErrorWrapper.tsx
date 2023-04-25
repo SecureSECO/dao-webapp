@@ -34,7 +34,7 @@ export const ErrorWrapper = React.forwardRef<HTMLDivElement, ErrorWrapperProps>(
       <div className={cn('flex w-full flex-col', className)} ref={ref}>
         {children}
         {error && (
-          <span className="text-red-600 first-letter:capitalize">
+          <span className="text-destructive first-letter:capitalize">
             {error?.type == 'required'
               ? `${name} is required`
               : error?.type == 'minLength'

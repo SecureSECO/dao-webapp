@@ -6,16 +6,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import ConnectButton from '@/src/components/layout/ConnectButton';
 import type { Meta, StoryObj } from '@storybook/react';
-import Loader from '@/src/components/ui/Loader';
 
-const meta: Meta<typeof Loader> = {
-  component: Loader,
-};
+const meta = {
+  component: ConnectButton,
+  tags: ['autodocs'],
+  argTypes: {},
+} satisfies Meta<typeof ConnectButton>;
 
 export default meta;
-type Story = StoryObj<typeof Loader>;
+type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {
+export const Default: Story = {
   args: {},
 };

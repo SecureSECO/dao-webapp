@@ -33,7 +33,7 @@ const ActionWrapper = ({
   children: ReactNode;
 }) => {
   const iconNode = createElement(icon, {
-    className: 'h-5 w-5 shrink-0 text-slate-500 dark:text-slate-400',
+    className: 'h-5 w-5 shrink-0 text-popover-foreground/80',
   });
 
   return (
@@ -43,9 +43,7 @@ const ActionWrapper = ({
         <div>
           <p className="text-lg">{title}</p>
           {subtitle && (
-            <span className="text-slate-500 dark:text-slate-400">
-              {subtitle}
-            </span>
+            <span className="text-popover-foreground/80">{subtitle}</span>
           )}
         </div>
       </AccordionTrigger>

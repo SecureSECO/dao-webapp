@@ -60,11 +60,11 @@ const ProposalActions = ({
       {...props}
     >
       {!actions || actions.length === 0 ? (
-        <div className="italic text-slate-500 dark:text-slate-400">
+        <div className="italic text-popover-foreground/80">
           No actions attached
         </div>
       ) : (
-        <Accordion type="single" collapsible className={'space-y-2'}>
+        <Accordion type="single" collapsible className="space-y-2">
           {actions.map((action, i) => (
             <ProposalAction key={i} action={action} index={i} />
           ))}

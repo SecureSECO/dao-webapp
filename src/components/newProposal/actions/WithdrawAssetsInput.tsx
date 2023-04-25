@@ -6,20 +6,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Input } from '../../ui/Input';
-import { Label } from '../../ui/Label';
+import { Input } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
-import { Button } from '../../ui/Button';
+import { Button } from '@/src/components/ui/Button';
 import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
+import { Control, Controller, UseFormRegister } from 'react-hook-form';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { MainCard } from '@/src/components/ui/MainCard';
 import {
-  Control,
-  Controller,
-  UseFormRegister,
-  UseFormSetValue,
-} from 'react-hook-form';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { MainCard } from '../../ui/MainCard';
-import { ActionFormError, ProposalFormActions } from '../steps/Actions';
+  ActionFormError,
+  ProposalFormActions,
+} from '@/src/components/newProposal/steps/Actions';
 import {
   Select,
   SelectContent,
@@ -31,7 +29,7 @@ import {
 } from '@/src/components/ui/Select';
 import { useDaoBalance } from '@/src/hooks/useDaoBalance';
 import { anyNullOrUndefined } from '@/src/lib/utils';
-import TokenAmount from '@/src/components/ui/TokenAmount/TokenAmount';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 
 export type ProposalFormWithdrawData = {
   name: 'withdraw_assets';
@@ -78,14 +76,12 @@ export const emptyWithdraw: ProposalFormWithdraw = {
  */
 export const WithdrawAssetsInput = ({
   register,
-  setValue,
   prefix,
   errors,
   onRemove,
   control,
 }: {
   register: UseFormRegister<ProposalFormActions>;
-  setValue: UseFormSetValue<ProposalFormActions>;
   prefix: `actions.${number}`;
   errors: ActionFormError<ProposalFormWithdrawData>;
   onRemove: any;
@@ -124,7 +120,7 @@ export const WithdrawAssetsInput = ({
       <div className="flex flex-col gap-y-1">
         <Label
           htmlFor="recipient"
-          tooltip="Address of the wallet to receive the tokens"
+          tooltip="Address of the wallet to receive the assets"
         >
           Recipient
         </Label>

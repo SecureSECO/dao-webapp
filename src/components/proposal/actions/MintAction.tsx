@@ -9,7 +9,7 @@
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
+import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { HiCircleStack } from 'react-icons/hi2';
 
@@ -37,7 +37,7 @@ const MintAction = ({ action }: { action: ProposalMintAction }) => {
           {action.params.to.map((item, index) => (
             <div
               key={index}
-              className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-slate-200 px-3 py-1 text-right dark:border-slate-700"
+              className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-border px-3 py-1 text-right"
             >
               <Address
                 address={item.to}
@@ -46,7 +46,7 @@ const MintAction = ({ action }: { action: ProposalMintAction }) => {
                 showCopy={false}
                 replaceYou={false}
               />
-              <p className="text-slate-500 ">
+              <p className="text-popover-foreground/80">
                 {toAbbreviatedTokenAmount(
                   item.amount,
                   CHAIN_METADATA.rep.nativeCurrency.decimals,

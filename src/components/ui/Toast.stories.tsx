@@ -10,6 +10,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import {
   Toast,
+  ToastAction,
   ToastClose,
   ToastDescription,
   ToastProvider,
@@ -117,6 +118,24 @@ export const Loading: Story = {
       <>
         <div>
           <ToastTitle>Toast title</ToastTitle>
+        </div>
+        <ToastClose />
+      </>
+    ),
+  },
+  decorators: [toastProviderDecorator],
+};
+
+export const WithAction: Story = {
+  args: {
+    variant: 'default',
+    duration: Infinity,
+    className: 'py-2',
+    children: (
+      <>
+        <div className="space-y-1">
+          <ToastTitle>Toast title</ToastTitle>
+          <ToastAction altText={'Click me'}>Click me!</ToastAction>
         </div>
         <ToastClose />
       </>

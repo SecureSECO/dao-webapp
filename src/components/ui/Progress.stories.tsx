@@ -8,7 +8,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Progress } from './Progress';
+import { Progress } from '@/src/components/ui/Progress';
 
 const meta: Meta<typeof Progress> = {
   component: Progress,
@@ -49,17 +49,9 @@ export const AlmostDone: Story = {
   },
 };
 
-export const Alt: Story = {
-  args: {
-    value: 33,
-    variant: 'alt',
-  },
-};
-
 export const Small: Story = {
   args: {
     value: 33,
     size: 'sm',
-    variant: 'alt',
   },
 };

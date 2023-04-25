@@ -99,7 +99,7 @@ export const Address: React.FC<AddressProps> = ({
   const etherscanURL = `https://etherscan.io/address/${address}`;
 
   // if the address is the current user's address, replace it with "you"
-  const content =
+  const linkContent =
     address.toLowerCase() === currentUser?.toLowerCase() && replaceYou
       ? 'you'
       : truncateMiddle(address, maxLength);
@@ -133,12 +133,12 @@ export const Address: React.FC<AddressProps> = ({
                   href={etherscanURL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-500 transition-colors duration-200 hover:text-primary dark:hover:text-primary-400"
+                  className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
                 >
-                  {content}
+                  {linkContent}
                 </a>
               ) : (
-                <span>{content}</span>
+                <span>{linkContent}</span>
               )}
             </TooltipTrigger>
             <TooltipContent>
@@ -153,7 +153,7 @@ export const Address: React.FC<AddressProps> = ({
               <TooltipTrigger asChild>
                 <button
                   onClick={handleClick}
-                  className="ml-2 text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-500"
+                  className="ml-2 transition-opacity duration-200 hover:opacity-80"
                 >
                   {status === 'copied' ? (
                     <HiCheck className="text-[1.15em]" />

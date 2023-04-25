@@ -40,10 +40,12 @@ const MergeAction = ({ action }: { action: ProposalMergeAction }) => {
           {Object.keys(action.params).map((item, index) => (
             <div
               key={index}
-              className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-slate-200 px-3 py-1 text-right dark:border-slate-700"
+              className="broder-border flex flex-row items-center justify-between gap-x-4 rounded-full border px-3 py-1 text-right"
             >
               <p>{fieldMap[item]}</p>
-              <p className="text-slate-500 ">{action.params[item]}</p>
+              <p className="text-popover-foreground/80">
+                {action.params[item]}
+              </p>
             </div>
           ))}
         </div>

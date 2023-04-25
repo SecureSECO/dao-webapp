@@ -13,8 +13,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-} from './Tooltip';
-import { Button } from './Button';
+} from '@/src/components/ui/Tooltip';
+import { Button } from '@/src/components/ui/Button';
 
 const meta: Meta<typeof Tooltip> = {
   tags: ['autodocs'],

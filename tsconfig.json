@@ -25,6 +25,6 @@
   },
   "include": ["**/*.ts", "**/*.tsx", "src"],
   "exclude": ["node_modules"],
-
+  "types": ["@types/jest"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

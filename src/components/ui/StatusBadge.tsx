@@ -16,10 +16,10 @@ const statusVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary-200 dark:bg-primary-400 dark:text-slate-900',
-        secondary: 'bg-slate-200 dark:bg-slate-600',
-        green: 'bg-green-200 dark:bg-green-300 dark:text-slate-900',
-        red: 'bg-red-200 dark:bg-red-300 dark:text-slate-900',
+        primary: 'bg-primary-highlight/70 text-success-foreground', // Intentionally using text-success-foreground
+        secondary: 'bg-secondary text-secondary-foreground',
+        success: 'bg-success-background text-success-foreground',
+        destructive: 'bg-destructive-background text-destructive-foreground',
       },
       size: {
         sm: 'text-sm px-2 py-1 gap-x-1',

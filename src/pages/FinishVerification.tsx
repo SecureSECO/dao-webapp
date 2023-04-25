@@ -15,8 +15,8 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import { verificationAbi } from '../assets/verificationAbi';
-import { verificationAddress } from '../pages/Verification';
+import { verificationAbi } from '@/src/assets/verificationAbi';
+import { verificationAddress } from '@/src/pages/Verification';
 import {
   Accordion,
   AccordionContent,
@@ -24,7 +24,7 @@ import {
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
 import { HiExclamationCircle } from 'react-icons/hi2';
-import Header from '../components/ui/Header';
+import Header from '@/src/components/ui/Header';
 import { useToast } from '@/src/hooks/useToast';
 
 const FinishVerification = () => {
@@ -170,7 +170,7 @@ const FinishVerification = () => {
           <div>{data?.hash && <p>Transaction hash: {data.hash}</p>}</div>
           {(isPrepareError || isError) && (
             <div>
-              <div className="mb-2 flex items-center gap-x-2 text-red-400">
+              <div className="mb-2 flex items-center gap-x-2 text-destructive">
                 <HiExclamationCircle />
                 <p>Verification Error</p>
               </div>
@@ -181,7 +181,7 @@ const FinishVerification = () => {
             </div>
           )}
           {isSuccess && (
-            <a href="/verification" className="text-blue-500">
+            <a href="/verification" className="text-primary-highlight">
               Go back to stamps
             </a>
           )}

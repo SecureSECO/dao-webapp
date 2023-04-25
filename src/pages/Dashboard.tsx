@@ -12,6 +12,7 @@ import { Card } from '@/src/components/ui/Card';
 import { format } from 'date-fns';
 import {
   HiArrowRight,
+  HiArrowTopRightOnSquare,
   HiCalendar,
   HiCircleStack,
   HiCube,
@@ -23,11 +24,10 @@ import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { useDao } from '@/src/hooks/useDao';
 import { useProposals } from '@/src/hooks/useProposals';
 import { useMembers } from '@/src/hooks/useMembers';
-import { Button } from '@/src/components/ui/Button';
 import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { ProposalCardList } from '@/src/pages/Governance';
 import MembersList from '@/src/components/dashboard/MembersList';
-import { DaoTransfers } from '@/src/pages/Finance';
+import { DaoTransfersList } from '@/src/pages/Finance';
 import { Link } from '@/src/components/ui/Link';
 import { getSupportedNetworkByChainId } from '@/src/lib/constants/chains';
 import { getChainDataByChainId } from '@/src/lib/constants/chains';
@@ -76,24 +76,24 @@ const Dashboard = () => {
             <div className="flex flex-col justify-between gap-y-6">
               <div className="flex flex-col gap-y-2">
                 <Header>{dao.name}</Header>
-                <p className="text-xl font-semibold text-slate-500 dark:text-slate-400">
+                <p className="text-xl font-semibold text-highlight-foreground/80">
                   {dao.ensDomain}
                 </p>
-                <p className="text-base font-normal text-slate-500 dark:text-slate-400">
+                <p className="text-base font-normal text-highlight-foreground/80">
                   {dao.description}
                 </p>
               </div>
-              <div className="flex flex-col gap-x-6 gap-y-2 text-sm font-normal text-slate-500 dark:text-slate-400 lg:flex-row lg:items-center">
+              <div className="flex flex-col gap-x-6 gap-y-2 text-sm font-normal text-highlight-foreground/80 lg:flex-row lg:items-center">
                 <div className="flex flex-row items-center gap-x-1">
-                  <HiCalendar className="h-5 w-5 text-primary dark:text-primary-500" />
+                  <HiCalendar className="h-5 w-5 shrink-0 text-primary" />
                   <p>{format(dao.creationDate, 'MMMM yyyy')}</p>
                 </div>
                 <div className="flex flex-row items-center gap-x-1">
-                  <HiCube className="h-5 w-5 text-primary dark:text-primary-500" />
+                  <HiCube className="h-5 w-5 shrink-0 text-primary" />
                   <p>{import.meta.env.DEV ? 'Goerli' : 'Polygon'}</p>
                 </div>
                 <div className="flex flex-row items-center gap-x-1">
-                  <HiHome className="h-5 w-5 text-primary dark:text-primary-500" />
+                  <HiHome className="h-5 w-5 shrink-0 text-primary" />
                   <p className="w-48 truncate xs:w-full">{dao.address}</p>
                 </div>
               </div>
@@ -106,9 +106,10 @@ const Dashboard = () => {
                   <a
                     key={i}
                     href={link.url}
-                    className="text-end text-base font-medium text-primary-500 transition-colors duration-200 hover:text-primary dark:hover:text-primary-400"
+                    className="flex flex-row items-center gap-x-2 font-medium text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
                   >
                     {link.name}
+                    <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
                   </a>
                 ))}
               </div>
@@ -167,18 +168,19 @@ const Dashboard = () => {
             />
           }
         >
-          {!daoTransfers ? (
-            <p className="text-center font-normal">No transfers found!</p>
-          ) : (
-            <DaoTransfers daoTransfers={daoTransfers} limit={3} />
-          )}
+          <DaoTransfersList
+            daoTransfers={daoTransfers}
+            limit={3}
+            loading={daoTransfersLoading}
+            error={daoTransfersError}
+          />
           <Link
             variant="outline"
             className="flex flex-row items-center gap-x-2"
             to="/finance"
           >
             <p>View all transfers</p>
-            <HiArrowRight className="h-5 w-5" />
+            <HiArrowRight className="h-5 w-5 shrink-0" />
           </Link>
         </MainCard>
 
@@ -204,7 +206,7 @@ const Dashboard = () => {
             }`}
           >
             <p>View all members</p>
-            <HiArrowRight className="h-5 w-5" />
+            <HiArrowRight className="h-5 w-5 shrink-0" />
           </Link>
         </MainCard>
       </div>

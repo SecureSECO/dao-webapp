@@ -10,16 +10,14 @@ import { useAragonSDKContext } from '@/src/context/AragonSDK';
 
 import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
-import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
-import { getErrorMessage } from '../lib/utils';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { getErrorMessage } from '@/src/lib/utils';
 
 export type UseDaoBalanceData = {
-  daoBalances: DaoBalances;
+  daoBalances: DaoBalance[];
   loading: boolean;
   error: string | null;
 };
-
-export type DaoBalances = DaoBalance[];
 
 export type DaoBalance = {
   type: TokenType;
@@ -38,7 +36,7 @@ export type UseDaoBalanceProps = {
 export const useDaoBalance = ({
   useDummyData = false,
 }: UseDaoBalanceProps): UseDaoBalanceData => {
-  const [daoBalances, setDaoBalances] = useState<DaoBalances>([]);
+  const [daoBalances, setDaoBalances] = useState<DaoBalance[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,7 +53,7 @@ export const useDaoBalance = ({
       const daoBal: AssetBalance[] | null = await client.methods.getDaoBalances(
         { daoAddressOrEns }
       );
-      let balances: DaoBalances = [];
+      let balances: DaoBalance[] = [];
       if (daoBal != null) {
         balances = daoBal.map(assetBalanceToDaoBalance);
       }

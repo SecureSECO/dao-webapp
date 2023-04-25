@@ -14,16 +14,16 @@ import { Card } from '@/src/components/ui/Card';
 import {
   ProposalFormVotingSettings,
   Voting,
-} from '../components/newProposal/steps/Voting';
+} from '@/src/components/newProposal/steps/Voting';
 import {
   Actions,
   ProposalFormActions,
-} from '../components/newProposal/steps/Actions';
+} from '@/src/components/newProposal/steps/Actions';
 import {
   Metadata,
   ProposalFormMetadata,
-} from '../components/newProposal/steps/Metadata';
-import { Confirmation } from '../components/newProposal/steps/Confirmation';
+} from '@/src/components/newProposal/steps/Metadata';
+import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import { Link } from '@/src/components/ui/Link';
 import { HiChevronLeft } from 'react-icons/hi2';
 
@@ -147,8 +147,8 @@ export const ProgressCard = ({ children }: { children?: React.ReactNode }) => {
   return (
     <Card className="flex flex-col gap-1 px-1 sm:px-6">
       <div className="flex w-full items-center justify-between">
-        <p className="text-primary dark:text-primary-500">New proposal</p>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-primary">New proposal</p>
+        <p className="text-sm text-highlight-foreground/80">
           Step {step} of {totalSteps}
         </p>
       </div>

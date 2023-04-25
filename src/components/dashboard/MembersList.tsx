@@ -10,8 +10,6 @@ import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { Member } from '@/src/hooks/useMembers';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
-import { jsNumberForAddress } from 'react-jazzicon';
-import Jazzicon from 'react-jazzicon/dist/Jazzicon';
 
 /**
  * @returns A card containg showing a DAO member's address, jazzicon and REP balance (the latter only if available)
@@ -20,7 +18,7 @@ const MemberCard = ({ member }: { member: Member }) => {
   return (
     <Card
       padding="sm"
-      className="flex flex-row items-center justify-between bg-slate-50 dark:bg-slate-700/50"
+      className="flex flex-row items-center justify-between bg-popover"
     >
       <Address
         address={member.address}
