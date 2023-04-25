@@ -15,6 +15,7 @@ import {
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
 import { emptyWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import { emptyMintData } from '@/src/components/newProposal/actions/MintTokensInput';
+import { emptyMergeData } from '../actions/MergePRInput';
 
 const meta: Meta<typeof Actions> = {
   component: Actions,
@@ -33,18 +34,17 @@ const FormProviderDecoratorFactory = (data: ProposalFormActions): any => {
 };
 
 const emptyActions = {
-  actions: [emptyMintData, emptyWithdrawData],
+  actions: [emptyMintData, emptyWithdrawData, emptyMergeData],
 };
 
 export const Primary: Story = {
   decorators: [FormProviderDecoratorFactory(emptyActions)],
 };
 
-const mintTokensAction: ProposalFormActions = {
-  actions: [
-    { name: 'mint_tokens', wallets: [{ address: '0x123', amount: 1 }] },
-  ],
+const zeroActions = {
+  actions: [],
 };
-export const MintTokensAction: Story = {
-  decorators: [FormProviderDecoratorFactory(mintTokensAction)],
+
+export const Empty: Story = {
+  decorators: [FormProviderDecoratorFactory(zeroActions)],
 };

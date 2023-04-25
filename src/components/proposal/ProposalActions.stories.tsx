@@ -60,6 +60,15 @@ const dummyActions = [
     },
   },
   {
+    method: 'merge',
+    interface: 'IMerge',
+    params: {
+      owner: 'SecureSECO-DAO',
+      repo: 'dao-webapp',
+      pull_number: 420,
+    },
+  },
+  {
     method: 'unknown',
     interface: 'IUnknown',
     params: {},
