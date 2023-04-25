@@ -35,10 +35,10 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <textarea
         className={cn(
-          'flex h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2  focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50  dark:text-slate-50  dark:focus:ring-offset-slate-800',
+          'flex h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-highlight-foreground/50 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
           error
             ? 'border-destructive focus:ring-destructive'
-            : 'border-slate-300 focus:ring-slate-400 dark:border-slate-700 dark:focus:ring-slate-400',
+            : 'border-input focus:ring-primary/50',
 
           className
         )}

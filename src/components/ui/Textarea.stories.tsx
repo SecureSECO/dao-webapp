@@ -8,16 +8,16 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Input } from '@/src/components/ui/Input';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { Textarea } from '@/src/components/ui/Textarea';
 
-const meta: Meta<typeof Input> = {
+const meta: Meta<typeof Textarea> = {
   tags: ['autodocs'],
-  component: Input,
+  component: Textarea,
 };
 
 export default meta;
-type Story = StoryObj<typeof Input>;
+type Story = StoryObj<typeof Textarea>;
 
 export const Primary: Story = {
   args: {
@@ -26,7 +26,7 @@ export const Primary: Story = {
   decorators: [
     (Story) => (
       <div className="w-[400px]">
-        <ErrorWrapper name={'textarea'} error={undefined}>
+        <ErrorWrapper name={'input'} error={undefined}>
           <Story />
         </ErrorWrapper>
       </div>
@@ -45,7 +45,7 @@ export const Error: Story = {
     (Story) => (
       <div className="w-[400px]">
         <ErrorWrapper
-          name={'textarea'}
+          name={'input'}
           error={{
             type: 'required',
           }}
