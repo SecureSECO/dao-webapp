@@ -88,8 +88,8 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
       >
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-row items-center gap-x-3 lg:gap-x-4">
-            <div className="rounded-md bg-foreground/10 p-2">
-              <IconWrapper.icon className="h-5 w-5 text-primary" />
+            <div className="rounded-md bg-popover p-2">
+              <IconWrapper.icon className="h-5 w-5 shrink-0 text-primary" />
             </div>
             {/* Only split move the header to next line if content for aside was provided */}
             <div

@@ -13,16 +13,18 @@ import { verificationAbi } from '@/src/assets/verificationAbi';
 import StampCard from '@/src/components/ui/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import {
+  HiCalendar,
   HiCheckBadge,
   HiClock,
   HiOutlineLockClosed,
+  HiQuestionMarkCircle,
   HiUserCircle,
 } from 'react-icons/hi2';
 import { AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
-import RecentVerificationCard from '../components/ui/RecentVerificationCard';
 import { FaDiscord, FaGithub } from 'react-icons/fa';
 import { useToast } from '@/src/hooks/useToast';
+import { Card } from '@/src/components/ui/Card';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -397,6 +399,44 @@ const Verification = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const RecentVerificationCard = ({
+  history,
+}: {
+  history: VerificationHistory;
+}) => {
+  const fallBackStampInfo = {
+    id: 'unknown',
+    displayName: 'Unknown',
+    url: 'https://www.google.com',
+    icon: <HiQuestionMarkCircle />,
+  } as StampInfo;
+
+  const stamp = history.stamp;
+  const stampInfo: StampInfo = stamp
+    ? availableStamps.find((stampInfo) => stampInfo.id === stamp[0]) ??
+      fallBackStampInfo
+    : fallBackStampInfo;
+
+  return (
+    <Card
+      padding="sm"
+      variant="light"
+      className="flex flex-col gap-y-2 p-4 font-normal"
+    >
+      <div className="flex items-center gap-x-2">
+        {stampInfo.icon}
+        <h2 className="text-xl font-semibold">{stampInfo.displayName}</h2>
+      </div>
+      <div className="flex items-center gap-x-2 text-popover-foreground/80">
+        <HiCalendar />
+        <p className="font-normal">
+          {new Date(history.timestamp * 1000).toLocaleString()}
+        </p>
+      </div>
+    </Card>
   );
 };
 

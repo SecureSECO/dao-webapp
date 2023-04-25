@@ -57,12 +57,7 @@ const DaoTokensList = ({
   return (
     <div className="space-y-4">
       {balances.map((balance: DaoBalance, i) => (
-        <Card
-          key={i}
-          padding="sm"
-          variant="light"
-          className="p-4 dark:bg-slate-700/50"
-        >
+        <Card key={i} padding="sm" variant="light">
           <h2 className="font-bold">
             {balance.name != '' && balance.name ? balance.name : 'Unkown Token'}
           </h2>
