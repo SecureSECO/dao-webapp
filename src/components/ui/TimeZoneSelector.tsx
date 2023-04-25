@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Controller, FieldError } from 'react-hook-form';
+import { Control, Controller, FieldError, FieldValues } from 'react-hook-form';
 import {
   Select,
   SelectGroup,
@@ -53,7 +53,7 @@ export const TimezoneSelector = ({
   name,
   id,
 }: {
-  control: any;
+  control: Control<any, any>;
   error?: FieldError;
   name: string;
   id?: string;

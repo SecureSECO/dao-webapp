@@ -102,12 +102,12 @@ const MenuBar: React.FC<MenuBarProps> = ({
   return (
     <div
       className={clsx(
-        'flex w-full flex-wrap items-center justify-between bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
+        'flex w-full flex-wrap items-center justify-between bg-accent px-4 py-2',
         fullScreen && 'sticky top-0 z-10',
-        disabled && 'bg-slate-100'
+        disabled && 'bg-muted'
       )}
     >
-      <div className="toolgroup flex flex-wrap space-x-1.5">
+      <div className="flex flex-wrap space-x-1.5">
         <Toggle
           //isActive={editor.isActive('bold')}
           disabled={disabled}
@@ -285,66 +285,97 @@ export const TextareaWYSIWYG = <T extends FieldValues>({
     }
 
     const fullScreenEditor = (
-      <div
-        className={clsx(
-          'fixed top-0 flex h-screen w-screen flex-col overflow-auto text-slate-700 dark:bg-slate-950 dark:text-slate-300',
-          disabled ? 'border-slate-200 bg-slate-100' : 'bg-white'
-        )}
-      >
-        <div
-          className={clsx(
-            'styled-menu-bar sticky top-0 z-10 flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
-            disabled && 'bg-slate-100'
-          )}
-        >
-          <MenuBar
-            disabled={disabled}
-            editor={editor}
-            fullScreen
-            isExpanded={isExpanded}
-            setIsExpanded={setIsExpanded}
-          />
-        </div>
-        <div className="styled-editor-content">
-          <EditorContent name={name} editor={editor} />{' '}
-        </div>
-      </div>
+      <EditorComponent
+        isExpanded={isExpanded}
+        disabled={disabled}
+        error={error}
+        isFocused={isFocused}
+        name={name}
+        editor={editor}
+        setIsExpanded={setIsExpanded}
+      />
     );
 
     return ReactDOM.createPortal(fullScreenEditor, portalNode);
   }
 
   return (
+    <EditorComponent
+      isExpanded={isExpanded}
+      disabled={disabled}
+      error={error}
+      isFocused={isFocused}
+      name={name}
+      editor={editor}
+      setIsExpanded={setIsExpanded}
+    />
+  );
+};
+
+const EditorWrapper: React.FC<{
+  isExpanded: boolean;
+  disabled: boolean;
+  error?: FieldError;
+  isFocused: boolean;
+  children: React.ReactNode;
+}> = ({ isExpanded, disabled, error, isFocused, children }) => {
+  return (
     <div
       className={clsx(
-        'group w-full overflow-auto rounded-md bg-white text-slate-700  dark:bg-slate-900/60 dark:text-slate-300 ',
+        isExpanded
+          ? 'fixed top-0 flex h-screen w-screen flex-col overflow-auto bg-highlight text-highlight-foreground'
+          : 'group w-full overflow-auto rounded-md bg-transparent',
         disabled
-          ? 'cursor-not-allowed opacity-50'
+          ? 'cursor-not-allowed border-input opacity-50'
           : error
-          ? 'border border-destructive'
-          : 'border border-slate-300 dark:border-slate-700',
-
-        error ? 'ring-destructive' : ' ring-slate-400  dark:ring-slate-400 ',
-        isFocused &&
-          'outline-none ring-2 ring-offset-2 dark:ring-offset-slate-900'
+          ? 'border border-destructive ring-destructive'
+          : 'border border-input ring-primary/50',
+        isFocused && 'outline-none ring-2 ring-offset-2 ring-offset-background'
       )}
     >
-      <div
-        className={clsx(
-          'styled-menu-bar flex flex-wrap justify-between bg-slate-50 px-2 py-1.5 dark:bg-slate-800',
-          disabled && 'bg-slate-100'
-        )}
-      >
+      {children}
+    </div>
+  );
+};
+
+const EditorComponent = ({
+  isExpanded,
+  setIsExpanded,
+  name,
+  disabled,
+  error,
+  isFocused,
+  editor,
+}: {
+  isExpanded: boolean;
+  setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+  name: string;
+  disabled: boolean;
+  error?: FieldError;
+  isFocused: boolean;
+  editor: Editor | null;
+}) => {
+  return (
+    <EditorWrapper
+      isExpanded={isExpanded}
+      disabled={disabled}
+      error={error}
+      isFocused={isFocused}
+    >
+      <div className="sticky top-0 z-10 flex flex-wrap justify-between">
         <MenuBar
           disabled={disabled}
           editor={editor}
+          fullScreen
           isExpanded={isExpanded}
           setIsExpanded={setIsExpanded}
         />
       </div>
-      <div className="styled-editor-content">
-        <EditorContent name={name} editor={editor} className="" />
-      </div>
-    </div>
+      <EditorContent
+        name={name}
+        editor={editor}
+        className="styled-editor-content"
+      />
+    </EditorWrapper>
   );
 };
