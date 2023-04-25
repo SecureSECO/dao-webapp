@@ -9,7 +9,9 @@
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { HiBanknotes } from 'react-icons/hi2';
+import { Card } from '@/src/components/ui/Card';
+import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { HiArrowRight, HiBanknotes } from 'react-icons/hi2';
 
 export type ProposalWithdrawAction = IProposalAction & {
   params: {
@@ -19,24 +21,41 @@ export type ProposalWithdrawAction = IProposalAction & {
   };
 };
 
+interface WithdrawActionProps extends AccordionItemProps {
+  action: ProposalWithdrawAction;
+}
+
 /**
  * Shows the details of a withdraw assets action
  * @param props.action Action of type ProposalWithdrawAction to be shown
  * @returns Details of a withdraw assets action wrapped in a GeneralAction component
  */
-const WithdrawAction = ({ action }: { action: ProposalWithdrawAction }) => {
+const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
   return (
-    <ActionWrapper icon={HiBanknotes} title="Withdraw assets">
+    <ActionWrapper
+      icon={HiBanknotes}
+      title="Withdraw assets"
+      description="Withdraw assets from the DAO treasury"
+      {...props}
+    >
       <div className="space-y-2">
-        <p>Withdraw assets from the DAO treasury.</p>
-        <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
-          To{' '}
-          <Address
-            address={action.params.to}
-            maxLength={AddressLength.Small}
-            hasLink={false}
-            showCopy={false}
-          />
+        <Card variant="outline" padding="sm"></Card>
+        <div className="flex flex-row items-center justify-between gap-x-2">
+          <Card variant="outline" padding="sm">
+            <p className="text-xs text-popover-foreground/80">From</p>
+            <p className="font-medium">DAO Treasury</p>
+          </Card>
+          <HiArrowRight className="h-4 w-4 shrink-0 text-popover-foreground/80" />
+          <Card variant="outline" padding="sm" className="font-medium">
+            <p className="text-xs font-normal text-popover-foreground/80">To</p>
+            <Address
+              address={action.params.to}
+              maxLength={AddressLength.Medium}
+              hasLink={false}
+              showCopy={false}
+              replaceYou={false}
+            />
+          </Card>
         </div>
       </div>
     </ActionWrapper>

@@ -7,7 +7,7 @@
  */
 
 import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
-import { Accordion, AccordionItem } from '@/src/components/ui/Accordion';
+import { Accordion } from '@/src/components/ui/Accordion';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -28,6 +28,7 @@ BigInt.prototype.toJSON = function () {
 
 export const Default: Story = {
   args: {
+    value: 'first',
     action: {
       method: 'something_unsupported',
       interface: 'something_unsupported',
@@ -39,9 +40,7 @@ export const Default: Story = {
   decorators: [
     (Story) => (
       <Accordion type="single" collapsible>
-        <AccordionItem value="first">
-          <Story />
-        </AccordionItem>
+        <Story />
       </Accordion>
     ),
   ],

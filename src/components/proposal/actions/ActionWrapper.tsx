@@ -8,48 +8,60 @@
 
 import {
   AccordionContent,
+  AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
-import { ReactNode, createElement } from 'react';
+import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { createElement } from 'react';
 import { IconType } from 'react-icons';
+
+interface ActionWrapperProps extends AccordionItemProps {
+  icon: IconType;
+  title: string;
+  description: string;
+}
 
 /**
  * General wrapper for a proposal action that includes an icon and title inside of an accordion
  * @param props.icon Icon to show in the AccordionTrigger
  * @param props.title Title to show in the AccordionTrigger
- * @param props.subtitle Subtitle to show in the AccordionTrigger
+ * @param props.description Description of the action
  * @param props.children Children to show in the AccordionContent
  * @returns A wrapper for a proposal action constituting an AccordionTrigger and AccordionContent component
  */
 const ActionWrapper = ({
   icon,
   title,
-  subtitle,
+  description,
   children,
-}: {
-  icon: IconType;
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
-}) => {
+  ...props
+}: ActionWrapperProps) => {
   const iconNode = createElement(icon, {
     className: 'h-5 w-5 shrink-0 text-popover-foreground/80',
   });
 
   return (
-    <>
+    <AccordionItem {...props}>
       <AccordionTrigger className="flex flex-row items-center gap-x-2">
         {iconNode}
-        <div>
-          <p className="text-lg">{title}</p>
-          {subtitle && (
-            <span className="text-popover-foreground/80">{subtitle}</span>
-          )}
-        </div>
+        <p className="text-lg">{title}</p>
       </AccordionTrigger>
-      <AccordionContent asChild>{children}</AccordionContent>
-    </>
+      <AccordionContent className="space-y-4">
+        <p className="text-popover-foreground/80">{description}</p>
+        {/* Only render a seperator if children were provided */}
+        {children && (
+          <>
+            <ActionContentSeparator />
+            {children}
+          </>
+        )}
+      </AccordionContent>
+    </AccordionItem>
   );
+};
+
+export const ActionContentSeparator = () => {
+  return <div className="inset-x-0 h-0.5 w-full bg-accent" />;
 };
 
 export default ActionWrapper;

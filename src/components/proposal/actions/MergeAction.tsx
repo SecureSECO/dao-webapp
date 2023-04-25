@@ -8,6 +8,7 @@
 
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
+import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { FaGithub } from 'react-icons/fa';
 
 export type ProposalMergeAction = IProposalAction & {
@@ -17,6 +18,10 @@ export type ProposalMergeAction = IProposalAction & {
     pull_number: number;
   };
 };
+
+interface MergeActionProps extends AccordionItemProps {
+  action: ProposalMergeAction;
+}
 
 const fieldMap: {
   [key in keyof ProposalMergeAction['params']]: string;
@@ -31,24 +36,24 @@ const fieldMap: {
  * @param props.action Action of type ProposalMergeAction to be shown
  * @returns Details of a mint action wrapped in a GeneralAction component
  */
-const MergeAction = ({ action }: { action: ProposalMergeAction }) => {
+const MergeAction = ({ action, ...props }: MergeActionProps) => {
   return (
-    <ActionWrapper icon={FaGithub} title="Merge Pull Request">
-      <div className="space-y-2">
-        <p>Merges a pull request.</p>
-        <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
-          {Object.keys(action.params).map((item, index) => (
-            <div
-              key={index}
-              className="broder-border flex flex-row items-center justify-between gap-x-4 rounded-full border px-3 py-1 text-right"
-            >
-              <p>{fieldMap[item]}</p>
-              <p className="text-popover-foreground/80">
-                {action.params[item]}
-              </p>
-            </div>
-          ))}
-        </div>
+    <ActionWrapper
+      icon={FaGithub}
+      title="Merge Pull Request"
+      description="Merge the specified pull request into the corresponding branch"
+      {...props}
+    >
+      <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
+        {Object.keys(action.params).map((item, index) => (
+          <div
+            key={index}
+            className="broder-border flex flex-row items-center justify-between gap-x-4 rounded-full border px-3 py-1 text-right"
+          >
+            <p>{fieldMap[item]}</p>
+            <p className="text-popover-foreground/80">{action.params[item]}</p>
+          </div>
+        ))}
       </div>
     </ActionWrapper>
   );

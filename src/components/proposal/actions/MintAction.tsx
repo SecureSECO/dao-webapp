@@ -9,8 +9,10 @@
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Card } from '@/src/components/ui/Card';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
+import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { HiCircleStack } from 'react-icons/hi2';
 
 export type ProposalMintAction = IProposalAction & {
@@ -23,40 +25,50 @@ export type ProposalMintAction = IProposalAction & {
   };
 };
 
+interface MintActionProps extends AccordionItemProps {
+  action: ProposalMintAction;
+}
+
 /**
  * Shows the details of a mint action
  * @param props.action Action of type ProposalMintAction to be shown
  * @returns Details of a mint action wrapped in a GeneralAction component
  */
-const MintAction = ({ action }: { action: ProposalMintAction }) => {
+const MintAction = ({ action, ...props }: MintActionProps) => {
   return (
-    <ActionWrapper icon={HiCircleStack} title="Mint tokens">
-      <div className="space-y-2">
-        <p>Mint tokens to a selection of wallets.</p>
-        <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
-          {action.params.to.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-border px-3 py-1 text-right"
-            >
-              <Address
-                address={item.to}
-                maxLength={AddressLength.Small}
-                hasLink={true}
-                showCopy={false}
-                replaceYou={false}
-              />
-              <p className="text-popover-foreground/80">
-                {toAbbreviatedTokenAmount(
-                  item.amount,
-                  CHAIN_METADATA.rep.nativeCurrency.decimals,
-                  true
-                )}{' '}
-                REP
-              </p>
-            </div>
-          ))}
-        </div>
+    <ActionWrapper
+      icon={HiCircleStack}
+      title="Mint tokens"
+      description="Mint tokens to a selection of wallets"
+      {...props}
+    >
+      <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
+        {action.params.to.map((item, index) => (
+          <Card
+            key={index}
+            variant="outline"
+            padding="sm"
+            className="flex flex-row items-center justify-between text-right"
+          >
+            <Address
+              address={item.to}
+              maxLength={AddressLength.Small}
+              hasLink={true}
+              showCopy={false}
+              replaceYou={false}
+              jazziconSize="md"
+            />
+            <p className="text-popover-foreground/80">
+              +{' '}
+              {toAbbreviatedTokenAmount(
+                item.amount,
+                CHAIN_METADATA.rep.nativeCurrency.decimals,
+                true
+              )}{' '}
+              REP
+            </p>
+          </Card>
+        ))}
       </div>
     </ActionWrapper>
   );

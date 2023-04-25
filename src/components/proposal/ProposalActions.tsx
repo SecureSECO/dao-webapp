@@ -18,7 +18,7 @@ import MintAction, {
 import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
-import { Accordion, AccordionItem } from '@/src/components/ui/Accordion';
+import { Accordion } from '@/src/components/ui/Accordion';
 import {
   DefaultMainCardHeader,
   MainCard,
@@ -27,6 +27,7 @@ import {
 import MergeAction, {
   ProposalMergeAction,
 } from '@/src/components/proposal/actions/MergeAction';
+import { AccordionItemProps } from '@radix-ui/react-accordion';
 
 export interface IProposalAction {
   interface: string;
@@ -66,50 +67,37 @@ const ProposalActions = ({
       ) : (
         <Accordion type="single" collapsible className="space-y-2">
           {actions.map((action, i) => (
-            <ProposalAction key={i} action={action} index={i} />
+            <ProposalAction key={i} value={i.toString()} action={action} />
           ))}
         </Accordion>
       )}
-
       {children}
     </MainCard>
   );
 };
+
+interface ProposalActionProps extends AccordionItemProps {
+  action: IProposalAction;
+}
 
 /**
  * Display an action in an accordion
  * @param props.action Action to display
  * @returns An AccordionItem with information about the action
  */
-export const ProposalAction = ({
-  action,
-  index,
-  className,
-}: {
-  action: IProposalAction;
-  index: number;
-  className?: string;
-}) => {
-  console.log(action);
-
-  const renderAction = () => {
-    switch (action.method) {
-      case 'withdraw':
-        return <WithdrawAction action={action as ProposalWithdrawAction} />;
-      case 'mint':
-        return <MintAction action={action as ProposalMintAction} />;
-      case 'merge':
-        return <MergeAction action={action as ProposalMergeAction} />;
-      default:
-        return <DefaultAction action={action} />;
-    }
-  };
-
-  return (
-    <AccordionItem value={index.toString()} className={className}>
-      {renderAction()}
-    </AccordionItem>
-  );
+export const ProposalAction = ({ action, ...props }: ProposalActionProps) => {
+  switch (action.method) {
+    case 'withdraw':
+      return (
+        <WithdrawAction action={action as ProposalWithdrawAction} {...props} />
+      );
+    case 'mint':
+      return <MintAction action={action as ProposalMintAction} {...props} />;
+    case 'merge':
+      return <MergeAction action={action as ProposalMergeAction} {...props} />;
+    default:
+      return <DefaultAction action={action} {...props} />;
+  }
 };
 
 export default ProposalActions;
