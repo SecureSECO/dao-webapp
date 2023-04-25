@@ -177,7 +177,7 @@ const StampCard = ({
         </div>
         <StatusBadge {...getStatusProps(verified, expired)} />
       </div>
-      <div className="flex items-center gap-x-2 text-slate-600 dark:text-slate-400">
+      <div className="flex items-center gap-x-2 text-popover-foreground">
         <HiLink />
         <p className="font-normal">
           {/* Url:{' '} */}
@@ -185,7 +185,7 @@ const StampCard = ({
             href={stampInfo.url}
             target="_blank"
             rel="noreferrer"
-            className="text-blue-500 hover:underline"
+            className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
           >
             {stampInfo.url}
           </a>
@@ -194,7 +194,7 @@ const StampCard = ({
       {stamp && stamp[2] && stamp[2].length > 0 && (
         <>
           <div className="flex items-center gap-x-6">
-            <div className="flex items-center gap-x-2 text-slate-600 dark:text-slate-400">
+            <div className="flex items-center gap-x-2 text-popover-foreground">
               <HiCalendar />
               <p className="font-normal">
                 {/* Last verified at:{' '} */}
@@ -208,7 +208,7 @@ const StampCard = ({
                 className={`flex items-center gap-x-2 ${
                   expired || timeLeftUntilExpiration / 86400 < 7
                     ? 'text-destructive'
-                    : 'text-slate-600 dark:text-slate-400'
+                    : 'text-popover-foreground'
                 }`}
               >
                 <FaHourglass size={14} />
@@ -219,7 +219,7 @@ const StampCard = ({
               </div>
             )}
           </div>
-          <div className="flex items-center gap-x-2 text-slate-600 dark:text-slate-400">
+          <div className="flex items-center gap-x-2 text-popover-foreground">
             <HiChartBar />
             <p className="font-normal">
               {/* Last verified at:{' '} */}
