@@ -55,40 +55,11 @@ Code that gives an error upon linting (using `npm run lint`) should not be commi
 
 ### Colors
 
-text-subtext - for `slate-500 dark:slate-400`
-text-secondary - for `slate-200 dark:slate-600`
+Colors are defined using CSS variables in [index.css](/src/index.css). The colors defined in this CSS file correspond to those defined in [tailwind.config.cjs](tailwind.config.cjs), and when adding a new color to the css file, the tailwind config should be updated accordingly.
 
-Below is a list of colors used for specific elements, both for light mode and dark mode. Colors are represented as tailwind classes here. The corresponding hex codes can be found in the [tailwind.config.cjs](tailwind.config.cjs) file.
+Some specific cases:
 
-#### Light mode:
-
-```
-- Background colors:
-  - default: bg-slate-50
-  - highlight: bg-white
-  - subhighlight: bg-slate-50
-  - warning: bg-red-500/80
-- Text colors:
-  - default: text-slate-700
-  - subtext: text-slate-500
-  - link: text-primary-500 (hover: text-primary-700)
-- Highlight color: text-primary
-```
-
-#### Dark mode:
-
-```
-- Background colors:
-  - default: bg-slate-950
-  - highlight: bg-slate-800
-  - subhighlight: bg-slate-700/50
-  - warning: bg-red-500/80
-- Text colors:
-  - default: text-slate-300
-  - subtext: text-slate-400
-  - link: text-primary-500 (hover: text-primary-400)
-- Highlight color: text-primary-500
-```
+- Links (`<a>` tags) usually get the following styling: `text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80`
 
 ### License
 
