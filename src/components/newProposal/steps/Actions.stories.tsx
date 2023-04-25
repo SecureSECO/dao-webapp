@@ -38,25 +38,10 @@ export const Primary: Story = {
   decorators: [FormProviderDecoratorFactory(emptyActions)],
 };
 
-const mintTokensAction: ProposalFormActions = {
-  actions: [
-    { name: 'mint_tokens', wallets: [{ address: '0x123', amount: 1 }] },
-  ],
-};
-export const MintTokensAction: Story = {
-  decorators: [FormProviderDecoratorFactory(mintTokensAction)],
+const zeroActions = {
+  actions: [],
 };
 
-const mergeAction: ProposalFormActions = {
-  actions: [
-    {
-      name: 'merge_pr',
-      inputs: { pull_number: 1, repo: 'dao-webapp', owner: 'SecureSECO-DAO' },
-      summary: {},
-    },
-  ],
-};
-
-export const PullRequestAction: Story = {
-  decorators: [FormProviderDecoratorFactory(mergeAction)],
+export const Empty: Story = {
+  decorators: [FormProviderDecoratorFactory(zeroActions)],
 };

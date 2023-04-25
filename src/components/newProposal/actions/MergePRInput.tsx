@@ -41,21 +41,6 @@ export const emptyMergeAction: ProposalFormMergeData = {
   summary: {},
 };
 
-export type ProposalFormMintData = {
-  name: 'merge_pr';
-  wallets: ProposalFormMintWallet[];
-};
-
-export type ProposalFormMintWallet = {
-  address: string;
-  amount: number;
-};
-
-export const emptyMintWallet: ProposalFormMintWallet = {
-  address: '',
-  amount: 0,
-};
-
 export const emptyMergeData: ProposalFormMergeData = {
   name: 'merge_pr',
   inputs: {
@@ -67,7 +52,7 @@ export const emptyMergeData: ProposalFormMergeData = {
 };
 
 /**
- * @returns Component to be used within a form to describe the action of minting tokens.
+ * @returns Component to be used within a form to describe the action of merging a pull request.
  */
 export const MergePRInput = ({
   register,
@@ -96,8 +81,8 @@ export const MergePRInput = ({
         />
       }
     >
-      <div className="grid grid-cols-3 justify-start gap-2 ">
-        <div>
+      <div className="grid grid-cols-1 justify-start gap-2 md:grid-cols-3">
+        <div className="flex flex-col gap-y-1">
           <Label tooltip="Owner of the GitHub repository">
             Repository owner
           </Label>
@@ -111,12 +96,13 @@ export const MergePRInput = ({
               id="owner"
               error={errors?.inputs?.owner ?? undefined}
               title="Username of the owner of the GitHub repository"
+              placeholder="GitHub Username"
               className="w-full basis-2/3"
               required
             />
           </ErrorWrapper>
         </div>
-        <div>
+        <div className="flex flex-col gap-y-1">
           <Label tooltip="Name of the GitHub repository">Repository</Label>
           <ErrorWrapper
             name="Repository"
@@ -128,12 +114,13 @@ export const MergePRInput = ({
               id="repo"
               error={errors?.inputs?.repo ?? undefined}
               title="Name of the GitHub repository"
+              placeholder="Repository name"
               className="w-full basis-2/3"
               required
             />
           </ErrorWrapper>
         </div>
-        <div>
+        <div className="flex flex-col gap-y-1">
           <Label tooltip="Pull request number">Pull request number</Label>
           <ErrorWrapper
             name="Pull request number"
@@ -147,6 +134,7 @@ export const MergePRInput = ({
               id="pull_number"
               error={errors?.inputs?.pull_number ?? undefined}
               title="Pull request number"
+              placeholder='Pull request number (e.g. "1")'
               className="w-full basis-2/3"
               required
             />

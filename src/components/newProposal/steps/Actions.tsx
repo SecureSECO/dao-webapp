@@ -43,7 +43,7 @@ import {
 import { Button } from '@/src/components/ui/Button';
 import { HiBanknotes, HiCircleStack, HiPlus } from 'react-icons/hi2';
 import { Label } from '@/src/components/ui/Label';
-import { AiFillGithub } from 'react-icons/ai';
+import { FaGithub } from 'react-icons/fa';
 
 export interface ProposalFormActions {
   actions: ProposalFormAction[];
@@ -194,7 +194,7 @@ export const AddActionButton = ({
             onClick={() => append(emptyMergeData)}
             className="gap-x-2 hover:cursor-pointer"
           >
-            <AiFillGithub className="h-5 w-5 shrink-0" />
+            <FaGithub className="h-5 w-5 shrink-0" />
             <span>Merge pull request</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>

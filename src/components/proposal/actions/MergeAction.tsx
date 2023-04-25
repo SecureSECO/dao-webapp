@@ -8,23 +8,22 @@
 
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
-import { AiFillGithub } from 'react-icons/ai';
-import { HiCircleStack } from 'react-icons/hi2';
+import { FaGithub } from 'react-icons/fa';
 
 export type ProposalMergeAction = IProposalAction & {
   params: {
-    _owner: string;
-    _repo: string;
-    _pull_number: number;
+    owner: string;
+    repo: string;
+    pull_number: number;
   };
 };
 
 const fieldMap: {
   [key in keyof ProposalMergeAction['params']]: string;
 } = {
-  _owner: 'Owner',
-  _repo: 'Repository',
-  _pull_number: 'Pull Request Number',
+  owner: 'Owner',
+  repo: 'Repository',
+  pull_number: 'Pull Request Number',
 };
 
 /**
@@ -34,7 +33,7 @@ const fieldMap: {
  */
 const MergeAction = ({ action }: { action: ProposalMergeAction }) => {
   return (
-    <ActionWrapper icon={AiFillGithub} title="Merge Pull Request">
+    <ActionWrapper icon={FaGithub} title="Merge Pull Request">
       <div className="space-y-2">
         <p>Merges a pull request.</p>
         <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">

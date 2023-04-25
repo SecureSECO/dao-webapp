@@ -8,8 +8,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import StampCard from './StampCard';
-import { AiFillGithub } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
+import { FaGithub } from 'react-icons/fa';
 
 const meta = {
   component: StampCard,
@@ -24,7 +24,7 @@ export const Verified: Story = {
   args: {
     stampInfo: {
       displayName: 'GitHub',
-      icon: <AiFillGithub />,
+      icon: <FaGithub />,
       id: 'github',
       url: 'https://github.com',
     },
@@ -38,7 +38,7 @@ export const Expired: Story = {
   args: {
     stampInfo: {
       displayName: 'GitHub',
-      icon: <AiFillGithub />,
+      icon: <FaGithub />,
       id: 'github',
       url: 'https://github.com',
     },
@@ -52,7 +52,7 @@ export const Unverified: Story = {
   args: {
     stampInfo: {
       displayName: 'GitHub',
-      icon: <AiFillGithub />,
+      icon: <FaGithub />,
       id: 'github',
       url: 'https://github.com',
     },
