@@ -83,3 +83,20 @@ export const calcBigintPercentage = (
 ): number => {
   return Number((numerator * 10000n) / denominator) / 100;
 };
+
+/**
+ * Performs the same logical task as the standard some method for lists.
+ * However, it does not test the entire list, but from the start (index 0) untill (exclusive) the given index.
+ */
+export function someUntil<T>(
+  list: T[],
+  predicate: (arg: T) => Boolean,
+  untillExclusive: number
+): Boolean {
+  for (let i = 0; i < list.length && i < untillExclusive; i++) {
+    if (predicate(list[i])) {
+      return true;
+    }
+  }
+  return false;
+}

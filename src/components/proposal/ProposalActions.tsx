@@ -24,8 +24,9 @@ import {
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
-import { cn } from '@/src/lib/utils';
-import MergeAction, { ProposalMergeAction } from './actions/MergeAction';
+import MergeAction, {
+  ProposalMergeAction,
+} from '@/src/components/proposal/actions/MergeAction';
 
 export interface IProposalAction {
   interface: string;
@@ -36,7 +37,6 @@ export interface IProposalAction {
 export interface ProposalActionsProps
   extends Omit<MainCardProps, 'icon' | 'header'> {
   actions: IProposalAction[] | undefined;
-  accordionVariant?: 'default' | 'dark';
   loading?: boolean;
 }
 
@@ -48,7 +48,6 @@ export interface ProposalActionsProps
  */
 const ProposalActions = ({
   actions,
-  accordionVariant = 'default',
   children,
   ...props
 }: ProposalActionsProps) => {
@@ -65,14 +64,7 @@ const ProposalActions = ({
           No actions attached
         </div>
       ) : (
-        <Accordion
-          type="single"
-          collapsible
-          className={cn(
-            'space-y-2',
-            accordionVariant === 'dark' && 'bg-slate-100 dark:bg-slate-700/50'
-          )}
-        >
+        <Accordion type="single" collapsible className={'space-y-2'}>
           {actions.map((action, i) => (
             <ProposalAction key={i} action={action} index={i} />
           ))}
@@ -106,7 +98,7 @@ export const ProposalAction = ({
         return <WithdrawAction action={action as ProposalWithdrawAction} />;
       case 'mint':
         return <MintAction action={action as ProposalMintAction} />;
-      case 'mergePullRequest':
+      case 'merge':
         return <MergeAction action={action as ProposalMergeAction} />;
       default:
         return <DefaultAction action={action} />;

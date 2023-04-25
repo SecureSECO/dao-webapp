@@ -6,25 +6,119 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { ProposalFormAction } from '@/src/components/newProposal/steps/Actions';
+import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
+import ProposalActions, {
+  IProposalAction,
+} from '@/src/components/proposal/ProposalActions';
+import { ProposalResources } from '@/src/components/proposal/ProposalResources';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { MainCard } from '@/src/components/ui/MainCard';
+import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useToast } from '@/src/hooks/useToast';
+import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/date-utils';
+import { anyNullOrUndefined } from '@/src/lib/utils';
 import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import DOMPurify from 'dompurify';
-import { HeaderCard } from '@/src/components/ui/HeaderCard';
-import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import { add, format } from 'date-fns';
-import { MainCard } from '@/src/components/ui/MainCard';
+import DOMPurify from 'dompurify';
+import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
-import ProposalActions, {
-  IProposalAction,
-} from '@/src/components/proposal/ProposalActions';
-import { inputToDate } from '@/src/lib/date-utils';
-import { ProposalFormAction } from '@/src/components/newProposal/steps/Actions';
-import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
+
+  const { votingClient, votingPluginAddress } = useAragonSDKContext();
+  const { toast } = useToast();
+
+  const {
+    handleSubmit,
+    formState: { errors, isValid },
+    setError,
+  } = useForm({
+    defaultValues: {
+      step1: dataStep1,
+      step2: dataStep2,
+      step3: dataStep3,
+      step4: { startTimevalidation: '' },
+    },
+  });
+
+  const onSubmitSend = async (data: any) => {
+    console.log(data);
+
+    if (!votingClient || !votingPluginAddress)
+      return toast({
+        title: 'Error submitting proposal',
+        description: 'Voting client not found',
+        variant: 'error',
+      });
+    // contractInteraction<ProposalCreationSteps, ProposalCreationStepValue>(
+    //   () =>
+    //     votingClient.methods.createProposal({
+    //       pluginAddress: votingPluginAddress,
+    //       actions: dataStep3?.actions ?? [],
+    //     }),
+    //   {
+    //     steps: {
+    //       confirmed: ProposalCreationSteps.DONE,
+    //       signed: ProposalCreationSteps.CREATING,
+    //     },
+    //     messages: {
+    //       error: 'Error creating proposal',
+    //       success: 'Proposal created!',
+    //     },
+    //     onFinish: () => {
+    //       // Send user to proposal page
+    //     },
+    //   }
+    // );
+  };
+
+  /**
+   * Checks if the form is valid and displays a dialog to fix invalidities if needed.
+   * @returns true if form is valid, false otherwise
+   * */
+  const onSubmitValidate = (): Boolean => {
+    // All step data needs to be defined
+    if (anyNullOrUndefined(dataStep1, dataStep2, dataStep3)) {
+      setError('root.step4error', {
+        type: 'custom',
+        message: 'Some data appears to be missing, please enter all steps',
+      });
+      return false;
+    }
+
+    //If step2 start time is custom, it must be in the future.
+    if (dataStep2!.start_time_type === 'custom') {
+      let start = inputToDate(
+        dataStep2!.custom_start_date!,
+        dataStep2!.custom_start_time!,
+        dataStep2!.custom_start_timezone!
+      );
+      let minStart = getTimeInxMinutesAsDate(5);
+      // If the start is past our minStart (less or equal), there is a proplem
+      if (start <= minStart) {
+        setError('root.step4error', {
+          type: 'custom',
+          message:
+            'The proposal start time must be in the future at the moment of execution',
+        });
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const onSubmit = async (data: any) => {
+    const valid = onSubmitValidate();
+    if (isValid && valid) {
+      onSubmitSend(data);
+    }
+  };
 
   // Map the actions to the IProposalAction interface
   const actions: IProposalAction[] = dataStep3
@@ -80,7 +174,7 @@ export const Confirmation = () => {
   );
 
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* View proposal details */}
         <HeaderCard
@@ -147,8 +241,10 @@ export const Confirmation = () => {
           )}
         </MainCard>
       </div>
-      <StepNavigator />
-    </div>
+      <ErrorWrapper name="submit" error={errors?.root?.step4error as any}>
+        <StepNavigator />
+      </ErrorWrapper>
+    </form>
   );
 };
 
