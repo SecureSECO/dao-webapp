@@ -60,7 +60,7 @@ const dummyActions = [
     },
   },
   {
-    method: 'mergePullRequest',
+    method: 'merge',
     interface: 'IMerge',
     params: {
       owner: 'SecureSECO-DAO',

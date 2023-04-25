@@ -150,7 +150,7 @@ export const Confirmation = () => {
             };
           case 'merge_pr':
             return {
-              method: 'mergePullRequest',
+              method: 'merge',
               interface: 'IMerge', // FIXME: This is not the correct interface
               params: {
                 owner: action.inputs.owner,

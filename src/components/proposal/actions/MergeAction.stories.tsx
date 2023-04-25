@@ -29,7 +29,7 @@ BigInt.prototype.toJSON = function () {
 export const Default: Story = {
   args: {
     action: {
-      method: 'mergePullRequest',
+      method: 'merge',
       interface: 'IMerge',
       params: {
         owner: 'SecureSECO-DAO',
