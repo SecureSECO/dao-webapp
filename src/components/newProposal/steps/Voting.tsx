@@ -308,7 +308,7 @@ export const EndTime = ({
         />
 
         {endTimeType === 'duration' ? (
-          <Card className="flex w-full gap-2 bg-slate-50 dark:bg-slate-700/50">
+          <Card variant="light">
             <LabelledInput
               id="duration_days"
               type="number"
@@ -356,7 +356,7 @@ export const EndTime = ({
           </Card>
         ) : (
           endTimeType === 'end-custom' && (
-            <Card className="flex w-full gap-2 bg-slate-50 dark:bg-slate-700/50">
+            <Card variant="light">
               <LabelledInput
                 id="custom_end_date"
                 type="date"

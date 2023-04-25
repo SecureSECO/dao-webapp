@@ -36,7 +36,7 @@ export const Primary: Story = {
           <TabsTrigger value="password">Password</TabsTrigger>
         </TabsList>
         <TabsContent value="account">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-highlight-foreground/80">
             Make changes to your account here. Click save when you&apos;re done.
           </p>
           <div className="grid gap-2 py-4">
@@ -54,7 +54,7 @@ export const Primary: Story = {
           </div>
         </TabsContent>
         <TabsContent value="password">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-highlight-foreground/80">
             Change your password here. After saving, you&apos;ll be logged out.
           </p>
           <div className="grid gap-2 py-4">

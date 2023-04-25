@@ -94,7 +94,6 @@ const ProposalTabs = () => {
       onValueChange={(v) =>
         setCurrentTab(statusStringToEnum(v as ProposalStatusString))
       }
-      variant="default"
     >
       <div className="flex flex-row items-center gap-x-2">
         {/* Mobile category selector (dropdown) */}

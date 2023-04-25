@@ -53,13 +53,13 @@ const RadioGroupItem = React.forwardRef<
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        'text:fill-slate-50 h-4 w-4 shrink-0 rounded-full border border-slate-300 text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-400 dark:text-slate-200 dark:hover:text-slate-100 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900',
+        'h-4 w-4 rounded-full border border-input ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}
       {...props}
     >
       <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <div className="h-2.5 w-2.5 rounded-full bg-slate-700 dark:bg-slate-200" />
+        <div className="h-2.5 w-2.5 rounded-full bg-primary" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   );
@@ -91,21 +91,19 @@ function RadioButtonCard<T extends string>({
     <Label
       htmlFor={id}
       className={cn(
-        'flex w-full cursor-pointer rounded-md border border-slate-300 bg-transparent px-3 py-2 text-sm font-normal placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-offset-slate-800',
+        'flex w-full cursor-pointer rounded-md border border-input bg-transparent px-3 py-2 text-sm font-normal ring-offset-background placeholder:text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
         error
           ? 'border-destructive focus:ring-destructive'
-          : value === id && 'ring-2 ring-primary-500 dark:ring-primary-400 ',
+          : value === id && 'ring-2 ring-primary-highlight ',
         className
       )}
     >
       <div className="w-full">
         <div className="flex items-center justify-between">
-          <span className="text-base text-slate-700 dark:text-slate-300">
-            {title}
-          </span>
+          <span className="text-base text-highlight-foreground">{title}</span>
           <RadioGroupItem value={id} id={id} className="group" {...props} />
         </div>
-        <p className="text-slate-500 dark:text-slate-400">{description}</p>
+        <p className="text-highlight-foreground/80">{description}</p>
       </div>
     </Label>
   );
