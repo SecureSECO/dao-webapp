@@ -24,6 +24,9 @@ import {
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
+import MergeAction, {
+  ProposalMergeAction,
+} from '@/src/components/proposal/actions/MergeAction';
 
 export interface IProposalAction {
   interface: string;
@@ -95,6 +98,8 @@ export const ProposalAction = ({
         return <WithdrawAction action={action as ProposalWithdrawAction} />;
       case 'mint':
         return <MintAction action={action as ProposalMintAction} />;
+      case 'merge':
+        return <MergeAction action={action as ProposalMergeAction} />;
       default:
         return <DefaultAction action={action} />;
     }

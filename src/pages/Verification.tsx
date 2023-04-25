@@ -18,10 +18,10 @@ import {
   HiOutlineLockClosed,
   HiUserCircle,
 } from 'react-icons/hi2';
-import { AiFillGithub, AiFillTwitterCircle } from 'react-icons/ai';
+import { AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
-import RecentVerificationCard from '@/src/components/ui/RecentVerificationCard';
-import { FaDiscord } from 'react-icons/fa';
+import RecentVerificationCard from '../components/ui/RecentVerificationCard';
+import { FaDiscord, FaGithub } from 'react-icons/fa';
 import { useToast } from '@/src/hooks/useToast';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
@@ -55,7 +55,7 @@ export const availableStamps: StampInfo[] = [
     id: 'github',
     displayName: 'GitHub',
     url: 'https://github.com/',
-    icon: <AiFillGithub size={20} />,
+    icon: <FaGithub size={20} />,
   },
   {
     id: 'twitter',

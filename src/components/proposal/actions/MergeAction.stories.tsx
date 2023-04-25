@@ -6,21 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import VotingDetails from '@/src/components/proposal/VotingDetails';
-import { dummyProposal } from '@/src/hooks/useProposal';
+import { Accordion, AccordionItem } from '@/src/components/ui/Accordion';
 import type { Meta, StoryObj } from '@storybook/react';
+import MergeAction from './MergeAction';
 
 const meta = {
-  component: VotingDetails,
+  component: MergeAction,
   tags: ['autodocs'],
-  argTypes: {
-    proposal: {
-      table: {
-        disable: true,
-      },
-    },
-  },
-} satisfies Meta<typeof VotingDetails>;
+  argTypes: {},
+} satisfies Meta<typeof MergeAction>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -34,6 +28,23 @@ BigInt.prototype.toJSON = function () {
 
 export const Default: Story = {
   args: {
-    proposal: dummyProposal,
+    action: {
+      method: 'merge',
+      interface: 'IMerge',
+      params: {
+        owner: 'SecureSECO-DAO',
+        repo: 'dao-webapp',
+        pull_number: 1,
+      },
+    },
   },
+  decorators: [
+    (Story) => (
+      <Accordion type="single" collapsible>
+        <AccordionItem value="first">
+          <Story />
+        </AccordionItem>
+      </Accordion>
+    ),
+  ],
 };

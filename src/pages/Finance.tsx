@@ -17,9 +17,11 @@ import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
-import { formatRelative } from 'date-fns';
+import { format } from 'date-fns';
 import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
-import TokenAmount, { transfertypeToSign } from '@/src/components/ui/TokenAmount';
+import TokenAmount, {
+  transfertypeToSign,
+} from '@/src/components/ui/TokenAmount';
 import { useState } from 'react';
 import { Link } from '@/src/components/ui/Link';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
@@ -92,6 +94,7 @@ type DaoTransfersListProps = {
   daoTransfers: DaoTransfer[] | null;
   limit?: number;
 };
+
 export const DaoTransfersList = ({
   loading,
   error,
@@ -123,8 +126,8 @@ export const DaoTransfersList = ({
         <Card key={transfer.transactionId} padding="sm" variant="light">
           <div className="flex flex-row justify-between">
             <div className="text-left">
-              <h2 className="font-bold capitalize">{transfer.type}</h2>
-              <span> {formatRelative(transfer.creationDate, new Date())} </span>
+              <p className="font-bold capitalize">{transfer.type}</p>
+              <p className="text-sm">{format(transfer.creationDate, 'Pp')}</p>
             </div>
             <div className="flex flex-col items-end text-right">
               <TokenAmount
