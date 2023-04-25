@@ -130,9 +130,10 @@ export const WithAction: Story = {
   args: {
     variant: 'default',
     duration: Infinity,
+    className: 'py-2',
     children: (
       <>
-        <div>
+        <div className="space-y-1">
           <ToastTitle>Toast title</ToastTitle>
           <ToastAction altText={'Click me'}>Click me!</ToastAction>
         </div>
