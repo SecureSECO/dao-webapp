@@ -69,7 +69,7 @@ const Query = () => {
         </Card>
         <Card className="my-6">
           <h2 className="text-xl font-bold">Rewards</h2>
-          <p className="text-base font-normal text-slate-500 dark:text-slate-400">This card will be used for claiming rewards</p>
+          <p className="text-base font-normal">This card will be used for claiming rewards</p>
         </Card>
       </div>
     </div>
