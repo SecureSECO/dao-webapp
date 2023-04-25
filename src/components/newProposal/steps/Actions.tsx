@@ -29,6 +29,11 @@ import {
   emptyMintData,
 } from '@/src/components/newProposal/actions/MintTokensInput';
 import {
+  MergePRInput,
+  ProposalFormMergeData,
+  emptyMergeData,
+} from '@/src/components/newProposal/actions/MergePRInput';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -38,6 +43,7 @@ import {
 import { Button } from '@/src/components/ui/Button';
 import { HiBanknotes, HiCircleStack, HiPlus } from 'react-icons/hi2';
 import { Label } from '@/src/components/ui/Label';
+import { FaGithub } from 'react-icons/fa';
 
 export interface ProposalFormActions {
   actions: ProposalFormAction[];
@@ -45,7 +51,8 @@ export interface ProposalFormActions {
 
 export type ProposalFormAction =
   | ProposalFormWithdrawData
-  | ProposalFormMintData;
+  | ProposalFormMintData
+  | ProposalFormMergeData;
 
 export const Actions = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
@@ -123,6 +130,19 @@ export const Actions = () => {
                           getValues={getValues}
                         />
                       );
+                    case 'merge_pr':
+                      return (
+                        <MergePRInput
+                          register={register}
+                          control={control}
+                          prefix={prefix}
+                          key={field.id}
+                          errors={
+                            errors.actions ? errors.actions[index] : undefined
+                          }
+                          onRemove={() => remove(index)}
+                        />
+                      );
                   }
                 })}
               </div>
@@ -175,6 +195,13 @@ export const AddActionButton = ({
           >
             <HiCircleStack className="h-5 w-5 shrink-0" />
             <span>Mint tokens</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => append(emptyMergeData)}
+            className="gap-x-2 hover:cursor-pointer"
+          >
+            <FaGithub className="h-5 w-5 shrink-0" />
+            <span>Merge pull request</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
