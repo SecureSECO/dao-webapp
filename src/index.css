@@ -100,18 +100,18 @@
 
   ::-moz-selection {
     /* Code for Firefox */
-    @apply bg-blue-500 text-gray-700;
+    @apply bg-primary text-primary-foreground;
   }
 
   ::selection {
-    @apply bg-blue-500 text-foreground;
+    @apply bg-primary text-primary-foreground;
   }
 
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    @apply text-gray-100 shadow-[inset_0_0_0_30px] shadow-white dark:shadow-destructive;
+    @apply shadow-[inset_0_0_0_30px] shadow-background dark:shadow-destructive;
     -webkit-text-fill-color: #aaa !important;
   }
 }
