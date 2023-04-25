@@ -27,6 +27,7 @@ import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
+import CategoryList from '@/src/components/ui/CategoryList';
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
@@ -201,29 +202,11 @@ export const Confirmation = () => {
           header="Voting settings"
         >
           {!dataStep2 ? (
-            <p>No data available</p>
+            <p className="italic text-highlight-foreground/80">
+              No data available
+            </p>
           ) : (
-            <>
-              {getCategories(dataStep2).map((category) => (
-                <div key={category.title}>
-                  <div className="flex flex-row items-center gap-x-2">
-                    <p className="font-medium opacity-90">{category.title}</p>
-                    <div className="mt-1 h-0.5 grow rounded-full bg-accent" />
-                  </div>
-                  {category.items.map((item) => (
-                    <div
-                      key={item.label}
-                      className="flex flex-row justify-between gap-x-2"
-                    >
-                      <p className="text-highlight-foreground/80">
-                        {item.label}
-                      </p>
-                      <p className="text-primary">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </>
+            <CategoryList categories={getCategories(dataStep2)} />
           )}
         </MainCard>
       </div>
