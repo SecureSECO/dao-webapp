@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 
 type UseMembersProps = {
   useDummyData?: boolean;
+  includeBalances?: boolean;
   limit?: number | undefined;
 };
 
@@ -23,6 +24,7 @@ type UseMembersData = {
   error: string | null;
   members: Member[];
   memberCount: number;
+  isMember: (address: string) => boolean;
 };
 
 export type Member = { address: string; bal: number | null };
@@ -31,6 +33,7 @@ const dummyMembers: Member[] = [];
 
 export const useMembers = ({
   useDummyData = false,
+  includeBalances = true,
   limit = undefined,
 }: UseMembersProps): UseMembersData => {
   const [members, setMembers] = useState<Member[]>([]);
@@ -95,7 +98,15 @@ export const useMembers = ({
       );
       if (addressList) {
         // Fetch the balance of each member
-        const daoMembers = await fetchBalances(addressList);
+        let daoMembers;
+        if (includeBalances) daoMembers = await fetchBalances(addressList);
+        else
+          daoMembers = addressList.map((address) => {
+            return {
+              address,
+              bal: null,
+            };
+          });
 
         // Sort the members by balance, descending
         daoMembers.sort((a, b) => {
@@ -132,10 +143,20 @@ export const useMembers = ({
     fetchMembers(votingClient);
   }, [votingClient]);
 
+  /**
+   * Check if an address is a member of the DAO
+   * @param address The address to check
+   * @returns True if the address is a member, false otherwise
+   */
+  const isMember = (address: string): boolean => {
+    return members.some((member) => member.address === address);
+  };
+
   return {
     loading,
     error,
     members,
     memberCount,
+    isMember,
   };
 };

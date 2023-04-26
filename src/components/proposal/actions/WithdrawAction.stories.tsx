@@ -35,7 +35,29 @@ export const Default: Story = {
       params: {
         to: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
         amount: 1000000000000000000n,
-        tokenAddress: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
+        tokenAddress: '0x0000000000000000000000000000000000000000',
+      },
+    },
+  },
+  decorators: [
+    (Story) => (
+      <Accordion type="single" collapsible>
+        <Story />
+      </Accordion>
+    ),
+  ],
+};
+
+export const UnknownToken: Story = {
+  args: {
+    value: 'first',
+    action: {
+      method: 'withdraw',
+      interface: 'IWithdraw',
+      params: {
+        to: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
+        amount: 1000000000000000000n,
+        tokenAddress: '0x2222222222222222222222222222222222222222',
       },
     },
   },

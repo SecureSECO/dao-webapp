@@ -48,7 +48,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
 
   const signer = useSigner().data || undefined;
   const provider = useProvider({
-    chainId: import.meta.env.VITE_PREFERRED_NETWORK_ID,
+    chainId: +import.meta.env.VITE_PREFERRED_NETWORK_ID,
   });
 
   useEffect(() => {

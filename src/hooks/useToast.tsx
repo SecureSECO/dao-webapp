@@ -7,7 +7,10 @@
 import * as React from 'react';
 
 import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
-import { getChainDataByChainId } from '@/src/lib/constants/chains';
+import {
+  PREFERRED_NETWORK,
+  getChainDataByChainId,
+} from '@/src/lib/constants/chains';
 import { ReactNode } from 'react';
 
 const TOAST_LIMIT = 5;
@@ -306,7 +309,7 @@ async function contractInteraction<
   try {
     // Get etherscan url for the currently preferred network
     // Use +chainId to convert string to number
-    const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
+    const chainId = PREFERRED_NETWORK;
     const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
     const steps = method();
 

@@ -19,6 +19,8 @@ export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 export function isSupportedChainId(
   chainId: number
 ): chainId is SupportedChainID {
+  console.log();
+
   return SUPPORTED_CHAIN_ID.some((id) => id === chainId);
 }
 
@@ -231,7 +233,7 @@ export const CHAIN_METADATA: ChainList = {
 };
 
 export const PREFERRED_NETWORK: SupportedNetworks =
-  getSupportedNetworkByChainId(import.meta.env.VITE_PREFERRED_NETWORK_ID) ??
+  getSupportedNetworkByChainId(+import.meta.env.VITE_PREFERRED_NETWORK_ID) ??
   'unsupported';
 
 export const PREFERRED_NETWORK_METADATA = CHAIN_METADATA[PREFERRED_NETWORK];
