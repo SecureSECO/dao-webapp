@@ -21,7 +21,7 @@ import {
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { HiCalendar, HiChartBar, HiLink } from 'react-icons/hi2';
-import { FaHourglass } from 'react-icons/fa';
+import { FaRegHourglass } from 'react-icons/fa';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import {
   AlertDialog,
@@ -41,6 +41,8 @@ import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
 import { useToast } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import Header from '@/src/components/ui/Header';
+import { format } from 'date-fns';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -74,11 +76,10 @@ const getStatusProps = (
 };
 
 /**
- * @param {Object} props - The properties for the StampCard component.
- * @param {string} props.providerId - The providerId for the stamp.
- * @param {Stamp | null} props.stamp - The stamp object, or null if there is no stamp.
- * @param {(providerId: string) => void} props.verify - Callback to verify the stamp.
- * @returns A StampCard React element.
+ * @param {string} props.stampInfo - Information about the stamp (e.g. GitHub icon, and link to GitHub website)
+ * @param {Stamp | null} props.stamp - The stamp object, or null if there is no stamp
+ * @param {(providerId: string) => void} props.verify - Callback to verify the stamp
+ * @returns A Card element containing information about the provided stamp
  */
 const StampCard = ({
   stampInfo,
@@ -169,43 +170,38 @@ const StampCard = ({
   };
 
   return (
-    <Card
-      padding="sm"
-      variant="light"
-      className="flex flex-col gap-y-2 p-4 font-normal"
-    >
+    <Card variant="light" className="flex flex-col gap-y-2">
       <div className="flex items-center justify-between gap-x-2">
         <div className="flex items-center gap-x-2">
-          {/* Make this just like ProposalCard */}
           {stampInfo.icon}
-          <h2 className="text-xl font-semibold">{stampInfo.displayName}</h2>
+          <Header level={2}>{stampInfo.displayName}</Header>
         </div>
-        <StatusBadge {...getStatusProps(verified, expired)} />
+        {isConnected && <StatusBadge {...getStatusProps(verified, expired)} />}
       </div>
-      <div className="flex items-center gap-x-2 text-popover-foreground">
-        <HiLink />
-        <p className="font-normal">
-          {/* Url:{' '} */}
-          <a
-            href={stampInfo.url}
-            target="_blank"
-            rel="noreferrer"
-            className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
-          >
-            {stampInfo.url}
-          </a>
-        </p>
-      </div>
-      {stamp && stamp[2] && stamp[2].length > 0 && (
-        <>
-          <div className="flex items-center gap-x-6">
+      <div className="flex flex-col gap-y-1 text-base">
+        <div className="flex w-full flex-row items-center gap-x-2 text-popover-foreground">
+          <HiLink className="shrink-0" />
+          <p className="max-w-full truncate font-normal">
+            <a
+              href={stampInfo.url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
+            >
+              {stampInfo.url}
+            </a>
+          </p>
+        </div>
+        {stamp && stamp[2] && stamp[2].length > 0 && (
+          <>
             <div className="flex items-center gap-x-2 text-popover-foreground">
-              <HiCalendar />
+              <HiCalendar className="shrink-0" />
               <p className="font-normal">
                 {/* Last verified at:{' '} */}
-                {new Date(
-                  stamp[2][stamp[2].length - 1].toNumber() * 1000
-                ).toLocaleDateString()}
+                {format(
+                  new Date(stamp[2][stamp[2].length - 1].toNumber() * 1000),
+                  'Pp'
+                )}
               </p>
             </div>
             {verified && timeLeftUntilExpiration != null && (
@@ -216,23 +212,23 @@ const StampCard = ({
                     : 'text-popover-foreground'
                 }`}
               >
-                <FaHourglass size={14} />
+                <FaRegHourglass className="shrink-0" size={14} />
                 <p className="font-normal">
-                  {Math.max(0, timeLeftUntilExpiration / 86400).toFixed(1)} days
+                  {Math.max(0, timeLeftUntilExpiration / 86400).toFixed(0)} days
                   until expiration
                 </p>
               </div>
             )}
-          </div>
-          <div className="flex items-center gap-x-2 text-popover-foreground">
-            <HiChartBar />
-            <p className="font-normal">
-              {/* Last verified at:{' '} */}
-              Verified {stamp[2].length} time{stamp[2].length > 1 ? 's' : ''}
-            </p>
-          </div>
-        </>
-      )}
+            <div className="flex items-center gap-x-2 text-popover-foreground">
+              <HiChartBar className="shrink-0" />
+              <p className="font-normal">
+                {/* Last verified at:{' '} */}
+                Verified {stamp[2].length} time{stamp[2].length > 1 ? 's' : ''}
+              </p>
+            </div>
+          </>
+        )}
+      </div>
 
       <div className="flex items-center gap-2">
         <div className="flex flex-row items-center gap-x-4">
@@ -245,7 +241,7 @@ const StampCard = ({
           {!isConnected && <ConnectWalletWarning action="to verify" />}
         </div>
 
-        {verified && (
+        {verified && isConnected && !isError && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="subtle">Remove</Button>

@@ -10,19 +10,23 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
 import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '@/src/assets/verificationAbi';
-import StampCard from '@/src/components/ui/StampCard';
+import StampCard from '@/src/components/verification/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import {
-  HiCalendar,
-  HiCheckBadge,
-  HiClock,
-  HiQuestionMarkCircle,
-  HiUserCircle,
-} from 'react-icons/hi2';
+import { HiCheckBadge, HiClock, HiUserCircle } from 'react-icons/hi2';
 import { BigNumber } from 'ethers';
 import { FaGithub } from 'react-icons/fa';
 import { useToast } from '@/src/hooks/useToast';
-import { Card } from '@/src/components/ui/Card';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/src/components/ui/Dialog';
+import { Button } from '@/src/components/ui/Button';
+import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -49,13 +53,13 @@ export const availableStamps: StampInfo[] = [
     id: 'proofofhumanity',
     displayName: 'Proof of Humanity',
     url: 'https://www.proofofhumanity.id/',
-    icon: <HiUserCircle className="h-5 w-5 shrink-0" />,
+    icon: <HiUserCircle className="h-7 w-7 shrink-0" />,
   },
   {
     id: 'github',
     displayName: 'GitHub',
     url: 'https://github.com/',
-    icon: <FaGithub className="h-5 w-5 shrink-0" />,
+    icon: <FaGithub className="h-6 w-6 shrink-0" />,
   },
   // New methods of verification can be added here, for example:
   // {
@@ -143,7 +147,7 @@ const Verification = () => {
   const { toast } = useToast();
 
   // Gets all the stamps for the current address
-  const { data, isError, error, isLoading, refetch } = useContractRead({
+  const { data, isError, isLoading, refetch } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getStamps',
@@ -168,7 +172,7 @@ const Verification = () => {
 
   // Sign our message to verify our address
   const { signMessage } = useSignMessage({
-    onError(error) {
+    onError() {
       toast({
         title: `Wait at least ${Math.round(
           reverifyThreshold
@@ -309,12 +313,7 @@ const Verification = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <HeaderCard title="Verification">
-        <p className="text-base font-normal text-highlight-foreground/80">
-          You can verify your identity on a variety platforms to prove that you
-          are a real person
-        </p>
-      </HeaderCard>
+      <HeaderCard title="Verification" />
 
       <div className="flex flex-col items-start gap-6 lg:flex-row">
         <MainCard
@@ -326,6 +325,31 @@ const Verification = () => {
               value={amountOfVerifiedStamps}
               label="verified accounts"
             />
+          }
+          aside={
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="subtle" label="How does it work?" />
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>How does verification work?</DialogTitle>
+                  <DialogDescription asChild>
+                    You can verify your identity on a variety platforms to prove
+                    that you are a real person
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogClose asChild>
+                  <div className="flex items-end justify-end">
+                    <Button
+                      variant="subtle"
+                      label="Close"
+                      className="self-end"
+                    />
+                  </div>
+                </DialogClose>
+              </DialogContent>
+            </Dialog>
           }
         >
           {isLoading ? (
@@ -352,6 +376,7 @@ const Verification = () => {
             </div>
           )}
         </MainCard>
+
         <MainCard
           className="basis-2/5"
           loading={false}
@@ -375,44 +400,6 @@ const Verification = () => {
         </MainCard>
       </div>
     </div>
-  );
-};
-
-const RecentVerificationCard = ({
-  history,
-}: {
-  history: VerificationHistory;
-}) => {
-  const fallBackStampInfo = {
-    id: 'unknown',
-    displayName: 'Unknown',
-    url: 'https://www.google.com',
-    icon: <HiQuestionMarkCircle />,
-  } as StampInfo;
-
-  const stamp = history.stamp;
-  const stampInfo: StampInfo = stamp
-    ? availableStamps.find((stampInfo) => stampInfo.id === stamp[0]) ??
-      fallBackStampInfo
-    : fallBackStampInfo;
-
-  return (
-    <Card
-      padding="sm"
-      variant="light"
-      className="flex flex-col gap-y-2 p-4 font-normal"
-    >
-      <div className="flex items-center gap-x-2">
-        {stampInfo.icon}
-        <h2 className="text-xl font-semibold">{stampInfo.displayName}</h2>
-      </div>
-      <div className="flex items-center gap-x-2 text-popover-foreground/80">
-        <HiCalendar />
-        <p className="font-normal">
-          {new Date(history.timestamp * 1000).toLocaleString()}
-        </p>
-      </div>
-    </Card>
   );
 };
 

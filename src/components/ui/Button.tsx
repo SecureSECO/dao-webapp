@@ -20,7 +20,7 @@ import { IconType } from 'react-icons/lib';
  * The generated variants for the `Button` component, based on the `class-variance-authority` package.
  */
 const buttonVariants = cva(
-  'active:scale-95 leading-4 inline-flex w-fit items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
+  'active:scale-95 leading-4 inline-flex w-fit transition-colors duration-200 items-center justify-center rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
   {
     variants: {
       variant: {
@@ -31,7 +31,7 @@ const buttonVariants = cva(
         outline:
           'bg-transparent text-background-foreground border border-border hover:bg-accent focus:ring-primary-highlight/20',
         subtle:
-          'bg-accent text-accent-foreground hover:bg-accent/80  focus:ring-primary-highlight/50',
+          'bg-accent text-accent-foreground hover:bg-accent/70 focus:ring-primary-highlight/50',
         ghost:
           'bg-transparent text-background-foreground hover:bg-accent focus:ring-primary-highlight/20',
       },

@@ -47,7 +47,7 @@ interface CategoryListProps extends VariantProps<typeof titleVariants> {
  */
 const CategoryList = ({
   categories,
-  showDivider,
+  showDivider = true,
   titleSize,
 }: CategoryListProps) => {
   return (
