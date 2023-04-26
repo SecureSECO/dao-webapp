@@ -144,7 +144,7 @@ export const Confirmation = () => {
                   return {
                     to: wallet.address,
                     amount: wallet.amount,
-                    tokenAddress: import.meta.env.VITE_REP_CONTRACT,
+                    tokenId: 0,
                   };
                 }),
               },

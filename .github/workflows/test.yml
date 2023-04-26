@@ -15,6 +15,7 @@ env:
   VITE_PREFERRED_NETWORK_ID: 5
   VITE_API_URL: 'http://localhost:43210/api'
   VITE_VERIFY_CONTRACT: '0x...'
+  VITE_USE_GANACHE: 'false'
 
 jobs:
   install-dependencies:

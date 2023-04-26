@@ -161,7 +161,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
                 CHAIN_METADATA.rep.nativeCurrency.decimals,
                 true
               )}{' '}
-              REP
+              {CHAIN_METADATA.rep.nativeCurrency.symbol}
             </p>
           </Card>
         ))}

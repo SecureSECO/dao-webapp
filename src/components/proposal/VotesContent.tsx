@@ -207,7 +207,7 @@ const VoteOption = ({
                   CHAIN_METADATA.rep.nativeCurrency.decimals,
                   true
                 )}{' '}
-                REP
+                {CHAIN_METADATA.rep.nativeCurrency.symbol}
               </p>
               <p className="w-12 text-right text-primary">{percentage}%</p>
             </div>
@@ -235,7 +235,7 @@ const VoteOption = ({
                       CHAIN_METADATA.rep.nativeCurrency.decimals,
                       true
                     )}{' '}
-                    REP
+                    {CHAIN_METADATA.rep.nativeCurrency.symbol}
                   </p>
                   <p>
                     {calcBigintPercentage(
