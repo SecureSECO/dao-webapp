@@ -41,7 +41,7 @@ export const NoVotes: Story = {
   },
 };
 
-export const MintAction: Story = {
+export const MintActionTag: Story = {
   args: {
     variant: 'action',
     children: 'Mint tokens',
@@ -49,7 +49,7 @@ export const MintAction: Story = {
   },
 };
 
-export const WithdrawAction: Story = {
+export const WithdrawActionTag: Story = {
   args: {
     variant: 'action',
     children: 'Withdraw assets',
@@ -57,7 +57,7 @@ export const WithdrawAction: Story = {
   },
 };
 
-export const MergeAction: Story = {
+export const MergeActionTag: Story = {
   args: {
     variant: 'action',
     children: 'Merge PR',

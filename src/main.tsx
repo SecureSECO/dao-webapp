@@ -44,7 +44,7 @@ const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 const chains = [goerli, polygon, ganache];
 
 const { provider } = configureChains(chains, [
-  import.meta.env.PROD
+  import.meta.env.PROD || import.meta.env.VITE_USE_GANACHE !== 'true'
     ? (w3mProvider({ projectId }) as any)
     : // DEV NOTE: This is a local testnet on Ganache. Make sure you have it running
       // on port 65534, and deploy the necessary contracts to it.

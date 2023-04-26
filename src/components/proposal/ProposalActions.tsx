@@ -11,22 +11,13 @@
  */
 
 import CheckList from '@/src/components/icons/CheckList';
-import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
-import MintAction, {
-  ProposalMintAction,
-} from '@/src/components/proposal/actions/MintAction';
-import WithdrawAction, {
-  ProposalWithdrawAction,
-} from '@/src/components/proposal/actions/WithdrawAction';
-import { Accordion, AccordionItem } from '@/src/components/ui/Accordion';
+import { Accordion } from '@/src/components/ui/Accordion';
 import {
   DefaultMainCardHeader,
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
-import MergeAction, {
-  ProposalMergeAction,
-} from '@/src/components/proposal/actions/MergeAction';
+import ProposalActionFilter from '@/src/components/proposal/actions/ProposalActionFilter';
 
 export interface IProposalAction {
   interface: string;
@@ -66,49 +57,16 @@ const ProposalActions = ({
       ) : (
         <Accordion type="single" collapsible className="space-y-2">
           {actions.map((action, i) => (
-            <ProposalAction key={i} action={action} index={i} />
+            <ProposalActionFilter
+              key={i}
+              value={i.toString()}
+              action={action}
+            />
           ))}
         </Accordion>
       )}
-
       {children}
     </MainCard>
-  );
-};
-
-/**
- * Display an action in an accordion
- * @param props.action Action to display
- * @returns An AccordionItem with information about the action
- */
-export const ProposalAction = ({
-  action,
-  index,
-  className,
-}: {
-  action: IProposalAction;
-  index: number;
-  className?: string;
-}) => {
-  console.log(action);
-
-  const renderAction = () => {
-    switch (action.method) {
-      case 'withdraw':
-        return <WithdrawAction action={action as ProposalWithdrawAction} />;
-      case 'mint':
-        return <MintAction action={action as ProposalMintAction} />;
-      case 'merge':
-        return <MergeAction action={action as ProposalMergeAction} />;
-      default:
-        return <DefaultAction action={action} />;
-    }
-  };
-
-  return (
-    <AccordionItem value={index.toString()} className={className}>
-      {renderAction()}
-    </AccordionItem>
   );
 };
 

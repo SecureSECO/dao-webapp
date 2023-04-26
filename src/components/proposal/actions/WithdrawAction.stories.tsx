@@ -7,7 +7,7 @@
  */
 
 import WithdrawAction from '@/src/components/proposal/actions/WithdrawAction';
-import { Accordion, AccordionItem } from '@/src/components/ui/Accordion';
+import { Accordion } from '@/src/components/ui/Accordion';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -28,22 +28,43 @@ BigInt.prototype.toJSON = function () {
 
 export const Default: Story = {
   args: {
+    value: 'first',
     action: {
       method: 'withdraw',
       interface: 'IWithdraw',
       params: {
-        to: '0x000000002',
+        to: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
         amount: 1000000000000000000n,
-        tokenAddress: '0x000000002',
+        tokenAddress: '0x0000000000000000000000000000000000000000',
       },
     },
   },
   decorators: [
     (Story) => (
       <Accordion type="single" collapsible>
-        <AccordionItem value="first">
-          <Story />
-        </AccordionItem>
+        <Story />
+      </Accordion>
+    ),
+  ],
+};
+
+export const UnknownToken: Story = {
+  args: {
+    value: 'first',
+    action: {
+      method: 'withdraw',
+      interface: 'IWithdraw',
+      params: {
+        to: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
+        amount: 1000000000000000000n,
+        tokenAddress: '0x2222222222222222222222222222222222222222',
+      },
+    },
+  },
+  decorators: [
+    (Story) => (
+      <Accordion type="single" collapsible>
+        <Story />
       </Accordion>
     ),
   ],

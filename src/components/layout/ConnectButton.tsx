@@ -32,7 +32,7 @@ import {
 } from '@/src/components/ui/Tooltip';
 import { Button } from '@/src/components/ui/Button';
 
-const prefferedNetwork: number = import.meta.env.VITE_PREFERRED_NETWORK_ID;
+const prefferedNetwork: number = +import.meta.env.VITE_PREFERRED_NETWORK_ID;
 const ConnectButton = () => {
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();

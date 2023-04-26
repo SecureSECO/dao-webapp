@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Accordion, AccordionItem } from '@/src/components/ui/Accordion';
+import { Accordion } from '@/src/components/ui/Accordion';
 import type { Meta, StoryObj } from '@storybook/react';
 import MergeAction from './MergeAction';
 
@@ -28,6 +28,7 @@ BigInt.prototype.toJSON = function () {
 
 export const Default: Story = {
   args: {
+    value: 'first',
     action: {
       method: 'merge',
       interface: 'IMerge',
@@ -41,9 +42,7 @@ export const Default: Story = {
   decorators: [
     (Story) => (
       <Accordion type="single" collapsible>
-        <AccordionItem value="first">
-          <Story />
-        </AccordionItem>
+        <Story />
       </Accordion>
     ),
   ],
