@@ -20,7 +20,12 @@ import {
 } from '@/src/pages/Verification';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { HiCalendar, HiChartBar, HiLink } from 'react-icons/hi2';
+import {
+  HiCalendar,
+  HiChartBar,
+  HiLink,
+  HiOutlineExclamationCircle,
+} from 'react-icons/hi2';
 import { FaRegHourglass } from 'react-icons/fa';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import {
@@ -171,16 +176,27 @@ const StampCard = ({
 
   return (
     <Card variant="light" className="flex flex-col gap-y-2">
+      {isConnected && (
+        <StatusBadge
+          {...getStatusProps(verified, expired)}
+          className="xs:hidden"
+        />
+      )}
       <div className="flex items-center justify-between gap-x-2">
         <div className="flex items-center gap-x-2">
           {stampInfo.icon}
           <Header level={2}>{stampInfo.displayName}</Header>
         </div>
-        {isConnected && <StatusBadge {...getStatusProps(verified, expired)} />}
+        {isConnected && (
+          <StatusBadge
+            {...getStatusProps(verified, expired)}
+            className="hidden xs:flex"
+          />
+        )}
       </div>
       <div className="flex flex-col gap-y-1 text-base">
         <div className="flex w-full flex-row items-center gap-x-2 text-popover-foreground">
-          <HiLink className="shrink-0" />
+          <HiLink className="h-5 w-5 shrink-0" />
           <p className="max-w-full truncate font-normal">
             <a
               href={stampInfo.url}
@@ -195,7 +211,7 @@ const StampCard = ({
         {stamp && stamp[2] && stamp[2].length > 0 && (
           <>
             <div className="flex items-center gap-x-2 text-popover-foreground">
-              <HiCalendar className="shrink-0" />
+              <HiCalendar className="h-5 w-5 shrink-0" />
               <p className="font-normal">
                 {/* Last verified at:{' '} */}
                 {format(
@@ -212,7 +228,9 @@ const StampCard = ({
                     : 'text-popover-foreground'
                 }`}
               >
-                <FaRegHourglass className="shrink-0" size={14} />
+                <div className="flex h-5 w-5 items-center justify-center">
+                  <FaRegHourglass className="h-4 w-4 shrink-0" size={14} />
+                </div>
                 <p className="font-normal">
                   {Math.max(0, timeLeftUntilExpiration / 86400).toFixed(0)} days
                   until expiration
@@ -220,7 +238,7 @@ const StampCard = ({
               </div>
             )}
             <div className="flex items-center gap-x-2 text-popover-foreground">
-              <HiChartBar className="shrink-0" />
+              <HiChartBar className="h-5 w-5 shrink-0" />
               <p className="font-normal">
                 {/* Last verified at:{' '} */}
                 Verified {stamp[2].length} time{stamp[2].length > 1 ? 's' : ''}
@@ -239,6 +257,14 @@ const StampCard = ({
             {verified ? 'Reverify' : 'Verify'}
           </Button>
           {!isConnected && <ConnectWalletWarning action="to verify" />}
+          {isError && isConnected && (
+            <div className="flex flex-row items-center gap-x-1 text-destructive opacity-80">
+              <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
+              <p className="leading-4">
+                An error occurred, please try again later
+              </p>
+            </div>
+          )}
         </div>
 
         {verified && isConnected && !isError && (

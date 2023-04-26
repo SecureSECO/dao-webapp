@@ -340,8 +340,14 @@ const Verification = () => {
                       prove that you are a real person.
                     </p>
                     <p>
-                      In order to verify your identity, you will need to sign a
-                      message with your wallet....
+                      After clicking the Verify button, you will be prompted to
+                      sign a message with your wallet (to prove that you own the
+                      wallet). After signing this message, you will be
+                      redirected to the platform&apos;s login page (if
+                      necessary). When you are logged in, you will be redirected
+                      back to our application, where you can finish the
+                      verification by clicking the corresponding button, and
+                      signing the transaction that will be initiated.
                     </p>
                   </DialogDescription>
                 </DialogHeader>

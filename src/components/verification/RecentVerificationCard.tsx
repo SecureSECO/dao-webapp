@@ -48,7 +48,7 @@ const RecentVerificationCard = ({
         <Header level={3}>{stampInfo.displayName}</Header>
       </div>
       <div className="flex items-center gap-x-2 text-popover-foreground/80">
-        <HiCalendar className="shrink-0" />
+        <HiCalendar className="h-5 w-5 shrink-0" />
         <p className="font-normal">
           {new Date(history.timestamp * 1000).toLocaleString()}
         </p>

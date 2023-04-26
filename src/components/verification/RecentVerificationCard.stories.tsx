@@ -7,9 +7,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import StampCard from './StampCard';
 import { BigNumber } from 'ethers';
-import { FaGithub } from 'react-icons/fa';
 import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
 import { VerificationHistory } from '@/src/pages/Verification';
 
@@ -24,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 
 const history: VerificationHistory = {
   id: '0x0',
-  timestamp: 1682537423602,
+  timestamp: 1682537423,
   isExpired: false,
   stamp: ['github', '0x0', [BigNumber.from(Math.floor(Date.now() / 1000))]],
 };
