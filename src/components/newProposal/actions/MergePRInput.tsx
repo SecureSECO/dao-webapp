@@ -76,7 +76,13 @@ export const MergePRInput = ({
           error={errors?.inputs?.url ?? undefined}
         >
           <Input
-            {...register(`${prefix}.inputs.url`, { required: true })}
+            {...register(`${prefix}.inputs.url`, {
+              required: true,
+              pattern: {
+                value: /^(https:\/\/github.com\/.+\/.+\/pull\/\d+)$/,
+                message: 'Please enter a valid GitHub pull request URL',
+              },
+            })}
             type="url"
             id="url"
             error={errors?.inputs?.url ?? undefined}

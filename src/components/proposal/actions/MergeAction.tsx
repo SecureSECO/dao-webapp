@@ -70,6 +70,8 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
           <a
             className="flex flex-row items-center gap-x-2 text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
             href={action.params.url}
+            target="_blank"
+            rel="noreferrer"
           >
             View on GitHub
             <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
