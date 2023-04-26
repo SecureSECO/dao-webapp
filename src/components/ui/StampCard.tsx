@@ -34,12 +34,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { verificationAbi } from '@/src/assets/verificationAbi';
 import { useState } from 'react';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
 import { useToast } from '@/src/hooks/useToast';
+import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -85,6 +86,7 @@ const StampCard = ({
   thresholdHistory,
   verify,
   refetch,
+  isError,
 }: {
   stampInfo: StampInfo;
   stamp: Stamp | null;
@@ -92,6 +94,7 @@ const StampCard = ({
   // eslint-disable-next-line no-unused-vars
   verify: (providerId: string) => void;
   refetch: () => void;
+  isError: boolean;
 }) => {
   const {
     verified,
@@ -103,6 +106,7 @@ const StampCard = ({
     timeLeftUntilExpiration: number | null;
   } = isVerified(thresholdHistory, stamp);
   const { promise: promiseToast } = useToast();
+  const { isConnected } = useAccount();
 
   const providerId = stampInfo.id;
 
@@ -172,6 +176,7 @@ const StampCard = ({
     >
       <div className="flex items-center justify-between gap-x-2">
         <div className="flex items-center gap-x-2">
+          {/* Make this just like ProposalCard */}
           {stampInfo.icon}
           <h2 className="text-xl font-semibold">{stampInfo.displayName}</h2>
         </div>
@@ -229,10 +234,16 @@ const StampCard = ({
         </>
       )}
 
-      <div className="mt-4 flex items-center gap-2">
-        <Button onClick={() => verify(providerId)}>
-          {verified ? 'Reverify' : 'Verify'}
-        </Button>
+      <div className="flex items-center gap-2">
+        <div className="flex flex-row items-center gap-x-4">
+          <Button
+            disabled={!isConnected || isError}
+            onClick={() => verify(providerId)}
+          >
+            {verified ? 'Reverify' : 'Verify'}
+          </Button>
+          {!isConnected && <ConnectWalletWarning action="to verify" />}
+        </div>
 
         {verified && (
           <AlertDialog>

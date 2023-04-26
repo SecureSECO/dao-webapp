@@ -16,13 +16,11 @@ import {
   HiCalendar,
   HiCheckBadge,
   HiClock,
-  HiOutlineLockClosed,
   HiQuestionMarkCircle,
   HiUserCircle,
 } from 'react-icons/hi2';
-import { AiFillTwitterCircle } from 'react-icons/ai';
 import { BigNumber } from 'ethers';
-import { FaDiscord, FaGithub } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa';
 import { useToast } from '@/src/hooks/useToast';
 import { Card } from '@/src/components/ui/Card';
 
@@ -51,26 +49,21 @@ export const availableStamps: StampInfo[] = [
     id: 'proofofhumanity',
     displayName: 'Proof of Humanity',
     url: 'https://www.proofofhumanity.id/',
-    icon: <HiUserCircle size={20} />,
+    icon: <HiUserCircle className="h-5 w-5 shrink-0" />,
   },
   {
     id: 'github',
     displayName: 'GitHub',
     url: 'https://github.com/',
-    icon: <FaGithub size={20} />,
+    icon: <FaGithub className="h-5 w-5 shrink-0" />,
   },
-  {
-    id: 'twitter',
-    displayName: 'Twitter',
-    url: 'https://twitter.com/',
-    icon: <AiFillTwitterCircle size={20} />,
-  },
-  {
-    id: 'discord',
-    displayName: 'Discord',
-    url: 'https://discord.com/',
-    icon: <FaDiscord size={20} />,
-  },
+  // New methods of verification can be added here, for example:
+  // {
+  //   id: 'discord',
+  //   displayName: 'Discord',
+  //   url: 'https://discord.com/',
+  //   icon: <FaDiscord size={20} />,
+  // },
 ];
 
 /**
@@ -146,7 +139,7 @@ const getThresholdForTimestamp = (
 export const verificationAddress = import.meta.env.VITE_VERIFY_CONTRACT;
 
 const Verification = () => {
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const { toast } = useToast();
 
   // Gets all the stamps for the current address
@@ -158,7 +151,7 @@ const Verification = () => {
   });
 
   // Gets the reverification threshold
-  const { data: rData } = useContractRead({
+  const { data: reverifyData } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'reverifyThreshold',
@@ -166,7 +159,7 @@ const Verification = () => {
   });
 
   // Gets the verification threshold history
-  const { data: vData } = useContractRead({
+  const { data: historyData } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getThresholdHistory',
@@ -266,14 +259,14 @@ const Verification = () => {
       setVerificationHistory(verificationHistory);
     }
 
-    if (vData && Array.isArray(vData)) {
-      setThresholdHistory(vData);
+    if (historyData && Array.isArray(historyData)) {
+      setThresholdHistory(historyData);
     }
 
-    if (rData != null) {
-      setReverifyThreshold((rData as BigNumber).toNumber());
+    if (reverifyData != null) {
+      setReverifyThreshold((reverifyData as BigNumber).toNumber());
     }
-  }, [data, vData, rData]);
+  }, [data, historyData, reverifyData]);
 
   const verify = async (providerId: string) => {
     try {
@@ -316,88 +309,71 @@ const Verification = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <HeaderCard title="Verification" aside={<></>}>
+      <HeaderCard title="Verification">
         <p className="text-base font-normal text-highlight-foreground/80">
           You can verify your identity on a variety platforms to prove that you
-          are a real person.
+          are a real person
         </p>
       </HeaderCard>
 
-      {isConnected ? (
-        <div className="flex flex-col items-start gap-6 lg:flex-row">
-          <MainCard
-            className="basis-3/5"
-            loading={false}
-            icon={HiCheckBadge}
-            header={
-              <DefaultMainCardHeader
-                value={amountOfVerifiedStamps}
-                label="verified accounts"
-              />
-            }
-          >
-            {isLoading ? (
-              <div className="flex flex-col gap-4">
-                <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
-                <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
-                <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
+      <div className="flex flex-col items-start gap-6 lg:flex-row">
+        <MainCard
+          className="basis-3/5"
+          loading={false}
+          icon={HiCheckBadge}
+          header={
+            <DefaultMainCardHeader
+              value={amountOfVerifiedStamps}
+              label="verified accounts"
+            />
+          }
+        >
+          {isLoading ? (
+            <div className="flex flex-col gap-4">
+              <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
+              <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
+              <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-y-8">
+              <div className="flex flex-wrap gap-6">
+                {availableStamps.map((stampInfo) => (
+                  <StampCard
+                    key={stampInfo.id}
+                    stampInfo={stampInfo}
+                    stamp={stamps.find(([id]) => id === stampInfo.id) || null}
+                    thresholdHistory={thresholdHistory ?? []}
+                    verify={verify}
+                    refetch={refetch}
+                    isError={isError}
+                  />
+                ))}
               </div>
-            ) : isError ? (
-              <div>
-                <p className="italic text-highlight-foreground/80">
-                  There was an error fetching your stamps. Please try again
-                  later.
-                </p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-y-8">
-                <div className="flex flex-wrap gap-6">
-                  {availableStamps.map((stampInfo) => (
-                    <StampCard
-                      key={stampInfo.id}
-                      stampInfo={stampInfo}
-                      stamp={stamps.find(([id]) => id === stampInfo.id) || null}
-                      thresholdHistory={thresholdHistory ?? []}
-                      verify={verify}
-                      refetch={refetch}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </MainCard>
-          <MainCard
-            className="basis-2/5"
-            loading={false}
-            icon={HiClock}
-            header={
-              <DefaultMainCardHeader
-                value={verificationHistory.length}
-                label="verifications"
-              />
-            }
-          >
-            {verificationHistory.length > 0 ? (
-              verificationHistory?.map((history, index) => (
-                <RecentVerificationCard key={index} history={history} />
-              ))
-            ) : (
-              <p className="italic text-highlight-foreground/80">
-                No verifications
-              </p>
-            )}
-          </MainCard>
-        </div>
-      ) : (
-        <div className="mt-10 flex flex-col items-center justify-center gap-6">
-          <div className="flex flex-col items-center justify-center gap-4">
-            <HiOutlineLockClosed className="text-6xl text-highlight-foreground/80" />
-            <p className="text-xl font-medium text-highlight-foreground/80">
-              Connect your wallet to verify your identity
+            </div>
+          )}
+        </MainCard>
+        <MainCard
+          className="basis-2/5"
+          loading={false}
+          icon={HiClock}
+          header={
+            <DefaultMainCardHeader
+              value={verificationHistory.length}
+              label="verifications"
+            />
+          }
+        >
+          {verificationHistory.length > 0 ? (
+            verificationHistory?.map((history, index) => (
+              <RecentVerificationCard key={index} history={history} />
+            ))
+          ) : (
+            <p className="italic text-highlight-foreground/80">
+              No verifications
             </p>
-          </div>
-        </div>
-      )}
+          )}
+        </MainCard>
+      </div>
     </div>
   );
 };
