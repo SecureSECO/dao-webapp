@@ -334,9 +334,15 @@ const Verification = () => {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>How does verification work?</DialogTitle>
-                  <DialogDescription asChild>
-                    You can verify your identity on a variety platforms to prove
-                    that you are a real person
+                  <DialogDescription className="space-y-2">
+                    <p>
+                      You can verify your identity on a variety platforms to
+                      prove that you are a real person.
+                    </p>
+                    <p>
+                      In order to verify your identity, you will need to sign a
+                      message with your wallet....
+                    </p>
                   </DialogDescription>
                 </DialogHeader>
                 <DialogClose asChild>
