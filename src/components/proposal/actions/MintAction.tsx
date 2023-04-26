@@ -116,7 +116,6 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
       const newHolders = action.params.to.filter((item) =>
         isMember(item.to)
       ).length;
-      console.log(memberCount, newHolders);
 
       setSummary({
         newTokens,

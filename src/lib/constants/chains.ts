@@ -19,8 +19,6 @@ export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 export function isSupportedChainId(
   chainId: number
 ): chainId is SupportedChainID {
-  console.log();
-
   return SUPPORTED_CHAIN_ID.some((id) => id === chainId);
 }
 

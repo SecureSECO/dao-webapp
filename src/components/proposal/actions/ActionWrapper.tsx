@@ -61,7 +61,7 @@ const ActionWrapper = ({
 };
 
 export const ActionContentSeparator = () => {
-  return <div className="inset-x-0 h-0.5 w-full bg-accent" />;
+  return <hr className="border-accent" />;
 };
 
 export default ActionWrapper;
