@@ -154,9 +154,7 @@ export const Confirmation = () => {
               method: 'merge',
               interface: 'IMerge', // FIXME: This is not the correct interface
               params: {
-                owner: action.inputs.owner,
-                repo: action.inputs.repo,
-                pull_number: action.inputs.pull_number,
+                url: action.inputs.url,
               },
             };
           default:
