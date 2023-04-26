@@ -1,6 +1,6 @@
 # Type of change
 
-[Bug fix / New feature]
+[Bug fix / New feature / Other]
 
 #### Does it contain breaking changes?
 
