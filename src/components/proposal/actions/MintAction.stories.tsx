@@ -37,12 +37,12 @@ export const Default: Story = {
           {
             to: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
             amount: 1000000000000000000n,
-            tokenAddress: '0x000000002',
+            tokenId: 0n,
           },
           {
             to: '0xD6E6C74C6054AD232C7A9833E89714EA39734A0F',
             amount: 1000000000000000000n,
-            tokenAddress: '0xD6E6C74C6054AD232C7A9833E89714EA39734A0F',
+            tokenId: 0n,
           },
         ],
       },
