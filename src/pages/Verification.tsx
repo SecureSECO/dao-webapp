@@ -12,7 +12,7 @@ import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '@/src/assets/verificationAbi';
 import StampCard from '@/src/components/verification/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { HiCheckBadge, HiClock, HiUserCircle } from 'react-icons/hi2';
+import { HiCheckBadge, HiUserCircle } from 'react-icons/hi2';
 import { BigNumber } from 'ethers';
 import { FaGithub } from 'react-icons/fa';
 import { useToast } from '@/src/hooks/useToast';
@@ -27,6 +27,7 @@ import {
 } from '@/src/components/ui/Dialog';
 import { Button } from '@/src/components/ui/Button';
 import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
+import History from '@/src/components/icons/History';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -392,7 +393,7 @@ const Verification = () => {
         <MainCard
           className="basis-2/5"
           loading={false}
-          icon={HiClock}
+          icon={History}
           header={
             <DefaultMainCardHeader
               value={verificationHistory.length}

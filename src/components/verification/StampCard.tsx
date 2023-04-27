@@ -26,7 +26,6 @@ import {
   HiLink,
   HiOutlineExclamationCircle,
 } from 'react-icons/hi2';
-import { FaRegHourglass } from 'react-icons/fa';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import {
   AlertDialog,
@@ -229,7 +228,7 @@ const StampCard = ({
                 }`}
               >
                 <div className="flex h-5 w-5 items-center justify-center">
-                  <FaRegHourglass className="h-4 w-4 shrink-0" size={14} />
+                  <HiOutlineClock className="h-4 w-4 shrink-0" size={14} />
                 </div>
                 <p className="font-normal">
                   {Math.max(0, timeLeftUntilExpiration / 86400).toFixed(0)} days
