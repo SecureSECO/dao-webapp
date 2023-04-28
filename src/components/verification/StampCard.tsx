@@ -286,10 +286,10 @@ const StampCard = ({
                   onClick={() => {
                     const promise = unverify();
                     promiseToast(promise, {
-                      loading: 'Removing stamp...',
-                      success: 'Stamp removed',
+                      loading: 'Removing verification...',
+                      success: 'Verification removed',
                       error: (err) => ({
-                        title: 'Failed to remove stamp: ',
+                        title: 'Failed to remove verification: ',
                         description: err,
                       }),
                     });

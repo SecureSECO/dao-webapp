@@ -180,14 +180,14 @@ const PendingVerificationCard = ({
             value: verification.timestamp,
           },
           {
+            label: 'Signature',
+            value: truncateMiddle(verification.sig, 16),
+          },
+          {
             label: 'Provider',
             value: (
               <span className="capitalize">{verification.providerId}</span>
             ),
-          },
-          {
-            label: 'Signature',
-            value: truncateMiddle(verification.sig, 16),
           },
         ],
       },
