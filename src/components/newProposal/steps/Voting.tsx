@@ -185,7 +185,7 @@ export const StartTime = ({
           )}
         />
         {startTimeType === 'custom' && (
-          <Card variant="light">
+          <Card variant="light" className="flex gap-2">
             <LabelledInput
               id="custom_start_date"
               type="date"
@@ -308,7 +308,7 @@ export const EndTime = ({
         />
 
         {endTimeType === 'duration' ? (
-          <Card variant="light">
+          <Card variant="light" className="flex gap-2">
             <LabelledInput
               id="duration_days"
               type="number"
@@ -320,6 +320,7 @@ export const EndTime = ({
               }
               max="364"
               error={errors.duration_days}
+              className="text-center"
             />
             <LabelledInput
               id="duration_hours"
@@ -336,6 +337,7 @@ export const EndTime = ({
               }
               max="23"
               error={errors.duration_hours}
+              className="text-center"
             />
             <LabelledInput
               id="duration_minutes"
@@ -352,11 +354,12 @@ export const EndTime = ({
               }
               max="59"
               error={errors.duration_minutes}
+              className="text-center"
             />
           </Card>
         ) : (
           endTimeType === 'end-custom' && (
-            <Card variant="light">
+            <Card variant="light" className="flex gap-2">
               <LabelledInput
                 id="custom_end_date"
                 type="date"
