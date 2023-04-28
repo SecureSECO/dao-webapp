@@ -40,7 +40,7 @@ export async function getTokenInfo(
       totalSupply: values[3],
     };
   } catch (error) {
-    console.error('Error getting token info from contract', error);
+    console.error('Error getting token info from contract');
   }
 
   return {};

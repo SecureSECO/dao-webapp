@@ -23,6 +23,7 @@ const FormProviderDecoratorFactory = (data: ProposalFormActions): any => {
 
 const meta: Meta<typeof MergePRInput> = {
   component: MergePRInput,
+  tags: ['autodocs'],
   decorators: [FormProviderDecoratorFactory({ actions: [] })],
 };
 

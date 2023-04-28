@@ -87,7 +87,7 @@ export const MergePRInput = ({
             id="url"
             error={errors?.inputs?.url ?? undefined}
             title="Link to the pull request on GitHub"
-            placeholder="Pull request URL"
+            placeholder="https://github.com/..."
             className="w-full basis-2/3"
             required
           />
