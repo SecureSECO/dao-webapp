@@ -61,7 +61,7 @@ const ActionWrapper = ({
 };
 
 export const ActionContentSeparator = () => {
-  return <hr className="border-accent" />;
+  return <hr className="border-2 border-accent" />;
 };
 
 export default ActionWrapper;

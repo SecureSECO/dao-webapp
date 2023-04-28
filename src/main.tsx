@@ -31,7 +31,6 @@ import NewProposal from '@/src/pages/NewProposal';
 import Verification from '@/src/pages/Verification';
 import { Toaster } from '@/src/components/ui/Toaster';
 import ViewProposal from '@/src/pages/ViewProposal';
-import FinishVerification from '@/src/pages/FinishVerification';
 import { ganache } from '@/src/lib/constants/GanacheChain';
 
 // 1. Get projectID at https://cloud.walletconnect.com
@@ -97,16 +96,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/verification',
-        children: [
-          {
-            path: '',
-            element: <Verification />,
-          },
-          {
-            path: '/verification/finish',
-            element: <FinishVerification />,
-          },
-        ],
+        element: <Verification />,
       },
       {
         path: '/settings',

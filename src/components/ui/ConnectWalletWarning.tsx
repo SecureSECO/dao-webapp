@@ -21,7 +21,7 @@ const ConnectWalletWarning = ({ action }: { action: string }) => {
   return (
     <div className="flex flex-row items-center gap-x-1 opacity-80">
       <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-      <p>
+      <p className="leading-4">
         <button
           type="button"
           className="hover:underline"

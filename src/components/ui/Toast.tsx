@@ -49,10 +49,10 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-highlight',
-        loading: 'bg-highlight',
-        success: 'bg-success-background',
-        error: 'bg-destructive-background',
+        default: 'bg-highlight text-highlight-foreground',
+        loading: 'bg-highlight text-highlight-foreground',
+        success: 'bg-success-background text-success-foreground',
+        error: 'bg-destructive-background text-destructive-foreground',
       },
     },
     defaultVariants: {
@@ -60,20 +60,6 @@ const toastVariants = cva(
     },
   }
 );
-
-const iconVariants = cva('w-6 h-6 shrink-0', {
-  variants: {
-    variant: {
-      default: 'text-highlight-foreground',
-      loading: 'text-highlight-foreground',
-      success: 'text-success-foreground',
-      error: 'text-destructive-foreground ',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-});
 
 const icons = {
   default: null,
@@ -90,7 +76,7 @@ const Toast = React.forwardRef<
   const icon =
     variant && variant !== 'default'
       ? React.createElement(icons[variant], {
-          className: cn(iconVariants({ variant })),
+          className: 'w-6 h-6 shrink-0',
         })
       : null;
 

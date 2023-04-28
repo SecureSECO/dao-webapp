@@ -20,8 +20,12 @@ import {
 } from '@/src/pages/Verification';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { HiCalendar, HiChartBar, HiLink } from 'react-icons/hi2';
-import { FaHourglass } from 'react-icons/fa';
+import {
+  HiCalendar,
+  HiChartBar,
+  HiLink,
+  HiOutlineExclamationCircle,
+} from 'react-icons/hi2';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import {
   AlertDialog,
@@ -34,12 +38,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { verificationAbi } from '@/src/assets/verificationAbi';
 import { useState } from 'react';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
 import { useToast } from '@/src/hooks/useToast';
+import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import Header from '@/src/components/ui/Header';
+import { format } from 'date-fns';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -73,11 +80,10 @@ const getStatusProps = (
 };
 
 /**
- * @param {Object} props - The properties for the StampCard component.
- * @param {string} props.providerId - The providerId for the stamp.
- * @param {Stamp | null} props.stamp - The stamp object, or null if there is no stamp.
- * @param {(providerId: string) => void} props.verify - Callback to verify the stamp.
- * @returns A StampCard React element.
+ * @param {string} props.stampInfo - Information about the stamp (e.g. GitHub icon, and link to GitHub website)
+ * @param {Stamp | null} props.stamp - The stamp object, or null if there is no stamp
+ * @param {(providerId: string) => void} props.verify - Callback to verify the stamp
+ * @returns A Card element containing information about the provided stamp
  */
 const StampCard = ({
   stampInfo,
@@ -85,6 +91,7 @@ const StampCard = ({
   thresholdHistory,
   verify,
   refetch,
+  isError,
 }: {
   stampInfo: StampInfo;
   stamp: Stamp | null;
@@ -92,6 +99,7 @@ const StampCard = ({
   // eslint-disable-next-line no-unused-vars
   verify: (providerId: string) => void;
   refetch: () => void;
+  isError: boolean;
 }) => {
   const {
     verified,
@@ -103,6 +111,7 @@ const StampCard = ({
     timeLeftUntilExpiration: number | null;
   } = isVerified(thresholdHistory, stamp);
   const { promise: promiseToast } = useToast();
+  const { isConnected } = useAccount();
 
   const providerId = stampInfo.id;
 
@@ -165,42 +174,49 @@ const StampCard = ({
   };
 
   return (
-    <Card
-      padding="sm"
-      variant="light"
-      className="flex flex-col gap-y-2 p-4 font-normal"
-    >
+    <Card variant="light" className="flex flex-col gap-y-2">
+      {isConnected && (
+        <StatusBadge
+          {...getStatusProps(verified, expired)}
+          className="xs:hidden"
+        />
+      )}
       <div className="flex items-center justify-between gap-x-2">
         <div className="flex items-center gap-x-2">
           {stampInfo.icon}
-          <h2 className="text-xl font-semibold">{stampInfo.displayName}</h2>
+          <Header level={2}>{stampInfo.displayName}</Header>
         </div>
-        <StatusBadge {...getStatusProps(verified, expired)} />
+        {isConnected && (
+          <StatusBadge
+            {...getStatusProps(verified, expired)}
+            className="hidden xs:flex"
+          />
+        )}
       </div>
-      <div className="flex items-center gap-x-2 text-popover-foreground">
-        <HiLink />
-        <p className="font-normal">
-          {/* Url:{' '} */}
-          <a
-            href={stampInfo.url}
-            target="_blank"
-            rel="noreferrer"
-            className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
-          >
-            {stampInfo.url}
-          </a>
-        </p>
-      </div>
-      {stamp && stamp[2] && stamp[2].length > 0 && (
-        <>
-          <div className="flex items-center gap-x-6">
+      <div className="flex flex-col gap-y-1 text-base">
+        <div className="flex w-full flex-row items-center gap-x-2 text-popover-foreground">
+          <HiLink className="h-5 w-5 shrink-0" />
+          <p className="max-w-full truncate font-normal">
+            <a
+              href={stampInfo.url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
+            >
+              {stampInfo.url}
+            </a>
+          </p>
+        </div>
+        {stamp && stamp[2] && stamp[2].length > 0 && (
+          <>
             <div className="flex items-center gap-x-2 text-popover-foreground">
-              <HiCalendar />
+              <HiCalendar className="h-5 w-5 shrink-0" />
               <p className="font-normal">
                 {/* Last verified at:{' '} */}
-                {new Date(
-                  stamp[2][stamp[2].length - 1].toNumber() * 1000
-                ).toLocaleDateString()}
+                {format(
+                  new Date(stamp[2][stamp[2].length - 1].toNumber() * 1000),
+                  'Pp'
+                )}
               </p>
             </div>
             {verified && timeLeftUntilExpiration != null && (
@@ -211,30 +227,46 @@ const StampCard = ({
                     : 'text-popover-foreground'
                 }`}
               >
-                <FaHourglass size={14} />
+                <div className="flex h-5 w-5 items-center justify-center">
+                  <HiOutlineClock className="h-5 w-5 shrink-0" />
+                </div>
                 <p className="font-normal">
-                  {Math.max(0, timeLeftUntilExpiration / 86400).toFixed(1)} days
+                  {Math.max(0, timeLeftUntilExpiration / 86400).toFixed(0)} days
                   until expiration
                 </p>
               </div>
             )}
-          </div>
-          <div className="flex items-center gap-x-2 text-popover-foreground">
-            <HiChartBar />
-            <p className="font-normal">
-              {/* Last verified at:{' '} */}
-              Verified {stamp[2].length} time{stamp[2].length > 1 ? 's' : ''}
-            </p>
-          </div>
-        </>
-      )}
+            <div className="flex items-center gap-x-2 text-popover-foreground">
+              <HiChartBar className="h-5 w-5 shrink-0" />
+              <p className="font-normal">
+                {/* Last verified at:{' '} */}
+                Verified {stamp[2].length} time{stamp[2].length > 1 ? 's' : ''}
+              </p>
+            </div>
+          </>
+        )}
+      </div>
 
-      <div className="mt-4 flex items-center gap-2">
-        <Button onClick={() => verify(providerId)}>
-          {verified ? 'Reverify' : 'Verify'}
-        </Button>
+      <div className="flex items-center gap-2">
+        <div className="flex flex-row items-center gap-x-4">
+          <Button
+            disabled={!isConnected || isError}
+            onClick={() => verify(providerId)}
+          >
+            {verified ? 'Reverify' : 'Verify'}
+          </Button>
+          {!isConnected && <ConnectWalletWarning action="to verify" />}
+          {isError && isConnected && (
+            <div className="flex flex-row items-center gap-x-1 text-destructive opacity-80">
+              <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
+              <p className="leading-4">
+                An error occurred, please try again later
+              </p>
+            </div>
+          )}
+        </div>
 
-        {verified && (
+        {verified && isConnected && !isError && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="subtle">Remove</Button>
@@ -254,10 +286,10 @@ const StampCard = ({
                   onClick={() => {
                     const promise = unverify();
                     promiseToast(promise, {
-                      loading: 'Removing stamp...',
-                      success: 'Stamp removed',
+                      loading: 'Removing verification...',
+                      success: 'Verification removed',
                       error: (err) => ({
-                        title: 'Failed to remove stamp: ',
+                        title: 'Failed to remove verification: ',
                         description: err,
                       }),
                     });

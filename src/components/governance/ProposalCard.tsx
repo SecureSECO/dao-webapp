@@ -153,13 +153,13 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
   } = proposal;
 
   return (
-    <Card padding="sm" variant="light" className="space-y-2 p-4 font-normal">
-      <ProposalStatusBadge status={status} className="xs:hidden" />
-      <div className="space-y-2">
+    <Card variant="light" className="space-y-2 font-normal">
+      <div className="flex flex-col gap-y-2">
+        <ProposalStatusBadge status={status} className="xs:hidden" />
         <div className="flex flex-row justify-between">
           <Link
             to={`/governance/proposals/${proposal.id}`}
-            className="flex flex-row items-end gap-x-2 hover:underline"
+            className="flex flex-row items-center gap-x-2 hover:underline"
           >
             <Header level={2}>{title}</Header>
             <HiChevronRight className="h-5 w-5" />

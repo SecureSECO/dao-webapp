@@ -26,7 +26,7 @@ const cardVariants = cva(
         outline: 'bg-transparent border border-border shadow-none',
       },
       padding: {
-        default: 'px-6 py-4',
+        default: 'px-5 py-4',
         sm: 'px-4 py-2',
         lg: 'px-6 sm:px-10 py-4 sm:py-8',
       },
