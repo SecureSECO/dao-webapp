@@ -18,9 +18,7 @@ import { Label } from '@/src/components/ui/Label';
 export type ProposalFormMergeData = {
   name: 'merge_pr';
   inputs: {
-    owner: string;
-    repo: string;
-    pull_number: number;
+    url: string;
   };
   summary: {};
 };
@@ -28,9 +26,7 @@ export type ProposalFormMergeData = {
 export const emptyMergeAction: ProposalFormMergeData = {
   name: 'merge_pr',
   inputs: {
-    owner: 'SecureSECODAO',
-    repo: '',
-    pull_number: 0,
+    url: '',
   },
   summary: {},
 };
@@ -38,9 +34,7 @@ export const emptyMergeAction: ProposalFormMergeData = {
 export const emptyMergeData: ProposalFormMergeData = {
   name: 'merge_pr',
   inputs: {
-    owner: '',
-    repo: '',
-    pull_number: 0,
+    url: '',
   },
   summary: {},
 };
@@ -50,13 +44,11 @@ export const emptyMergeData: ProposalFormMergeData = {
  */
 export const MergePRInput = ({
   register,
-  control,
   prefix,
   errors,
   onRemove,
 }: {
   register: UseFormRegister<ProposalFormActions>;
-  control: Control<ProposalFormActions>;
   prefix: `actions.${number}`;
   errors: ActionFormError<ProposalFormMergeData>;
   onRemove: () => void;
@@ -75,65 +67,31 @@ export const MergePRInput = ({
         />
       }
     >
-      <div className="grid grid-cols-1 justify-start gap-2 md:grid-cols-3">
-        <div className="flex flex-col gap-y-1">
-          <Label tooltip="Owner of the GitHub repository">
-            Repository owner
-          </Label>
-          <ErrorWrapper
-            name="Repository owner"
-            error={errors?.inputs?.owner ?? undefined}
-          >
-            <Input
-              {...register(`${prefix}.inputs.owner`, { required: true })}
-              type="text"
-              id="owner"
-              error={errors?.inputs?.owner ?? undefined}
-              title="Username of the owner of the GitHub repository"
-              placeholder="GitHub username"
-              className="w-full basis-2/3"
-              required
-            />
-          </ErrorWrapper>
-        </div>
-        <div className="flex flex-col gap-y-1">
-          <Label tooltip="Name of the GitHub repository">Repository</Label>
-          <ErrorWrapper
-            name="Repository"
-            error={errors?.inputs?.repo ?? undefined}
-          >
-            <Input
-              {...register(`${prefix}.inputs.repo`, { required: true })}
-              type="text"
-              id="repo"
-              error={errors?.inputs?.repo ?? undefined}
-              title="Name of the GitHub repository"
-              placeholder="Repository name"
-              className="w-full basis-2/3"
-              required
-            />
-          </ErrorWrapper>
-        </div>
-        <div className="flex flex-col gap-y-1">
-          <Label tooltip="Pull request number">Pull request number</Label>
-          <ErrorWrapper
-            name="Pull request number"
-            error={errors?.inputs?.pull_number ?? undefined}
-          >
-            <Input
-              {...register(`${prefix}.inputs.pull_number`, {
-                required: true,
-              })}
-              type="number"
-              id="pull_number"
-              error={errors?.inputs?.pull_number ?? undefined}
-              title="Pull request number"
-              placeholder='Pull request number (e.g. "1")'
-              className="w-full basis-2/3"
-              required
-            />
-          </ErrorWrapper>
-        </div>
+      <div className="flex flex-col gap-y-1">
+        <Label tooltip="Link to the pull request on GitHub">
+          Pull request URL
+        </Label>
+        <ErrorWrapper
+          name="Pull request URL"
+          error={errors?.inputs?.url ?? undefined}
+        >
+          <Input
+            {...register(`${prefix}.inputs.url`, {
+              required: true,
+              pattern: {
+                value: /^(https:\/\/github.com\/.+\/.+\/pull\/\d+)$/,
+                message: 'Please enter a valid GitHub pull request URL',
+              },
+            })}
+            type="url"
+            id="url"
+            error={errors?.inputs?.url ?? undefined}
+            title="Link to the pull request on GitHub"
+            placeholder="https://github.com/..."
+            className="w-full basis-2/3"
+            required
+          />
+        </ErrorWrapper>
       </div>
     </MainCard>
   );

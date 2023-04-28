@@ -33,9 +33,7 @@ export const Default: Story = {
       method: 'merge',
       interface: 'IMerge',
       params: {
-        owner: 'SecureSECO-DAO',
-        repo: 'dao-webapp',
-        pull_number: 1,
+        url: 'https://github.com/SecureSECODAO/dao-webapp/pull/43',
       },
     },
   },

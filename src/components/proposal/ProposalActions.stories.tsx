@@ -63,9 +63,7 @@ const dummyActions = [
     method: 'merge',
     interface: 'IMerge',
     params: {
-      owner: 'SecureSECO-DAO',
-      repo: 'dao-webapp',
-      pull_number: 420,
+      url: 'https://github.com/SecureSECODAO/dao-webapp/pull/43',
     },
   },
   {
