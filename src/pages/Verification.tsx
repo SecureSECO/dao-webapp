@@ -12,9 +12,9 @@ import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '@/src/assets/verificationAbi';
 import StampCard from '@/src/components/verification/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { HiCheckBadge, HiUserCircle } from 'react-icons/hi2';
+import { HiArrowSmallRight, HiCheckBadge, HiUserCircle } from 'react-icons/hi2';
 import { BigNumber } from 'ethers';
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub, FaHourglass } from 'react-icons/fa';
 import { useToast } from '@/src/hooks/useToast';
 import {
   Dialog,
@@ -28,6 +28,9 @@ import {
 import { Button } from '@/src/components/ui/Button';
 import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
 import History from '@/src/components/icons/History';
+import { useSearchParams } from 'react-router-dom';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import PendingVerificationCard from '../components/verification/PendingVerificationCard';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -48,6 +51,14 @@ export type VerificationThreshold = [
   timestamp: BigNumber,
   threshold: BigNumber
 ];
+
+export type PendingVerification = {
+  addressToVerify: string;
+  hash: string;
+  timestamp: string;
+  providerId: string;
+  sig: string;
+};
 
 export const availableStamps: StampInfo[] = [
   {
@@ -144,6 +155,11 @@ const getThresholdForTimestamp = (
 export const verificationAddress = import.meta.env.VITE_VERIFY_CONTRACT;
 
 const Verification = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [pendingVerifications, setPendingVerifications] = useLocalStorage<
+    PendingVerification[]
+  >('pendingVerifications', []);
+
   const { address } = useAccount();
   const { toast } = useToast();
 
@@ -222,6 +238,7 @@ const Verification = () => {
   const [verificationHistory, setVerificationHistory] = useState<
     VerificationHistory[]
   >([]);
+  const [historyLimit, setHistoryLimit] = useState<number>(5);
   const [thresholdHistory, setThresholdHistory] = useState<
     VerificationThreshold[]
   >([]);
@@ -273,6 +290,56 @@ const Verification = () => {
     }
   }, [data, historyData, reverifyData]);
 
+  useEffect(() => {
+    // Check if there are any pending verifications in url params
+    const searchParamSize = [...new Set(searchParams.keys())].length;
+    if (searchParamSize === 0) {
+      return;
+    }
+
+    const paramsObj: PendingVerification = {
+      addressToVerify: searchParams.get('address') ?? '',
+      hash: searchParams.get('hash') ?? '',
+      timestamp: searchParams.get('timestamp') ?? '',
+      providerId: searchParams.get('providerId') ?? '',
+      sig: searchParams.get('sig') ?? '',
+    };
+
+    setSearchParams();
+
+    // Check if paramsObj already exists in pendingVerificationsObj
+    const alreadyExists = pendingVerifications.some(
+      (obj: PendingVerification) => {
+        return JSON.stringify(obj) === JSON.stringify(paramsObj);
+      }
+    );
+
+    // If it doesn't exist, add it to the array
+    if (!alreadyExists) {
+      const obj = [...pendingVerifications, paramsObj];
+      setPendingVerifications(obj);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const lengthBefore = pendingVerifications.length;
+
+    // Remove expired pending verifications
+    const filteredPendingVerifications = pendingVerifications.filter(
+      (obj: PendingVerification) => {
+        const { timestamp } = obj;
+        // Should verify within 1 hour of timestamp
+        const expirationTime = parseInt(timestamp) + 60 * 60;
+        return Date.now() / 1000 < expirationTime;
+      }
+    );
+
+    if (lengthBefore !== filteredPendingVerifications.length) {
+      setPendingVerifications(filteredPendingVerifications);
+      console.log('filtered');
+    }
+  }, [pendingVerifications]);
+
   const verify = async (providerId: string) => {
     try {
       // Check if the account has already been verified
@@ -295,6 +362,19 @@ const Verification = () => {
         }
       }
 
+      // Check if there is no pending verification for this provider which is still valid (1 hour)
+      const pendingVerification = pendingVerifications.find(
+        (obj: PendingVerification) =>
+          obj.providerId === providerId &&
+          Date.now() / 1000 < parseInt(obj.timestamp) + 60 * 60
+      );
+
+      if (pendingVerification) {
+        throw new Error(
+          'There is already a pending verification for this provider'
+        );
+      }
+
       const nonce = Math.floor(Math.random() * 1000000);
       setNonce(nonce);
       setProviderId(providerId);
@@ -315,7 +395,6 @@ const Verification = () => {
   return (
     <div className="flex flex-col gap-6">
       <HeaderCard title="Verification" />
-
       <div className="flex flex-col items-start gap-6 lg:flex-row">
         <MainCard
           className="basis-3/5"
@@ -390,27 +469,66 @@ const Verification = () => {
           )}
         </MainCard>
 
-        <MainCard
-          className="basis-2/5"
-          loading={false}
-          icon={History}
-          header={
-            <DefaultMainCardHeader
-              value={verificationHistory.length}
-              label="verifications"
-            />
-          }
-        >
-          {verificationHistory.length > 0 ? (
-            verificationHistory?.map((history, index) => (
-              <RecentVerificationCard key={index} history={history} />
-            ))
-          ) : (
-            <p className="italic text-highlight-foreground/80">
-              No verifications
-            </p>
+        <div className="flex basis-2/5 flex-col gap-6">
+          {pendingVerifications.length > 0 && (
+            <MainCard
+              loading={false}
+              icon={FaHourglass}
+              header={
+                <DefaultMainCardHeader
+                  value={pendingVerifications.length}
+                  label="pending"
+                />
+              }
+            >
+              {pendingVerifications.map(
+                (verification: PendingVerification, index: number) => (
+                  <PendingVerificationCard
+                    verification={verification}
+                    refetch={refetch}
+                    pendingVerifications={pendingVerifications}
+                    setPendingVerifications={setPendingVerifications}
+                    key={index}
+                  />
+                )
+              )}
+            </MainCard>
           )}
-        </MainCard>
+          <MainCard
+            loading={false}
+            icon={History}
+            header={
+              <DefaultMainCardHeader
+                value={verificationHistory.length}
+                label="verifications"
+              />
+            }
+          >
+            {verificationHistory.length > 0 ? (
+              <>
+                {verificationHistory
+                  ?.map((history, index) => (
+                    <RecentVerificationCard key={index} history={history} />
+                  ))
+                  .slice(0, historyLimit)}
+                {historyLimit < verificationHistory.length && (
+                  <Button
+                    variant="outline"
+                    label="Show more tokens"
+                    icon={HiArrowSmallRight}
+                    onClick={() =>
+                      setHistoryLimit(historyLimit + Math.min(historyLimit, 25))
+                    }
+                  />
+                )}
+              </>
+            ) : (
+              <p className="italic text-highlight-foreground/80">
+                No verifications
+              </p>
+            )}
+          </MainCard>
+        </div>
       </div>
     </div>
   );
