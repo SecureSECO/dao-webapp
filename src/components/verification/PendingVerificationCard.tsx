@@ -16,11 +16,10 @@ import Header from '@/src/components/ui/Header';
 import {
   PendingVerification,
   StampInfo,
-  VerificationHistory,
   availableStamps,
   verificationAddress,
 } from '@/src/pages/Verification';
-import { HiCalendar, HiClock, HiQuestionMarkCircle } from 'react-icons/hi2';
+import { HiClock, HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
 import {
   useContractWrite,
@@ -40,6 +39,7 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
 import CategoryList, { Category } from '@/src/components/ui/CategoryList';
+import { truncateMiddle } from '@/src/lib/utils';
 
 /**
  * @returns A Card element containing information about a previous verification
@@ -151,24 +151,36 @@ const PendingVerificationCard = ({
   };
 
   // Creates categories from verification fields
-  function getCategories(verification: any): Category[] {
-    const categories: Category[] = [];
-    for (const category in verification) {
-      categories.push({
-        title: category,
+  function getCategories(verification: PendingVerification): Category[] {
+    return [
+      {
+        title: 'Details',
         items: [
           {
-            label: 'Value',
-            value:
-              verification[category].length < 32
-                ? verification[category]
-                : verification[category].substring(0, 32) + '...',
+            label: 'Address',
+            value: truncateMiddle(verification.addressToVerify, 16),
+          },
+          {
+            label: 'Hash',
+            value: truncateMiddle(verification.hash, 16),
+          },
+          {
+            label: 'Timestamp',
+            value: verification.timestamp,
+          },
+          {
+            label: 'Provider',
+            value: (
+              <span className="capitalize">{verification.providerId}</span>
+            ),
+          },
+          {
+            label: 'Signature',
+            value: truncateMiddle(verification.sig, 16),
           },
         ],
-      });
-    }
-
-    return categories;
+      },
+    ];
   }
 
   return (
@@ -178,7 +190,7 @@ const PendingVerificationCard = ({
         <Header level={3}>{stampInfo.displayName}</Header>
       </div>
       <div className="flex items-center gap-x-2 text-popover-foreground/80">
-        <HiClock className="h-5 w-5 shrink-0" />
+        <HiOutlineClock className="h-5 w-5 shrink-0" />
         <p className="font-normal">
           {timeLeft > 0
             ? `Expires in ${Math.floor(timeLeft / 60)} minutes`
@@ -186,6 +198,22 @@ const PendingVerificationCard = ({
         </p>
       </div>
       <div className="flex items-center gap-x-2">
+        <Button
+          onClick={() => {
+            promiseToast(verify(), {
+              loading: 'Verifying, please wait...',
+              success: 'Successfully verified!',
+              error: (e) => ({
+                title: 'Verification failed',
+                description: e.message,
+              }),
+            });
+          }}
+          disabled={
+            !write || isBusy || isLoading || isSuccess || isPrepareError
+          }
+          label={isLoading ? 'Verifying...' : isSuccess ? 'Success' : 'Finish'}
+        />
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="subtle" label="View details" />
@@ -204,29 +232,6 @@ const PendingVerificationCard = ({
             </DialogClose>
           </DialogContent>
         </Dialog>
-        <Button
-          onClick={() => {
-            promiseToast(verify(), {
-              loading: 'Verifying, please wait...',
-              success: 'Successfully verified!',
-              error: (e) => ({
-                title: 'Verification failed',
-                description: e.message,
-              }),
-            });
-          }}
-          disabled={
-            !write || isBusy || isLoading || isSuccess || isPrepareError
-          }
-        >
-          {isLoading
-            ? 'Verifying...'
-            : isSuccess
-            ? 'Transaction Sent'
-            : isError
-            ? 'Verification failed: ' + error?.message
-            : 'Verify Account'}
-        </Button>
       </div>
     </Card>
   );

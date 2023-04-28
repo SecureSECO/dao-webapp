@@ -12,9 +12,14 @@ import { useAccount, useContractRead, useSignMessage } from 'wagmi';
 import { verificationAbi } from '@/src/assets/verificationAbi';
 import StampCard from '@/src/components/verification/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { HiArrowSmallRight, HiCheckBadge, HiUserCircle } from 'react-icons/hi2';
+import {
+  HiArrowSmallRight,
+  HiCheckBadge,
+  HiOutlineClock,
+  HiUserCircle,
+} from 'react-icons/hi2';
 import { BigNumber } from 'ethers';
-import { FaGithub, FaHourglass } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa';
 import { useToast } from '@/src/hooks/useToast';
 import {
   Dialog,
@@ -395,9 +400,9 @@ const Verification = () => {
   return (
     <div className="flex flex-col gap-6">
       <HeaderCard title="Verification" />
-      <div className="flex flex-col items-start gap-6 lg:flex-row">
+      <div className="grid grid-cols-7 gap-6">
         <MainCard
-          className="basis-3/5"
+          className="col-span-full lg:col-span-4"
           loading={false}
           icon={HiCheckBadge}
           header={
@@ -406,43 +411,7 @@ const Verification = () => {
               label="verified accounts"
             />
           }
-          aside={
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="subtle" label="How does it work?" />
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>How does verification work?</DialogTitle>
-                  <DialogDescription className="space-y-2">
-                    <p>
-                      You can verify your identity on a variety platforms to
-                      prove that you are a real person.
-                    </p>
-                    <p>
-                      After clicking the Verify button, you will be prompted to
-                      sign a message with your wallet (to prove that you own the
-                      wallet). After signing this message, you will be
-                      redirected to the platform&apos;s login page (if
-                      necessary). When you are logged in, you will be redirected
-                      back to our application, where you can finish the
-                      verification by clicking the corresponding button, and
-                      signing the transaction that will be initiated.
-                    </p>
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogClose asChild>
-                  <div className="flex items-end justify-end">
-                    <Button
-                      variant="subtle"
-                      label="Close"
-                      className="self-end"
-                    />
-                  </div>
-                </DialogClose>
-              </DialogContent>
-            </Dialog>
-          }
+          aside={<ExplanationButton />}
         >
           {isLoading ? (
             <div className="flex flex-col gap-4">
@@ -469,19 +438,20 @@ const Verification = () => {
           )}
         </MainCard>
 
-        <div className="flex basis-2/5 flex-col gap-6">
-          {pendingVerifications.length > 0 && (
-            <MainCard
-              loading={false}
-              icon={FaHourglass}
-              header={
-                <DefaultMainCardHeader
-                  value={pendingVerifications.length}
-                  label="pending"
-                />
-              }
-            >
-              {pendingVerifications.map(
+        <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
+          <MainCard
+            loading={false}
+            icon={HiOutlineClock}
+            header={
+              <DefaultMainCardHeader
+                value={pendingVerifications.length}
+                label="pending verifications"
+                truncateMobile
+              />
+            }
+          >
+            {pendingVerifications.length > 0 ? (
+              pendingVerifications.map(
                 (verification: PendingVerification, index: number) => (
                   <PendingVerificationCard
                     verification={verification}
@@ -491,16 +461,22 @@ const Verification = () => {
                     key={index}
                   />
                 )
-              )}
-            </MainCard>
-          )}
+              )
+            ) : (
+              <p className="italic text-highlight-foreground/80">
+                No pending verifications
+              </p>
+            )}
+          </MainCard>
+
           <MainCard
             loading={false}
             icon={History}
             header={
               <DefaultMainCardHeader
                 value={verificationHistory.length}
-                label="verifications"
+                label="completed verifications"
+                truncateMobile
               />
             }
           >
@@ -524,13 +500,68 @@ const Verification = () => {
               </>
             ) : (
               <p className="italic text-highlight-foreground/80">
-                No verifications
+                No completed verifications
               </p>
             )}
           </MainCard>
         </div>
       </div>
     </div>
+  );
+};
+
+/**
+ * Button that opens a dialog containg an explanation of how verification works
+ * @returns A Dialog component with the explanation as its desription
+ */
+const ExplanationButton = () => {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="subtle" label="How does it work?" />
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>How does verification work?</DialogTitle>
+          <DialogDescription asChild>
+            <div className="space-y-2">
+              <p className="block">
+                You can verify your identity on a variety platforms to prove
+                that you are a real person. Follow the steps below to verify for
+                a specific platform:
+              </p>
+              <ol className="list-decimal pl-5">
+                <li>
+                  Click the Verify button on the card of the platform of your
+                  choice. This will prompt you to sign a message using your
+                  wallet to prove that you own the wallet.
+                </li>
+                <li>
+                  After signing the message, you will be redirected to the login
+                  page of the platform (if necessary). When you are logged in,
+                  you will be redirected back to this page.
+                </li>
+                <li>
+                  Click the Finish button on the corresponding card in the
+                  pending verifications on the right. A transaction will be
+                  initiated to store the verification on the blockchain, which
+                  you will be asked to sign.
+                </li>
+                <li>
+                  After the transaction is confirmed, you will be verified for
+                  that platform!
+                </li>
+              </ol>
+            </div>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogClose asChild>
+          <div className="flex items-end justify-end">
+            <Button variant="subtle" label="Close" className="self-end" />
+          </div>
+        </DialogClose>
+      </DialogContent>
+    </Dialog>
   );
 };
 

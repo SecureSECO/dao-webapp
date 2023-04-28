@@ -228,7 +228,7 @@ const StampCard = ({
                 }`}
               >
                 <div className="flex h-5 w-5 items-center justify-center">
-                  <HiOutlineClock className="h-4 w-4 shrink-0" size={14} />
+                  <HiOutlineClock className="h-5 w-5 shrink-0" />
                 </div>
                 <p className="font-normal">
                   {Math.max(0, timeLeftUntilExpiration / 86400).toFixed(0)} days

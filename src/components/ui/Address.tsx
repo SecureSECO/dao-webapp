@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 import { toast } from '@/src/hooks/useToast';
+import { copyToClipboard, truncateMiddle } from '@/src/lib/utils';
 import React, { useState } from 'react';
 import { HiCheck, HiDocumentDuplicate } from 'react-icons/hi2';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
@@ -41,34 +42,6 @@ type AddressProps = {
   showCopy: boolean;
   replaceYou?: boolean;
   jazziconSize?: 'sm' | 'md' | 'lg' | 'none';
-};
-
-/**
- * Truncates the middle of a string with an ellipsis if it is longer than a specified maximum length. maximum length must be at least 4 or more
- * @param address - The string to truncate.
- * @param maxLength - The maximum length of the string. If the string is longer than this, it will be truncated in the middle with an ellipsis. A negative value means no truncation. Minimum value is 4.
- * @returns - The truncated string.
- * @example
- * const truncated = truncateMiddle("0x1234567890123456789012345678901234567890", 20);
- * console.log(truncated); // "0x1234567…234567890"
- */
-const truncateMiddle = (address: string, maxLength: number) => {
-  if (address.length <= maxLength || maxLength < 0) return address;
-  const lengthToKeep = maxLength - 2;
-  const start = address.slice(0, lengthToKeep / 2);
-  const end = address.slice(-lengthToKeep / 2);
-  return `${start}…${end}`;
-};
-
-/**
- * Copies a string to the clipboard.
- * @param address - The string to copy to the clipboard.
- * @returns
- * @example
- * copyToClipboard("0x1234567890123456789012345678901234567890");
- */
-const copyToClipboard = (address: string) => {
-  navigator.clipboard.writeText(address);
 };
 
 /**

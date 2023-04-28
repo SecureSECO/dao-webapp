@@ -12,6 +12,7 @@
 
 import { cn } from '@/src/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';
+import { ReactNode } from 'react';
 
 export type Category = {
   title: string;
@@ -20,7 +21,7 @@ export type Category = {
 
 type CategoryItem = {
   label: string;
-  value: string;
+  value: ReactNode;
 };
 
 const titleVariants = cva('font-medium opacity-90', {
