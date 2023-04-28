@@ -19,7 +19,7 @@ import {
   availableStamps,
   verificationAddress,
 } from '@/src/pages/Verification';
-import { HiClock, HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
+import { HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
 import {
   useContractWrite,
@@ -54,6 +54,7 @@ const PendingVerificationCard = ({
   refetch: () => void;
   pendingVerifications: PendingVerification[];
   setPendingVerifications: (
+    // eslint-disable-next-line no-unused-vars
     pendingVerifications: PendingVerification[]
   ) => void;
 }) => {
@@ -106,6 +107,16 @@ const PendingVerificationCard = ({
    * @returns {Promise<void>} Promise that resolves when the verification settles
    */
   const verify = async (): Promise<void> => {
+    // Check if verification is still valid
+    if (timeLeft <= 0) {
+      setPendingVerifications(
+        pendingVerifications.filter(
+          (pendingVerification) => pendingVerification.hash !== hash
+        )
+      );
+      throw new Error('Verification expired');
+    }
+
     setIsBusy(true);
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
