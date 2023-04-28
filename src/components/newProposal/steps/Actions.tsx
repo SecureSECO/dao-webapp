@@ -130,7 +130,6 @@ export const Actions = () => {
                       return (
                         <MergePRInput
                           register={register}
-                          control={control}
                           prefix={prefix}
                           key={field.id}
                           errors={

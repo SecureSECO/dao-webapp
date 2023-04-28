@@ -69,7 +69,7 @@ export const TimezoneSelector = ({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>UTC</SelectLabel>
+              <SelectLabel>Timezone</SelectLabel>
               {generateUtcOptions().map((value) => (
                 <SelectItem key={value} value={value}>
                   {value}

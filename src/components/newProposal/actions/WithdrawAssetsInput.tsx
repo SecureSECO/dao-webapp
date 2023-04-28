@@ -146,7 +146,6 @@ export const WithdrawAssetsInput = ({
           <Label tooltip="Token to withdraw" htmlFor="tokenAddress">
             Token
           </Label>
-          {/* To be replaced with <Select> component, which is currently, conveniently located in another branch */}
           <ErrorWrapper name="Token" error={errors?.tokenAddress}>
             <Controller
               control={control}

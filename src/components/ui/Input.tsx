@@ -54,11 +54,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = 'Input';
 
-export interface LabelledInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface LabelledInputProps extends InputProps {
   id: string;
   label: string;
-  error?: FieldError;
 }
 
 const LabelledInput = React.forwardRef<HTMLInputElement, LabelledInputProps>(
@@ -73,7 +71,7 @@ const LabelledInput = React.forwardRef<HTMLInputElement, LabelledInputProps>(
             error={error}
             placeholder={label}
             {...props}
-            className={cn('w-full text-center', className)}
+            className={cn('w-full', className)}
           />
         </ErrorWrapper>
       </div>
