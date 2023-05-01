@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://github.com/SecureSECODAO/dao-webapp/blob/dev/README.md" alt="License">
+    <a href="https://github.com/SecureSECODAO/dao-webapp/blob/master/LICENSE" alt="License">
         <img src="https://img.shields.io/github/license/SecureSECODAO/dao-webapp" /></a>
     <a href="https://github.com/SecureSECODAO/dao-webapp/graphs/contributors" alt="Contributors">
         <img src="https://img.shields.io/github/contributors/SecureSECODAO/dao-webapp" /></a>
@@ -232,16 +232,90 @@ The approach of shadcn uses a `background` and `foreground` convention, where th
 
 Hover effects for buttons etc. are given by appylying the normal background color with a lower opacity, usually 80% opacity of the original.
 
-The following is a list of the colors currently being used:
+The following is a list of the colors currently being used (light mode):
 
-Default background color of `<body />` etc.
-
-```
+- Default background color and corresponding text color of `<body />` etc.
 
 ```
+--background: 210 40% 98%;
+--foreground: 215 25% 27%;
+```
 
-Some specific cases:
+- Muted backgrounds for things like loading skeletons and background of `<Progress />`
 
+```
+--muted: 214 32% 91%;
+--muted-foreground: 215 25% 27%;
+```
+
+- Colors for top-level cards (first card on top of the background of the page), such as `<MainCard />`
+
+```
+--highlight: 0 0% 100%;
+--highlight-foreground: 215 25% 27%;
+```
+
+- Colors for second-level cards, such as the `light` variant of the `<Card />` component
+
+```
+--popover: 210 40% 98%;
+--popover-foreground: 215 25% 27%;
+```
+
+- Primary colors, where highlight is a lighter version of the main color, used in various places, such as `<Button />`
+
+```
+--primary: 215 54% 34%;
+--primary-foreground: 210 40% 98%;
+--primary-highlight: 213 52% 60%;
+```
+
+- Colors used for accents, such as the `subtle` variant of the `<Button />` component, certain hover effects, and separator lines such as the one in `<CategoryList />`
+
+```
+--accent: 210 40% 94%;
+--accent-foreground: 222 47% 11%;
+```
+
+- Green colors, used for things like successful toasts in `<Toast />` (note that the default color here is for green text, and the variable with the `-background` suffix is specifically meant for components with a green background)
+
+```
+--success: 142 69% 58%;
+--success-background: 120 100% 90%;
+--success-foreground: 216 34% 17%;
+```
+
+- Red colors, used for things like failed toasts, or showing form input errors in `<ErrorWrapper />` (note that the default color here is for red text, and the variable with the `-background` suffix is specifically meant for components with a red background)
+
+```
+--destructive: 0 91% 71%;
+--destructive-background: 0 96% 89%;
+--destructive-foreground: 216 34% 17%;
+```
+
+- Default border color
+
+```
+--border: 214 32% 91%;
+```
+
+- Border color for inputs, such as `<Input />`, `<Select />`, `<Textarea />` etc.
+
+```
+--input: 214 32% 91%;
+```
+
+- Color for the ring shown around certain focused components, such as `<Dialog />` (a lot of components, like `<Button />` use other ring colors)
+
+```
+--ring: 215 20% 65%;
+```
+
+Some specific examples of how to use the color classes:
+
+- Component with a highlight background: `bg-highlight text-highlight-foreground`
+- Subtext inside of a `light` variant `<Card />` component: `text-popover-foreground/80`
+- Even more subtle text inside of a `light` variant `<Card />` component: `text-popover-foreground/60`
 - Links (`<a>` tags) usually get the following styling: `text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80`
 
 ### License
