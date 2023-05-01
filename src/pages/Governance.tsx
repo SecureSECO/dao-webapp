@@ -43,7 +43,6 @@ const Governance = () => {
             to="/governance/new-proposal"
             variant="default"
             label="New proposal"
-            onClick={() => console.log('New Proposal Clicked')}
           />
         }
       />
@@ -95,7 +94,6 @@ const ProposalTabs = () => {
       onValueChange={(v) =>
         setCurrentTab(statusStringToEnum(v as ProposalStatusString))
       }
-      variant="default"
     >
       <div className="flex flex-row items-center gap-x-2">
         {/* Mobile category selector (dropdown) */}
@@ -165,8 +163,8 @@ export const ProposalCardList = ({
           doubleColumn && 'lg:grid-cols-2'
         )}
       >
-        <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
-        <div className="h-16 w-full animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
+        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
       </div>
     );
   if (error)

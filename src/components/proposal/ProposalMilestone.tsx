@@ -24,10 +24,10 @@ import { HiCheckCircle, HiCube, HiXCircle } from 'react-icons/hi2';
 const variants = cva('flex flex-row gap-x-2 items-start', {
   variants: {
     variant: {
-      loading: 'text-slate-500 dark:text-slate-400',
-      done: 'text-slate-500 dark:text-slate-400',
-      executed: 'text-green-400 dark:text-green-300',
-      failed: 'text-red-400 dark:text-red-300',
+      loading: 'text-highlight-foreground/80',
+      done: 'text-highlight-foreground/80',
+      executed: 'text-success',
+      failed: 'text-destructive',
     },
   },
   defaultVariants: {
@@ -65,10 +65,7 @@ const ProposalMilestone = ({
 
   return (
     <div {...props} className={cn(variants({ variant }), className)}>
-      {/* #202a3c is the background color, slate-700/50, but without transparency */}
-      <div className="mt-0.5 rounded-full bg-white dark:bg-[#202a3c]">
-        {icon}
-      </div>
+      <div className="mt-0.5 rounded-full bg-highlight">{icon}</div>
       <div className="flex w-full flex-col">
         <div className="flex w-full flex-row items-center justify-between">
           <p className="font-medium">{label}</p>
@@ -76,7 +73,7 @@ const ProposalMilestone = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild className="hover:cursor-help">
-                  <div className="flex flex-row items-center gap-x-1 text-slate-400 dark:text-slate-500">
+                  <div className="flex flex-row items-center gap-x-1 text-highlight-foreground/60">
                     <p className="text-sm">{blockNumber.toLocaleString()}</p>
                     <HiCube className="h-4 w-4 shrink-0" />
                   </div>
@@ -89,7 +86,7 @@ const ProposalMilestone = ({
           )}
         </div>
         {date && (
-          <p className="text-xs text-slate-400 dark:text-slate-500">
+          <p className="text-xs text-highlight-foreground/60">
             {format(date, 'Pp O')}
           </p>
         )}

@@ -20,6 +20,18 @@ import * as React from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
 
 import { cn } from '@/src/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/src/components/ui/Tooltip';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+
+interface LabelProps
+  extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {
+  tooltip?: string;
+}
 
 /**
  * The Label component is a pre-styled label element based on @radix-ui/react-label.
@@ -29,16 +41,28 @@ import { cn } from '@/src/lib/utils';
  */
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
->(({ className, ...props }, ref) => (
+  LabelProps
+>(({ className, tooltip, children, ...props }, ref) => (
   <LabelPrimitive.Root
     ref={ref}
     className={cn(
-      'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+      'flex flex-row items-center gap-x-1 font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-80',
       className
     )}
     {...props}
-  />
+  >
+    {children}
+    {tooltip && (
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger className="hover:cursor-help">
+            <HiQuestionMarkCircle className="h-5 w-5 shrink-0 text-highlight-foreground/80" />
+          </TooltipTrigger>
+          <TooltipContent className="font-normal">{tooltip}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )}
+  </LabelPrimitive.Root>
 ));
 Label.displayName = LabelPrimitive.Root.displayName;
 

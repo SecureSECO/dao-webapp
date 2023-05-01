@@ -19,6 +19,10 @@ import { useEffect, useState } from 'react';
 import { useSigner } from 'wagmi';
 
 export type DetailedProposal = TokenVotingProposal;
+export type ProposalResource = {
+  name: string;
+  url: string;
+};
 
 export type UseProposalData = {
   loading: boolean;
@@ -95,8 +99,8 @@ export const dummyProposal: DetailedProposal = {
     decimals: 18,
     type: TokenType.ERC20,
   },
-  usedVotingWeight: 1000000n,
-  totalVotingWeight: 1000000n,
+  usedVotingWeight: 2000000000000000000n,
+  totalVotingWeight: 7000000000000000000n,
   executionTxHash: null,
   votes: [
     {

@@ -12,52 +12,17 @@
  */
 
 import * as React from 'react';
-import { VariantProps, cva } from 'class-variance-authority';
+import { VariantProps } from 'class-variance-authority';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { cn } from '../../lib/utils';
+import { cn } from '@/src/lib/utils';
 import { IconType } from 'react-icons/lib';
 import { ReactNode } from 'react';
-
-const linkVariants = cva(
-  'active:scale-95 leading-4 inline-flex w-fit items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
-  {
-    variants: {
-      variant: {
-        default:
-          'bg-primary text-white dark:text-slate-300 hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary focus:ring-primary-400 dark:focus:ring-slate-400', // for button that opens some menu: data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-slate-800
-        outline:
-          'bg-transparent border border-slate-300 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800 dark:text-slate-100 focus:ring-primary-100 dark:focus:ring-primary-400',
-      },
-      size: {
-        default: 'h-10 py-2 px-4',
-        sm: 'h-10 px-3 rounded-md',
-        lg: 'h-11 px-8 rounded-md',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-    },
-  }
-);
-
-const iconVariants = cva('transition-all duration-200', {
-  variants: {
-    size: {
-      default: 'h-5 w-5',
-      sm: 'h-4 w-4',
-      lg: 'h-6 w-6',
-    },
-  },
-  defaultVariants: {
-    size: 'default',
-  },
-});
+import { buttonVariants, iconVariants } from '@/src/components/ui/Button';
 
 export interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>,
-    VariantProps<typeof linkVariants> {
+    VariantProps<typeof buttonVariants> {
   label?: string;
   icon?: IconType | null;
   iconNode?: ReactNode | null;
@@ -79,7 +44,7 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
 
     return (
       <RouterLink
-        className={cn(linkVariants({ variant, className }))}
+        className={cn(buttonVariants({ variant, className }))}
         ref={ref}
         {...props}
       >
@@ -104,4 +69,4 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
 
 Link.displayName = 'Link';
 
-export { Link, linkVariants };
+export { Link };

@@ -3,12 +3,19 @@ name: UI Tests
 on:
   workflow_dispatch:
   push:
-    branches: [ "master", "dev" ]
+    branches: ['master', 'dev']
   pull_request:
-    branches: [ "master", "dev" ]
+    branches: ['master', 'dev']
 
 env:
   NODE_VERSION: 18.x
+  VITE_DAO_ADDRESS: '0xa23ff5fc643b1a8d5866f5b392dc5924b746c6fd'
+  VITE_VOTING_PLUGIN: '0xfc9ef7e0ea890e86864137e49282b21a0a1f6e5e'
+  VITE_REP_CONTRACT: '0xdAC85cFabEF4da96D426185Ea050d9A947bE1C5f'
+  VITE_PREFERRED_NETWORK_ID: 5
+  VITE_API_URL: 'http://localhost:43210/api'
+  VITE_VERIFY_CONTRACT: '0x...'
+  VITE_USE_GANACHE: 'false'
 
 jobs:
   install-dependencies:
@@ -28,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-
-  
+
   jest-unit-tests:
     runs-on: ubuntu-latest
     needs: install-dependencies
@@ -75,7 +82,7 @@ jobs:
 
   interaction-and-accessibility-tests:
     runs-on: ubuntu-latest
-    needs: [ install-dependencies, build-storybook ]
+    needs: [install-dependencies, build-storybook]
     steps:
       - uses: actions/checkout@v3
       - name: Restore npm cache
@@ -136,5 +143,4 @@ jobs:
         uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          storybookBuildDir: "storybook-static"
-
+          storybookBuildDir: 'storybook-static'

@@ -8,7 +8,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Address, AddressLength } from './Address';
+import { Address, AddressLength } from '@/src/components/ui/Address';
 
 const meta: Meta<typeof Address> = {
   component: Address,
@@ -69,5 +69,26 @@ export const NoLinkNoCopy: Story = {
     ...Medium.args,
     showCopy: false,
     hasLink: false,
+  },
+};
+
+export const WithJazziconSmall: Story = {
+  args: {
+    ...Medium.args,
+    jazziconSize: 'sm',
+  },
+};
+
+export const WithJazziconMedium: Story = {
+  args: {
+    ...Medium.args,
+    jazziconSize: 'md',
+  },
+};
+
+export const WithJazziconLarge: Story = {
+  args: {
+    ...Medium.args,
+    jazziconSize: 'lg',
   },
 };

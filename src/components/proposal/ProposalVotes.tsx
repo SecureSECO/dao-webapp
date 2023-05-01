@@ -12,8 +12,8 @@
  */
 
 import VotesContent from '@/src/components/proposal/VotesContent';
-import VotingDetails from '@/src/components/proposal/VotingDetails';
 import { Button } from '@/src/components/ui/Button';
+import CategoryList, { Category } from '@/src/components/ui/CategoryList';
 import {
   Dialog,
   DialogClose,
@@ -25,8 +25,8 @@ import {
 } from '@/src/components/ui/Dialog';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { DetailedProposal } from '@/src/hooks/useProposal';
-import { cn } from '@/src/lib/utils';
-import React from 'react';
+import { calcBigintPercentage, cn } from '@/src/lib/utils';
+import { format } from 'date-fns';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 
 interface ProposalVotesProps {
@@ -35,6 +35,67 @@ interface ProposalVotesProps {
   refetch: () => void;
   className?: string;
 }
+
+/**
+ * Get the list of categories that describe the voting details to be passed to the CategoryList component
+ * @param proposal The proposal to show the voting details for
+ * @returns List of Category objects to be passed to the CategoryList component
+ */
+const getCategories = (proposal: DetailedProposal | null): Category[] => {
+  if (!proposal) return [];
+
+  const currentParticipation = calcBigintPercentage(
+    proposal.usedVotingWeight,
+    proposal.totalVotingWeight
+  );
+
+  const uniqueVoters = proposal.votes.reduce(
+    (acc, vote) => acc.add(vote.address),
+    new Set<string>()
+  ).size;
+
+  return [
+    {
+      title: 'Decision rules',
+      items: [
+        {
+          label: 'Support threshold',
+          value: `${proposal.settings.supportThreshold * 100}%`,
+        },
+        {
+          label: 'Minimum participation',
+          value: `${proposal.settings.minParticipation * 100}%`,
+        },
+      ],
+    },
+    {
+      title: 'Voting activity',
+      items: [
+        {
+          label: 'Current participation',
+          value: `${currentParticipation}%`,
+        },
+        {
+          label: 'Unique voters',
+          value: uniqueVoters.toString(),
+        },
+      ],
+    },
+    {
+      title: 'Voting period',
+      items: [
+        {
+          label: 'Start',
+          value: format(new Date(proposal.startDate), 'Pp'),
+        },
+        {
+          label: 'End',
+          value: format(new Date(proposal.endDate), 'Pp'),
+        },
+      ],
+    },
+  ];
+};
 
 /**
  * MainCard component showing the votes of a proposal, other details and allowing user to vote (if eligible)
@@ -69,9 +130,7 @@ const ProposalVotes = ({
             <DialogHeader>
               <DialogTitle>Voting details</DialogTitle>
               <DialogDescription asChild>
-                <div className="flex flex-col gap-y-4">
-                  <VotingDetails proposal={proposal} />
-                </div>
+                <CategoryList categories={getCategories(proposal)} />
               </DialogDescription>
             </DialogHeader>
             <DialogClose asChild>

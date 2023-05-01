@@ -6,14 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import ErrorPage from './pages/ErrorPage';
-import Governance from './pages/Governance';
-import Dashboard from './pages/Dashboard';
-import Layout from './components/layout/Layout';
+import ErrorPage from '@/src/pages/ErrorPage';
+import Governance from '@/src/pages/Governance';
+import Dashboard from '@/src/pages/Dashboard';
+import Layout from '@/src/components/layout/Layout';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import './index.css';
+import '@/src/index.css';
 
 import {
   EthereumClient,
@@ -25,15 +25,13 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { goerli, polygon } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import Finance from '@/src/pages/Finance';
-import Community from '@/src/pages/Community';
 import Settings from '@/src/pages/Settings';
 import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import NewProposal from '@/src/pages/NewProposal';
-import Verification from './pages/Verification';
+import Verification from '@/src/pages/Verification';
 import { Toaster } from '@/src/components/ui/Toaster';
 import ViewProposal from '@/src/pages/ViewProposal';
-import FinishVerification from './pages/FinishVerification';
-import { ganache } from './lib/constants/GanacheChain';
+import { ganache } from '@/src/lib/constants/GanacheChain';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -45,7 +43,7 @@ const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 const chains = [goerli, polygon, ganache];
 
 const { provider } = configureChains(chains, [
-  import.meta.env.PROD
+  import.meta.env.PROD || import.meta.env.VITE_USE_GANACHE !== 'true'
     ? (w3mProvider({ projectId }) as any)
     : // DEV NOTE: This is a local testnet on Ganache. Make sure you have it running
       // on port 65534, and deploy the necessary contracts to it.
@@ -97,21 +95,8 @@ const router = createBrowserRouter([
         element: <Finance />,
       },
       {
-        path: '/community',
-        element: <Community />,
-      },
-      {
         path: '/verification',
-        children: [
-          {
-            path: '',
-            element: <Verification />,
-          },
-          {
-            path: '/verification/finish',
-            element: <FinishVerification />,
-          },
-        ],
+        element: <Verification />,
       },
       {
         path: '/settings',
@@ -119,7 +104,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // If you need a route without the layout, add another object here
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

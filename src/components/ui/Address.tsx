@@ -8,8 +8,17 @@
 /**
  * A module that exports the `Address` component for displaying Ethereum addresses, optionally with a link to Etherscan/Polyscan and a copy-to-clipboard button.
  */
-import React from 'react';
-import { HiClipboardCopy } from 'react-icons/hi';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/src/components/ui/Tooltip';
+import { toast } from '@/src/hooks/useToast';
+import { copyToClipboard, truncateMiddle } from '@/src/lib/utils';
+import React, { useState } from 'react';
+import { HiCheck, HiDocumentDuplicate } from 'react-icons/hi2';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useAccount } from 'wagmi';
 
 export enum AddressLength {
@@ -19,40 +28,20 @@ export enum AddressLength {
   Full = -1, // no trunction
 }
 
+const jazziconVariants = {
+  none: 0,
+  sm: 16,
+  md: 24,
+  lg: 32,
+};
+
 type AddressProps = {
   address: string;
   maxLength: AddressLength;
   hasLink: boolean;
   showCopy: boolean;
   replaceYou?: boolean;
-};
-
-/**
- * Truncates the middle of a string with an ellipsis if it is longer than a specified maximum length. maximum length must be at least 4 or more
- * @param address - The string to truncate.
- * @param maxLength - The maximum length of the string. If the string is longer than this, it will be truncated in the middle with an ellipsis. A negative value means no truncation. Minimum value is 4.
- * @returns - The truncated string.
- * @example
- * const truncated = truncateMiddle("0x1234567890123456789012345678901234567890", 20);
- * console.log(truncated); // "0x1234567…234567890"
- */
-const truncateMiddle = (address: string, maxLength: number) => {
-  if (address.length <= maxLength || maxLength < 0) return address;
-  const lengthToKeep = maxLength - 2;
-  const start = address.slice(0, lengthToKeep / 2);
-  const end = address.slice(-lengthToKeep / 2);
-  return `${start}…${end}`;
-};
-
-/**
- * Copies a string to the clipboard.
- * @param address - The string to copy to the clipboard.
- * @returns
- * @example
- * copyToClipboard("0x1234567890123456789012345678901234567890");
- */
-const copyToClipboard = (address: string) => {
-  navigator.clipboard.writeText(address);
+  jazziconSize?: 'sm' | 'md' | 'lg' | 'none';
 };
 
 /**
@@ -62,6 +51,7 @@ const copyToClipboard = (address: string) => {
  * @param props.maxLength - The maximum length of the displayed address. If the address is longer than this, it will be truncated in the middle with an ellipsis. A negative value means no truncation.
  * @param props.hasLink - Whether the displayed address should be linked to its corresponding page on Etherscan.
  * @param props.showCopy - Whether to display a copy-to-clipboard button next to the address.
+ * @param props.jazziconSize - The size of the Jazzicon to display next to the address (0 to show no Jazzicon)
  * @param [props.replaceYou=true] - Whether to replace the user's own Ethereum address with "you" in the displayed text.
  * @returns - A React element representing the `Address` component.
  * @remarks
@@ -75,11 +65,14 @@ export const Address: React.FC<AddressProps> = ({
   hasLink,
   showCopy,
   replaceYou = true,
+  jazziconSize = 'none',
 }) => {
+  const [status, setStatus] = useState<'idle' | 'copied'>('idle');
   const { address: currentUser } = useAccount();
   const etherscanURL = `https://etherscan.io/address/${address}`;
+
   // if the address is the current user's address, replace it with "you"
-  const content =
+  const linkContent =
     address.toLowerCase() === currentUser?.toLowerCase() && replaceYou
       ? 'you'
       : truncateMiddle(address, maxLength);
@@ -87,32 +80,68 @@ export const Address: React.FC<AddressProps> = ({
   const handleClick = () => {
     if (showCopy) {
       copyToClipboard(address);
+      setStatus('copied');
+      toast({
+        title: 'Copied to clipboard!',
+        variant: 'success',
+      });
+      setTimeout(() => setStatus('idle'), 4000);
     }
   };
 
   return (
-    <div className="flex items-center">
-      {hasLink ? (
-        <a
-          href={etherscanURL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600"
-        >
-          {content}
-        </a>
-      ) : (
-        <span>{content}</span>
+    <div className="flex flex-row items-center gap-x-2">
+      {jazziconSize !== 'none' && (
+        <Jazzicon
+          diameter={jazziconVariants[jazziconSize]}
+          seed={jsNumberForAddress(address!)}
+        />
       )}
+      <div className="flex items-center">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              {hasLink ? (
+                <a
+                  href={etherscanURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+                >
+                  {linkContent}
+                </a>
+              ) : (
+                <span>{linkContent}</span>
+              )}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Open in block explorer</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
-      {showCopy && (
-        <button
-          onClick={handleClick}
-          className="ml-2 text-gray-500 hover:text-gray-700"
-        >
-          <HiClipboardCopy size={18} />
-        </button>
-      )}
+        {showCopy && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleClick}
+                  className="ml-2 transition-opacity duration-200 hover:opacity-80"
+                >
+                  {status === 'copied' ? (
+                    <HiCheck className="text-[1.15em]" />
+                  ) : (
+                    <HiDocumentDuplicate className="text-[1.15em]" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Copy address</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
     </div>
   );
 };

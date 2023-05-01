@@ -145,8 +145,7 @@ const SortSelector = ({
                 value={prop.value}
                 className={cn(
                   'flex flex-row justify-start gap-x-2 hover:cursor-pointer',
-                  sortBySelected == prop.value &&
-                    'text-primary-500 dark:text-primary-400'
+                  sortBySelected == prop.value && 'text-primary-highlight'
                 )}
               >
                 <prop.icon className="h-5 w-5" />

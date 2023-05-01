@@ -10,7 +10,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { HiPlus } from 'react-icons/hi2';
 
-import { Button } from './Button';
+import { Button } from '@/src/components/ui/Button';
 
 const meta = {
   component: Button,
@@ -46,14 +46,6 @@ export const Destructive: Story = {
 export const Ghost: Story = {
   args: {
     variant: 'ghost',
-    label: 'Button',
-    disabled: false,
-  },
-};
-
-export const Link: Story = {
-  args: {
-    variant: 'link',
     label: 'Button',
     disabled: false,
   },

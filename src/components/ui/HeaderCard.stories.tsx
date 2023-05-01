@@ -9,7 +9,7 @@
 import { Button } from '@/src/components/ui/Button';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { HeaderCard } from './HeaderCard';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
 
 const meta: Meta<typeof HeaderCard> = {
   component: HeaderCard,

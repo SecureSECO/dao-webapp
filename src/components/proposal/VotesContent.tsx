@@ -15,6 +15,7 @@ import { DetailedProposal } from '@/src/hooks/useProposal';
 import {
   ProposalStatus,
   VoteProposalStep,
+  VoteProposalStepValue,
   VoteValues,
 } from '@aragon/sdk-client';
 import {
@@ -31,13 +32,10 @@ import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { useCanVote } from '@/src/hooks/useCanVote';
 import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import {
-  CHAIN_METADATA,
-  getChainDataByChainId,
-} from '@/src/lib/constants/chains';
+import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { calcBigintPercentage } from '@/src/lib/utils';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount/TokenAmount';
-import { ToastUpdate, useToast } from '@/src/hooks/useToast';
+import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
+import { contractInteraction, useToast } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 
 type VoteFormData = {
@@ -99,85 +97,33 @@ const VotesContentActive = ({
   const { votingClient } = useAragonSDKContext();
   const { toast } = useToast();
 
-  // Send the vote to SDK
-  const confirmVote = async (
-    vote: number,
-    // eslint-disable-next-line no-unused-vars
-    updateToast: (props: ToastUpdate) => void
-  ) => {
-    if (!votingClient) return;
-    try {
-      const steps = votingClient.methods.voteProposal({
-        proposalId: proposal.id,
-        vote,
-      });
-
-      // Get etherscan url for the currently preferred network
-      // Use +chainId to convert string to number
-      const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
-      const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
-
-      for await (const step of steps) {
-        try {
-          switch (step.key) {
-            case VoteProposalStep.VOTING:
-              // Show link to transaction on etherscan
-              updateToast({
-                title: 'Awaiting confirmation...',
-                description: (
-                  <a
-                    href={`${etherscanURL}/tx/${step.txHash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs text-primary"
-                  >
-                    View on etherscan
-                  </a>
-                ),
-              });
-              break;
-            case VoteProposalStep.DONE:
-              updateToast({
-                title: 'Vote submitted!',
-                description: '',
-                variant: 'success',
-                duration: 3000,
-              });
-              break;
-          }
-        } catch (err) {
-          updateToast({
-            title: 'Error submitting vote',
-            description: '',
-            variant: 'error',
-            duration: 3000,
-          });
-          console.error(err);
-        }
-      }
-      // Refetch proposal data after submitting vote to update the number of votes
-      refetch();
-      refetchCanVote();
-    } catch (e) {
-      updateToast({
-        title: 'Error submitting vote',
-        description: '',
-        variant: 'error',
-        duration: 3000,
-      });
-    }
-  };
-
   const onSubmitVote: SubmitHandler<VoteFormData> = (data) => {
-    if (!votingClient) return;
-    const { update: updateToast } = toast({
-      duration: Infinity,
-      variant: 'loading',
-      title: 'Awaiting signature...',
-    });
-    confirmVote(
-      VoteValues[data.vote_value as VoteValueStringUpper],
-      updateToast
+    if (!votingClient)
+      return toast({
+        title: 'Error submitting vote',
+        description: 'Voting client not found',
+        variant: 'error',
+      });
+    contractInteraction<VoteProposalStep, VoteProposalStepValue>(
+      () =>
+        votingClient.methods.voteProposal({
+          proposalId: proposal.id,
+          vote: VoteValues[data.vote_value as VoteValueStringUpper],
+        }),
+      {
+        steps: {
+          confirmed: VoteProposalStep.DONE,
+          signed: VoteProposalStep.VOTING,
+        },
+        messages: {
+          error: 'Error submitting vote',
+          success: 'Vote submitted!',
+        },
+        onFinish: () => {
+          refetch();
+          refetchCanVote();
+        },
+      }
     );
   };
 
@@ -255,27 +201,25 @@ const VoteOption = ({
               {voteValueString}
             </p>
             <div className="flex flex-row items-center gap-x-4 text-right">
-              <p className="text-slate-500 dark:text-slate-400">
+              <p className="text-popover-foreground/80">
                 {toAbbreviatedTokenAmount(
                   proposal.result[voteValueLower],
                   CHAIN_METADATA.rep.nativeCurrency.decimals,
                   true
                 )}{' '}
-                REP
+                {CHAIN_METADATA.rep.nativeCurrency.symbol}
               </p>
-              <p className="w-12 text-right text-primary-500 dark:text-primary-400">
-                {percentage}%
-              </p>
+              <p className="w-12 text-right text-primary">{percentage}%</p>
             </div>
           </div>
-          <Progress value={percentage} size="sm" variant="alt" />
+          <Progress value={percentage} size="sm" />
         </AccordionTrigger>
         <AccordionContent className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
           {votes.length > 0 ? (
             votes.map((vote) => (
               <div
                 key={vote.address}
-                className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-slate-200 px-3 py-1 dark:border-slate-700"
+                className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-border px-3 py-1"
               >
                 <Address
                   address={vote.address}
@@ -284,16 +228,16 @@ const VoteOption = ({
                   showCopy={false}
                   replaceYou={false}
                 />
-                <div className="grid grid-cols-2 text-right">
-                  <p className="text-gray-500 ">
+                <div className="grid grid-cols-2 text-right opacity-80">
+                  <p>
                     {toAbbreviatedTokenAmount(
                       vote.weight,
                       CHAIN_METADATA.rep.nativeCurrency.decimals,
                       true
                     )}{' '}
-                    REP
+                    {CHAIN_METADATA.rep.nativeCurrency.symbol}
                   </p>
-                  <p className="text-slate-500 dark:text-slate-400">
+                  <p>
                     {calcBigintPercentage(
                       vote.weight,
                       proposal.totalVotingWeight
@@ -304,7 +248,7 @@ const VoteOption = ({
               </div>
             ))
           ) : (
-            <p className="col-span-full text-center italic text-slate-500 dark:text-slate-400">
+            <p className="col-span-full text-center italic text-popover-foreground/80">
               No votes
             </p>
           )}

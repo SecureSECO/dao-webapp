@@ -12,25 +12,41 @@ import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import {
-  StepOneMetadata,
-  StepTwoData,
-} from '../components/newProposal/newProposalData';
-import { StepTwo } from '../components/newProposal/StepTwoVoting';
-import { StepThree } from '../components/newProposal/StepThreeActions';
-import { StepOne } from '../components/newProposal/StepOneMetadata';
-import { StepFour } from '../components/newProposal/StepFourConfirmation';
-import { StepThreeData } from '../components/newProposal/newProposalData';
+  ProposalFormVotingSettings,
+  Voting,
+} from '@/src/components/newProposal/steps/Voting';
+import {
+  Actions,
+  ProposalFormActions,
+} from '@/src/components/newProposal/steps/Actions';
+import {
+  Metadata,
+  ProposalFormMetadata,
+} from '@/src/components/newProposal/steps/Metadata';
+import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
+import { Link } from '@/src/components/ui/Link';
+import { HiChevronLeft } from 'react-icons/hi2';
 
 const totalSteps = 4;
 
 const NewProposal = () => {
   return (
-    <div className="flex flex-col gap-6">
-      <NewProposalFormProvider>
-        <ProgressCard>
-          <StepContent />
-        </ProgressCard>
-      </NewProposalFormProvider>
+    <div className="space-y-2">
+      {/* Back button */}
+      <Link
+        to="/governance"
+        icon={HiChevronLeft}
+        variant="outline"
+        label="All proposals"
+        className="text-lg"
+      />
+      <div className="flex flex-col gap-6">
+        <NewProposalFormProvider>
+          <ProgressCard>
+            <StepContent />
+          </ProgressCard>
+        </NewProposalFormProvider>
+      </div>
     </div>
   );
 };
@@ -40,14 +56,18 @@ export default NewProposal;
 export type NewProposalFormContextProps = {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  dataStep1: StepOneMetadata | undefined;
+  dataStep1: ProposalFormMetadata | undefined;
   setDataStep1: React.Dispatch<
-    React.SetStateAction<StepOneMetadata | undefined>
+    React.SetStateAction<ProposalFormMetadata | undefined>
   >;
-  dataStep2: StepTwoData | undefined;
-  setDataStep2: React.Dispatch<React.SetStateAction<StepTwoData | undefined>>;
-  dataStep3: StepThreeData | undefined;
-  setDataStep3: React.Dispatch<React.SetStateAction<StepThreeData | undefined>>;
+  dataStep2: ProposalFormVotingSettings | undefined;
+  setDataStep2: React.Dispatch<
+    React.SetStateAction<ProposalFormVotingSettings | undefined>
+  >;
+  dataStep3: ProposalFormActions | undefined;
+  setDataStep3: React.Dispatch<
+    React.SetStateAction<ProposalFormActions | undefined>
+  >;
 };
 
 export const NewProposalFormContext = createContext(
@@ -60,22 +80,22 @@ export const useNewProposalFormContext = () =>
 export type NewProposalFormProviderProps = {
   children: any;
   step?: number;
-  dataStep1?: StepOneMetadata | undefined;
-  dataStep2?: StepTwoData | undefined;
-  dataStep3?: StepThreeData | undefined;
+  dataStep1?: ProposalFormMetadata | undefined;
+  dataStep2?: ProposalFormVotingSettings | undefined;
+  dataStep3?: ProposalFormActions | undefined;
 };
 export const NewProposalFormProvider = ({
   children,
   ...props
 }: NewProposalFormProviderProps) => {
   const [step, setStep] = useState<number>(props?.step ?? 1);
-  const [dataStep1, setDataStep1] = useState<StepOneMetadata | undefined>(
+  const [dataStep1, setDataStep1] = useState<ProposalFormMetadata | undefined>(
     props.dataStep1
   );
-  const [dataStep2, setDataStep2] = useState<StepTwoData | undefined>(
-    props.dataStep2
-  );
-  const [dataStep3, setDataStep3] = useState<StepThreeData | undefined>(
+  const [dataStep2, setDataStep2] = useState<
+    ProposalFormVotingSettings | undefined
+  >(props.dataStep2);
+  const [dataStep3, setDataStep3] = useState<ProposalFormActions | undefined>(
     props.dataStep3
   );
 
@@ -112,7 +132,7 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
   const isLastStep = step === totalSteps;
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
       <Button onClick={handlePrevStep} type="button" disabled={step === 1}>
         Back
       </Button>
@@ -127,8 +147,8 @@ export const ProgressCard = ({ children }: { children?: React.ReactNode }) => {
   return (
     <Card className="flex flex-col gap-1 px-1 sm:px-6">
       <div className="flex w-full items-center justify-between">
-        <p className="text-primary dark:text-primary-500">New proposal</p>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-primary">New proposal</p>
+        <p className="text-sm text-highlight-foreground/80">
           Step {step} of {totalSteps}
         </p>
       </div>
@@ -143,13 +163,13 @@ const StepContent = () => {
   const { step } = useNewProposalFormContext();
   switch (step) {
     case 1:
-      return <StepOne />;
+      return <Metadata />;
     case 2:
-      return <StepTwo />;
+      return <Voting />;
     case 3:
-      return <StepThree />;
+      return <Actions />;
     case 4:
-      return <StepFour />;
+      return <Confirmation />;
     default:
       return null;
   }

@@ -8,7 +8,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { TextareaWYSIWYG } from './TextareaWYSIWYG';
+import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 
 const meta: Meta<typeof TextareaWYSIWYG> = {
   component: TextareaWYSIWYG,

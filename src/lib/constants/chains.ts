@@ -231,8 +231,7 @@ export const CHAIN_METADATA: ChainList = {
 };
 
 export const PREFERRED_NETWORK: SupportedNetworks =
-  getSupportedNetworkByChainId(
-    parseInt(import.meta.env.VITE_PREFERRED_NETWORK_ID)
-  ) ?? 'unsupported';
+  getSupportedNetworkByChainId(+import.meta.env.VITE_PREFERRED_NETWORK_ID) ??
+  'unsupported';
 
 export const PREFERRED_NETWORK_METADATA = CHAIN_METADATA[PREFERRED_NETWORK];

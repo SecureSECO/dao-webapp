@@ -7,7 +7,6 @@
  */
 
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
-import React from 'react';
 
 const Settings = () => {
   return (
