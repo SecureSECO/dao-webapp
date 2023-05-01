@@ -36,37 +36,37 @@ After building the webapp, it is possible to locally run the built webapp using:
 
 #### Aragon SDK
 
-[Documentation](https://github.com/aragon/aragon.js)
+[Documentation](https://devs.aragon.org/docs/sdk/)
 Primarily used for: interacting with Aragon smart contracts
 Aragon SDK is used for interacting with the smart contracts from Aragon. We've been extending the base smart contracts with our own plugins, so for those, we use the custom Plopmens SDK to interact with our custom plugins.
 
 #### Ethers
 
 [Documentation](https://docs.ethers.io/v5/)
-Primarily used for: interacting with Ethereum blockchain
-Ethers is a library for interacting with the Ethereum blockchain. We might move to [Viem](https://viem.sh/) when it goes out of beta and Wagmi starts using it.
+Primarily used for: interacting with Ethereum blockchain.
+Ethers is a library for interacting with the Ethereum blockchain. We might move to [Viem](https://viem.sh/) when it goes out of beta and Wagmi starts using it. We use Ethers v5, since wagmi currently required ethers<6, but this will change when wagmi moves to viem.
 
 #### Plopmens SDK
 
-Documentation: ?
+[Documentation](https://github.com/SecureSECODAO/diamond-governance)
 Primarily used for: interacting with our custom smart contracts
-Made by our own Plopmens to interact with our custom smart contracts. (Place temporary link here)[temp]
+Made by our own Plopmens to interact with our custom smart contracts. Check out the github repo [here](https://github.com/SecureSECODAO/diamond-governance)
 
 #### React Jazzicon
 
-[Documentation](https://github.com/samuveth/react-jazzicon)
+[Documentation](https://github.com/marcusmolchany/react-jazzicon#readme)
 Primarily used for: generating SVG icons based on user addresses
 React Jazzicon is used for transforming a user's address (public key hash) into a beautiful SVG. Built into our `<Address/>` component as well.
 
 #### Wagmi
 
-[Documentation](https://github.com/wagmihq/wagmi-sdk)
+[Documentation](https://wagmi.sh/react/getting-started)
 Primarily used for: interacting with wallet connectors
 We use Wagmi's React hooks to interact with the wallet connector, such as checking if the user is connected and requesting transactions, signatures, and more through the wallet provider.
 
 #### WalletConnect + Web3Modal
 
-[WalletConnect Documentation](https://docs.walletconnect.com/2.0/web3modal/react/installation) / [Web3Modal Documentation](https://github.com/Web3Modal/web3modal)
+[Documentation](https://docs.walletconnect.com/2.0/web3modal/react/installation)
 Primarily used for: wallet connection on the site
 We use WalletConnect and Web3Modal for wallet connection on the site. They make it easy to connect and interact with different wallets.
 
@@ -74,21 +74,28 @@ We use WalletConnect and Web3Modal for wallet connection on the site. They make 
 
 #### Class Variance Authority
 
-Documentation: ?
+[Documentation] (https://cva.style/docs)
 Primarily used for: components and variants, naming convention
-Used for components and variants, naming convention?
+Used for components and variants,
+
+##### naming convention
+
+TODO
 
 #### Clsx + Tailwind-Merge
 
-[Clsx Documentation](https://github.com/lukeed/clsx) / [Tailwind-Merge Documentation](https://github.com/ben-rogerson/tailwind-merge)
+[Clsx Documentation](https://github.com/lukeed/clsx#readme) / [Tailwind-Merge Documentation](https://github.com/dcastil/tailwind-merge)
 Primarily used for: conditional CSS class application
-Clsx and Tailwind-Merge are used together to create the `cn()` function, which makes it easier to conditionally apply Tailwind CSS classes. Defined in `lib/utils.ts`.
+Clsx and Tailwind-Merge are used together to create the `cn()` function, which makes it easier to conditionally apply Tailwind CSS classes. Defined in [lib/utils.ts](/src/lib/utils.ts). This function is inspired by the shadcn: https://ui.shadcn.com/docs
 
 #### ESLint
 
-[Documentation](https://eslint.org/docs/user-guide/configuring/)
+[Documentation](https://eslint.org/docs/latest/)
 Primarily used for: linting JavaScript and TypeScript code
+
 ESLint is used to enforce code quality and consistency. Make sure to install the Visual Studio Code extension [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
+
+We are using some plugins for eslint to make it work for [tailwind](https://github.com/francoismassart/eslint-plugin-tailwindcss) (eslint-plugin-tailwindcss"), [storybook](https://github.com/storybookjs/eslint-plugin-storybook#readme) (eslint-plugin-storybook) and [react](https://github.com/jsx-eslint/eslint-plugin-react) (eslint-plugin-react).
 
 #### Jest
 
@@ -100,7 +107,9 @@ Jest is a testing framework for JavaScript and TypeScript code. It helps to ensu
 
 [Documentation](https://prettier.io/docs/en/index.html)
 Primarily used for: code formatting
-Prettier is a code formatter that enforces a consistent coding style across the project.
+Prettier is a code formatter that enforces a consistent coding style across the project. We also use a prettier plugin called [prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss#readme) that enforces tailwinds recommended class order.
+
+Make sure to install the Visual Studio Code extension [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
 
 #### Radix UI
 
@@ -112,8 +121,9 @@ own components. Radix UI is highly inspired by the shadcn components: https://ui
 
 #### React + Vite
 
-[React Documentation](https://reactjs.org/docs/getting-started.html) / [Vite Documentation](https://vitejs.dev/guide/)
+[React Documentation](https://react.dev/reference/react) / [Vite Documentation](https://vitejs.dev/guide/)
 Primarily used for: building and developing the web application
+
 We use React as the main UI library and Vite as the build tool and development server. We didn't go for Next.js, since the Aragon SDK had problems using SSR.
 
 #### React DOM
@@ -126,22 +136,20 @@ React DOM is used for rendering our React components to the browser's DOM. It's 
 
 [Documentation](https://react-hook-form.com/get-started)
 Primarily used for: handling form elements
-React Hook Form is used for form elements, mainly in voting and the creation of new proposals. Sometimes it is needed to use the `Controller` around the component, since some components are Radix UI components and not default HTML components. Please look in the repository for how the component is being used.
 
-#### React Router
+React Hook Form is used for form elements, mainly in voting and the creation of new proposals. Sometimes it is needed to use the `<Controller/>` around the component, since some components are Radix UI components and not default HTML components. Please look in the repository for how the component is being used.
 
-[Documentation](https://reactrouter.com/docs/en/v6)
+#### React Router (DOM)
+
+[Documentation](https://reactrouter.com/en/main)
 Primarily used for: client-side routing
 React Router is a powerful and flexible client-side routing library for React applications. It helps us manage navigation and rendering of components based on the current URL.
 
-#### React Router DOM
-
-[Documentation](https://reactrouter.com/docs/en/v6/getting-started/overview)
-Primarily used for: managing routing in the web application
 React Router DOM is a set of bindings to use React Router with web applications. It provides the necessary components and hooks for managing navigation and rendering components based on the current URL in a web environment.
 
 #### Storybook
 
+[Documentation](https://storybook.js.org/docs/react/get-started/install/)
 Storybook is a frontend workshop for building UI components and pages in isolation.
 To run the storybook, use the following command:
 `npm run storybook`
