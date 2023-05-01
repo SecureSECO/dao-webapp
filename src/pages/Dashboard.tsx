@@ -22,8 +22,7 @@ import {
 } from '@/src/lib/constants/chains';
 import { DaoTransfersList } from '@/src/pages/Finance';
 import { ProposalCardList } from '@/src/pages/Governance';
-import { useWeb3Modal } from '@web3modal/react';
-import { addDays, format } from 'date-fns';
+import { format } from 'date-fns';
 import {
   HiArrowRight,
   HiArrowTopRightOnSquare,
@@ -32,13 +31,11 @@ import {
   HiCube,
   HiHome,
   HiInboxStack,
-  HiOutlineExclamationCircle,
   HiUserGroup,
 } from 'react-icons/hi2';
-import { Link as RouterLink } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import ConnectButton from '../components/layout/ConnectButton';
-import { useVerification, Verification } from '../hooks/useVerification';
+import { MembershipStatus } from '../components/dashboard/MembershipStatus';
+import { useVerification } from '../hooks/useVerification';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -78,7 +75,6 @@ const Dashboard = () => {
   return (
     <div className="grid grid-cols-7 gap-6">
       {/* Banner on top showing optional information about membership status */}
-      {/* TODO: Hidde will make a nice banner styling */}
       <MembershipStatus
         isConnected={isConnected}
         verification={memberVerification}
@@ -235,107 +231,6 @@ const Dashboard = () => {
       </div>
     </div>
   );
-};
-
-const MembershipStatus = ({
-  isConnected,
-  verification,
-}: {
-  isConnected: Boolean;
-  verification: Verification;
-}) => {
-  const { open } = useWeb3Modal();
-  // If user has not connected a wallet:
-  // An informative banner, with button to connect wallet
-  if (!isConnected) {
-    return (
-      <Card
-        variant="warning"
-        className="col-span-full flex flex-row items-center gap-x-1"
-      >
-        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-        Your wallet is not yet connected:
-        <button
-          type="button"
-          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
-          onClick={() => open()}
-        >
-          Connect Wallet.
-        </button>
-      </Card>
-    );
-  }
-
-  // If user has connected wallet but is not member:
-  // An informative banner on how to become member, with button
-  const isNotMember = verification === null || verification.length === 0;
-  if (isNotMember) {
-    return (
-      <Card
-        variant="warning"
-        className="col-span-full flex flex-row items-center gap-x-1"
-      >
-        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-        You are not yet a member of this DAO:
-        <RouterLink
-          to="/verification"
-          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
-        >
-          become a member!
-        </RouterLink>
-      </Card>
-    );
-  }
-
-  // Set boolean values needed for futher code
-  let now = new Date();
-  let expired = verification.some((stamp) => stamp.expiration >= now);
-  let almostExpired =
-    !expired &&
-    verification.some((stamp) => addDays(stamp.expiration, 30) >= now);
-
-  // If user has connected wallet but verification is about to expire:
-  // A warning banner, with button to re-verify
-  if (almostExpired) {
-    return (
-      <Card
-        variant="warning"
-        className="col-span-full flex flex-row items-center gap-x-1"
-      >
-        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-        Your verification is almost expired:
-        <RouterLink
-          to="/verification"
-          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
-        >
-          re-verify
-        </RouterLink>
-      </Card>
-    );
-  }
-
-  // If user has connected wallet but verification is expired:
-  // an important warning banner (red), with button to re-verify.
-  if (expired) {
-    return (
-      <Card
-        variant="warning"
-        className="col-span-full flex flex-row items-center gap-x-1"
-      >
-        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-        Your verification is expired:
-        <RouterLink
-          to="/verification"
-          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
-        >
-          re-verify
-        </RouterLink>
-      </Card>
-    );
-  }
-
-  // If membership Status is OK, don't show a banner
-  return <></>;
 };
 
 export default Dashboard;
