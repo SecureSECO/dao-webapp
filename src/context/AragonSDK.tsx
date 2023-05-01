@@ -52,6 +52,8 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   });
 
   useEffect(() => {
+    if (!signer) return;
+
     const aragonSDKContextParams: ContextParams = {
       network: 'goerli',
       signer,
