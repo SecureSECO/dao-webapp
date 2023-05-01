@@ -1,14 +1,34 @@
 <p align="center">
-    <a href="https://github.com/SecureSECODAO/dao-webapp/blob/master/LICENSE" alt="License">
-        <img src="https://img.shields.io/github/license/SecureSECODAO/dao-webapp" /></a>
-    <a href="https://github.com/SecureSECODAO/dao-webapp/graphs/contributors" alt="Contributors">
-        <img src="https://img.shields.io/github/contributors/SecureSECODAO/dao-webapp" /></a>
-    <a href="https://github.com/SecureSECODAO/dao-webapp/pulse" alt="Activity">
-        <img src="https://img.shields.io/github/commit-activity/m/SecureSECODAO/dao-webapp" /></a>
-    <a href="https://github.com/SecureSECODAO/dao-webapp/actions" alt="Actions">
-        <img src="https://github.com/SecureSECODAO/dao-webapp/actions/workflows/test.yml/badge.svg?branch=master" /></a>
-    <a href="https://dao-webapp-securesecodao.vercel.app/" alt="Vercel deployment">
-        <img src="https://img.shields.io/github/deployments/SecureSECODAO/dao-webapp/production?label=vercel&logo=vercel" /></a>
+  <a
+    href="https://github.com/SecureSECODAO/dao-webapp/blob/master/LICENSE"
+    alt="License"
+  >
+    <img src="https://img.shields.io/github/license/SecureSECODAO/dao-webapp" />
+  </a>
+  <a
+    href="https://github.com/SecureSECODAO/dao-webapp/graphs/contributors"
+    alt="Contributors"
+  >
+    <img src="https://img.shields.io/github/contributors/SecureSECODAO/dao-webapp" />
+  </a>
+  <a
+    href="https://github.com/SecureSECODAO/dao-webapp/pulse"
+    alt="Activity"
+  >
+    <img src="https://img.shields.io/github/commit-activity/m/SecureSECODAO/dao-webapp" />
+  </a>
+  <a
+    href="https://github.com/SecureSECODAO/dao-webapp/actions"
+    alt="Actions"
+  >
+    <img src="https://github.com/SecureSECODAO/dao-webapp/actions/workflows/test.yml/badge.svg?branch=master" />
+  </a>
+  <a
+    href="https://dao-webapp-securesecodao.vercel.app/"
+    alt="Vercel deployment"
+  >
+    <img src="https://img.shields.io/github/deployments/SecureSECODAO/dao-webapp/production?label=vercel&logo=vercel" />
+  </a>
 </p>
 
 # SecureSECO DAO web-app
@@ -17,7 +37,9 @@
 
 ### Environment variables
 
-Some default env variables are provided by [Vite](https://vitejs.dev/guide/env-and-mode.html) in the `import.meta.env` object. Custom variables should be prefixed with `VITE_` to expose them to the code.
+Some default env variables are provided by [Vite](https://vitejs.dev/guide/env-and-mode.html) in the `import.meta.env` object. Custom variables should be prefixed with `VITE_` to expose them to the client-sided code.
+All custom defined env variables are normally defined in a `.env` file in the root directory of the project. The [`.env.example`](/.env.example) file serves as an example of the env variables that you need to define in your own `.env` file.
+There is support for IntelliSense on the `import.meta.env` for custom defined env variables, provided by the [`env.d.ts`](/src/env.d.ts) file. A note of warning on the use of types in this declaration file: the env varialbes are always strings, so declaring it as any other type in `env.d.ts` may cause unintentional artifacts (such as the code thinking the variable is a `number`, while really its)
 
 Note on `.env` files:
 
@@ -35,13 +57,125 @@ Note on `.env` files:
 ## Running the webapp
 
 Use the following command to locally run the webapp for development:
-`npm run dev`
+
+```
+npm run dev
+```
 
 Use the following command to build the webapp for deployment:
-`npm run build`
+
+```
+npm run build
+```
 
 After building the webapp, it is possible to locally run the built webapp using:
-`npm run preview`
+
+```
+npm run preview
+```
+
+## Style guide
+
+### Code style
+
+The code should be formatted as dictated by the automatic formatting tools.
+Code that gives an error upon linting (using `npm run lint`) should not be committed.
+It is also advised to turn on the `Format On Save` option in settings if you are using VS Code. Alternatively, you can run `npm run format` to format **_all_** files in the project, however, it is preferable to format only the files that you change.
+
+### Colors
+
+Colors are defined using CSS variables in [index.css](/src/index.css) based on the approach taken by [shadcn](https://ui.shadcn.com/docs/theming). Each color has variants for light and dark mode, making it easy to change a color, without having to change the code everywhere that color is used.
+The colors defined in this CSS file correspond to those defined in [tailwind.config.cjs](tailwind.config.cjs), and when adding a new color to the css file, the tailwind config should be updated accordingly.
+
+The approach of shadcn uses a `background` and `foreground` convention, where the `background` variable is used for the background color of the component and the `foreground` variable is used for the text color. Usually, the `background` suffix is omitted in the variable, if the color only needs a background and foreground color. For example, in the [Button](/src/components/ui/Button.tsx) component, there is a `primary` variant that uses the tailwind class `bg-primary` to make the button's background color our primary color, and `text-primary-foreground` to give the text the corresponding foreground color. Note that the foreground variant of a color should always be properly readable on top of the corresponding background variant.
+
+Hover effects for buttons etc. are given by appylying the normal background color with a lower opacity, usually 80% opacity of the original.
+
+The following is a list of the colors currently being used (light mode):
+
+- Default background color and corresponding text color of `<body />` etc.
+
+```
+--background: 210 40% 98%;
+--foreground: 215 25% 27%;
+```
+
+- Muted backgrounds for things like loading skeletons and background of `<Progress />`
+
+```
+--muted: 214 32% 91%;
+--muted-foreground: 215 25% 27%;
+```
+
+- Colors for top-level cards (first card on top of the background of the page), such as `<MainCard />`
+
+```
+--highlight: 0 0% 100%;
+--highlight-foreground: 215 25% 27%;
+```
+
+- Colors for second-level cards, such as the `light` variant of the `<Card />` component
+
+```
+--popover: 210 40% 98%;
+--popover-foreground: 215 25% 27%;
+```
+
+- Primary colors, where highlight is a lighter version of the main color, used in various places, such as `<Button />`
+
+```
+--primary: 215 54% 34%;
+--primary-foreground: 210 40% 98%;
+--primary-highlight: 213 52% 60%;
+```
+
+- Colors used for accents, such as the `subtle` variant of the `<Button />` component, certain hover effects, and separator lines such as the one in `<CategoryList />`
+
+```
+--accent: 210 40% 94%;
+--accent-foreground: 222 47% 11%;
+```
+
+- Green colors, used for things like successful toasts in `<Toast />` (note that the default color here is for green text, and the variable with the `-background` suffix is specifically meant for components with a green background)
+
+```
+--success: 142 69% 58%;
+--success-background: 120 100% 90%;
+--success-foreground: 216 34% 17%;
+```
+
+- Red colors, used for things like failed toasts, or showing form input errors in `<ErrorWrapper />` (note that the default color here is for red text, and the variable with the `-background` suffix is specifically meant for components with a red background)
+
+```
+--destructive: 0 91% 71%;
+--destructive-background: 0 96% 89%;
+--destructive-foreground: 216 34% 17%;
+```
+
+- Default border color
+
+```
+--border: 214 32% 91%;
+```
+
+- Border color for inputs, such as `<Input />`, `<Select />`, `<Textarea />` etc.
+
+```
+--input: 214 32% 91%;
+```
+
+- Color for the ring shown around certain focused components, such as `<Dialog />` (a lot of components, like `<Button />` use other ring colors)
+
+```
+--ring: 215 20% 65%;
+```
+
+Some specific examples of how to use the color classes:
+
+- Component with a highlight background: `bg-highlight text-highlight-foreground`
+- Subtext inside of a `light` variant `<Card />` component: `text-popover-foreground/80`
+- Even more subtle text inside of a `light` variant `<Card />` component: `text-popover-foreground/60`
+- Links (`<a>` tags) usually get the following styling: `text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80`
 
 ## Packages
 
@@ -215,109 +349,6 @@ The automatic Storybook tests (defined using _play_ functions) can be run using:
 There is also support for tests written using _Jest_, mostly used for testing logic.
 These tests can be run using `npm test` (or optionally `npm run test`).
 
-## Style guide
-
-### Code style
-
-The code should be formatted as dictated by the automatic formatting tools.
-Code that gives an error upon linting (using `npm run lint`) should not be committed.
-It is also advised to turn on the `Format On Save` option in settings if you are using VS Code. Alternatively, you can run `npm run format` to format **_all_** files in the project, however, it is preferable to format only the files that you change.
-
-### Colors
-
-Colors are defined using CSS variables in [index.css](/src/index.css) based on the approach taken by [shadcn](https://ui.shadcn.com/docs/theming). Each color has variants for light and dark mode, making it easy to change a color, without having to change the code everywhere that color is used.
-The colors defined in this CSS file correspond to those defined in [tailwind.config.cjs](tailwind.config.cjs), and when adding a new color to the css file, the tailwind config should be updated accordingly.
-
-The approach of shadcn uses a `background` and `foreground` convention, where the `background` variable is used for the background color of the component and the `foreground` variable is used for the text color. Usually, the `background` suffix is omitted in the variable, if the color only needs a background and foreground color. For example, in the [Button](/src/components/ui/Button.tsx) component, there is a `primary` variant that uses the tailwind class `bg-primary` to make the button's background color our primary color, and `text-primary-foreground` to give the text the corresponding foreground color. Note that the foreground variant of a color should always be properly readable on top of the corresponding background variant.
-
-Hover effects for buttons etc. are given by appylying the normal background color with a lower opacity, usually 80% opacity of the original.
-
-The following is a list of the colors currently being used (light mode):
-
-- Default background color and corresponding text color of `<body />` etc.
-
-```
---background: 210 40% 98%;
---foreground: 215 25% 27%;
-```
-
-- Muted backgrounds for things like loading skeletons and background of `<Progress />`
-
-```
---muted: 214 32% 91%;
---muted-foreground: 215 25% 27%;
-```
-
-- Colors for top-level cards (first card on top of the background of the page), such as `<MainCard />`
-
-```
---highlight: 0 0% 100%;
---highlight-foreground: 215 25% 27%;
-```
-
-- Colors for second-level cards, such as the `light` variant of the `<Card />` component
-
-```
---popover: 210 40% 98%;
---popover-foreground: 215 25% 27%;
-```
-
-- Primary colors, where highlight is a lighter version of the main color, used in various places, such as `<Button />`
-
-```
---primary: 215 54% 34%;
---primary-foreground: 210 40% 98%;
---primary-highlight: 213 52% 60%;
-```
-
-- Colors used for accents, such as the `subtle` variant of the `<Button />` component, certain hover effects, and separator lines such as the one in `<CategoryList />`
-
-```
---accent: 210 40% 94%;
---accent-foreground: 222 47% 11%;
-```
-
-- Green colors, used for things like successful toasts in `<Toast />` (note that the default color here is for green text, and the variable with the `-background` suffix is specifically meant for components with a green background)
-
-```
---success: 142 69% 58%;
---success-background: 120 100% 90%;
---success-foreground: 216 34% 17%;
-```
-
-- Red colors, used for things like failed toasts, or showing form input errors in `<ErrorWrapper />` (note that the default color here is for red text, and the variable with the `-background` suffix is specifically meant for components with a red background)
-
-```
---destructive: 0 91% 71%;
---destructive-background: 0 96% 89%;
---destructive-foreground: 216 34% 17%;
-```
-
-- Default border color
-
-```
---border: 214 32% 91%;
-```
-
-- Border color for inputs, such as `<Input />`, `<Select />`, `<Textarea />` etc.
-
-```
---input: 214 32% 91%;
-```
-
-- Color for the ring shown around certain focused components, such as `<Dialog />` (a lot of components, like `<Button />` use other ring colors)
-
-```
---ring: 215 20% 65%;
-```
-
-Some specific examples of how to use the color classes:
-
-- Component with a highlight background: `bg-highlight text-highlight-foreground`
-- Subtext inside of a `light` variant `<Card />` component: `text-popover-foreground/80`
-- Even more subtle text inside of a `light` variant `<Card />` component: `text-popover-foreground/60`
-- Links (`<a>` tags) usually get the following styling: `text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80`
-
-### License
+## License
 
 This repository is [MIT licensed](./LICENSE).
