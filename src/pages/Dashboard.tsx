@@ -6,9 +6,23 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import MembersList from '@/src/components/dashboard/MembersList';
 import Logo from '@/src/components/Logo';
-import Header from '@/src/components/ui/Header';
 import { Card } from '@/src/components/ui/Card';
+import Header from '@/src/components/ui/Header';
+import { Link } from '@/src/components/ui/Link';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { useDao } from '@/src/hooks/useDao';
+import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
+import { useMembers } from '@/src/hooks/useMembers';
+import { useProposals } from '@/src/hooks/useProposals';
+import {
+  getChainDataByChainId,
+  getSupportedNetworkByChainId,
+} from '@/src/lib/constants/chains';
+import { DaoTransfersList } from '@/src/pages/Finance';
+import { ProposalCardList } from '@/src/pages/Governance';
+import { useWeb3Modal } from '@web3modal/react';
 import { addDays, format } from 'date-fns';
 import {
   HiArrowRight,
@@ -20,23 +34,11 @@ import {
   HiInboxStack,
   HiOutlineExclamationCircle,
   HiUserGroup,
-  HiXMark,
 } from 'react-icons/hi2';
-import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { useDao } from '@/src/hooks/useDao';
-import { useProposals } from '@/src/hooks/useProposals';
-import { useMembers } from '@/src/hooks/useMembers';
-import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
-import { ProposalCardList } from '@/src/pages/Governance';
-import MembersList from '@/src/components/dashboard/MembersList';
-import { DaoTransfersList } from '@/src/pages/Finance';
-import { Link } from '@/src/components/ui/Link';
-import { getSupportedNetworkByChainId } from '@/src/lib/constants/chains';
-import { getChainDataByChainId } from '@/src/lib/constants/chains';
+import { Link as RouterLink } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { useVerification, Verification } from '../hooks/useVerification';
 import ConnectButton from '../components/layout/ConnectButton';
-import { useWeb3Modal } from '@web3modal/react';
+import { useVerification, Verification } from '../hooks/useVerification';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -269,8 +271,18 @@ const MembershipStatus = ({
   const isNotMember = verification === null || verification.length === 0;
   if (isNotMember) {
     return (
-      <Card className="col-span-full">
-        Oh no, you are not a member of the DAO.
+      <Card
+        variant="warning"
+        className="col-span-full flex flex-row items-center gap-x-1"
+      >
+        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
+        You are not yet a member of this DAO:
+        <RouterLink
+          to="/verification"
+          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+        >
+          become a member!
+        </RouterLink>
       </Card>
     );
   }
@@ -286,8 +298,18 @@ const MembershipStatus = ({
   // A warning banner, with button to re-verify
   if (almostExpired) {
     return (
-      <Card className="col-span-full">
-        Oh no, your verification is almost expired!
+      <Card
+        variant="warning"
+        className="col-span-full flex flex-row items-center gap-x-1"
+      >
+        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
+        Your verification is almost expired:
+        <RouterLink
+          to="/verification"
+          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+        >
+          re-verify
+        </RouterLink>
       </Card>
     );
   }
@@ -296,8 +318,18 @@ const MembershipStatus = ({
   // an important warning banner (red), with button to re-verify.
   if (expired) {
     return (
-      <Card className="col-span-full">
-        Oh no, your verification is expired!
+      <Card
+        variant="warning"
+        className="col-span-full flex flex-row items-center gap-x-1"
+      >
+        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
+        Your verification is expired:
+        <RouterLink
+          to="/verification"
+          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+        >
+          re-verify
+        </RouterLink>
       </Card>
     );
   }
