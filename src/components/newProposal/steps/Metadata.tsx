@@ -12,6 +12,7 @@ import {
   Controller,
   FieldErrors,
   UseFormGetValues,
+  useFieldArray,
 } from 'react-hook-form';
 import { Button } from '@/src/components/ui/Button';
 import { HiPlus, HiXMark } from 'react-icons/hi2';
@@ -40,12 +41,16 @@ export interface Media {
   header: string;
 }
 
+const emptyDataStep1: ProposalFormMetadata = {
+  title: '',
+  summary: '',
+  description: '',
+  resources: [{ name: '', url: '' }],
+  media: { logo: '', header: '' },
+};
+
 export const Metadata = () => {
   const { setStep, setDataStep1, dataStep1 } = useNewProposalFormContext();
-
-  const [resources, setResources] = useState<ProposalResource[]>([
-    { name: '', url: '' },
-  ]);
 
   const {
     register,
@@ -55,7 +60,21 @@ export const Metadata = () => {
     getValues,
     setError,
     clearErrors,
-  } = useForm<ProposalFormMetadata>({ defaultValues: dataStep1 });
+  } = useForm<ProposalFormMetadata>({
+    defaultValues: dataStep1 ?? emptyDataStep1,
+  });
+
+  const {
+    fields: resources,
+    append,
+    remove,
+  } = useFieldArray({
+    name: 'resources',
+    control: control,
+  });
+
+  console.log(dataStep1);
+  console.log(resources);
 
   const onSubmit = (data: ProposalFormMetadata) => {
     // Handle submission
@@ -70,23 +89,11 @@ export const Metadata = () => {
   };
 
   const handleAddResource = () => {
-    setResources([...resources, { name: '', url: '' }]);
-  };
-
-  const handleResourceChange = (
-    index: number,
-    key: 'name' | 'url',
-    value: string
-  ) => {
-    const newResources = [...resources];
-    newResources[index][key] = value;
-    setResources(newResources);
+    append({ name: '', url: '' });
   };
 
   const handleRemoveResource = (index: number) => {
-    const newResources = [...resources];
-    newResources.splice(index, 1);
-    setResources(newResources);
+    remove(index);
   };
 
   return (
@@ -147,14 +154,13 @@ export const Metadata = () => {
         </div>
         <fieldset className="space-y-1">
           <Label htmlFor="resources">Resources</Label>
-          {resources.map((resource, index) => (
+          {resources.map((field, index) => (
             <ResourceInput
-              key={index}
-              resource={resource}
-              onChange={(key, value) => handleResourceChange(index, key, value)}
+              key={field.id}
               onRemove={() => handleRemoveResource(index)}
               register={register}
               getValues={getValues}
+              defaultValue={field}
               prefix={`resources.${index}`}
               errors={
                 errors?.resources?.[index] as FieldErrors<ProposalResource>
@@ -178,18 +184,16 @@ export const Metadata = () => {
 };
 
 const ResourceInput = ({
-  resource,
-  onChange,
   onRemove,
   getValues,
+  defaultValue,
   register,
   prefix,
   errors,
 }: {
-  resource: ProposalResource;
-  onChange: (key: 'name' | 'url', value: string) => void;
   onRemove: () => void;
   getValues: UseFormGetValues<ProposalFormMetadata>;
+  defaultValue: { name: string; url: string };
   register: any;
   prefix: `resources.${number}`;
   errors: FieldErrors<ProposalResource> | undefined;
@@ -209,9 +213,7 @@ const ResourceInput = ({
               },
             })}
             type="text"
-            value={resource.name}
             error={errors?.name}
-            onChange={(e) => onChange('name', e.target.value)}
             placeholder="Resource name"
           />
         </ErrorWrapper>
@@ -234,8 +236,6 @@ const ResourceInput = ({
                 },
               })}
               type="text"
-              value={resource.url}
-              onChange={(e) => onChange('url', e.target.value)}
               placeholder="Resource URL"
               error={errors?.url}
             />
