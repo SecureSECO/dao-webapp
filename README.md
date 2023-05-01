@@ -1,4 +1,4 @@
-# dao-webapp
+# SecureSECO DAO web-app
 
 ## Initial setup
 
@@ -180,10 +180,24 @@ These tests can be run using `npm test` (or optionally `npm run test`).
 
 The code should be formatted as dictated by the automatic formatting tools.
 Code that gives an error upon linting (using `npm run lint`) should not be committed.
+It is also advised to turn on the `Format On Save` option in settings if you are using VS Code. Alternatively, you can run `npm run format` to format **_all_** files in the project, however, it is preferable to format only the files that you change.
 
 ### Colors
 
-Colors are defined using CSS variables in [index.css](/src/index.css). The colors defined in this CSS file correspond to those defined in [tailwind.config.cjs](tailwind.config.cjs), and when adding a new color to the css file, the tailwind config should be updated accordingly.
+Colors are defined using CSS variables in [index.css](/src/index.css) based on the approach taken by [shadcn](https://ui.shadcn.com/docs/theming). Each color has variants for light and dark mode, making it easy to change a color, without having to change the code everywhere that color is used.
+The colors defined in this CSS file correspond to those defined in [tailwind.config.cjs](tailwind.config.cjs), and when adding a new color to the css file, the tailwind config should be updated accordingly.
+
+The approach of shadcn uses a `background` and `foreground` convention, where the `background` variable is used for the background color of the component and the `foreground` variable is used for the text color. Usually, the `background` suffix is omitted in the variable, if the color only needs a background and foreground color. For example, in the [Button](/src/components/ui/Button.tsx) component, there is a `primary` variant that uses the tailwind class `bg-primary` to make the button's background color our primary color, and `text-primary-foreground` to give the text the corresponding foreground color. Note that the foreground variant of a color should always be properly readable on top of the corresponding background variant.
+
+Hover effects for buttons etc. are given by appylying the normal background color with a lower opacity, usually 80% opacity of the original.
+
+The following is a list of the colors currently being used:
+
+Default background color of `<body />` etc.
+
+```
+
+```
 
 Some specific cases:
 
