@@ -6,9 +6,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import MembersList from '@/src/components/dashboard/MembersList';
 import Logo from '@/src/components/Logo';
-import Header from '@/src/components/ui/Header';
 import { Card } from '@/src/components/ui/Card';
+import Header from '@/src/components/ui/Header';
+import { Link } from '@/src/components/ui/Link';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { useDao } from '@/src/hooks/useDao';
+import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
+import { useMembers } from '@/src/hooks/useMembers';
+import { useProposals } from '@/src/hooks/useProposals';
+import {
+  getChainDataByChainId,
+  getSupportedNetworkByChainId,
+} from '@/src/lib/constants/chains';
+import { DaoTransfersList } from '@/src/pages/Finance';
+import { ProposalCardList } from '@/src/pages/Governance';
 import { format } from 'date-fns';
 import {
   HiArrowRight,
@@ -20,17 +33,9 @@ import {
   HiInboxStack,
   HiUserGroup,
 } from 'react-icons/hi2';
-import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { useDao } from '@/src/hooks/useDao';
-import { useProposals } from '@/src/hooks/useProposals';
-import { useMembers } from '@/src/hooks/useMembers';
-import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
-import { ProposalCardList } from '@/src/pages/Governance';
-import MembersList from '@/src/components/dashboard/MembersList';
-import { DaoTransfersList } from '@/src/pages/Finance';
-import { Link } from '@/src/components/ui/Link';
-import { getSupportedNetworkByChainId } from '@/src/lib/constants/chains';
-import { getChainDataByChainId } from '@/src/lib/constants/chains';
+import { useAccount } from 'wagmi';
+import { MembershipStatus } from '../components/dashboard/MembershipStatus';
+import { useVerification } from '../hooks/useVerification';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -54,6 +59,9 @@ const Dashboard = () => {
     memberCount,
   } = useMembers({ limit: 5 });
 
+  const { isConnected } = useAccount();
+  const { memberVerification } = useVerification({ useDummyData: true });
+
   if (daoError) {
     console.log(daoError);
 
@@ -66,6 +74,13 @@ const Dashboard = () => {
 
   return (
     <div className="grid grid-cols-7 gap-6">
+      {/* Banner on top showing optional information about membership status */}
+      <MembershipStatus
+        isConnected={isConnected}
+        verification={memberVerification}
+      />
+
+      {/* Card showing metadata about the DAO */}
       <Card
         loading={daoLoading}
         padding="lg"
@@ -118,6 +133,7 @@ const Dashboard = () => {
         )}
       </Card>
 
+      {/* Proposal Card */}
       <MainCard
         className="col-span-full lg:col-span-4"
         loading={allProposalsLoading}
@@ -147,7 +163,9 @@ const Dashboard = () => {
         </Link>
       </MainCard>
 
+      {/* div containing the right column of the dashboard */}
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
+        {/* Card containing the latest dao transfers */}
         <MainCard
           className=""
           loading={daoTransfersLoading}
@@ -184,6 +202,7 @@ const Dashboard = () => {
           </Link>
         </MainCard>
 
+        {/* Card containing DAO members */}
         <MainCard
           className=""
           loading={membersLoading}
