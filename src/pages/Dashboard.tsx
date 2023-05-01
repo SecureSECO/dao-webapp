@@ -9,7 +9,7 @@
 import Logo from '@/src/components/Logo';
 import Header from '@/src/components/ui/Header';
 import { Card } from '@/src/components/ui/Card';
-import { format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import {
   HiArrowRight,
   HiArrowTopRightOnSquare,
@@ -18,6 +18,7 @@ import {
   HiCube,
   HiHome,
   HiInboxStack,
+  HiOutlineExclamationCircle,
   HiUserGroup,
   HiXMark,
 } from 'react-icons/hi2';
@@ -32,6 +33,10 @@ import { DaoTransfersList } from '@/src/pages/Finance';
 import { Link } from '@/src/components/ui/Link';
 import { getSupportedNetworkByChainId } from '@/src/lib/constants/chains';
 import { getChainDataByChainId } from '@/src/lib/constants/chains';
+import { useAccount } from 'wagmi';
+import { useVerification, Verification } from '../hooks/useVerification';
+import ConnectButton from '../components/layout/ConnectButton';
+import { useWeb3Modal } from '@web3modal/react';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -55,6 +60,9 @@ const Dashboard = () => {
     memberCount,
   } = useMembers({ limit: 5 });
 
+  const { isConnected } = useAccount();
+  const { memberVerification } = useVerification({ useDummyData: true });
+
   if (daoError) {
     console.log(daoError);
 
@@ -69,6 +77,10 @@ const Dashboard = () => {
     <div className="grid grid-cols-7 gap-6">
       {/* Banner on top showing optional information about membership status */}
       {/* TODO: Hidde will make a nice banner styling */}
+      <MembershipStatus
+        isConnected={isConnected}
+        verification={memberVerification}
+      />
 
       {/* Card showing metadata about the DAO */}
       <Card
@@ -221,6 +233,77 @@ const Dashboard = () => {
       </div>
     </div>
   );
+};
+
+const MembershipStatus = ({
+  isConnected,
+  verification,
+}: {
+  isConnected: Boolean;
+  verification: Verification;
+}) => {
+  const { open } = useWeb3Modal();
+  // If user has not connected a wallet:
+  // An informative banner, with button to connect wallet
+  if (!isConnected) {
+    return (
+      <Card
+        variant="warning"
+        className="col-span-full flex flex-row items-center gap-x-1"
+      >
+        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
+        Your wallet is not yet connected:
+        <button
+          type="button"
+          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+          onClick={() => open()}
+        >
+          Connect Wallet.
+        </button>
+      </Card>
+    );
+  }
+
+  // If user has connected wallet but is not member:
+  // An informative banner on how to become member, with button
+  const isNotMember = verification === null || verification.length === 0;
+  if (isNotMember) {
+    return (
+      <Card className="col-span-full">
+        Oh no, you are not a member of the DAO.
+      </Card>
+    );
+  }
+
+  // Set boolean values needed for futher code
+  let now = new Date();
+  let expired = verification.some((stamp) => stamp.expiration >= now);
+  let almostExpired =
+    !expired &&
+    verification.some((stamp) => addDays(stamp.expiration, 30) >= now);
+
+  // If user has connected wallet but verification is about to expire:
+  // A warning banner, with button to re-verify
+  if (almostExpired) {
+    return (
+      <Card className="col-span-full">
+        Oh no, your verification is almost expired!
+      </Card>
+    );
+  }
+
+  // If user has connected wallet but verification is expired:
+  // an important warning banner (red), with button to re-verify.
+  if (expired) {
+    return (
+      <Card className="col-span-full">
+        Oh no, your verification is expired!
+      </Card>
+    );
+  }
+
+  // If membership Status is OK, don't show a banner
+  return <></>;
 };
 
 export default Dashboard;
