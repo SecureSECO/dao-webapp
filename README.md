@@ -39,6 +39,7 @@
 
 Some default env variables are provided by [Vite](https://vitejs.dev/guide/env-and-mode.html) in the `import.meta.env` object. Custom variables should be prefixed with `VITE_` to expose them to the client-sided code.
 All custom defined env variables are normally defined in a `.env` file in the root directory of the project. The [`.env.example`](/.env.example) file serves as an example of the env variables that you need to define in your own `.env` file.
+
 There is support for IntelliSense on the `import.meta.env` for custom defined env variables, provided by the [`env.d.ts`](/src/env.d.ts) file. A note of warning on the use of types in this declaration file: the env varialbes are always strings, so declaring it as any other type in `env.d.ts` may cause unintentional artifacts (such as the code thinking the variable is a `number`, while really its)
 
 Note on `.env` files:
@@ -233,35 +234,35 @@ Additionally, the following files should be updated:
 
 [Documentation](https://devs.aragon.org/docs/sdk/)
 
-Primarily used for: interacting with Aragon smart contracts
-Aragon SDK is used for interacting with the smart contracts from Aragon. We've been extending the base smart contracts with our own plugins, so for those, we use the custom Plopmens SDK to interact with our custom plugins.
+Primarily used for: interacting with default Aragon smart contracts
+Aragon SDK is used for interacting with the smart contracts from Aragon. We've been extending the base smart contracts with our own plugins, so for those, we use the custom Plopmens SDK to interact with our custom plugins. Because of our own SDK implementation that supports our plugin, the aragon sdk might become unused.
 
 #### Ethers
 
 [Documentation](https://docs.ethers.io/v5/)
 
-Primarily used for: interacting with Ethereum blockchain.
+Primarily used for: interacting with Ethereum blockchain and wallet connection/wagmi hooks.
 Ethers is a library for interacting with the Ethereum blockchain. We might move to [Viem](https://viem.sh/) when it goes out of beta and Wagmi starts using it. We use Ethers v5, since wagmi currently required ethers<6, but this will change when wagmi moves to viem.
 
 #### Secure Seco DAO SDK
 
 [Documentation](https://github.com/SecureSECODAO/diamond-governance)
 
-Primarily used for: interacting with our custom smart contracts
+Primarily used for: interacting with our custom smart contracts and plugins. See [hooks](/src/hooks/)
 Made by our own Plopmens to interact with our custom smart contracts. Check out the github repo [here](https://github.com/SecureSECODAO/diamond-governance)
 
 #### React Jazzicon
 
 [Documentation](https://github.com/marcusmolchany/react-jazzicon#readme)
 
-Primarily used for: generating SVG icons based on user addresses
+Primarily used for: generating SVG icons based on user addresses. See [<Address/>](/src/components/ui/Address.tsx) and [<ConnectButton/>](/src/components/layout/ConnectButton.tsx)
 React Jazzicon is used for transforming a user's address (public key hash) into a beautiful SVG. Built into our `<Address/>` component as well.
 
 #### Wagmi
 
 [Documentation](https://wagmi.sh/react/getting-started)
 
-Primarily used for: interacting with wallet connectors
+Primarily used for: interacting with wallet connectors.
 We use Wagmi's React hooks to interact with the wallet connector, such as checking if the user is connected and requesting transactions, signatures, and more through the wallet provider.
 
 #### WalletConnect + Web3Modal
@@ -277,7 +278,7 @@ We use WalletConnect and Web3Modal for wallet connection on the site. They make 
 
 [Documentation](https://cva.style/docs)
 
-Primarily used for: components and variants, naming convention
+Primarily used for: Almost all [components](/src/components/) and variants, naming convention
 Used for components and variants,
 
 ##### naming convention
@@ -294,6 +295,7 @@ Clsx and Tailwind-Merge are used together to create the `cn()` function, which m
 #### ESLint
 
 [Documentation](https://eslint.org/docs/latest/)
+[Config](/.eslintrc.cjs)
 
 Primarily used for: linting JavaScript and TypeScript code
 
@@ -304,6 +306,7 @@ We are using some plugins for eslint to make it work for [tailwind](https://gith
 #### Jest
 
 [Documentation](https://jestjs.io/docs/getting-started)
+[Config](/jest.config.ts)
 
 Primarily used for: testing JavaScript and TypeScript code
 Jest is a testing framework for JavaScript and TypeScript code. It helps to ensure the quality and correctness of our codebase.
@@ -311,6 +314,7 @@ Jest is a testing framework for JavaScript and TypeScript code. It helps to ensu
 #### Prettier
 
 [Documentation](https://prettier.io/docs/en/index.html)
+[Config](/prettier.config.cjs)
 
 Primarily used for: code formatting
 Prettier is a code formatter that enforces a consistent coding style across the project. We also use a prettier plugin called [prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss#readme) that enforces tailwinds recommended class order.
@@ -329,6 +333,7 @@ own components. Radix UI is highly inspired by the shadcn components: https://ui
 #### React + Vite
 
 [React Documentation](https://react.dev/reference/react) / [Vite Documentation](https://vitejs.dev/guide/)
+[Config](/vite.config.ts)
 
 Primarily used for: building and developing the web application
 
@@ -373,12 +378,13 @@ The storybook can also be build, using:
 
 [Documentation](https://tiptap.dev/)
 
-Primarily used for: creating rich text editors
-Tiptap is a powerful, extensible, and customizable rich text editor for the web. We use it for the `<TextareaWYSIWYG/>` component for writing styled markdown text.
+Primarily used for: creating rich text editors, see [<TextareaWYSIWYG/>](/src/components/ui/TextareaWYSIWYG.tsx)
+Tiptap is a powerful, extensible, and customizable rich text editor for the web. We use it for the [<TextareaWYSIWYG/>](/src/components/ui/TextareaWYSIWYG.tsx) component for writing styled markdown text.
 
 #### Tailwind CSS
 
 [Documentation](https://tailwindcss.com/docs)
+[Config](/tailwind.config.cjs)
 
 Primarily used for: styling the application
 Tailwind CSS is a utility-first CSS framework for rapidly building custom designs. We use it for styling the entire app and components. When possible, use `@apply` in CSS files for better maintainability.
@@ -386,6 +392,7 @@ Tailwind CSS is a utility-first CSS framework for rapidly building custom design
 #### TypeScript
 
 [Documentation](https://www.typescriptlang.org/docs/)
+[Config](/tsconfig.json)
 
 Primarily used for: adding types to JavaScript code
 TypeScript is a superset of JavaScript that adds optional static types. It helps us catch errors early in the development process and improves the overall code quality.
