@@ -31,10 +31,10 @@ export const useVerification = ({ useDummyData = false }) => {
     const now = new Date();
 
     const stamps = [
-      addDays(now, 60),
-      addDays(now, 15),
-      addDays(now, -15),
-      addDays(now, -60),
+      addDays(now, 60), //very much expired
+      addDays(now, 15), // 15 days expired
+      addDays(now, -15), // almost expired
+      addDays(now, -60), // good to go
     ].map((x) => ({ expiration: x }));
 
     setMemberVerification(stamps);
