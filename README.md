@@ -74,15 +74,49 @@ After building the webapp, it is possible to locally run the built webapp using:
 npm run preview
 ```
 
-## Style guide
+## Contributing
 
-### Code style
+Contributions to the web-app are welcome. Below are some guidelines to follow when contributing.
+
+### Branch organization
+
+Development is done on the `dev` branch. When adding a new feature, bug fix, or anything else, a new branch should be created based on the `dev` branch (using kebeb case for its name). When the branch is done and no more changes will be pushed to it, a pull request can be opened to the `dev` branch.
+
+The main production branch is `master`, which is the branch that the live production deployment is based on. The `master` branch should be updated only be way of a pull request from the `dev` branch.
+
+Both the `dev` branch as well as the `master` branch are protected, and can only be changed by pull requests that pass the test workflow.
+
+### Development workflow
+
+After developing a feature or bug fix on a separate branch, the following commands can be run to ensure the project still builds and all tests pass before opening a pull request to the `dev` branch:
+
+- `npm run build` to make sure the project builds without errors
+- `npm run lint` to check the code style
+- `npm run format` to format the code using prettier
+- `npm run test` to run the Jest tests for logic functions
+- `npm run storybook` followed by `npm run test-storybook` to run the visual UI tests
+
+### Storybook
+
+For component where it makes sense (most components) to be able to view it in Storybook, a story should be written. For example, if you create a component in the file `Example.tsx`, you should write a story in the file `Example.stories.tsx`.
+You can refer to [this page](https://storybook.js.org/docs/react/writing-stories/introduction) for further instructions on how to write a story, or have a look at one of the existing `.stories` files for reference. In particular, it is advised to add the property `tags: ['autodocs']` to the `meta` object of every story.
+
+### Style guide
+
+#### Code style
 
 The code should be formatted as dictated by the automatic formatting tools.
-Code that gives an error upon linting (using `npm run lint`) should not be committed.
-It is also advised to turn on the `Format On Save` option in settings if you are using VS Code. Alternatively, you can run `npm run format` to format **_all_** files in the project, however, it is preferable to format only the files that you change.
+It is advised to turn on the `Format On Save` option in settings if you are using VS Code. Alternatively, you can run `npm run format` to format **_all_** files in the project, however, it is preferable to format only the files that you change.
 
-### Colors
+#### Page structure
+
+The general page structure is set up as follows:
+
+- `<HeaderCard />` component at the top, with the title of the page, and optionally a button or some other content on the right side (using the `aside` prop)
+- `<MainCard />` or regular `<Card />` components for the content of the page, with `1.5rem` of spacing in between the cards (tailwind class is `gap-6`)
+- `<Card />` with prop `variant='light'` for items inside of the main cards
+
+#### Colors
 
 Colors are defined using CSS variables in [index.css](/src/index.css) based on the approach taken by [shadcn](https://ui.shadcn.com/docs/theming). Each color has variants for light and dark mode, making it easy to change a color, without having to change the code everywhere that color is used.
 The colors defined in this CSS file correspond to those defined in [tailwind.config.cjs](tailwind.config.cjs), and when adding a new color to the css file, the tailwind config should be updated accordingly.
@@ -176,6 +210,20 @@ Some specific examples of how to use the color classes:
 - Subtext inside of a `light` variant `<Card />` component: `text-popover-foreground/80`
 - Even more subtle text inside of a `light` variant `<Card />` component: `text-popover-foreground/60`
 - Links (`<a>` tags) usually get the following styling: `text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80`
+
+### Adding proposal actions
+
+Proposal actions are essentially smart contract calls that can be executed upon a proposal being passed by the DAO. To add support for a new proposal, assuming it has already been added to the SDK, you should add the following files (when adding an action called `example`):
+
+- `ExampleAction.tsx` to the [components/proposal/actions](/src/components/proposal/actions) folder. This should be a component to view the action on the view-proposal-page, and the final step of the new proposal flow. You can refer to the other components for the existing actions for examples of the expected style. Don't forget to write a story for this component. This file should also include a type `ProposalExampleAction` that extends the `IProposalAction` interface (as defined in [ProposalActions.tsx](/src/components/proposal/ProposalActions.tsx)).
+- `ExampleInput.tsx` to the [components/newProposal/actions](/src/components/newProposal/actions) folder. This should be a component that can be used as part of a form to add an action in the new proposal flow. Again, refer to the files already in the folder for examples.
+
+Additionally, the following files should be updated:
+
+- [ProposalActionFilter.tsx](/src/components/proposal/actions/ProposalActionFilter.tsx) - a case should be added for the action, which should return the `<ExampleAction />` component newly defined in `ExampleAction.tsx`
+- [Actions.tsx](/src/components/newProposal/steps/Actions.tsx) - a case should be added for the new action in the switch statement of the component in this file, which should return the `<ExampleInput />` component newly defined in `ExampleInput.tsx`
+- [Confirmation.tsx](/src/components/newProposal/steps/Confirmation.tsx) - a case should be added for the new action to map the form data as defined in `ExampleInput.tsx` to the format expected by the `IProposalAction` interface (as defined in [ProposalActions.tsx](/src/components/proposal/ProposalActions.tsx))
+- [ProposalTag.tsx](/src/components/governance/ProposalTag.tsx) - an icon should be added to the `proposalTagIcon` object and the name of the action to the props interface `ProposalTagProps.icon`
 
 ## Packages
 
