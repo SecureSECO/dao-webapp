@@ -1,3 +1,16 @@
+<p align="center">
+    <a href="https://github.com/SecureSECODAO/dao-webapp/blob/dev/README.md" alt="License">
+        <img src="https://img.shields.io/github/license/SecureSECODAO/dao-webapp" /></a>
+    <a href="https://github.com/SecureSECODAO/dao-webapp/graphs/contributors" alt="Contributors">
+        <img src="https://img.shields.io/github/contributors/SecureSECODAO/dao-webapp" /></a>
+    <a href="https://github.com/SecureSECODAO/dao-webapp/pulse" alt="Activity">
+        <img src="https://img.shields.io/github/commit-activity/m/SecureSECODAO/dao-webapp" /></a>
+    <a href="https://github.com/SecureSECODAO/dao-webapp/actions" alt="Actions">
+        <img src="https://github.com/SecureSECODAO/dao-webapp/actions/workflows/test.yml/badge.svg?branch=master" /></a>
+    <a href="https://dao-webapp-securesecodao.vercel.app/" alt="Vercel deployment">
+        <img src="https://img.shields.io/github/deployments/SecureSECODAO/dao-webapp/production?label=vercel&logo=vercel" /></a>
+</p>
+
 # SecureSECO DAO web-app
 
 ## Initial setup
