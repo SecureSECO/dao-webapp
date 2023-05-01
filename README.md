@@ -48,7 +48,7 @@ Aragon SDK is used for interacting with the smart contracts from Aragon. We've b
 Primarily used for: interacting with Ethereum blockchain.
 Ethers is a library for interacting with the Ethereum blockchain. We might move to [Viem](https://viem.sh/) when it goes out of beta and Wagmi starts using it. We use Ethers v5, since wagmi currently required ethers<6, but this will change when wagmi moves to viem.
 
-#### Plopmens SDK
+#### Secure Seco DAO SDK
 
 [Documentation](https://github.com/SecureSECODAO/diamond-governance)
 
@@ -80,7 +80,7 @@ We use WalletConnect and Web3Modal for wallet connection on the site. They make 
 
 #### Class Variance Authority
 
-[Documentation] (https://cva.style/docs)
+[Documentation](https://cva.style/docs)
 
 Primarily used for: components and variants, naming convention
 Used for components and variants,
