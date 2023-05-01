@@ -226,7 +226,7 @@ Additionally, the following files should be updated:
 - [Confirmation.tsx](/src/components/newProposal/steps/Confirmation.tsx) - a case should be added for the new action to map the form data as defined in `ExampleInput.tsx` to the format expected by the `IProposalAction` interface (as defined in [ProposalActions.tsx](/src/components/proposal/ProposalActions.tsx))
 - [ProposalTag.tsx](/src/components/governance/ProposalTag.tsx) - an icon should be added to the `proposalTagIcon` object and the name of the action to the props interface `ProposalTagProps.icon`
 
-## Packages
+## Dependencies
 
 ### Web3 packages
 
@@ -272,18 +272,14 @@ We use Wagmi's React hooks to interact with the wallet connector, such as checki
 Primarily used for: wallet connection on the site
 We use WalletConnect and Web3Modal for wallet connection on the site. They make it easy to connect and interact with different wallets.
 
-### Normal Dependencies
+### Regular Dependencies
 
 #### Class Variance Authority
 
 [Documentation](https://cva.style/docs)
 
-Primarily used for: Almost all [components](/src/components/) and variants, naming convention
-Used for components and variants,
-
-##### naming convention
-
-TODO
+Primarily used for: Almost all [components](/src/components/) and variants.
+Refer to one of the existing components that uses variants to see how to use it. For example, see the [Button](/src/components/ui/Button.tsx) component.
 
 #### Clsx + Tailwind-Merge
 
