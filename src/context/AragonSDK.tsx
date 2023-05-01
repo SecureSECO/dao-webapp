@@ -52,8 +52,6 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   });
 
   useEffect(() => {
-    if (!signer) return;
-
     const aragonSDKContextParams: ContextParams = {
       network: 'goerli',
       signer,
@@ -67,7 +65,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
       ],
       graphqlNodes: [
         {
-          url: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/version/v1.0.0/api', //'https://subgraph.plopmenz.com/subgraphs/name/PlopGraph/version/v0.0.1/api'
+          url: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/version/v1.1.0/api', //'https://subgraph.plopmenz.com/subgraphs/name/PlopGraph/version/v0.0.1/api'
         },
       ],
     };
