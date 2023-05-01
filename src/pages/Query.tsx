@@ -17,6 +17,7 @@ import { Label } from '@/src/components/ui/Label';
 
 interface QueryFormData {
   searchUrl: string;
+  token: string;
 }
 
 const Query = () => {
@@ -26,9 +27,34 @@ const Query = () => {
     formState: { errors },
   } = useForm<QueryFormData>();
 
-  const onSubmit = (data: QueryFormData) => {
+  const onSubmit = async (data: QueryFormData) => {
     console.log('Valid URL:', data.searchUrl);
-    // Logic
+
+    try {
+      const response = await fetch('http://localhost:8080/fetch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          url: data.searchUrl,
+          token: data.token,
+        })
+      });
+  
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+  
+      const result = await response.json();
+      console.log('Result:', result);
+  
+      // Process result
+  
+    } catch (error) {
+      console.error('Error during fetch request:', error);
+      // Error handling
+    }
   };
 
   return (
@@ -59,6 +85,26 @@ const Query = () => {
                   className="..."
                   aria-invalid={errors.searchUrl ? 'true' : 'false'}
                   error={errors.searchUrl}
+                />
+              </ErrorWrapper>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="token">Enter your Github token</Label>
+              <ErrorWrapper name="Token" error={errors.token}>
+                <Input
+                  {...register('token', {
+                    required: true,
+                    pattern: {
+                      value: /^[\w\d-]+$/,  //placeholder
+                      message: 'Invalid token',
+                    },
+                  })}
+                  type="text"
+                  placeholder="Enter your Github token"
+                  id="token"
+                  className="..."
+                  aria-invalid={errors.token ? 'true' : 'false'}
+                  error={errors.token}
                 />
               </ErrorWrapper>
             </div>
