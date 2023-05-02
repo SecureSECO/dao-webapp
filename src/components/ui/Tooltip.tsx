@@ -43,7 +43,7 @@ const TooltipTrigger = React.forwardRef<
   <TooltipPrimitive.Trigger
     ref={ref}
     className={cn(
-      'ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-1',
+      'ring-ring ring-offset-2 ring-offset-highlight focus:outline-none focus:ring-1',
       className
     )}
     {...props}
