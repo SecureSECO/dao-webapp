@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { action } from '@storybook/addon-actions';
 import { StoryFn } from '@storybook/react';
 import { ReactElement, ReactNode, FC } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -21,8 +20,7 @@ const StorybookFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 export const withReactHookForm = (
-  Story: FC,
-  options: any
+  Story: FC
 ): ReturnType<StoryFn<ReactElement>> => (
   <StorybookFormProvider>
     <Story />
