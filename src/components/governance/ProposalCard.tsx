@@ -159,7 +159,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
         <div className="flex flex-row justify-between">
           <Link
             to={`/governance/proposals/${proposal.id}`}
-            className="flex flex-row items-center gap-x-2 hover:underline"
+            className="flex flex-row items-center gap-x-2 rounded-sm ring-ring ring-offset-2 ring-offset-background hover:underline focus:outline-none focus:ring-1"
           >
             <Header level={2}>{title}</Header>
             <HiChevronRight className="h-5 w-5" />
