@@ -55,7 +55,7 @@ const Label = React.forwardRef<
     {tooltip && (
       <TooltipProvider delayDuration={0}>
         <Tooltip>
-          <TooltipTrigger className="hover:cursor-help">
+          <TooltipTrigger className="rounded-full hover:cursor-help">
             <HiQuestionMarkCircle className="h-5 w-5 shrink-0 text-highlight-foreground/80" />
           </TooltipTrigger>
           <TooltipContent className="font-normal">{tooltip}</TooltipContent>

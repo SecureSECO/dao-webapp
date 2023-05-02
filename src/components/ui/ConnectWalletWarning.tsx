@@ -24,7 +24,7 @@ const ConnectWalletWarning = ({ action }: { action: string }) => {
       <p className="leading-4">
         <button
           type="button"
-          className="hover:underline"
+          className="rounded-sm ring-ring ring-offset-2 ring-offset-background hover:underline focus:outline-none focus:ring-1"
           onClick={() => open()}
         >
           Connect
