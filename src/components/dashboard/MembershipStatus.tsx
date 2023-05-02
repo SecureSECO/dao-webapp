@@ -34,7 +34,7 @@ export const MembershipStatus = ({
         Your wallet is not yet connected:
         <button
           type="button"
-          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+          className="rounded-sm text-primary-highlight underline ring-ring ring-offset-2 ring-offset-destructive-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
           onClick={() => open()}
         >
           Connect Wallet.
@@ -56,7 +56,7 @@ export const MembershipStatus = ({
         You are not yet a member of this DAO:
         <RouterLink
           to="/verification"
-          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+          className="rounded-sm text-primary-highlight underline ring-ring ring-offset-2 ring-offset-destructive-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
         >
           become a member!
         </RouterLink>
@@ -83,7 +83,7 @@ export const MembershipStatus = ({
         Your verification is almost expired:
         <RouterLink
           to="/verification"
-          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+          className="rounded-sm text-primary-highlight underline ring-ring ring-offset-2 ring-offset-destructive-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
         >
           re-verify
         </RouterLink>
@@ -103,7 +103,7 @@ export const MembershipStatus = ({
         Your verification is expired:
         <RouterLink
           to="/verification"
-          className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+          className="rounded-sm text-primary-highlight underline ring-ring ring-offset-2 ring-offset-destructive-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
         >
           re-verify
         </RouterLink>

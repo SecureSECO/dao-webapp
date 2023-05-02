@@ -239,7 +239,11 @@ const ResourceInput = ({
               placeholder="Resource URL"
               error={errors?.url}
             />
-            <button type="button" onClick={onRemove} className="shrink-0">
+            <button
+              type="button"
+              onClick={onRemove}
+              className="shrink-0 rounded-sm ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2"
+            >
               <HiXMark className="h-5 w-5 cursor-pointer" />
             </button>
           </div>

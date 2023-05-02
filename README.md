@@ -210,7 +210,7 @@ Some specific examples of how to use the color classes:
 - Component with a highlight background: `bg-highlight text-highlight-foreground`
 - Subtext inside of a `light` variant `<Card />` component: `text-popover-foreground/80`
 - Even more subtle text inside of a `light` variant `<Card />` component: `text-popover-foreground/60`
-- Links (`<a>` tags) usually get the following styling: `text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80`
+- Links (`<a>` tags) usually get the following styling: `text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80 ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-1 rounded-sm`
 
 ### Adding proposal actions
 
