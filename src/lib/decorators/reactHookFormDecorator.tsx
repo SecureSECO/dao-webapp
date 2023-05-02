@@ -10,8 +10,12 @@ import { StoryFn } from '@storybook/react';
 import { ReactElement, ReactNode, FC } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-const StorybookFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const methods = useForm();
+const StorybookFormProvider: FC<{ children: ReactNode; options: any }> = ({
+  children,
+  options,
+}) => {
+  const { parameters } = options;
+  const methods = useForm({ defaultValues: parameters.defaultValues });
   return (
     <FormProvider {...methods}>
       <form>{children}</form>
@@ -20,9 +24,10 @@ const StorybookFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 export const withReactHookForm = (
-  Story: FC
+  Story: FC,
+  options: any
 ): ReturnType<StoryFn<ReactElement>> => (
-  <StorybookFormProvider>
+  <StorybookFormProvider options={options}>
     <Story />
   </StorybookFormProvider>
 );
