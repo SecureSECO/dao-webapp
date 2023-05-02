@@ -36,7 +36,20 @@ Tooltip.displayName = TooltipPrimitive.Tooltip.displayName;
  * Custom TooltipTrigger component.
  * The button that toggles the tooltip. By default, the Tooltip.Content will position itself against the trigger.
  */
-const TooltipTrigger = TooltipPrimitive.Trigger;
+const TooltipTrigger = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Trigger>
+>(({ className, ...props }, ref) => (
+  <TooltipPrimitive.Trigger
+    ref={ref}
+    className={cn(
+      'ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-1',
+      className
+    )}
+    {...props}
+  />
+));
+TooltipTrigger.displayName = TooltipPrimitive.Trigger.displayName;
 
 /**
  * Custom TooltipContent component with additional styling.

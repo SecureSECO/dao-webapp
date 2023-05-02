@@ -121,7 +121,7 @@ const Dashboard = () => {
                   <a
                     key={i}
                     href={link.url}
-                    className="flex flex-row items-center gap-x-2 font-medium text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
+                    className="flex flex-row items-center gap-x-2 rounded-sm font-medium text-primary-highlight ring-ring ring-offset-2 ring-offset-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
                   >
                     {link.name}
                     <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
