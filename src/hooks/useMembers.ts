@@ -7,9 +7,11 @@
  */
 
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
 import { TokenVotingClient } from '@aragon/sdk-client';
+import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 
@@ -40,8 +42,7 @@ export const useMembers = ({
   const [memberCount, setMemberCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { votingClient, votingPluginAddress, repTokenContract } =
-    useAragonSDKContext();
+  const { client, repTokenContract } = useDiamondSDKContext();
 
   /**
    * Fetch the REP balance for a single address. Throws an error if the REP token contract is not set
@@ -84,18 +85,12 @@ export const useMembers = ({
     );
   };
 
-  const fetchMembers = async (client: TokenVotingClient) => {
-    if (!votingPluginAddress) {
-      setLoading(false);
-      setError('Voting plugin address not set');
-      return;
-    }
-
+  const fetchMembers = async (client: DiamondGovernanceClient) => {
     try {
       // Fetch the list of address that are members of the DAO
-      const addressList: string[] | null = await client.methods.getMembers(
-        votingPluginAddress
-      );
+      const addressList: string[] = await client.sugar.GetMembers();
+      console.log(addressList);
+
       if (addressList) {
         // Fetch the balance of each member
         let daoMembers;
@@ -139,9 +134,9 @@ export const useMembers = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!votingClient) return;
-    fetchMembers(votingClient);
-  }, [votingClient]);
+    if (!client) return;
+    fetchMembers(client);
+  }, [client]);
 
   /**
    * Check if an address is a member of the DAO

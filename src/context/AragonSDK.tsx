@@ -17,40 +17,24 @@ import {
   Client,
   Context,
   ContextParams,
-  ContextPlugin,
   TokenVotingClient,
 } from '@aragon/sdk-client';
-import { useProvider, useSigner } from 'wagmi';
-import { Contract } from 'ethers';
-import { erc20ABI } from 'wagmi';
-import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
+import { useSigner } from 'wagmi';
 
 type SDKContext = {
   context?: Context;
   client?: Client;
-  votingClient?: DiamondGovernanceClient;
+  votingClient?: TokenVotingClient;
   votingPluginAddress?: string;
-  repTokenContract?: Contract;
 };
 
 const AragonSDKContext = createContext<SDKContext>({});
-const votingPluginAddress = import.meta.env.VITE_VOTING_PLUGIN;
-const repTokenAddress = import.meta.env.VITE_REP_CONTRACT;
 
 export function AragonSDKWrapper({ children }: any): JSX.Element {
   const [context, setContext] = useState<Context | undefined>(undefined);
   const [client, setClient] = useState<Client | undefined>(undefined);
-  const [votingClient, setVotingClient] = useState<
-    DiamondGovernanceClient | undefined
-  >(undefined);
-  const [repTokenContract, setRepTokenContract] = useState<
-    Contract | undefined
-  >(undefined);
 
   const signer = useSigner().data || undefined;
-  const provider = useProvider({
-    chainId: +import.meta.env.VITE_PREFERRED_NETWORK_ID,
-  });
 
   useEffect(() => {
     const aragonSDKContextParams: ContextParams = {
@@ -77,22 +61,13 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   useEffect(() => {
     if (!context || !signer) return;
     setClient(new Client(context));
-    // const contextPlugin = ContextPlugin.fromContext(context);
-    setVotingClient(new DiamondGovernanceClient(votingPluginAddress, signer));
   }, [context, signer]);
-
-  useEffect(() => {
-    setRepTokenContract(new Contract(repTokenAddress, erc20ABI, provider));
-  }, [provider]);
 
   return (
     <AragonSDKContext.Provider
       value={{
         context,
         client,
-        votingClient,
-        votingPluginAddress,
-        repTokenContract,
       }}
     >
       {children}

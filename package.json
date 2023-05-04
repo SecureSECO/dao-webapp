@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@aragon/sdk-client": "^1.4.0",
-    "@plopmenz/diamond-governance-sdk": "^0.0.3",
+    "@plopmenz/diamond-governance-sdk": "^0.0.11",
     "@radix-ui/react-accordion": "^1.1.1",
     "@radix-ui/react-alert-dialog": "^1.0.3",
     "@radix-ui/react-collapsible": "^1.0.2",
@@ -60,6 +60,7 @@
     "wagmi": "^0.12.12"
   },
   "devDependencies": {
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@storybook/addon-essentials": "^7.0.7",
     "@storybook/addon-interactions": "^7.0.7",
     "@storybook/addon-links": "^7.0.7",
