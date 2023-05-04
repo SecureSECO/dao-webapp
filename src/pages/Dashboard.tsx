@@ -17,8 +17,8 @@ import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { useMembers } from '@/src/hooks/useMembers';
 import { useProposals } from '@/src/hooks/useProposals';
 import {
-  getChainDataByChainId,
-  getSupportedNetworkByChainId,
+  PREFERRED_NETWORK,
+  PREFERRED_NETWORK_METADATA,
 } from '@/src/lib/constants/chains';
 import { DaoTransfersList } from '@/src/pages/Finance';
 import { ProposalCardList } from '@/src/pages/Governance';
@@ -68,9 +68,8 @@ const Dashboard = () => {
     return <p>error: {daoError}</p>;
   }
 
-  const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
-  const currentNetwork = getSupportedNetworkByChainId(+chainId);
-  const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
+  const currentNetwork = PREFERRED_NETWORK;
+  const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
 
   return (
     <div className="grid grid-cols-7 gap-6">
@@ -121,7 +120,7 @@ const Dashboard = () => {
                   <a
                     key={i}
                     href={link.url}
-                    className="flex flex-row items-center gap-x-2 rounded-sm font-medium text-primary-highlight ring-ring ring-offset-2 ring-offset-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
+                    className="hover:text-primary-highlight/80 flex flex-row items-center gap-x-2 rounded-sm font-medium text-primary-highlight ring-ring ring-offset-2 ring-offset-background transition-colors duration-200 focus:outline-none focus:ring-1"
                   >
                     {link.name}
                     <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
