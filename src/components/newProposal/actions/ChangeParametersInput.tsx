@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { NumberPattern } from '@/src/lib/patterns';
+import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import {
   Select,
   SelectGroup,
@@ -22,14 +22,38 @@ import {
   Controller,
   UseFormRegister,
   useWatch,
+  ValidationRule,
 } from 'react-hook-form';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { isNullOrUndefined } from '@/src/lib/utils';
 import { Input } from '@/src/components/ui/Input';
+import { MainCard } from '../../ui/MainCard';
+import { HiCog } from 'react-icons/hi2';
+import { Label } from '../../ui/Label';
+import { ActionFormError } from '../steps/Actions';
 
+export type ProposalFormChangeParameter = {
+  name: 'change_parameter';
+  plugin: string;
+  parameter: string;
+  value: string;
+};
+
+export const emptyChangeParameter: ProposalFormChangeParameter = {
+  name: 'change_parameter',
+  plugin: '',
+  parameter: '',
+  value: '',
+};
+
+// TYPES:
 type Validator = {
-  validate?: (param: Parameter) => undefined | string;
+  // Validation function, returns true if valid, string with error message if invalid
+  validate?: (value: string) => true | string;
+  // Regexp pattern to validate string value.
   pattern?: RegExp;
+  // Message to display if pattern does not match
+  message?: string;
 };
 
 type Parameter = {
@@ -42,10 +66,41 @@ type Plugin = {
   parameters: Parameter[];
 };
 
+// VALIDATORS:
+// This is the place to add new validators
+
 const numberValidator: Validator = {
   pattern: NumberPattern,
+  message: 'The value should be a number, e.g.: 3.141',
 };
 
+const addressValidator: Validator = {
+  pattern: AddressPattern,
+  message: 'The value should be an address, starting with 0x',
+};
+
+/*
+ * A function to apply a validator for a given value
+ * @returns true if the value is valid,
+ *    a string with an error message for the user if the value is invalid.
+ * */
+const applyValidator = (validator: Validator | undefined, value: string) => {
+  // No validator, thus it is valid
+  if (!validator) return true;
+
+  const patternValid = validator.pattern?.test(value) ?? true;
+  if (!patternValid) {
+    return validator.message ?? 'Invalid input';
+  }
+  if (validator.validate) {
+    return validator.validate(value);
+  }
+  // No validators, thus it is valid
+  return true;
+};
+
+//Plugins and parameters:
+//Note: this is the place to add new plugins/parameters
 const PluginParameterOptions: { plugins: Plugin[] } = {
   plugins: [
     {
@@ -65,7 +120,8 @@ const PluginParameterOptions: { plugins: Plugin[] } = {
       plugin: 'Plugin 2',
       parameters: [
         {
-          param: 'Plugin 2 param 1',
+          param: 'Plugin 2 param 1 - address',
+          validator: addressValidator,
         },
         {
           param: 'Plugin 2 param 2',
@@ -83,8 +139,8 @@ export const ChangeParametersInput = ({
 }: {
   control: Control<any, any>;
   register: UseFormRegister<any>;
-  errors?: FieldError;
-  prefix: string;
+  errors?: ActionFormError<ProposalFormChangeParameter>;
+  prefix: `actions.${number}`;
 }) => {
   // react-hook-form input names
   const name_plugin = `${prefix}.plugin`;
@@ -103,86 +159,98 @@ export const ChangeParametersInput = ({
   );
 
   return (
-    <div>
-      <div className="w-full">
-        <Controller
-          control={control}
-          name={name_plugin}
-          render={({ field: { onChange, name, value } }) => (
-            <Select defaultValue={value} onValueChange={onChange} name={name}>
-              <SelectTrigger>
-                <SelectValue placeholder="Plugin" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Plugin</SelectLabel>
-                  {PluginParameterOptions.plugins.map((plugin) => (
-                    <SelectItem key={plugin.plugin} value={plugin.plugin}>
-                      {plugin.plugin}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          )}
-        />
+    <MainCard
+      className="flex flex-col gap-4"
+      header="Change DAO parameters"
+      icon={HiCog}
+      variant="light"
+    >
+      <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-y-1">
+          <Label tooltip="Plugin to change" htmlFor="amount">
+            Plugin
+          </Label>
+          <Controller
+            control={control}
+            name={name_plugin}
+            render={({ field: { onChange, name, value } }) => (
+              <Select defaultValue={value} onValueChange={onChange} name={name}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Plugin" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Plugin</SelectLabel>
+                    {PluginParameterOptions.plugins.map((plugin) => (
+                      <SelectItem key={plugin.plugin} value={plugin.plugin}>
+                        {plugin.plugin}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
+        <div className="flex flex-col gap-y-1">
+          <Label tooltip="Plugin parameter to change" htmlFor="amount">
+            Parameter
+          </Label>
+          <Controller
+            control={control}
+            name={name_param}
+            render={({ field: { onChange, name, value } }) => (
+              <Select
+                disabled={isNullOrUndefined(watchPlugin)}
+                defaultValue={value}
+                onValueChange={onChange}
+                name={name}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Parameter" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Parameter</SelectLabel>
+                    {watchPlugin?.parameters.map((param) => (
+                      <SelectItem key={param.param} value={param.param}>
+                        {param.param}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
       </div>
-      <div className="w-full">
-        <Controller
-          control={control}
-          name={name_param}
-          render={({ field: { onChange, name, value } }) => (
-            <Select
-              disabled={isNullOrUndefined(watchPlugin)}
-              defaultValue={value}
-              onValueChange={onChange}
-              name={name}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Parameter" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Parameter</SelectLabel>
-                  {watchPlugin?.parameters.map((param) => (
-                    <SelectItem key={param.param} value={param.param}>
-                      {param.param}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          )}
-        />
+      <div className="flex flex-col gap-y-1">
+        <div className="w-full">
+          <Label
+            htmlFor="recipient"
+            tooltip="The value that the plugin parameter will be changed to"
+          >
+            Parameter value
+          </Label>
+          <ErrorWrapper name="Value" error={errors?.value}>
+            <Input
+              {...register(name_value, {
+                required: true,
+                //since registration happens only once,
+                //we must use a validation function that can retrieve the current validator and apply it.
+                validate: (v: string) => {
+                  const validator = watchParam?.validator;
+                  return applyValidator(validator, v);
+                },
+              })}
+              type="text"
+              id="parameterValue"
+              disabled={isNullOrUndefined(watchParam)}
+              error={errors?.value}
+            />
+          </ErrorWrapper>
+        </div>
       </div>
-      <div className="w-full">
-        <Input
-          {...register(name_value, {
-            required: true,
-            // TODO: Validation logic
-            // pattern: {
-            //   value: AddressPattern,
-            //   message:
-            //     'Please enter an address starting with 0x, followed by 40 address characters',
-            // },
-            // // Custom validation function to prevent duplicate addresses
-            // validate: (value: string) => {
-            //   let anyDuplicates = someUntil(
-            //     getValues(walletsPrefix),
-            //     (a) => a.address === value,
-            //     index
-            //   );
-            //   return !anyDuplicates || 'Duplicate address';
-            // },
-          })}
-          type="text"
-          id="parameterValue"
-          disabled={isNullOrUndefined(watchParam)}
-          // error={errors?.address}
-          // className="w-full basis-2/5"
-          // placeholder="0x..."
-        />
-      </div>
-    </div>
+    </MainCard>
   );
 };

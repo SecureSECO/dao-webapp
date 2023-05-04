@@ -41,9 +41,14 @@ import {
   DropdownMenuItem,
 } from '@/src/components/ui/Dropdown';
 import { Button } from '@/src/components/ui/Button';
-import { HiBanknotes, HiCircleStack, HiPlus } from 'react-icons/hi2';
+import { HiBanknotes, HiCircleStack, HiCog, HiPlus } from 'react-icons/hi2';
 import { Label } from '@/src/components/ui/Label';
 import { FaGithub } from 'react-icons/fa';
+import {
+  ChangeParametersInput,
+  emptyChangeParameter,
+  ProposalFormChangeParameter,
+} from '../actions/ChangeParametersInput';
 
 export interface ProposalFormActions {
   actions: ProposalFormAction[];
@@ -52,7 +57,8 @@ export interface ProposalFormActions {
 export type ProposalFormAction =
   | ProposalFormWithdrawData
   | ProposalFormMintData
-  | ProposalFormMergeData;
+  | ProposalFormMergeData
+  | ProposalFormChangeParameter;
 
 export const Actions = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
@@ -138,6 +144,15 @@ export const Actions = () => {
                           onRemove={() => remove(index)}
                         />
                       );
+                    case 'change_parameter':
+                      return (
+                        <ChangeParametersInput
+                          control={control}
+                          register={register}
+                          errors={errors?.actions?.[index]}
+                          prefix={prefix}
+                        />
+                      );
                   }
                 })}
               </div>
@@ -197,6 +212,13 @@ export const AddActionButton = ({
           >
             <FaGithub className="h-5 w-5 shrink-0" />
             <span>Merge pull request</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => append(emptyChangeParameter)}
+            className="gap-x-2 hover:cursor-pointer"
+          >
+            <HiCog className="h-5 w-5 shrink-0" />
+            <span>Change DAO parameter</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

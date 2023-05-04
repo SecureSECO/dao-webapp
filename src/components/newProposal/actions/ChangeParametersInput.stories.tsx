@@ -22,7 +22,7 @@ export const Primary: Story = {
   args: {
     register: (() => {}) as any,
     errors: undefined,
-    name: 'name',
+    prefix: 'actions.0',
   },
   decorators: [withReactHookForm],
 };
