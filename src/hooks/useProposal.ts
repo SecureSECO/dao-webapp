@@ -160,18 +160,6 @@ export const useProposal = ({
       setError(getErrorMessage(e));
       setLoading(false);
     }
-
-    // Fetch if the current proposal can be executed
-    try {
-      // Will fail if no signer is available, so check for signer existence first
-      if (signer) {
-        const canExecuteProposal = await votingClient.methods.canExecute(id);
-        if (canExecuteProposal) setCanExecute(true);
-        else setCanExecute(false);
-      }
-    } catch (e) {
-      console.error('Error fetching canExecute', e);
-    }
   };
 
   const execute = () => {
@@ -192,6 +180,24 @@ export const useProposal = ({
     if (votingClient) setLoading(true);
     fetchProposal();
   }, [votingClient, id]);
+
+  useEffect(() => {
+    const checkCanExecute = async () => {
+      if (!votingClient || !proposal || !id) return;
+      // Fetch if the current proposal can be executed
+      try {
+        // Will fail if no signer is available, so check for signer existence first
+        if (signer) {
+          const canExecuteProposal = await votingClient.methods.canExecute(id);
+          if (canExecuteProposal) setCanExecute(true);
+          else setCanExecute(false);
+        }
+      } catch (e) {
+        console.error('Error fetching canExecute', e);
+      }
+    };
+    checkCanExecute();
+  }, [signer, proposal]);
 
   return {
     loading,
