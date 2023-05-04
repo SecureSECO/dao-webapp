@@ -18,7 +18,7 @@ import { calcBigintPercentage, countdownText } from '@/src/lib/utils';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { Link } from 'react-router-dom';
 import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
-import Activity from '@/src/components/icons/Actitivy';
+import Activity from '@/src/components/icons/Activity';
 import Check from '@/src/components/icons/Check';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 
