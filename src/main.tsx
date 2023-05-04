@@ -14,7 +14,7 @@ import Layout from './components/layout/Layout';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import './index.css';
+import '@/src/index.css';
 
 import {
   EthereumClient,
@@ -29,11 +29,10 @@ import Finance from '@/src/pages/Finance';
 import Settings from '@/src/pages/Settings';
 import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import NewProposal from '@/src/pages/NewProposal';
-import Verification from './pages/Verification';
+import Verification from '@/src/pages/Verification';
 import { Toaster } from '@/src/components/ui/Toaster';
 import ViewProposal from '@/src/pages/ViewProposal';
-import FinishVerification from './pages/FinishVerification';
-import { ganache } from './lib/constants/GanacheChain';
+import { ganache } from '@/src/lib/constants/GanacheChain';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -45,7 +44,7 @@ const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 const chains = [goerli, polygon, ganache];
 
 const { provider } = configureChains(chains, [
-  import.meta.env.PROD
+  import.meta.env.PROD || import.meta.env.VITE_USE_GANACHE !== 'true'
     ? (w3mProvider({ projectId }) as any)
     : // DEV NOTE: This is a local testnet on Ganache. Make sure you have it running
       // on port 65534, and deploy the necessary contracts to it.
@@ -98,16 +97,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/verification',
-        children: [
-          {
-            path: '',
-            element: <Verification />,
-          },
-          {
-            path: '/verification/finish',
-            element: <FinishVerification />,
-          },
-        ],
+        element: <Verification />,
       },
       {
         path: '/query',

@@ -11,30 +11,108 @@
 @tailwind utilities;
 
 @layer base {
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    @apply text-gray-100 shadow-[inset_0_0_0_30px] shadow-white dark:shadow-slate-800;
-    -webkit-text-fill-color: #aaa !important;
+  :root {
+    --background: 210 40% 98%; /* hsl(210, 40%, 98%) */
+    --foreground: 215 25% 27%; /* hsl(215, 25%, 27%) */
+
+    --muted: 214 32% 91%; /* hsl(214, 32%, 91%) */
+    --muted-foreground: 215 25% 27%; /* hsl(215, 25%, 27%) */
+
+    --popover: 210 40% 98%; /* hsl(210, 40%, 98%) */
+    --popover-foreground: 215 25% 27%; /* hsl(215, 25%, 27%) */
+
+    --highlight: 0 0% 100%; /* hsl(0, 0%, 100%) */
+    --highlight-foreground: 215 25% 27%; /* hsl(215, 25%, 27%) */
+
+    --border: 214 32% 91%; /* hsl(214, 32%, 91%) */
+    --input: 214 32% 91%; /* hsl(214, 32%, 91%) */
+
+    --success: 142 69% 58%; /* hsl(142, 69%, 58%) */
+    --success-background: 120 100% 90%; /* hsl(120, 100%, 90%) */
+    --success-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
+
+    --primary: 215 54% 34%; /* hsl(215, 54%, 34%) */
+    --primary-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
+    --primary-highlight: 213 52% 60%; /* hsl(213, 52%, 60%) */
+
+    --secondary: 213 27% 84%; /* hsl(213, 27%, 84%) */
+    --secondary-foreground: 216 34% 15%; /* hsl(216, 34%, 17%) */
+
+    --accent: 210 40% 94%; /* hsl(210, 40%, 94%) */
+    --accent-foreground: 222 47% 11%; /* hsl(222, 47%, 11%) */
+
+    --destructive: 0 91% 71%; /* hsl(0, 91%, 71%) */
+    --destructive-background: 0 96% 89%; /* hsl(0, 96%, 89%) */
+    --destructive-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
+
+    --ring: 215 20% 65%; /* hsl(215, 20%, 65%) */
+
+    --radius: 0.5rem; /* 8px */
   }
 
-  html,
+  .dark {
+    --background: 225 29% 11%; /* hsl(224, 29%, 11%) */
+    --foreground: 213 27% 84%; /* hsl(213, 27%, 84%) */
+
+    --muted: 222 47% 11%; /* hsl(223, 47%, 11%) */
+    --muted-foreground: 213 27% 84%; /* hsl(213, 27%, 84%) */
+
+    --popover: 223 24% 20%; /* hsl(223, 24%, 20%) */
+    --popover-foreground: 213 27% 84%; /* hsl(213, 27%, 84%) */
+
+    --highlight: 226 28% 16%; /* hsl(226, 28%, 16%) */
+    --highlight-foreground: 213 27% 84%; /* hsl(213, 27%, 84%) */
+
+    --border: 223 24% 25%; /* hsl(223, 24%, 25%) */
+    --input: 223 24% 25%; /* hsl(223, 24%, 25%) */
+
+    --success: 142 77% 73%; /* hsl(142, 77%, 73%) */
+    --success-background: 134 77% 86%; /* hsl(134, 77%, 86%) */
+    --success-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
+
+    --primary: 213 50% 48%; /* hsl(213, 50%, 48%) */
+    --primary-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
+    --primary-highlight: 213 52% 60%; /* hsl(213, 52%, 60%) */
+
+    --secondary: 215 19% 35%; /* hsl(215, 19%, 35%) */
+    --secondary-foreground: 213 27% 84%; /* hsl(213, 27%, 84%) */
+
+    --accent: 223 24% 22%; /* hsl(216, 34%, 17%) */
+    --accent-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
+
+    --destructive: 0 94% 82%; /* hsl(0, 94%, 82%) */
+    --destructive-background: 0 94% 82%; /* hsl(0, 94%, 82%) */
+    --destructive-foreground: 216 34% 17%; /* hsl(216, 34%, 17%) */
+
+    --ring: 223 24% 28%; /* hsl(223, 24%, 28%) */
+
+    --radius: 0.5rem; /* 8px */
+
+    color-scheme: dark;
+  }
+}
+
+@layer base {
   body {
-    @apply min-h-screen scroll-smooth bg-slate-50 text-black dark:bg-slate-950 dark:text-slate-50;
-  }
-
-  #root {
-    @apply h-full w-full;
+    @apply min-h-screen scroll-smooth bg-background text-foreground;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
   ::-moz-selection {
     /* Code for Firefox */
-    @apply bg-blue-500 text-gray-700;
+    @apply bg-primary text-primary-foreground;
   }
 
   ::selection {
-    @apply bg-blue-500 text-gray-700;
+    @apply bg-primary text-primary-foreground;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    @apply shadow-[inset_0_0_0_30px] shadow-background dark:shadow-destructive;
+    -webkit-text-fill-color: #aaa !important;
   }
 }
 
@@ -48,23 +126,23 @@
   outline: none;
 }
 
-.styled-editor-content .ProseMirror ul {
-  list-style-type: decimal;
-  padding: 0 1rem;
-}
-
-.styled-editor-content .ProseMirror ol {
+.styled-editor-content ul {
   list-style-type: disc;
   padding: 0 1rem;
 }
 
-.styled-editor-content .ProseMirror a {
+.styled-editor-content ol {
+  list-style-type: decimal;
+  padding: 0 1rem;
+}
+
+.styled-editor-content a {
   color: #003bf5;
   cursor: pointer;
   font-weight: 700;
 }
 
-.styled-editor-content .ProseMirror a:hover {
+.styled-editor-content a:hover {
   color: #0031ad;
 }
 

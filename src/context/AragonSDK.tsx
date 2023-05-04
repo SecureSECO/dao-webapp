@@ -1,4 +1,12 @@
 /**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
  * @see https://devs.aragon.org/docs/sdk/examples/ - Aragon SDK Context setup
  * Exports a React Context that provides the Aragon SDK Context and Client.
  * This context is used by the useAragonSDK hook.
@@ -40,7 +48,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
 
   const signer = useSigner().data || undefined;
   const provider = useProvider({
-    chainId: import.meta.env.VITE_PREFERRED_NETWORK_ID,
+    chainId: +import.meta.env.VITE_PREFERRED_NETWORK_ID,
   });
 
   useEffect(() => {

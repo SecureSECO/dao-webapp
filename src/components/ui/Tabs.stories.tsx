@@ -7,12 +7,16 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
 
-import { Button } from './Button';
-import { Input } from './Input';
+import { Button } from '@/src/components/ui/Button';
+import { Input } from '@/src/components/ui/Input';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/src/components/ui/Tabs';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -32,7 +36,7 @@ export const Primary: Story = {
           <TabsTrigger value="password">Password</TabsTrigger>
         </TabsList>
         <TabsContent value="account">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-highlight-foreground/80">
             Make changes to your account here. Click save when you&apos;re done.
           </p>
           <div className="grid gap-2 py-4">
@@ -50,7 +54,7 @@ export const Primary: Story = {
           </div>
         </TabsContent>
         <TabsContent value="password">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-highlight-foreground/80">
             Change your password here. After saving, you&apos;ll be logged out.
           </p>
           <div className="grid gap-2 py-4">
@@ -69,29 +73,5 @@ export const Primary: Story = {
         </TabsContent>
       </>
     ),
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    // For documentation on queries on the canvas, see: https://testing-library.com/docs/queries/byplaceholdertext
-    const name = canvas.getByText('Name').nextSibling as Element;
-    const username = canvas.getByText('Username').nextSibling as Element;
-    const d = 10;
-
-    userEvent.clear(name);
-    userEvent.type(name, 'Firstname2, Lastname2', { delay: d });
-    userEvent.clear(username);
-    userEvent.type(username, 'username', { delay: d });
-    userEvent.click(canvas.getByText('Save changes'));
-
-    // move to next tab
-    userEvent.click(canvas.getByText('Password'));
-    const curPass = canvas.getByText('Current password').nextSibling as Element;
-    const newPass = canvas.getByText('New password').nextSibling as Element;
-    userEvent.clear(curPass);
-    userEvent.type(curPass, 'Old Password', { delay: d });
-    userEvent.clear(newPass);
-    userEvent.type(newPass, 'New Password that is a lot longer', {
-      delay: d,
-    });
   },
 };

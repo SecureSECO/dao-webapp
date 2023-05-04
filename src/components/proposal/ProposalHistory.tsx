@@ -115,10 +115,10 @@ const ProposalHistory = ({
       loading={loading}
       className={className}
       icon={History}
-      header={<p className="text-2xl font-medium">History</p>}
+      header="History"
     >
       <div className="relative">
-        <div className="absolute bottom-6 left-[0.5625rem] top-2 w-0.5 bg-slate-400 dark:bg-slate-500" />
+        <div className="absolute bottom-6 left-[0.5625rem] top-2 w-0.5 bg-popover-foreground/60" />
         <div className="relative z-10 flex flex-col gap-y-6">
           {proposal &&
             getProposalMilestones(proposal).map((milestone, i) => (

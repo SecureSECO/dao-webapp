@@ -8,19 +8,21 @@ const config = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
-    "@storybook/addon-styling",
+    '@storybook/addon-styling',
   ],
   framework: {
     name: '@storybook/react-vite',
     options: {},
   },
+  features: {
+    storyStoreV7: true,
+  },
   docs: {
     autodocs: 'tag',
   },
-  core:{
+  core: {
     disableTelemetry: true,
-  }
+  },
 };
-
 
 module.exports = config;

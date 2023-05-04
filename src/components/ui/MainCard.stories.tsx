@@ -36,10 +36,38 @@ const meta: Meta<typeof MainCard> = {
 export default meta;
 type Story = StoryObj<typeof MainCard>;
 
-export const Primary: Story = {
+export const Default: Story = {
   args: {
     icon: HiInbox,
     header: <p className="text-xl">Example title</p>,
+    aside: (
+      <Button
+        label="Click me!"
+        onClick={() => console.log('I have been clicked!')}
+      />
+    ),
+  },
+};
+
+export const Light: Story = {
+  args: {
+    icon: HiInbox,
+    header: <p className="text-xl">Example title</p>,
+    variant: 'light',
+    aside: (
+      <Button
+        label="Click me!"
+        onClick={() => console.log('I have been clicked!')}
+      />
+    ),
+  },
+};
+
+export const Outline: Story = {
+  args: {
+    icon: HiInbox,
+    header: <p className="text-xl">Example title</p>,
+    variant: 'outline',
     aside: (
       <Button
         label="Click me!"

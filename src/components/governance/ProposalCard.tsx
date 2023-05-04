@@ -15,7 +15,7 @@ import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
 import { calcBigintPercentage, countdownText } from '@/src/lib/utils';
-import { StatusBadge, StatusBadgeProps } from '../ui/StatusBadge';
+import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { Link } from 'react-router-dom';
 import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import Activity from '@/src/components/icons/Actitivy';
@@ -43,17 +43,17 @@ const statusBadgeProps: StatusBadgePropsMap = {
   },
   Succeeded: {
     icon: Check,
-    variant: 'green',
+    variant: 'success',
     text: 'Succeeded',
   },
   Executed: {
     icon: DoubleCheck,
-    variant: 'green',
+    variant: 'success',
     text: 'Executed',
   },
   Defeated: {
     icon: HiXMark,
-    variant: 'red',
+    variant: 'destructive',
     text: 'Defeated',
   },
 };
@@ -103,6 +103,7 @@ export const ProposalStatusBadge = ({
  */
 const getProposalTags = (proposal: Proposal) => {
   const res: ProposalTagProps[] = [];
+
   if (proposal.status === ProposalStatus.PENDING)
     res.push(
       {
@@ -152,30 +153,28 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
   } = proposal;
 
   return (
-    <Card padding="sm" variant="light" className="space-y-2 p-4 font-normal">
-      <ProposalStatusBadge status={status} className="xs:hidden" />
-      <div className="space-y-2">
+    <Card variant="light" className="space-y-2 font-normal">
+      <div className="flex flex-col gap-y-2">
+        <ProposalStatusBadge status={status} className="xs:hidden" />
         <div className="flex flex-row justify-between">
           <Link
             to={`/governance/proposals/${proposal.id}`}
-            className="flex flex-row items-end gap-x-2 hover:underline"
+            className="flex flex-row items-center gap-x-2 rounded-sm ring-ring ring-offset-2 ring-offset-background hover:underline focus:outline-none focus:ring-1"
           >
             <Header level={2}>{title}</Header>
             <HiChevronRight className="h-5 w-5" />
           </Link>
           <ProposalStatusBadge status={status} className="hidden xs:flex" />
         </div>
-        <p className="leading-5 text-slate-500 dark:text-slate-400">
-          {summary}
-        </p>
+        <p className="leading-5 text-popover-foreground/80">{summary}</p>
       </div>
       <div className="flex flex-wrap gap-1">
         {getProposalTags(proposal).map((tagProps, i) => (
           <ProposalTag key={i} {...tagProps} />
         ))}
       </div>
-      <div className="flex items-center gap-x-1 text-xs">
-        <span className="text-gray-500 dark:text-slate-400">Published by</span>
+      <div className="flex items-center gap-x-1 text-xs text-popover-foreground/60">
+        <span>Published by</span>
         <Address
           address={creatorAddress}
           maxLength={AddressLength.Medium}

@@ -39,28 +39,28 @@ import {
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 
-type ProposalSortByString = 'CREATED_AT' | 'NAME' | 'POPULARITY' | 'VOTES';
+type ProposalSortByString = 'CREATED_AT'; // | 'NAME' | 'POPULARITY' | 'VOTES';
 const sortProps = [
   {
     value: 'CREATED_AT',
     icon: HiCalendar,
     label: 'Creation date',
   },
-  {
-    value: 'NAME',
-    icon: HiIdentification,
-    label: 'Name',
-  },
-  {
-    value: 'POPULARITY',
-    icon: HiChartBar,
-    label: 'Popularity',
-  },
-  {
-    value: 'VOTES',
-    icon: HiThumbUp,
-    label: 'Votes',
-  },
+  // {
+  //   value: 'NAME',
+  //   icon: HiIdentification,
+  //   label: 'Name',
+  // },
+  // {
+  //   value: 'POPULARITY',
+  //   icon: HiChartBar,
+  //   label: 'Popularity',
+  // },
+  // {
+  //   value: 'VOTES',
+  //   icon: HiThumbUp,
+  //   label: 'Votes',
+  // },
 ];
 
 // eslint vies the below as unused, but they are used in the JSX
@@ -145,8 +145,7 @@ const SortSelector = ({
                 value={prop.value}
                 className={cn(
                   'flex flex-row justify-start gap-x-2 hover:cursor-pointer',
-                  sortBySelected == prop.value &&
-                    'text-primary-500 dark:text-primary-400'
+                  sortBySelected == prop.value && 'text-primary-highlight'
                 )}
               >
                 <prop.icon className="h-5 w-5" />

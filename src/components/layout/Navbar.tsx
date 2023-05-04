@@ -53,24 +53,16 @@ const navItems: NavItem[] = [
   },
 ];
 
-const Navitem = ({
-  item,
-  mobile = false,
-}: {
-  item: NavItem;
-  mobile?: boolean;
-}) => {
+const Navitem = ({ item }: { item: NavItem }) => {
   return (
     <NavLink
       key={item.label}
       to={item.url}
       className={({ isActive, isPending }) =>
         cn(
-          'rounded-md px-4 py-2 text-lg font-semibold dark:text-slate-400',
-          isActive && ' text-primary shadow-md dark:text-primary-500',
-          isPending && '',
-          isActive && mobile && 'bg-slate-50 dark:bg-slate-700/50',
-          isActive && !mobile && 'bg-white dark:bg-slate-800'
+          'rounded-md px-4 py-2 text-lg font-semibold ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2',
+          isActive && 'bg-highlight text-primary shadow-md',
+          isPending && ''
         )
       }
     >
@@ -101,7 +93,7 @@ const Navbar = () => {
                   key={item.label}
                   className="hover:cursor-pointer"
                 >
-                  <Navitem item={item} mobile />
+                  <Navitem item={item} />
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>
@@ -113,7 +105,7 @@ const Navbar = () => {
       <LogoFull className="h-fit w-32 xs:w-40 lg:hidden" />
 
       {/* Desktop nav */}
-      <nav className="hidden px-4 py-6 lg:flex lg:flex-row">
+      <nav className="hidden px-4 py-6 lg:flex lg:flex-row lg:gap-x-2">
         {navItems.map((item) => (
           <Navitem key={item.label} item={item} />
         ))}
