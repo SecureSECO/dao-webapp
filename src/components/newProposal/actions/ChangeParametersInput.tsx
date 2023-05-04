@@ -161,7 +161,7 @@ export const ChangeParametersInput = ({
   return (
     <MainCard
       className="flex flex-col gap-4"
-      header="Change DAO parameters"
+      header="Change plugin parameter"
       icon={HiCog}
       variant="light"
     >
