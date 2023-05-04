@@ -28,7 +28,7 @@ export const useSearchSECO = (props: UseSearchSECOProps): UseSearchSECOData => {
 
   const runQuery = async (url: string, token: string): Promise<QueryResponse> =>
     new Promise((resolve, reject) => {
-      return fetch('http://localhost:8080/fetch', {
+      return fetch('http://localhost:8080/api/fetch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
