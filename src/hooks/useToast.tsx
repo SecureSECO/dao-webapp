@@ -7,11 +7,8 @@
 import * as React from 'react';
 
 import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
-import {
-  PREFERRED_NETWORK,
-  getChainDataByChainId,
-} from '@/src/lib/constants/chains';
-import { ReactNode } from 'react';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
 
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 3000;
@@ -307,10 +304,8 @@ async function contractInteraction<
   });
 
   try {
-    // Get etherscan url for the currently preferred network
-    // Use +chainId to convert string to number
-    const chainId = PREFERRED_NETWORK;
-    const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
+    // Get block explorer url for the currently preferred network
+    const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
     const steps = method();
 
     try {
@@ -327,9 +322,10 @@ async function contractInteraction<
                       href={`${etherscanURL}/tx/${step.txHash}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-xs text-primary"
+                      className="flex flex-row items-center gap-x-1 text-xs text-primary"
                     >
                       View on etherscan
+                      <HiArrowTopRightOnSquare />
                     </a>
                   ) : (
                     ''
