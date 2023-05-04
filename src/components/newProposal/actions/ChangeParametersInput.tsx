@@ -18,11 +18,9 @@ import {
 } from '@/src/components/ui/Select';
 import {
   Control,
-  FieldError,
   Controller,
   UseFormRegister,
   useWatch,
-  ValidationRule,
 } from 'react-hook-form';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { isNullOrUndefined } from '@/src/lib/utils';

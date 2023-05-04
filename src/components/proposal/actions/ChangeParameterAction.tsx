@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Proposal } from '@/src/hooks/useProposals';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { HiCog } from 'react-icons/hi2';
 import { Card } from '../../ui/Card';

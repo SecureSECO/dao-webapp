@@ -14,6 +14,7 @@ import {
   HiOutlineBanknotes,
   HiOutlineCircleStack,
   HiOutlineClock,
+  HiOutlineCog,
   HiOutlineHandThumbDown,
   HiOutlineHandThumbUp,
 } from 'react-icons/hi2';
@@ -41,13 +42,14 @@ const proposalTagIcon = {
   no: <HiOutlineHandThumbDown className="h-4 w-4 shrink-0" />,
   mint: <HiOutlineCircleStack className="h-4 w-4 shrink-0" />,
   withdraw: <HiOutlineBanknotes className="h-4 w-4 shrink-0" />,
+  change: <HiOutlineCog className="h-4 w-4 shrink-0" />,
   merge: <FaGithub className="h-4 w-4 shrink-0" />,
 };
 
 export interface ProposalTagProps
   extends React.BaseHTMLAttributes<HTMLDivElement>,
     VariantProps<typeof proposalTagVariants> {
-  icon?: 'mint' | 'withdraw' | 'merge' | 'countdown' | 'yes' | 'no';
+  icon?: 'mint' | 'withdraw' | 'merge' | 'countdown' | 'yes' | 'no' | 'change';
 }
 
 /**
