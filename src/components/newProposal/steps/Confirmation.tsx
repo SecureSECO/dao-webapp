@@ -157,6 +157,17 @@ export const Confirmation = () => {
                 url: action.inputs.url,
               },
             };
+          case 'change_parameter':
+            return{
+            method: 'change',
+            interface: 'IChange', //FIXME: This is not the correct interface
+            params: {
+              plugin: action.plugin,
+              parameter: action.parameter,
+              value: action.value,
+            }
+
+          }
           default:
             return {
               method: '',

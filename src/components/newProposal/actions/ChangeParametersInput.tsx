@@ -144,7 +144,7 @@ export const ChangeParametersInput = ({
 }) => {
   // react-hook-form input names
   const name_plugin = `${prefix}.plugin`;
-  const name_param = `${prefix}.param`;
+  const name_param = `${prefix}.parameter`;
   const name_value = `${prefix}.value`;
 
   //Watches
