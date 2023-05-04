@@ -120,6 +120,20 @@ The general page structure is set up as follows:
 - `<MainCard />` or regular `<Card />` components for the content of the page, with `1.5rem` of spacing in between the cards (tailwind class is `gap-6`)
 - `<Card />` with prop `variant='light'` for items inside of the main cards
 
+#### Icons
+
+The project uses [react-icons](https://react-icons.github.io/react-icons/) for most of the icons. In particular, we aim to use [Heroicons v2](https://heroicons.com/), wherever necessary. As react-icons includes both v1 and v2 of Heroicons, it's important to make sure the the imports from the react-icons library are importing v2 (so make sure the icon is imported from `react-icons/hi2` rather than `react-icons/hi`). If there's something you'd like to use that is not included in Heroicons, you can try [Font Awesome](https://fontawesome.com/) instead. Font Awesome is especially useful for logos of various companies, such as Github. If Heroicons, nor Font Awesome, has what you're looking for, there's a heap of other icon libraries included in react-icons.
+
+If none of the icon libraries in react-icons are satisfactory, you may add a custom icon based on an svg to the [icons](/src/components/icons/) folder. Have a look at one of the other files already in that folder for an example on how to go about doing so. In the past, this approach has been used to add icons from [Lucide](https://lucide.dev/), which is an icon library that is not included in react-icons.
+
+#### Headers
+
+Headers, like `<h1 />`, `<h2 />` etc., should not be used directly. Instead, use the [Header](/src/components/ui/Header.tsx) component, and pass it a prop `level` corresponding to the component of choice. For example, when you need an `<h1 />`, you should instead use `<Header level={1}/>`.
+
+#### Inputs & Labels
+
+Similar to the headers, inputs and labels should not be used plainly like `<input />` or `<label />`. Instead, use the provided `<Input />` and `<Label />` components.
+
 #### Colors
 
 Colors are defined using CSS variables in [index.css](/src/index.css) based on the approach taken by [shadcn](https://ui.shadcn.com/docs/theming). Each color has variants for light and dark mode, making it easy to change a color, without having to change the code everywhere that color is used.
