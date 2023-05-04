@@ -170,58 +170,68 @@ export const ChangeParametersInput = ({
           <Label tooltip="Plugin to change" htmlFor="amount">
             Plugin
           </Label>
-          <Controller
-            control={control}
-            name={name_plugin}
-            render={({ field: { onChange, name, value } }) => (
-              <Select defaultValue={value} onValueChange={onChange} name={name}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Plugin" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Plugin</SelectLabel>
-                    {PluginParameterOptions.plugins.map((plugin) => (
-                      <SelectItem key={plugin.plugin} value={plugin.plugin}>
-                        {plugin.plugin}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            )}
-          />
+          <ErrorWrapper name="Plugin" error={errors?.plugin}>
+            <Controller
+              control={control}
+              name={name_plugin}
+              rules={{ required: true }}
+              render={({ field: { onChange, name, value } }) => (
+                <Select
+                  defaultValue={value}
+                  onValueChange={onChange}
+                  name={name}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Plugin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Plugin</SelectLabel>
+                      {PluginParameterOptions.plugins.map((plugin) => (
+                        <SelectItem key={plugin.plugin} value={plugin.plugin}>
+                          {plugin.plugin}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </ErrorWrapper>
         </div>
         <div className="flex flex-col gap-y-1">
           <Label tooltip="Plugin parameter to change" htmlFor="amount">
             Parameter
           </Label>
-          <Controller
-            control={control}
-            name={name_param}
-            render={({ field: { onChange, name, value } }) => (
-              <Select
-                disabled={isNullOrUndefined(watchPlugin)}
-                defaultValue={value}
-                onValueChange={onChange}
-                name={name}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Parameter" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Parameter</SelectLabel>
-                    {watchPlugin?.parameters.map((param) => (
-                      <SelectItem key={param.param} value={param.param}>
-                        {param.param}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            )}
-          />
+          <ErrorWrapper name="Parameter" error={errors?.parameter}>
+            <Controller
+              control={control}
+              name={name_param}
+              rules={{ required: true }}
+              render={({ field: { onChange, name, value } }) => (
+                <Select
+                  disabled={isNullOrUndefined(watchPlugin)}
+                  defaultValue={value}
+                  onValueChange={onChange}
+                  name={name}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Parameter" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Parameter</SelectLabel>
+                      {watchPlugin?.parameters.map((param) => (
+                        <SelectItem key={param.param} value={param.param}>
+                          {param.param}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </ErrorWrapper>
         </div>
       </div>
       <div className="flex flex-col gap-y-1">
