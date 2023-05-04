@@ -33,6 +33,9 @@
 
 # SecureSECO DAO web-app
 
+This is the repository for the web-app to interact with the DAO for the [SecureSECO](https://secureseco.org/) project.
+It has been built using React together with Vite.
+
 ## Initial setup
 
 ### Environment variables
