@@ -6,65 +6,69 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useEffect, useState } from 'react';
+import { promise } from '@/src/hooks/useToast';
 import { getErrorMessage } from '@/src/lib/utils';
+import { useState } from 'react';
 
-type UseSearchSECOProps = {
-  searchUrl: string;
-  token: string;
-};
+type QueryResponse = any;
+
+type UseSearchSECOProps = {};
 
 type UseSearchSECOData = {
-  loading: boolean;
-  error: string | null;
-  result: any;
+  queryResult: QueryResponse;
+  runQuery: (url: string, token: string) => void;
 };
 
-export const useSearchSECO = ({
-  searchUrl,
-  token,
-}: UseSearchSECOProps): UseSearchSECOData => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<any>(null);
+/**
+ * Utility functions to interact with the SearchSECO database and API
+ * @returns Functions and results of interacting with the SearchSECO database and API
+ */
+export const useSearchSECO = (props: UseSearchSECOProps): UseSearchSECOData => {
+  const [queryResult, setQueryResult] = useState<QueryResponse | null>(null);
 
-  const fetchSearchSECO = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('http://localhost:8080/fetch', {
+  const fetchResult = async (
+    url: string,
+    token: string
+  ): Promise<QueryResponse> =>
+    new Promise((resolve, reject) => {
+      return fetch('http://localhost:8080/fetch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url: searchUrl,
+          url,
           token,
         }),
-      });
+      })
+        .then((response) => {
+          if (!response.ok)
+            reject(`API request failed with status ${response.status}`);
+          return response.json();
+        })
+        .then((res) => {
+          setQueryResult(res);
+          resolve(res);
+        })
+        .catch((e) => {
+          console.error(e);
+          reject(getErrorMessage(e));
+        });
+    });
 
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-
-      const result = await response.json();
-      setResult(result);
-      setLoading(false);
-      setError(null);
-    } catch (e) {
-      console.error(e);
-      setLoading(false);
-      setError(getErrorMessage(e));
-    }
+  const runQuery = async (url: string, token: string) => {
+    promise(fetchResult(url, token), {
+      loading: 'Querying SearchSECO database...',
+      success: 'Query successful!',
+      error: (err) => ({
+        title: err,
+        description: '',
+      }),
+    });
   };
 
-  useEffect(() => {
-    if (!searchUrl || !token) return;
-    fetchSearchSECO();
-  }, [searchUrl, token]);
-
   return {
-    loading,
-    error,
-    result,
+    queryResult,
+    runQuery,
   };
 };
