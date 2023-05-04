@@ -76,3 +76,17 @@ export const Outline: Story = {
     ),
   },
 };
+
+export const Warning: Story = {
+  args: {
+    icon: HiInbox,
+    header: <p className="text-xl">Example title</p>,
+    variant: 'warning',
+    aside: (
+      <Button
+        label="Click me!"
+        onClick={() => console.log('I have been clicked!')}
+      />
+    ),
+  },
+};
