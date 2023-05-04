@@ -20,6 +20,7 @@ import {
   HiOutlineDocumentMagnifyingGlass,
 } from 'react-icons/hi2';
 import { UrlPattern } from '@/src/lib/patterns';
+import { promise } from '@/src/hooks/useToast';
 
 interface QueryFormData {
   searchUrl: string;
@@ -37,7 +38,14 @@ const Query = () => {
   const onSubmit = async (data: QueryFormData) => {
     console.log('Valid URL:', data.searchUrl);
 
-    runQuery(data.searchUrl, data.token);
+    promise(runQuery(data.searchUrl, data.token), {
+      loading: 'Querying SearchSECO database...',
+      success: 'Query successful!',
+      error: (err) => ({
+        title: err,
+        description: '',
+      }),
+    });
   };
 
   return (

@@ -16,7 +16,7 @@ type UseSearchSECOProps = {};
 
 type UseSearchSECOData = {
   queryResult: QueryResponse;
-  runQuery: (url: string, token: string) => void;
+  runQuery: (url: string, token: string) => Promise<QueryResponse>;
 };
 
 /**
@@ -26,10 +26,7 @@ type UseSearchSECOData = {
 export const useSearchSECO = (props: UseSearchSECOProps): UseSearchSECOData => {
   const [queryResult, setQueryResult] = useState<QueryResponse | null>(null);
 
-  const fetchResult = async (
-    url: string,
-    token: string
-  ): Promise<QueryResponse> =>
+  const runQuery = async (url: string, token: string): Promise<QueryResponse> =>
     new Promise((resolve, reject) => {
       return fetch('http://localhost:8080/fetch', {
         method: 'POST',
@@ -55,17 +52,6 @@ export const useSearchSECO = (props: UseSearchSECOProps): UseSearchSECOData => {
           reject(getErrorMessage(e));
         });
     });
-
-  const runQuery = async (url: string, token: string) => {
-    promise(fetchResult(url, token), {
-      loading: 'Querying SearchSECO database...',
-      success: 'Query successful!',
-      error: (err) => ({
-        title: err,
-        description: '',
-      }),
-    });
-  };
 
   return {
     queryResult,
