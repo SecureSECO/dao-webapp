@@ -56,7 +56,7 @@ const Navitem = ({ item }: { item: NavItem }) => {
       to={item.url}
       className={({ isActive, isPending }) =>
         cn(
-          'rounded-md px-4 py-2 text-lg font-semibold',
+          'rounded-md px-4 py-2 text-lg font-semibold ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2',
           isActive && 'bg-highlight text-primary shadow-md',
           isPending && ''
         )
@@ -101,7 +101,7 @@ const Navbar = () => {
       <LogoFull className="h-fit w-32 xs:w-40 lg:hidden" />
 
       {/* Desktop nav */}
-      <nav className="hidden px-4 py-6 lg:flex lg:flex-row">
+      <nav className="hidden px-4 py-6 lg:flex lg:flex-row lg:gap-x-2">
         {navItems.map((item) => (
           <Navitem key={item.label} item={item} />
         ))}

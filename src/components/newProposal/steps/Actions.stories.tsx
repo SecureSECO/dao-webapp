@@ -19,32 +19,30 @@ import { emptyMergeData } from '../actions/MergePRInput';
 
 const meta: Meta<typeof Actions> = {
   component: Actions,
+  tags: ['autodocs'],
 };
 
 export default meta;
 type Story = StoryObj<typeof Actions>;
 
-const FormProviderDecoratorFactory = (data: ProposalFormActions): any => {
-  // eslint-disable-next-line react/display-name
-  return (Story: any) => (
-    <NewProposalFormProvider step={3} dataStep3={data}>
+const FormProviderDecorator = (Story: any, options: any) => {
+  const { args } = options;
+
+  return (
+    <NewProposalFormProvider step={3} dataStep3={args.data}>
       <Story />
     </NewProposalFormProvider>
   );
 };
 
-const emptyActions = {
-  actions: [emptyMintData, emptyWithdrawData, emptyMergeData],
-};
-
 export const Primary: Story = {
-  decorators: [FormProviderDecoratorFactory(emptyActions)],
-};
-
-const zeroActions = {
-  actions: [],
+  args: {
+    data: { actions: [emptyMintData, emptyWithdrawData, emptyMergeData] },
+  },
+  decorators: [FormProviderDecorator],
 };
 
 export const Empty: Story = {
-  decorators: [FormProviderDecoratorFactory(zeroActions)],
+  args: { data: { actions: [] } },
+  decorators: [FormProviderDecorator],
 };

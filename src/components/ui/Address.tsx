@@ -100,7 +100,7 @@ export const Address: React.FC<AddressProps> = ({
       <div className="flex items-center">
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger asChild className="rounded-sm">
               {hasLink ? (
                 <a
                   href={etherscanURL}
@@ -126,7 +126,7 @@ export const Address: React.FC<AddressProps> = ({
               <TooltipTrigger asChild>
                 <button
                   onClick={handleClick}
-                  className="ml-2 transition-opacity duration-200 hover:opacity-80"
+                  className="ml-2 rounded-sm transition-opacity duration-200 hover:opacity-80"
                 >
                   {status === 'copied' ? (
                     <HiCheck className="text-[1.15em]" />
