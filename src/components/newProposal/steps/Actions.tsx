@@ -151,6 +151,7 @@ export const Actions = () => {
                           register={register}
                           errors={errors?.actions?.[index]}
                           prefix={prefix}
+                          onRemove={() => remove(index)}
                         />
                       );
                   }

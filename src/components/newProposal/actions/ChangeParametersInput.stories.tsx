@@ -22,6 +22,7 @@ export const Primary: Story = {
   args: {
     register: (() => {}) as any,
     errors: undefined,
+    onRemove: (() => {}) as any,
     prefix: 'actions.0',
   },
   decorators: [withReactHookForm],

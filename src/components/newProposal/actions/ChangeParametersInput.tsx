@@ -28,9 +28,10 @@ import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { isNullOrUndefined } from '@/src/lib/utils';
 import { Input } from '@/src/components/ui/Input';
 import { MainCard } from '../../ui/MainCard';
-import { HiCog } from 'react-icons/hi2';
+import { HiCog, HiXMark } from 'react-icons/hi2';
 import { Label } from '../../ui/Label';
 import { ActionFormError } from '../steps/Actions';
+import { Button } from '../../ui/Button';
 
 export type ProposalFormChangeParameter = {
   name: 'change_parameter';
@@ -134,11 +135,13 @@ const PluginParameterOptions: { plugins: Plugin[] } = {
 export const ChangeParametersInput = ({
   control,
   register,
+  onRemove,
   errors,
   prefix,
 }: {
   control: Control<any, any>;
   register: UseFormRegister<any>;
+  onRemove: any;
   errors?: ActionFormError<ProposalFormChangeParameter>;
   prefix: `actions.${number}`;
 }) => {
@@ -164,6 +167,14 @@ export const ChangeParametersInput = ({
       header="Change plugin parameter"
       icon={HiCog}
       variant="light"
+      aside={
+        <Button
+          type="button"
+          icon={HiXMark}
+          onClick={onRemove}
+          variant="ghost"
+        />
+      }
     >
       <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
         <div className="flex flex-col gap-y-1">
