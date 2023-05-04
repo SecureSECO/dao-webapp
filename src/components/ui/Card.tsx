@@ -25,7 +25,7 @@ const cardVariants = cva(
         light: 'bg-popover',
         outline: 'bg-transparent border border-border shadow-none',
       },
-      padding: {
+      size: {
         default: 'px-5 py-4',
         sm: 'px-4 py-2',
         lg: 'px-6 sm:px-10 py-4 sm:py-8',
@@ -33,7 +33,7 @@ const cardVariants = cva(
     },
     defaultVariants: {
       variant: 'default',
-      padding: 'default',
+      size: 'default',
     },
   }
 );
@@ -53,17 +53,19 @@ export interface CardProps
 
 /**
  * A Card component that supports various visual styles, padding options, and a loading state.
- * @param props - Props for the Card component.
+ * @param props.variant - Variant of the card that defines its styling.
+ * @param props.size - Size of the card as defined by padding.
+ * @param props.loading - Optional boolean flag to enable/disable the loading state, which will show a pulse animation. It is recommended to also pass a minimum height when providing a loading variable.
  * @returns A Card React element.
  * @remarks This component is built using the class-variance-authority library for managing CSS classes. You can pass a loading property to enable a loading state with a pulse animation.
  */
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, padding, loading = false, ...props }, ref) => {
+  ({ className, variant, size, loading = false, ...props }, ref) => {
     return (
       <div
         ref={ref}
         className={cn(
-          cardVariants({ variant, padding, className }),
+          cardVariants({ variant, size, className }),
           loading && 'animate-pulse'
         )}
         {...props}

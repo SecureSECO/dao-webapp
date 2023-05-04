@@ -19,6 +19,7 @@ import {
 } from '@/src/components/ui/MainCard';
 import { Card } from '@/src/components/ui/Card';
 import { ProposalResource } from '@/src/hooks/useProposal';
+import { cn } from '@/src/lib/utils';
 
 export interface ProposalResourcesProps
   extends Omit<MainCardProps, 'icon' | 'header'> {
@@ -43,7 +44,7 @@ export const ProposalResources = ({
   return (
     <MainCard
       loading={loading ?? resources ? true : false}
-      className={className + ' shrink'}
+      className={cn(className, 'min-h-[100px] shrink')}
       icon={HiLink}
       header={
         <DefaultMainCardHeader
@@ -61,7 +62,7 @@ export const ProposalResources = ({
         <ul className="space-y-2">
           {filtered.map((resource) => (
             <li key={resource.url}>
-              <Card padding="sm" variant="light">
+              <Card size="sm" variant="light">
                 <a
                   href={resource.url}
                   rel="noreferrer"

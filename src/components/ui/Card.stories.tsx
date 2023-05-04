@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     variant: 'default',
-    padding: 'lg',
+    size: 'lg',
     children: <Header>Card</Header>,
   },
 };
@@ -30,7 +30,7 @@ export const Default: Story = {
 export const Light: Story = {
   args: {
     variant: 'light',
-    padding: 'lg',
+    size: 'lg',
     children: <Header>Card</Header>,
   },
 };
@@ -38,7 +38,7 @@ export const Light: Story = {
 export const Outline: Story = {
   args: {
     variant: 'outline',
-    padding: 'lg',
+    size: 'lg',
     children: <Header>Card</Header>,
   },
 };
@@ -46,7 +46,7 @@ export const Outline: Story = {
 export const Warning: Story = {
   args: {
     variant: 'warning',
-    padding: 'lg',
+    size: 'lg',
     children: <Header>Card</Header>,
   },
 };

@@ -83,8 +83,8 @@ const Dashboard = () => {
       {/* Card showing metadata about the DAO */}
       <Card
         loading={daoLoading}
-        padding="lg"
-        className="relative col-span-full flex shrink flex-row justify-between"
+        size="lg"
+        className="relative col-span-full flex min-h-[150px] shrink flex-row justify-between"
       >
         {dao && (
           <>
@@ -135,7 +135,7 @@ const Dashboard = () => {
 
       {/* Proposal Card */}
       <MainCard
-        className="col-span-full lg:col-span-4"
+        className="col-span-full min-h-[100px] lg:col-span-4"
         loading={allProposalsLoading}
         icon={HiInboxStack}
         header={
@@ -167,7 +167,7 @@ const Dashboard = () => {
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
         {/* Card containing the latest dao transfers */}
         <MainCard
-          className=""
+          className="min-h-[100px]"
           loading={daoTransfersLoading}
           icon={HiCircleStack}
           header={
@@ -204,7 +204,7 @@ const Dashboard = () => {
 
         {/* Card containing DAO members */}
         <MainCard
-          className=""
+          className="min-h-[100px]"
           loading={membersLoading}
           icon={HiUserGroup}
           header={<DefaultMainCardHeader value={memberCount} label="members" />}

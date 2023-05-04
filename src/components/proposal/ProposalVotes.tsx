@@ -111,7 +111,7 @@ const ProposalVotes = ({
     <MainCard
       loading={loading}
       className={cn(
-        'col-span-full flex flex-col gap-y-4 lg:col-span-4',
+        'col-span-full flex min-h-[100px] flex-col gap-y-4 lg:col-span-4',
         className
       )}
       icon={HiChatBubbleLeftRight}

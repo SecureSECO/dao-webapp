@@ -14,9 +14,10 @@
 import { cn } from '@/src/lib/utils';
 
 /**
- *
- * @param param0
- * @returns
+ * Skeleton component to be used as a placeholder while content is loading.
+ * As this uses `bg-popover`, it is recommended to use this inside of a Card component (or MainCard) that uses the default variant, and therefore has `bg-highlight`.
+ * @warning This should not be used in place of rendering a Card component, as you can pass a loading state to the Card component itself.
+ * @returns A div that pulses slowly to indicate a loading state.
  */
 function Skeleton({
   className,
@@ -24,7 +25,7 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('animate-pulse rounded-md bg-muted', className)}
+      className={cn('animate-pulse rounded-lg bg-popover', className)}
       {...props}
     />
   );
