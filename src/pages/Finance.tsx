@@ -186,7 +186,6 @@ const Finance = () => {
           header={
             <DefaultMainCardHeader value={daoBalances.length} label="tokens" />
           }
-          className="min-h-[100px]"
           loading={false}
           icon={HiCircleStack}
         >
@@ -217,7 +216,6 @@ const Finance = () => {
             />
           }
           loading={transfersLoading}
-          className="min-h-[100px]"
           icon={HiArrowsRightLeft}
         >
           <div className="space-y-4">

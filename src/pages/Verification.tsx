@@ -407,7 +407,7 @@ const Verification = () => {
       <HeaderCard title="Verification" />
       <div className="grid grid-cols-7 gap-6">
         <MainCard
-          className="col-span-full min-h-[100px] lg:col-span-4"
+          className="col-span-full lg:col-span-4"
           loading={stampsLoading || reverifyLoading}
           icon={HiCheckBadge}
           header={
@@ -468,7 +468,6 @@ const Verification = () => {
 
           <MainCard
             loading={historyLoading}
-            className="min-h-[100px]"
             icon={History}
             header={
               <DefaultMainCardHeader

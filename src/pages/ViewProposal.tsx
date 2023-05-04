@@ -86,7 +86,6 @@ const ViewProposal = () => {
           <>
             <HeaderCard
               loading={loading}
-              className="min-h-[150px]"
               title={proposal?.metadata.title ?? 'Proposal not found'}
               aside={
                 <div className="flex flex-row-reverse items-center justify-between gap-y-4 sm:flex-col sm:items-end">

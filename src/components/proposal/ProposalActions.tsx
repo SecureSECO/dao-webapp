@@ -46,7 +46,6 @@ const ProposalActions = ({
   return (
     <MainCard
       loading={loading}
-      className="min-h-[100px]"
       icon={CheckList}
       header={
         <DefaultMainCardHeader value={actions?.length ?? 0} label="actions" />

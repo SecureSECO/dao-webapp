@@ -44,7 +44,7 @@ export const ProposalResources = ({
   return (
     <MainCard
       loading={loading ?? resources ? true : false}
-      className={cn(className, 'min-h-[100px] shrink')}
+      className={cn(className, 'shrink')}
       icon={HiLink}
       header={
         <DefaultMainCardHeader

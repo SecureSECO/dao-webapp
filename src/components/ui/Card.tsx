@@ -39,6 +39,24 @@ const cardVariants = cva(
 );
 
 /**
+ * Variants used when the `loading` property's value is true.
+ * This uses the `size` prop passed to the Card component to also determine a min-height to give the Card component,
+ * such that the pulse animation is sufficiently visible.
+ */
+const loadingVariants = cva('animate-pulse', {
+  variants: {
+    size: {
+      default: 'min-h-[100px]',
+      sm: 'min-h-[50px]',
+      lg: 'min-h-[150px]',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
+/**
  * Card component properties.
  * @property className - Optional custom CSS class name.
  * @property variant - Visual style of the card. Can be "default", "warning", or "light".
@@ -66,7 +84,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         className={cn(
           cardVariants({ variant, size, className }),
-          loading && 'animate-pulse'
+          loading && loadingVariants({ size })
         )}
         {...props}
       >

@@ -114,7 +114,7 @@ const ProposalHistory = ({
   return (
     <MainCard
       loading={loading}
-      className={cn(className, 'min-h-[100px]')}
+      className={className}
       icon={History}
       header="History"
     >
