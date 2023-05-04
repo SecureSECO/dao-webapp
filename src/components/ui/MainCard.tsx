@@ -23,6 +23,20 @@ const mainCardVariants = cva('w-full flex flex-col gap-y-2', {
   defaultVariants: {},
 });
 
+const iconBackgroundVariants = cva('rounded-md p-2', {
+  variants: {
+    variant: {
+      default: 'bg-popover',
+      light: 'bg-highlight',
+      warning: 'bg-destructive/20',
+      outline: 'bg-highlight',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
 /**
  * Default header for the MainCard component.
  * @param props.value The numeric value to be displayed in the header.
@@ -88,7 +102,7 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
       >
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-row items-center gap-x-3 lg:gap-x-4">
-            <div className="rounded-md bg-popover p-2">
+            <div className={iconBackgroundVariants({ variant: props.variant })}>
               <IconWrapper.icon className="h-5 w-5 shrink-0 text-primary" />
             </div>
             {/* Only split move the header to next line if content for aside was provided */}
