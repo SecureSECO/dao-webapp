@@ -36,16 +36,16 @@ export const ChangeParameterAction = ({
     >
       <div className="space-y-2">
         <div className="grid grid-cols-2 gap-2">
-          <Card variant="outline" padding="sm">
+          <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">Plugin</p>
             <p className="font-medium">{action.params.plugin}</p>
           </Card>
-          <Card variant="outline" padding="sm">
+          <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">Parameter</p>
             <p className="font-medium">{action.params.parameter}</p>
           </Card>
         </div>
-        <Card variant="outline" padding="sm">
+        <Card variant="outline" size="sm">
           <p className="text-xs text-popover-foreground/80">
             New parameter value
           </p>
