@@ -1,3 +1,11 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 // import React, { Fragment, useEffect, useState } from 'react';
 import { HiExclamationCircle, HiOutlineLogout } from 'react-icons/hi';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
@@ -6,8 +14,6 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useWeb3Modal } from '@web3modal/react';
 import { useAccount, useNetwork, useDisconnect } from 'wagmi';
 import { FaWallet } from 'react-icons/fa';
-
-const prefferedNetwork: number = 5; //137;
 
 import {
   DropdownMenu,
@@ -26,6 +32,7 @@ import {
 } from '@/src/components/ui/Tooltip';
 import { Button } from '@/src/components/ui/Button';
 
+const prefferedNetwork: number = +import.meta.env.VITE_PREFERRED_NETWORK_ID;
 const ConnectButton = () => {
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();
@@ -35,10 +42,7 @@ const ConnectButton = () => {
   let jazznumber = address ? jsNumberForAddress(address!) : 0;
 
   return address ? (
-    <div className="flex items-center gap-x-3 text-slate-900">
-      <div className="grid select-none gap-y-1.5 text-sm dark:text-gray-300">
-        {/* TODO: possibly put address here */}
-      </div>
+    <div className="flex items-center">
       <DropdownMenu>
         <DropdownMenuTrigger className="relative flex rounded-full text-sm focus:outline-none">
           <span className="sr-only">Open wallet menu</span>
@@ -46,8 +50,10 @@ const ConnectButton = () => {
           {chain?.id !== prefferedNetwork && (
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger asChild className="absolute -top-2 -right-2">
-                  <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgb(0,0,0)] dark:text-primary-500" />
+                <TooltipTrigger asChild className="absolute -right-2 -top-2">
+                  <div>
+                    <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgba(0,0,0,0.4)]" />
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Incorrect Network</p>
@@ -64,7 +70,7 @@ const ConnectButton = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <p className=" text-sm font-medium dark:text-gray-200">
+                    <p className="text-sm font-medium text-popover-foreground">
                       {address?.slice(0, 5) + '...' + address?.slice(-4)}
                     </p>
                   </TooltipTrigger>
@@ -79,7 +85,7 @@ const ConnectButton = () => {
           <DropdownMenuItem className="group">
             <button
               onClick={() => disconnect()}
-              className="flex w-full items-center gap-x-2 text-sm dark:text-gray-300"
+              className="flex w-full items-center gap-x-2 text-sm text-popover-foreground"
             >
               <HiOutlineLogout className="text-xl" />
               <span>Sign Out</span>
@@ -96,8 +102,7 @@ const ConnectButton = () => {
       className="gap-x-2"
       icon={FaWallet}
       label="Connect Wallet"
-      //className="flex shrink-0 grow-0 items-center gap-x-2 rounded-md bg-primary-500 p-3 hover:bg-primary-800 lg:rounded-md lg:py-1.5 lg:px-4"
-    ></Button>
+    />
   );
 };
 

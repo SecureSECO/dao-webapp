@@ -1,16 +1,23 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
 
 import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
-import { getErrorMessage } from '../lib/utils';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { getErrorMessage } from '@/src/lib/utils';
 
 export type UseDaoBalanceData = {
-  daoBalances: DaoBalances;
+  daoBalances: DaoBalance[];
   loading: boolean;
   error: string | null;
 };
-
-export type DaoBalances = DaoBalance[];
 
 export type DaoBalance = {
   type: TokenType;
@@ -29,7 +36,7 @@ export type UseDaoBalanceProps = {
 export const useDaoBalance = ({
   useDummyData = false,
 }: UseDaoBalanceProps): UseDaoBalanceData => {
-  const [daoBalances, setDaoBalances] = useState<DaoBalances>([]);
+  const [daoBalances, setDaoBalances] = useState<DaoBalance[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,14 +53,14 @@ export const useDaoBalance = ({
       const daoBal: AssetBalance[] | null = await client.methods.getDaoBalances(
         { daoAddressOrEns }
       );
-      let balances: DaoBalances = [];
+      let balances: DaoBalance[] = [];
       if (daoBal != null) {
         balances = daoBal.map(assetBalanceToDaoBalance);
       }
       setDaoBalances(balances);
 
-      if (loading) setLoading(false);
-      if (error) setError(null);
+      setLoading(false);
+      setError(null);
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -62,8 +69,8 @@ export const useDaoBalance = ({
   };
 
   const setDummyData = () => {
-    if (loading) setLoading(false);
-    if (error) setError(null);
+    setLoading(false);
+    setError(null);
 
     const nativeBal: AssetBalance = {
       type: TokenType.NATIVE,
@@ -87,7 +94,6 @@ export const useDaoBalance = ({
       updateDate: new Date(2023, 2, 10),
     };
 
-    //TODO
     setDaoBalances([
       assetBalanceToDaoBalance(nativeBal),
       assetBalanceToDaoBalance(erc20Bal),
@@ -110,7 +116,7 @@ export const useDaoBalance = ({
 
 function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
   const x = assetBalance as any;
-  return {
+  let result = {
     type: assetBalance.type,
     updateDate: assetBalance.updateDate,
     balance: x.balance ?? null,
@@ -119,4 +125,27 @@ function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
     name: x.name ?? null,
     symbol: x.symbol ?? null,
   };
+  switch (assetBalance.type) {
+    case TokenType.NATIVE:
+      // eslint-disable-next-line no-case-declarations
+      const metadata = PREFERRED_NETWORK_METADATA;
+      result.decimals = metadata.nativeCurrency.decimals;
+      result.address = import.meta.env.VITE_DAO_ADDRESS;
+      result.name = metadata.nativeCurrency.name;
+      result.symbol = metadata.nativeCurrency.symbol;
+      break;
+    case TokenType.ERC721:
+      result.balance = x.balance ?? 1;
+      result.decimals = x.decimals ?? 0;
+      break;
+    case TokenType.ERC20:
+      break;
+    default:
+      console.error(
+        'useDaoBalance.ts ~ assetBalanceToDaoBalance: Unexpected tokentype'
+      );
+      break;
+  }
+
+  return result;
 }

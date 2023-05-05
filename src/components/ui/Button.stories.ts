@@ -1,8 +1,16 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { HiPlus } from 'react-icons/hi2';
 
-import { Button } from './Button';
+import { Button } from '@/src/components/ui/Button';
 
 const meta = {
   component: Button,
@@ -43,14 +51,6 @@ export const Ghost: Story = {
   },
 };
 
-export const Link: Story = {
-  args: {
-    variant: 'link',
-    label: 'Button',
-    disabled: false,
-  },
-};
-
 export const Outline: Story = {
   args: {
     variant: 'outline',
@@ -75,8 +75,6 @@ export const WithIcon: Story = {
     icon: HiPlus,
   },
 };
-
-// const Template: ComponentStory<typeof RegistrationForm> = (args) => <RegistrationForm {...args} />;
 
 export const Clicked: Story = {
   ...Default,

@@ -1,15 +1,17 @@
-import { Card } from '@/src/components/ui/Card';
-import Header from '@/src/components/ui/Header';
-import React from 'react';
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
 
 const Settings = () => {
   return (
     <div className="flex flex-col gap-6">
-      <Card padding="lg" className="flex flex-col justify-between gap-y-8">
-        <div className="flex w-full items-center justify-between gap-y-6">
-          <Header>Settings</Header>
-        </div>
-      </Card>
+      <HeaderCard title="Settings" />
     </div>
   );
 };

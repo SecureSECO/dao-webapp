@@ -1,11 +1,49 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * This file contains a set of custom Tabs components built on top of the '@radix-ui/react-tabs' library.
+ * @see https://www.radix-ui.com/docs/primitives/components/tabs - Radix UI Tabs Primitive
+ * The components include Tabs, TabsList, TabsTrigger, and TabsContent.
+ * These components are styled and provide a consistent UI look and feel for tabs throughout an application. inspired by https://ui.shadcn.com/docs/primitives/tabs
+ * The components also have support for multiple variants and padding options, which can be controlled through the props.
+ */
+
 import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 
 import { cn } from '@/src/lib/utils';
-import { cva, VariantProps } from 'class-variance-authority';
 
-const Tabs = TabsPrimitive.Root;
+/**
+ * The Tabs component represents the main container for tabs.
+ * @param {Object} props - The properties for the Tabs component.
+ * @param {string} props.className - Optional CSS classes to add to the component.
+ * @returns A Tabs React element.
+ */
+const Tabs = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Root
+    className={cn(
+      className,
+      'flex w-full flex-col items-start gap-y-4 bg-highlight px-6 py-4 text-highlight-foreground'
+    )}
+    {...props}
+    ref={ref}
+  />
+));
+Tabs.displayName = TabsPrimitive.Root.displayName;
 
+/**
+ * The TabsList component represents the list of tab triggers within the Tabs component.
+ * @returns A TabsList React element.
+ */
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
@@ -13,7 +51,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      'inline-flex items-center justify-center rounded-md bg-slate-100 p-1 dark:bg-slate-800',
+      'inline-flex items-center justify-center rounded-md bg-popover p-1 px-2 text-popover-foreground',
       className
     )}
     {...props}
@@ -21,13 +59,18 @@ const TabsList = React.forwardRef<
 ));
 TabsList.displayName = TabsPrimitive.List.displayName;
 
+/**
+ * The TabsTrigger component represents an individual tab trigger within the TabsList component.
+ * It controls the active state of the associated tab content.
+ * @returns A TabsTrigger React element.
+ */
 const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
     className={cn(
-      'inline-flex min-w-[100px] items-center justify-center rounded-[0.185rem] px-3 py-1.5  text-sm font-medium text-slate-700 transition-all  disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm dark:text-slate-200 dark:data-[state=active]:bg-slate-900 dark:data-[state=active]:text-slate-100',
+      'inline-flex min-w-[100px] items-center justify-center rounded-lg px-3 py-1.5 text-sm font-medium text-popover-foreground transition-all disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-highlight data-[state=active]:text-highlight-foreground data-[state=active]:shadow-sm',
       className
     )}
     {...props}
@@ -36,39 +79,17 @@ const TabsTrigger = React.forwardRef<
 ));
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
-const tabsContentVariants = cva(
-  'w-full h-fit rounded-lg font-medium shadow-md mt-2',
-  {
-    variants: {
-      variant: {
-        default: 'bg-white dark:bg-slate-800',
-        border: 'border border-slate-200 p-6 dark:border-slate-700',
-        light: 'bg-slate-100 dark:bg-slate-700/50',
-        none: '',
-      },
-      padding: {
-        default: 'px-6 py-4',
-        sm: 'px-4 py-2',
-        lg: 'px-10 py-8',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      padding: 'default',
-    },
-  }
-);
-
-export interface TabsContentProps
-  extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>,
-    VariantProps<typeof tabsContentVariants> {}
-
+/**
+ * The TabsContent component represents the content of an individual tab.
+ * The content will be shown or hidden based on the active state of the associated tab trigger.
+ * @returns A TabsContent React element.
+ */
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
-  TabsContentProps
->(({ className, variant, padding, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+>(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
-    className={cn(tabsContentVariants({ variant, padding, className }))}
+    className={cn('w-full', className)}
     {...props}
     ref={ref}
   />

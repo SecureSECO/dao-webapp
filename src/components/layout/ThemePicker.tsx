@@ -1,3 +1,11 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import {
   DropdownMenu as Dropdown,
   DropdownMenuContent,
@@ -81,8 +89,7 @@ const ThemePicker = () => {
               value={theme.value}
               className={cn(
                 'flex flex-row justify-start gap-x-2 hover:cursor-pointer',
-                theme.value == currentTheme &&
-                  'text-primary-500 dark:text-primary-400'
+                theme.value == currentTheme && 'text-primary'
               )}
             >
               <theme.icon className="h-5 w-5" />

@@ -1,74 +1,66 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * The Link module provides a pre-styled link component based on react-router-dom.
+ * It extends the RouterLink component with additional styling and accepts both icons and labels.
+ */
+
 import * as React from 'react';
-import { VariantProps, cva } from 'class-variance-authority';
+import { VariantProps } from 'class-variance-authority';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { cn } from '../../lib/utils';
+import { cn } from '@/src/lib/utils';
 import { IconType } from 'react-icons/lib';
-
-const linkVariants = cva(
-  'active:scale-95 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-default disabled:pointer-events-none',
-  {
-    variants: {
-      variant: {
-        default:
-          'bg-primary text-white dark:text-slate-300 hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary focus:ring-primary-400 dark:focus:ring-slate-400',
-        outline:
-          'text-slate-700 dark:text-slate-100 border-b-2 border-transparent hover:text-slate-900 dark:hover:text-slate-100 focus:ring-primary-100 dark:focus:ring-primary-400',
-      },
-      size: {
-        default: 'h-10 py-2 px-4',
-        sm: 'h-9 px-2 rounded-md',
-        lg: 'h-11 px-8 rounded-md',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-    },
-  }
-);
-
-const iconVariants = cva('', {
-  variants: {
-    size: {
-      default: 'h-5 w-5',
-      sm: 'h-4 w-4',
-      lg: 'h-6 w-6',
-    },
-  },
-  defaultVariants: {
-    size: 'default',
-  },
-});
+import { ReactNode } from 'react';
+import { buttonVariants, iconVariants } from '@/src/components/ui/Button';
 
 export interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>,
-    VariantProps<typeof linkVariants> {
+    VariantProps<typeof buttonVariants> {
   label?: string;
   icon?: IconType | null;
+  iconNode?: ReactNode | null;
   to: string;
 }
 
+/**
+ * The Link component is a pre-styled link element based on react-router-dom.
+ * It extends the RouterLink component with additional styling and accepts both icons and labels.
+ * @param props - Props for the Link component.
+ * @returns A Link React element.
+ */
 const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
-  ({ className, icon, variant, label, children, ...props }, ref) => {
+  (
+    { className, icon, iconNode, variant, size, label, children, ...props },
+    ref
+  ) => {
     const IconWrapper = { icon };
 
     return (
       <RouterLink
-        className={cn(linkVariants({ variant, className }))}
+        className={cn(buttonVariants({ variant, className }))}
         ref={ref}
         {...props}
       >
         <span className="sr-only">{label}</span>
         {icon && IconWrapper.icon ? (
-          <span className="flex flex-row items-center gap-x-2">
+          <div className="flex flex-row items-center gap-x-2">
             <IconWrapper.icon
-              className={cn(iconVariants({ size: 'default', className }))}
+              className={cn(iconVariants({ size, className }))}
             />
-            <span className="leading-4">{label || children}</span>
-          </span>
+            {(label || children) && <>{label || children}</>}
+          </div>
         ) : (
-          <span className="leading-4">{label || children}</span>
+          <div className="flex flex-row items-center gap-x-2">
+            {iconNode && <>{iconNode}</>}
+            {label || children}
+          </div>
         )}
       </RouterLink>
     );
@@ -77,4 +69,4 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
 
 Link.displayName = 'Link';
 
-export { Link, linkVariants };
+export { Link };

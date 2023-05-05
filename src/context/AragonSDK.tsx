@@ -1,3 +1,17 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @see https://devs.aragon.org/docs/sdk/examples/ - Aragon SDK Context setup
+ * Exports a React Context that provides the Aragon SDK Context and Client.
+ * This context is used by the useAragonSDK hook.
+ */
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
   Client,
@@ -6,17 +20,21 @@ import {
   ContextPlugin,
   TokenVotingClient,
 } from '@aragon/sdk-client';
-import { useSigner } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
+import { Contract } from 'ethers';
+import { erc20ABI } from 'wagmi';
 
 type SDKContext = {
   context?: Context;
   client?: Client;
   votingClient?: TokenVotingClient;
   votingPluginAddress?: string;
+  repTokenContract?: Contract;
 };
 
 const AragonSDKContext = createContext<SDKContext>({});
-const votingPluginAddress = '0xfc9ef7e0ea890e86864137e49282b21a0a1f6e5e';
+const votingPluginAddress = import.meta.env.VITE_VOTING_PLUGIN;
+const repTokenAddress = import.meta.env.VITE_REP_CONTRACT;
 
 export function AragonSDKWrapper({ children }: any): JSX.Element {
   const [context, setContext] = useState<Context | undefined>(undefined);
@@ -24,13 +42,16 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   const [votingClient, setVotingClient] = useState<
     TokenVotingClient | undefined
   >(undefined);
-  const signer = useSigner().data || undefined;
+  const [repTokenContract, setRepTokenContract] = useState<
+    Contract | undefined
+  >(undefined);
 
-  // TODO: Add support for Polygon
-  // e.g. for network: import.meta.env.DEV ? 'goerli' : 'polygon'
+  const signer = useSigner().data || undefined;
+  const provider = useProvider({
+    chainId: +import.meta.env.VITE_PREFERRED_NETWORK_ID,
+  });
+
   useEffect(() => {
-    // TODO: remove this line, but somehow still handle the case where signer is undefined, but we do want to fetch basic info from the DAO
-    if (!signer) return;
     const aragonSDKContextParams: ContextParams = {
       network: 'goerli',
       signer,
@@ -44,7 +65,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
       ],
       graphqlNodes: [
         {
-          url: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/version/v1.0.0/api', //'https://subgraph.plopmenz.com/subgraphs/name/PlopGraph/version/v0.0.1/api'
+          url: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/version/v1.1.0/api', //'https://subgraph.plopmenz.com/subgraphs/name/PlopGraph/version/v0.0.1/api'
         },
       ],
     };
@@ -55,13 +76,23 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   useEffect(() => {
     if (!context) return;
     setClient(new Client(context));
-    const contextPlugin = new ContextPlugin(context);
+    const contextPlugin = ContextPlugin.fromContext(context);
     setVotingClient(new TokenVotingClient(contextPlugin));
   }, [context]);
 
+  useEffect(() => {
+    setRepTokenContract(new Contract(repTokenAddress, erc20ABI, provider));
+  }, [provider]);
+
   return (
     <AragonSDKContext.Provider
-      value={{ context, client, votingClient, votingPluginAddress }}
+      value={{
+        context,
+        client,
+        votingClient,
+        votingPluginAddress,
+        repTokenContract,
+      }}
     >
       {children}
     </AragonSDKContext.Provider>

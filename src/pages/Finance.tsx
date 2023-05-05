@@ -1,48 +1,78 @@
-import { TransferType } from '@aragon/sdk-client';
-import { HiArrowSmallRight, HiPlus } from 'react-icons/hi2';
-import { Address } from '../components/ui/Address';
-import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
-import { HeaderCard } from '../components/ui/HeaderCard';
-import Loader from '../components/ui/Loader';
-import { DaoBalance, DaoBalances, useDaoBalance } from '../hooks/useDaoBalance';
-import { formatRelative } from 'date-fns';
-import { DaoTransfer, useDaoTransfers } from '../hooks/useDaoTransfers';
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
-type DaoTokenProps = {
-  daoBalances: DaoBalances;
-  max_amount: number;
+import { TransferType } from '@aragon/sdk-client';
+import {
+  HiArrowSmallRight,
+  HiArrowsRightLeft,
+  HiCircleStack,
+} from 'react-icons/hi2';
+import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
+import { format } from 'date-fns';
+import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
+import TokenAmount, {
+  transfertypeToSign,
+} from '@/src/components/ui/TokenAmount';
+import { useState } from 'react';
+import { Link } from '@/src/components/ui/Link';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { Skeleton } from '@/src/components/ui/Skeleton';
+
+type DaoTokenListProps = {
+  loading: boolean;
+  error: string | null;
+  daoBalances: DaoBalance[];
+  limit: number;
 };
 
-const DaoTokens = ({
+const DaoTokensList = ({
+  loading,
+  error,
   daoBalances,
-  max_amount = daoBalances.length,
-}: DaoTokenProps): JSX.Element => {
+  limit = daoBalances.length,
+}: DaoTokenListProps): JSX.Element => {
+  if (loading)
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+      </div>
+    );
+  if (error)
+    return <p className="text-center font-normal">An error was encountered</p>;
+
   const balances = daoBalances
     .slice() //Copies array
     .sort((a, b) => (a.updateDate < b.updateDate ? 1 : -1))
-    .slice(0, max_amount);
+    .slice(0, limit);
 
   return (
-    <div className="mt-4 space-y-4">
-      {balances.map((balance: DaoBalance, index) => (
-        <Card
-          key={index}
-          padding="sm"
-          variant="light"
-          className="p-4 dark:bg-slate-700/50"
-        >
-          <h2 className="font-bold">{balance.name}</h2>
+    <div className="space-y-4">
+      {balances.map((balance: DaoBalance, i) => (
+        <Card key={i} size="sm" variant="light">
+          <p className="font-bold capitalize">
+            {balance.name != '' && balance.name ? balance.name : 'Unkown Token'}
+          </p>
           <div className="flex flex-row items-center">
-            <span>
-              {bigIntToFloat(balance.balance, balance.decimals).toFixed(2)}
-              &nbsp;{balance.symbol ?? ''}
-            </span>
+            <TokenAmount
+              amount={balance.balance}
+              tokenDecimals={balance.decimals}
+              symbol={balance.symbol}
+            />
             <span className="px-2">•</span>
-            <span>
+            <span className="text-popover-foreground/80">
               <Address
                 address={balance.address ?? '-'}
-                maxLength={10}
+                maxLength={AddressLength.Small}
                 hasLink={true}
                 showCopy={true}
               />
@@ -54,52 +84,63 @@ const DaoTokens = ({
   );
 };
 
-const DaoTokensWrapped = (): JSX.Element => {
-  const { daoBalances, loading, error } = useDaoBalance({});
-  if (loading) return <Loader></Loader>;
-  if (error) return <h3>{error}</h3>;
-  return DaoTokens({ daoBalances: daoBalances, max_amount: 3 });
+type DaoTransfersListProps = {
+  loading: boolean;
+  error: string | null;
+  daoTransfers: DaoTransfer[] | null;
+  limit?: number;
 };
 
-type DaoTransfersProps = {
-  daoTransfers: DaoTransfer[];
-  max_amount: number;
-};
-const DaoTransfers = ({
+export const DaoTransfersList = ({
+  loading,
+  error,
   daoTransfers,
-  max_amount = daoTransfers.length,
-}: DaoTransfersProps): JSX.Element => {
-  const transfers = daoTransfers.slice(0, max_amount);
-  console.log(transfers);
+  limit = daoTransfers?.length ?? 3,
+}: DaoTransfersListProps): JSX.Element => {
+  if (loading)
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+      </div>
+    );
+  if (error)
+    return <p className="text-center font-normal">An error was encountered</p>;
+
+  if (!daoTransfers)
+    return (
+      <p className="text-center font-normal italic text-highlight-foreground/80">
+        No transfers found
+      </p>
+    );
+
+  const transfers = daoTransfers.slice(0, limit);
+
   return (
-    <div className="mt-4 space-y-4">
+    <div className="space-y-4">
       {transfers.map((transfer: DaoTransfer) => (
-        <Card
-          key={transfer.transactionId}
-          padding="sm"
-          variant="light"
-          className="p-4 dark:bg-slate-700/50"
-        >
+        <Card key={transfer.transactionId} size="sm" variant="light">
           <div className="flex flex-row justify-between">
             <div className="text-left">
-              <h2 className="font-bold capitalize">{transfer.type}</h2>
-              <span> {formatRelative(transfer.creationDate, new Date())} </span>
+              <p className="font-bold capitalize">{transfer.type}</p>
+              <p className="text-sm">{format(transfer.creationDate, 'Pp')}</p>
             </div>
-            <div className="text-right">
-              <span className="font-bold">
-                {transfer.type === TransferType.WITHDRAW ? '-' : '+'}
-                {bigIntToFloat(
-                  transfer.amount ?? 1n,
-                  transfer.decimals ?? 0
-                ).toFixed(2)}{' '}
-                &nbsp;{transfer.tokenSymbol ?? ''}
-              </span>
-              <Address
-                address={daoTransferAddress(transfer)}
-                maxLength={10}
-                hasLink={true}
-                showCopy={true}
+            <div className="flex flex-col items-end text-right">
+              <TokenAmount
+                className="font-bold"
+                amount={transfer.amount}
+                tokenDecimals={transfer.decimals}
+                symbol={transfer.tokenSymbol}
+                sign={transfertypeToSign(transfer.type)}
               />
+              <div className="text-popover-foreground/80">
+                <Address
+                  address={daoTransferAddress(transfer)}
+                  maxLength={AddressLength.Small}
+                  hasLink={true}
+                  showCopy={true}
+                />
+              </div>
             </div>
           </div>
         </Card>
@@ -119,52 +160,83 @@ const daoTransferAddress = (transfer: DaoTransfer): string => {
   throw new Error('Unreachable exception');
 };
 
-const DaoTransfersWrapped = (): JSX.Element => {
-  const { daoTransfers, loading, error } = useDaoTransfers({});
-  if (loading) return <Loader></Loader>;
-  if (error) return <h3>{error}</h3>;
-  if (!daoTransfers) return <h3>No transfers could be loaded</h3>;
-  return DaoTransfers({ daoTransfers, max_amount: 3 });
-};
-
-const bigIntToFloat = (
-  value: BigInt | null,
-  decimals: number | null,
-  onError: string = '-'
-): number => parseFloat(value && decimals ? `${value}E-${decimals}` : onError);
-
 const Finance = () => {
+  const {
+    daoBalances,
+    loading: tokensLoading,
+    error: tokensError,
+  } = useDaoBalance({});
+  const [tokenLimit, setTokenLimit] = useState(3);
+
+  const {
+    daoTransfers,
+    loading: transfersLoading,
+    error: trasnfersError,
+  } = useDaoTransfers({});
+  const [transferLimit, setTransferLimit] = useState(3);
+
   return (
-    <div>
-      <div className="flex flex-col gap-6">
-        <HeaderCard
-          title="Finance"
-          aside={<Button label="New transfer" icon={HiPlus}></Button>}
-        ></HeaderCard>
-      </div>
-      <div className="my-6 grid grid-cols-2 gap-4">
-        <Card>
-          <h2 className="text-xl font-bold">Tokens</h2>
-          <DaoTokensWrapped />
-          {/* //TODO make this button DO something */}
-          <Button
-            className="my-4"
-            variant="outline"
-            label="See all tokens"
-            icon={HiArrowSmallRight}
-          ></Button>
-        </Card>
-        <Card>
-          <h2 className="text-xl font-bold">Latest transfers</h2>
-          <DaoTransfersWrapped />
-          {/* TODO make this button DO something */}
-          <Button
-            className="my-4"
-            variant="outline"
-            label="See all transfers"
-            icon={HiArrowSmallRight}
-          />
-        </Card>
+    <div className="space-y-6">
+      <HeaderCard
+        title="Finance"
+        aside={<Link to="/governance/new-proposal" label="New transfer" />}
+      />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <MainCard
+          header={
+            <DefaultMainCardHeader value={daoBalances.length} label="tokens" />
+          }
+          loading={false}
+          icon={HiCircleStack}
+        >
+          <div className="space-y-4">
+            <DaoTokensList
+              daoBalances={daoBalances}
+              limit={tokenLimit}
+              loading={tokensLoading}
+              error={tokensError}
+            />
+            {tokenLimit < daoBalances.length && (
+              <Button
+                variant="outline"
+                label="Show more tokens"
+                icon={HiArrowSmallRight}
+                onClick={() =>
+                  setTokenLimit(tokenLimit + Math.min(tokenLimit, 25))
+                }
+              />
+            )}
+          </div>
+        </MainCard>
+        <MainCard
+          header={
+            <DefaultMainCardHeader
+              value={daoTransfers?.length ?? 0}
+              label="transfers completed"
+            />
+          }
+          loading={transfersLoading}
+          icon={HiArrowsRightLeft}
+        >
+          <div className="space-y-4">
+            <DaoTransfersList
+              daoTransfers={daoTransfers}
+              limit={transferLimit}
+              loading={transfersLoading}
+              error={trasnfersError}
+            />
+            {daoTransfers && transferLimit < daoTransfers.length && (
+              <Button
+                variant="outline"
+                label="Show more tokens"
+                icon={HiArrowSmallRight}
+                onClick={() =>
+                  setTransferLimit(transferLimit + Math.min(transferLimit, 25))
+                }
+              />
+            )}
+          </div>
+        </MainCard>
       </div>
     </div>
   );

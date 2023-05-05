@@ -1,3 +1,11 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
 
 import {
@@ -10,7 +18,8 @@ import {
   TransferType,
 } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
-import { getErrorMessage } from '../lib/utils';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { getErrorMessage } from '@/src/lib/utils';
 
 export type UseDaoTransfersData = {
   daoTransfers: DaoTransfer[] | null;
@@ -27,9 +36,9 @@ export type DaoTransfer = {
   from: string;
   amount: BigInt | null;
   decimals: number | null;
-  tokenAddress: String | null;
-  tokenName: String | null;
-  tokenSymbol: String | null;
+  tokenAddress: string | null;
+  tokenName: string | null;
+  tokenSymbol: string | null;
   proposalId: String | null;
 };
 
@@ -59,7 +68,7 @@ export const useDaoTransfers = ({
     const params: ITransferQueryParams = {
       daoAddressOrEns: address,
       sortBy: TransferSortBy.CREATED_AT, // optional
-      limit: limit, // optional
+      limit, // optional
       skip: 0, // optional
       direction: SortDirection.DESC, // optional, options: DESC or ASC
     };
@@ -70,8 +79,8 @@ export const useDaoTransfers = ({
       );
       const daoTransfers = transfers?.map(transferToDaoTransfer) ?? null;
       setDaoTransfers(daoTransfers);
-      if (loading) setLoading(false);
-      if (error) setError(null);
+      setLoading(false);
+      setError(null);
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -80,8 +89,8 @@ export const useDaoTransfers = ({
   };
 
   const setDummyData = () => {
-    if (loading) setLoading(false);
-    if (error) setError(null);
+    setLoading(false);
+    setError(null);
 
     const data: Transfer[] = [
       {
@@ -147,7 +156,7 @@ export const useDaoTransfers = ({
 
 const transferToDaoTransfer = (transfer: Transfer): DaoTransfer => {
   const x = transfer as any;
-  return {
+  let result = {
     type: transfer.type,
     tokenType: transfer.tokenType,
     creationDate: transfer.creationDate,
@@ -155,10 +164,32 @@ const transferToDaoTransfer = (transfer: Transfer): DaoTransfer => {
     to: transfer.to,
     from: transfer.from,
     amount: x.amount ?? null,
-    decimals: x.token.decimals ?? null,
-    tokenAddress: x.token.address ?? null,
-    tokenName: x.token.name ?? null,
-    tokenSymbol: x.token.symbol ?? null,
+    decimals: x.token?.decimals ?? null,
+    tokenAddress: x.token?.address ?? null,
+    tokenName: x.token?.name ?? null,
+    tokenSymbol: x.token?.symbol ?? null,
     proposalId: x.proposalId ?? null,
   };
+  switch (transfer.tokenType) {
+    case TokenType.NATIVE:
+      // eslint-disable-next-line no-case-declarations
+      const meta = PREFERRED_NETWORK_METADATA;
+      result.decimals = meta.nativeCurrency.decimals;
+      result.tokenName = meta.nativeCurrency.name;
+      result.tokenSymbol = meta.nativeCurrency.symbol;
+      break;
+    case TokenType.ERC721:
+      result.amount = x.amount ?? 1;
+      result.decimals = x.token?.decimals ?? 0;
+      break;
+    case TokenType.ERC20:
+      break;
+    default:
+      console.error(
+        'useDaoTransfers.ts ~ transferToDaoTransfer: Unexpected tokentype'
+      );
+      break;
+  }
+
+  return result;
 };

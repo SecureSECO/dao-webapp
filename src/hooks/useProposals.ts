@@ -1,8 +1,19 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
   TokenVotingClient,
-  TokenVotingProposalListItem,
+  ProposalStatus,
+  TokenType,
+  ProposalSortBy,
+  SortDirection,
 } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
 
@@ -21,12 +32,19 @@ type Token = {
   name: string;
   symbol: string;
   decimals: number;
+  type: TokenType;
 };
 
-type Results = {
+type Result = {
   yes: bigint;
   no: bigint;
   abstain: bigint;
+};
+
+type Settings = {
+  supportThreshold: number;
+  duration: number;
+  minParticipation: number;
 };
 
 export type Proposal = {
@@ -36,9 +54,11 @@ export type Proposal = {
   metadata: Metadata;
   startDate: Date;
   endDate: Date;
-  status: 'Executed' | 'Pending';
+  status: ProposalStatus;
   token: Token;
-  results: Results;
+  result: Result;
+  settings: Settings;
+  totalVotingWeight: bigint;
 };
 
 export type UseProposalsData = {
@@ -48,11 +68,15 @@ export type UseProposalsData = {
 };
 export type UseProposalsProps = {
   useDummyData?: boolean;
+  status?: ProposalStatus | undefined;
+  sortBy?: ProposalSortBy | undefined;
+  direction?: SortDirection | undefined;
+  limit?: number | undefined;
 };
 
 const dummyProposals: Proposal[] = [
   {
-    id: '0x12345...',
+    id: '0x22345',
     dao: {
       address: '0x1234567890123456789012345678901234567890',
       name: 'Cool DAO',
@@ -64,23 +88,30 @@ const dummyProposals: Proposal[] = [
     },
     startDate: new Date('2023-03-16T00:00:00.000Z'),
     endDate: new Date('2023-03-23T00:00:00.000Z'),
-    status: 'Executed',
+    status: ProposalStatus.ACTIVE,
     token: {
       address: '0x1234567890123456789012345678901234567890',
       name: 'The Token',
       symbol: 'TOK',
       decimals: 18,
+      type: TokenType.ERC20,
     },
-    results: {
+    result: {
       yes: 100000n,
       no: 77777n,
       abstain: 0n,
     },
+    settings: {
+      supportThreshold: 0.5,
+      duration: 87000,
+      minParticipation: 0.15,
+    },
+    totalVotingWeight: 1000000000000000000n,
   },
   {
-    id: '0x12346...',
+    id: '0x12345',
     dao: {
-      address: '0x1234567890123456789012345678901234567890',
+      address: '0x123456789012345678901234567890123456789',
       name: 'Cool DAO',
     },
     creatorAddress: '0x1234567890123456789012345678901234567890',
@@ -90,23 +121,34 @@ const dummyProposals: Proposal[] = [
     },
     startDate: new Date('2023-03-16T00:00:00.000Z'),
     endDate: new Date('2023-03-23T00:00:00.000Z'),
-    status: 'Pending',
+    status: ProposalStatus.PENDING,
     token: {
       address: '0x1234567890123456789012345678901234567890',
       name: 'The Token',
       symbol: 'TOK',
       decimals: 18,
+      type: TokenType.ERC20,
     },
-    results: {
+    result: {
       yes: 100000n,
       no: 77777n,
       abstain: 0n,
     },
+    settings: {
+      supportThreshold: 0.5,
+      duration: 87000,
+      minParticipation: 0.15,
+    },
+    totalVotingWeight: 1000000000000000000n,
   },
 ];
 
 export const useProposals = ({
   useDummyData = false,
+  status = undefined,
+  sortBy = ProposalSortBy.CREATED_AT,
+  direction = SortDirection.DESC,
+  limit = undefined,
 }: UseProposalsProps): UseProposalsData => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -121,16 +163,19 @@ export const useProposals = ({
     }
 
     try {
-      const daoProposals: TokenVotingProposalListItem[] | null =
-        await client.methods.getProposals({
+      const daoProposals: Proposal[] | null =
+        (await client.methods.getProposals({
           daoAddressOrEns: import.meta.env.VITE_DAO_ADDRESS,
-        });
-      if (daoProposals) {
-        // setProposals();
-        console.log(daoProposals);
+          status,
+          sortBy,
+          direction: direction ?? SortDirection.DESC,
+          limit,
+        })) as Proposal[];
 
-        if (loading) setLoading(false);
-        if (error) setError(null);
+      if (daoProposals) {
+        setProposals(daoProposals);
+        setLoading(false);
+        setError(null);
       }
     } catch (e) {
       console.error(e);
@@ -141,17 +186,17 @@ export const useProposals = ({
 
   //** Set dummy data for development without querying Aragon API */
   const setDummyData = () => {
-    if (loading) setLoading(false);
-    if (error) setError(null);
-
+    setLoading(false);
+    setError(null);
     setProposals(dummyProposals);
   };
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
     if (!votingClient) return;
+    setLoading(true);
     fetchProposals(votingClient);
-  }, [votingClient]);
+  }, [votingClient, status, sortBy, direction]);
 
   return {
     loading,

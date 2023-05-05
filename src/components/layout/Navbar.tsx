@@ -1,3 +1,11 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import { NavLink } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
 import LogoFull from '@/src/components/LogoFull';
@@ -32,8 +40,8 @@ const navItems: NavItem[] = [
     url: '/finance',
   },
   {
-    label: 'Community',
-    url: '/community',
+    label: 'Verification',
+    url: '/verification',
   },
   {
     label: 'Settings',
@@ -48,9 +56,8 @@ const Navitem = ({ item }: { item: NavItem }) => {
       to={item.url}
       className={({ isActive, isPending }) =>
         cn(
-          'rounded-md py-2 px-4 text-lg font-semibold dark:text-slate-400',
-          isActive &&
-            'bg-white text-primary shadow-md dark:bg-slate-800 dark:text-primary-500',
+          'rounded-md px-4 py-2 text-lg font-semibold ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2',
+          isActive && 'bg-highlight text-primary shadow-md',
           isPending && ''
         )
       }
@@ -62,7 +69,7 @@ const Navitem = ({ item }: { item: NavItem }) => {
 
 const Navbar = () => {
   return (
-    <div className="flex w-full flex-row items-center justify-between">
+    <div className="mt-2 flex w-full flex-row items-center justify-between lg:mt-0">
       {/* Desktop logo */}
       <LogoFull className="hidden h-fit w-40 lg:block" />
 
@@ -70,12 +77,12 @@ const Navbar = () => {
       <nav className="relative lg:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="subtle" className="group">
-              <HiBars3 className="h-8 w-8 group-data-[state=open]:hidden" />
-              <HiXMark className="h-8 w-8 group-data-[state=closed]:hidden" />
+            <Button variant="outline" className="group" size="sm">
+              <HiBars3 className="h-6 w-6 group-data-[state=open]:hidden" />
+              <HiXMark className="h-6 w-6 group-data-[state=closed]:hidden" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="absolute -left-8 origin-top">
+          <DropdownMenuContent className="absolute -left-6 origin-top">
             <DropdownMenuGroup>
               {navItems.map((item) => (
                 <DropdownMenuItem
@@ -91,10 +98,10 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile logo */}
-      <LogoFull className="h-fit w-40 lg:hidden" />
+      <LogoFull className="h-fit w-32 xs:w-40 lg:hidden" />
 
       {/* Desktop nav */}
-      <nav className="hidden px-4 py-6 lg:flex lg:flex-row">
+      <nav className="hidden px-4 py-6 lg:flex lg:flex-row lg:gap-x-2">
         {navItems.map((item) => (
           <Navitem key={item.label} item={item} />
         ))}
