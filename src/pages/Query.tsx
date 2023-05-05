@@ -7,9 +7,11 @@
  */
 
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
+import { Table } from '@/src/components/ui/Table';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { Label } from '@/src/components/ui/Label';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
@@ -18,13 +20,25 @@ import {
   HiOutlineCodeBracketSquare,
   HiOutlineCurrencyDollar,
   HiOutlineDocumentMagnifyingGlass,
+  HiArrowDownTray,
 } from 'react-icons/hi2';
 import { UrlPattern } from '@/src/lib/patterns';
 import { promise } from '@/src/hooks/useToast';
+import { saveAs } from 'file-saver';
+import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import { useAccount } from 'wagmi';
 
 interface QueryFormData {
   searchUrl: string;
   token: string;
+}
+
+interface ResultData {
+  Hash: string;
+  FileName: string;
+  FunctionName: string;
+  LineNumber: number;
+  LineNumberEnd: number;
 }
 
 const Query = () => {
@@ -33,19 +47,38 @@ const Query = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<QueryFormData>();
-  const { queryResult, runQuery } = useSearchSECO({});
+  const { queryResult, runQuery, checkHashes } = useSearchSECO({});
+  const [hashCount, setHashCount] = useState<number | null>(null);
+
+  const { address } = useAccount();
+
+  const downloadResults = () => {
+    if (queryResult) {
+      const data = new Blob([JSON.stringify(queryResult, null, 2)], {
+        type: 'application/json',
+      });
+      saveAs(data, 'results.json');
+    }
+  };
 
   const onSubmit = async (data: QueryFormData) => {
     console.log('Valid URL:', data.searchUrl);
 
-    promise(runQuery(data.searchUrl, data.token), {
-      loading: 'Querying SearchSECO database...',
-      success: 'Query successful!',
-      error: (err) => ({
-        title: err,
-        description: '',
+    promise(
+      runQuery(data.searchUrl, data.token).then((results: ResultData[]) => {
+        const hashes = results.map((result: ResultData) => result.Hash);
+        setHashCount(hashes.length);
+        return checkHashes(hashes);
       }),
-    });
+      {
+        loading: 'Querying SearchSECO database and retrieving hash metadata...',
+        success: 'Hash metadata retrieved successfully!',
+        error: (err) => ({
+          title: err,
+          description: '',
+        }),
+      }
+    );
   };
 
   return (
@@ -106,14 +139,53 @@ const Query = () => {
                   />
                 </ErrorWrapper>
               </div>
-              <Button type="submit" className="">
+              <Button type="submit" className="" 
+              //disabled={!address}           Commented for testing purposes
+              >
                 Submit
               </Button>
+              {!address && <ConnectWalletWarning action="to query the SearchSECO database" />}
             </form>
           </MainCard>
           <MainCard header="Result" icon={HiOutlineCodeBracketSquare}>
-            {queryResult ? (
-              <pre>{JSON.stringify(queryResult, null, 2)}</pre>
+            {hashCount !== null ? (
+              <>
+                <p>
+                  Number of hashes found: <strong>{hashCount}</strong>
+                </p>
+                {hashCount > 0 ? (
+                  <>
+                    {queryResult && queryResult.methodData ? (
+                      <>
+                        <Table
+                          columns={[
+                            { header: 'Hash', accessor: 'method_hash' },
+                            { header: 'File Name', accessor: 'file' },
+                            { header: 'Function Name', accessor: 'method_name' },
+                            { header: 'Line Number', accessor: 'lineNumber' },
+                          ]}
+                          data={queryResult.methodData}
+                        />
+                        <Button
+                          onClick={downloadResults}
+                          className="mt-2"
+                          disabled={!queryResult}
+                        >
+                          Download as JSON file
+                        </Button>
+                      </>
+                    ) : (
+                      <p className="text-base font-normal italic text-highlight-foreground/80">
+                        Loading metadata...
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-base font-normal italic text-highlight-foreground/80">
+                    No hashes found
+                  </p>
+                )}
+              </>
             ) : (
               <p className="text-base font-normal italic text-highlight-foreground/80">
                 Query results will be displayed here

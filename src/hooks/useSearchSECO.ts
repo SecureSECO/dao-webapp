@@ -11,12 +11,14 @@ import { getErrorMessage } from '@/src/lib/utils';
 import { useState } from 'react';
 
 type QueryResponse = any;
+type CheckResponse = any;
 
 type UseSearchSECOProps = {};
 
 type UseSearchSECOData = {
   queryResult: QueryResponse;
   runQuery: (url: string, token: string) => Promise<QueryResponse>;
+  checkHashes: (hashes: string[]) => Promise<any>;
 };
 
 /**
@@ -24,11 +26,11 @@ type UseSearchSECOData = {
  * @returns Functions and results of interacting with the SearchSECO database and API
  */
 export const useSearchSECO = (props: UseSearchSECOProps): UseSearchSECOData => {
-  const [queryResult, setQueryResult] = useState<QueryResponse | null>(null);
+  const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
 
-  const runQuery = async (url: string, token: string): Promise<QueryResponse> =>
-    new Promise((resolve, reject) => {
-      return fetch('http://localhost:8080/api/fetch', {
+  const runQuery = async (url: string, token: string): Promise<QueryResponse> => {
+    try {
+      const response = await fetch('http://localhost:8080/api/fetch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,6 +39,29 @@ export const useSearchSECO = (props: UseSearchSECOProps): UseSearchSECOData => {
           url,
           token,
         }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+
+      const res = await response.json();
+      setQueryResult(res);
+      return res;
+    } catch (e) {
+      console.error(e);
+      throw getErrorMessage(e);
+    }
+  };
+
+  const checkHashes = async (hashes: string[]): Promise<CheckResponse> =>
+    new Promise((resolve, reject) => {
+      return fetch('http://localhost:8080/api/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ hashes }),
       })
         .then((response) => {
           if (!response.ok)
@@ -56,5 +81,6 @@ export const useSearchSECO = (props: UseSearchSECOProps): UseSearchSECOData => {
   return {
     queryResult,
     runQuery,
+    checkHashes,
   };
 };
