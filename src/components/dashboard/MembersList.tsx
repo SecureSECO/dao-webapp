@@ -17,7 +17,7 @@ import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 const MemberCard = ({ member }: { member: Member }) => {
   return (
     <Card
-      padding="sm"
+      size="sm"
       className="flex flex-row items-center justify-between bg-popover"
     >
       <Address

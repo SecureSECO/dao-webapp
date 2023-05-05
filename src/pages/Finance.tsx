@@ -25,6 +25,7 @@ import TokenAmount, {
 import { useState } from 'react';
 import { Link } from '@/src/components/ui/Link';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { Skeleton } from '@/src/components/ui/Skeleton';
 
 type DaoTokenListProps = {
   loading: boolean;
@@ -42,8 +43,8 @@ const DaoTokensList = ({
   if (loading)
     return (
       <div className="space-y-4">
-        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
-        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
       </div>
     );
   if (error)
@@ -57,7 +58,7 @@ const DaoTokensList = ({
   return (
     <div className="space-y-4">
       {balances.map((balance: DaoBalance, i) => (
-        <Card key={i} padding="sm" variant="light">
+        <Card key={i} size="sm" variant="light">
           <p className="font-bold capitalize">
             {balance.name != '' && balance.name ? balance.name : 'Unkown Token'}
           </p>
@@ -99,8 +100,8 @@ export const DaoTransfersList = ({
   if (loading)
     return (
       <div className="space-y-4">
-        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
-        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
       </div>
     );
   if (error)
@@ -118,7 +119,7 @@ export const DaoTransfersList = ({
   return (
     <div className="space-y-4">
       {transfers.map((transfer: DaoTransfer) => (
-        <Card key={transfer.transactionId} padding="sm" variant="light">
+        <Card key={transfer.transactionId} size="sm" variant="light">
           <div className="flex flex-row justify-between">
             <div className="text-left">
               <p className="font-bold capitalize">{transfer.type}</p>
@@ -185,6 +186,7 @@ const Finance = () => {
           header={
             <DefaultMainCardHeader value={daoBalances.length} label="tokens" />
           }
+          loading={false}
           icon={HiCircleStack}
         >
           <div className="space-y-4">
@@ -213,6 +215,7 @@ const Finance = () => {
               label="transfers completed"
             />
           }
+          loading={transfersLoading}
           icon={HiArrowsRightLeft}
         >
           <div className="space-y-4">

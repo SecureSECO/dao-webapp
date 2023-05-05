@@ -32,6 +32,7 @@ import {
 } from '@/src/components/ui/Dropdown';
 import { HiChevronDown } from 'react-icons/hi2';
 import { cn } from '@/src/lib/utils';
+import { Skeleton } from '@/src/components/ui/Skeleton';
 
 const Governance = () => {
   return (
@@ -163,8 +164,10 @@ export const ProposalCardList = ({
           doubleColumn && 'lg:grid-cols-2'
         )}
       >
-        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
-        <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
       </div>
     );
   if (error)
