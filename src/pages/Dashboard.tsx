@@ -82,7 +82,7 @@ const Dashboard = () => {
       {/* Card showing metadata about the DAO */}
       <Card
         loading={daoLoading}
-        padding="lg"
+        size="lg"
         className="relative col-span-full flex shrink flex-row justify-between"
       >
         {dao && (
@@ -166,7 +166,6 @@ const Dashboard = () => {
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
         {/* Card containing the latest dao transfers */}
         <MainCard
-          className=""
           loading={daoTransfersLoading}
           icon={HiCircleStack}
           header={
@@ -203,7 +202,6 @@ const Dashboard = () => {
 
         {/* Card containing DAO members */}
         <MainCard
-          className=""
           loading={membersLoading}
           icon={HiUserGroup}
           header={<DefaultMainCardHeader value={memberCount} label="members" />}

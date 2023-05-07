@@ -12,6 +12,7 @@ import ProposalMilestone, {
 } from '@/src/components/proposal/ProposalMilestone';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { DetailedProposal } from '@/src/hooks/useProposal';
+import { cn } from '@/src/lib/utils';
 import { ProposalStatus } from '@aragon/sdk-client';
 
 /**

@@ -67,7 +67,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
       <div className="space-y-2">
         <Card
           variant="outline"
-          padding="sm"
+          size="sm"
           className="flex flex-row items-center justify-between"
         >
           <p className="text-xl font-medium leading-9">
@@ -84,12 +84,12 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
           </p>
         </Card>
         <div className="flex flex-row items-center justify-between gap-x-2">
-          <Card variant="outline" padding="sm">
+          <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">From</p>
             <p className="font-medium">DAO Treasury</p>
           </Card>
           <HiArrowRight className="h-4 w-4 shrink-0 text-popover-foreground/80" />
-          <Card variant="outline" padding="sm" className="font-medium">
+          <Card variant="outline" size="sm" className="font-medium">
             <p className="text-xs font-normal text-popover-foreground/80">To</p>
             <Address
               address={action.params.to}

@@ -142,7 +142,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
           <Card
             key={index}
             variant="outline"
-            padding="sm"
+            size="sm"
             className="flex flex-row items-center justify-between text-right"
           >
             <Address

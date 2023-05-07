@@ -54,16 +54,16 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
     >
       <div className="space-y-2">
         <div className="grid grid-cols-2 gap-2">
-          <Card variant="outline" padding="sm">
+          <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">Owner</p>
             <p className="font-medium">{parsedUrl.owner}</p>
           </Card>
-          <Card variant="outline" padding="sm">
+          <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">Repository</p>
             <p className="font-medium">{parsedUrl.repo}</p>
           </Card>
         </div>
-        <Card variant="outline" padding="sm">
+        <Card variant="outline" size="sm">
           <p className="text-xs text-popover-foreground/80">
             Pull request #{parsedUrl.pullNumber}
           </p>

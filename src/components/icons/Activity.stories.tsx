@@ -7,7 +7,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import Activity from '@/src/components/icons/Actitivy';
+import Activity from '@/src/components/icons/Activity';
 
 const meta = {
   component: Activity,
