@@ -31,8 +31,8 @@ import {
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 import { Button } from '@/src/components/ui/Button';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 
-const prefferedNetwork: number = +import.meta.env.VITE_PREFERRED_NETWORK_ID;
 const ConnectButton = () => {
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();
@@ -47,7 +47,7 @@ const ConnectButton = () => {
         <DropdownMenuTrigger className="relative flex rounded-full text-sm focus:outline-none">
           <span className="sr-only">Open wallet menu</span>
           <Jazzicon diameter={40} seed={jazznumber} />
-          {chain?.id !== prefferedNetwork && (
+          {chain?.id !== PREFERRED_NETWORK_METADATA.id && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild className="absolute -right-2 -top-2">

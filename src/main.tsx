@@ -31,7 +31,6 @@ import NewProposal from '@/src/pages/NewProposal';
 import Verification from '@/src/pages/Verification';
 import { Toaster } from '@/src/components/ui/Toaster';
 import ViewProposal from '@/src/pages/ViewProposal';
-import { ganache } from '@/src/lib/constants/GanacheChain';
 import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
 
 // 1. Get projectID at https://cloud.walletconnect.com
@@ -41,7 +40,7 @@ if (!import.meta.env.VITE_APP_PROJECT_ID) {
 const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 
 // 2. Configure wagmi client
-const chains = [polygonMumbai, polygon, ganache];
+const chains = [polygonMumbai, polygon];
 
 const { provider } = configureChains(chains, [
   import.meta.env.PROD || import.meta.env.VITE_USE_GANACHE !== 'true'

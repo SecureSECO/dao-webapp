@@ -13,9 +13,16 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { erc20ABI, useProvider, useSigner } from 'wagmi';
+import {
+  erc20ABI,
+  useNetwork,
+  useProvider,
+  useSigner,
+  useSwitchNetwork,
+} from 'wagmi';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
-import { Contract } from 'ethers';
+import { Contract, ethers } from 'ethers';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 
 type SDKContext = {
   client?: DiamondGovernanceClient;
@@ -35,11 +42,39 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
 
   const signer = useSigner().data || undefined;
   const provider = useProvider({
-    chainId: +import.meta.env.VITE_PREFERRED_NETWORK_ID,
+    chainId: PREFERRED_NETWORK_METADATA.id,
   });
 
+  // Make sure the user is on the correct network
+  const network = useSwitchNetwork({
+    chainId: PREFERRED_NETWORK_METADATA.id,
+  });
+  const { chain } = useNetwork();
+  if (
+    chain?.id !== PREFERRED_NETWORK_METADATA.id &&
+    network.switchNetwork &&
+    !network.isLoading
+  ) {
+    network.switchNetwork();
+  }
+
   useEffect(() => {
-    if (!signer) return;
+    // If no signer is available, use a dummy signer
+    // All operations that actually require a signer should be blocked anwyways
+    if (!signer) {
+      let jsonRpcProvider = new ethers.providers.JsonRpcProvider(
+        'https://rpc.ankr.com/polygon_mumbai',
+        {
+          chainId: PREFERRED_NETWORK_METADATA.id,
+          name: PREFERRED_NETWORK_METADATA.name,
+        }
+      );
+      let dummySigner = jsonRpcProvider.getSigner(
+        '0x0000000000000000000000000000000000000000'
+      );
+      setClient(new DiamondGovernanceClient(diamondAddress, dummySigner));
+      return;
+    }
     setClient(new DiamondGovernanceClient(diamondAddress, signer));
   }, [signer]);
 
