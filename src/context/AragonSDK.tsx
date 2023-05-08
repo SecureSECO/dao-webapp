@@ -58,8 +58,6 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
         },
       ],
     };
-    console.log(aragonSDKContextParams);
-
     setContext(new Context(aragonSDKContextParams));
   }, [signer]);
 

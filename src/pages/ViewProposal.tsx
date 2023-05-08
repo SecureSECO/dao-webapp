@@ -10,11 +10,7 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useProposal } from '@/src/hooks/useProposal';
 import { useParams } from 'react-router';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import {
-  ExecuteProposalStep,
-  ExecuteProposalStepValue,
-  ProposalStatus,
-} from '@aragon/sdk-client';
+import { ProposalStatus } from '@aragon/sdk-client';
 import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
 import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
 import { Link } from '@/src/components/ui/Link';
@@ -23,7 +19,7 @@ import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import ProposalActions from '@/src/components/proposal/ProposalActions';
-import { contractInteraction } from '@/src/hooks/useToast';
+import { contractTransaction, toast } from '@/src/hooks/useToast';
 import { useAccount } from 'wagmi';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import { Button } from '@/src/components/ui/Button';
@@ -31,18 +27,20 @@ import { Button } from '@/src/components/ui/Button';
 const ViewProposal = () => {
   const { id } = useParams();
   const { address } = useAccount();
-  const { proposal, loading, error, refetch, canExecute, execute } =
-    useProposal({ id });
+  const { proposal, loading, error, refetch, canExecute, canVote } =
+    useProposal({ id, address });
 
   const statusText = (status: ProposalStatus) => {
     if (!proposal) return '';
     switch (status) {
       case ProposalStatus.PENDING:
-        return 'Starts in ' + countdownText(proposal.startDate);
+        return 'Starts in ' + countdownText(proposal.data.parameters.startDate);
       case ProposalStatus.ACTIVE:
-        return 'Ends in ' + countdownText(proposal.endDate);
+        return 'Ends in ' + countdownText(proposal.data.parameters.endDate);
       default:
-        return 'Ended ' + countdownText(proposal.endDate) + ' ago';
+        return (
+          'Ended ' + countdownText(proposal.data.parameters.endDate) + ' ago'
+        );
     }
   };
 
@@ -50,23 +48,22 @@ const ViewProposal = () => {
    * Execute current proposal's actions
    */
   const executeProposal = async () => {
-    if (!execute) return;
-    contractInteraction<ExecuteProposalStep, ExecuteProposalStepValue>(
-      execute,
-      {
-        steps: {
-          confirmed: ExecuteProposalStep.DONE,
-          signed: ExecuteProposalStep.EXECUTING,
-        },
-        messages: {
-          error: 'Error executing proposal',
-          success: 'Execution successful!',
-        },
-        onFinish: () => {
-          refetch();
-        },
-      }
-    );
+    if (!proposal)
+      return toast({
+        title: 'No proposal found',
+        description: 'Please try again later',
+        variant: 'error',
+      });
+
+    contractTransaction(() => proposal.Execute(), {
+      messages: {
+        error: 'Error executing proposal',
+        success: 'Execution successful!',
+      },
+      onFinish: () => {
+        refetch();
+      },
+    });
   };
 
   return (

@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useState } from 'react';
 import {
   useForm,
   Controller,
@@ -25,7 +24,7 @@ import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import { ProposalResource } from '@/src/hooks/useProposal';
+import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
 import { UrlPattern } from '@/src/lib/patterns';
 
 export interface ProposalFormMetadata {

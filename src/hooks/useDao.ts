@@ -45,9 +45,12 @@ export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
     }
 
     try {
+      console.log('Fetching DAO details');
+
       const dao: DaoApiData | null = await client.methods.getDao(
         import.meta.env.VITE_DAO_ADDRESS
       );
+
       if (dao) {
         setDaoDetails({
           name: dao.metadata.name,

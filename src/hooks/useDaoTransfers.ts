@@ -77,6 +77,7 @@ export const useDaoTransfers = ({
       const transfers: Transfer[] | null = await client.methods.getDaoTransfers(
         params
       );
+
       const daoTransfers = transfers?.map(transferToDaoTransfer) ?? null;
       setDaoTransfers(daoTransfers);
       setLoading(false);

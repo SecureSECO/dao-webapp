@@ -11,13 +11,6 @@
  * and allow the user to submit their own vote if the proposal is active (and they are eligible to vote).
  */
 
-import { DetailedProposal } from '@/src/hooks/useProposal';
-import {
-  ProposalStatus,
-  VoteProposalStep,
-  VoteProposalStepValue,
-  VoteValues,
-} from '@aragon/sdk-client';
 import {
   Accordion,
   AccordionContent,
@@ -28,18 +21,21 @@ import { Progress } from '@/src/components/ui/Progress';
 import { Button } from '@/src/components/ui/Button';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
-import { useCanVote } from '@/src/hooks/useCanVote';
-import { useAccount } from 'wagmi';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
-import { calcBigintPercentage } from '@/src/lib/utils';
+import { calcBigNumberPercentage } from '@/src/lib/utils';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
-import { contractInteraction, useToast } from '@/src/hooks/useToast';
+import { contractTransaction } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import { ProposalStatus, VoteOption } from '@plopmenz/diamond-governance-sdk';
+import { Proposal } from '@plopmenz/diamond-governance-sdk/dist/sdk/src/sugar/proposal';
+import { CanVote } from '@/src/hooks/useProposal';
+import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
+import { BigNumber } from 'ethers';
+import { useAccount } from 'wagmi';
 
 type VoteFormData = {
-  vote_value: string;
+  vote_option: string;
 };
 
 /**
@@ -49,28 +45,52 @@ type VoteFormData = {
  */
 const VotesContent = ({
   proposal,
-  refetch,
+  ...props
 }: {
-  proposal: DetailedProposal;
+  proposal: Proposal;
+  canVote: CanVote;
+  votingPower: BigNumber;
   refetch: () => void;
 }) => {
+  const { totalVotingWeight } = useTotalVotingWeight({
+    blockNumber: proposal.data.parameters.snapshotBlock,
+  });
+
   switch (proposal.status) {
     // Active proposals include radio button to vote
-    case ProposalStatus.ACTIVE:
-      return <VotesContentActive proposal={proposal} refetch={refetch} />;
+    case ProposalStatus.Active:
+      return (
+        <VotesContentActive
+          proposal={proposal}
+          totalVotingWeight={totalVotingWeight}
+          {...props}
+        />
+      );
     default:
       return (
         <Accordion type="single" collapsible className="space-y-2">
-          <VoteOption proposal={proposal} voteValue={VoteValues.YES} />
-          <VoteOption proposal={proposal} voteValue={VoteValues.NO} />
-          <VoteOption proposal={proposal} voteValue={VoteValues.ABSTAIN} />
+          <VotesContentOption
+            proposal={proposal}
+            voteOption={VoteOption.Yes}
+            totalVotingWeight={totalVotingWeight}
+          />
+          <VotesContentOption
+            proposal={proposal}
+            voteOption={VoteOption.No}
+            totalVotingWeight={totalVotingWeight}
+          />
+          <VotesContentOption
+            proposal={proposal}
+            voteOption={VoteOption.Abstain}
+            totalVotingWeight={totalVotingWeight}
+          />
         </Accordion>
       );
   }
 };
 
-type VoteValueString = 'yes' | 'no' | 'abstain';
-type VoteValueStringUpper = 'YES' | 'NO' | 'ABSTAIN';
+type VoteOptionString = 'Yes' | 'No' | 'Abstain';
+type VoteOptionStringLower = 'yes' | 'no' | 'abstain';
 
 /**
  * VotesContent specific to active proposals, which allows the user to vote
@@ -78,75 +98,71 @@ type VoteValueStringUpper = 'YES' | 'NO' | 'ABSTAIN';
  */
 const VotesContentActive = ({
   proposal,
+  totalVotingWeight,
+  canVote,
+  votingPower,
   refetch,
 }: {
-  proposal: DetailedProposal;
+  proposal: Proposal;
+  totalVotingWeight: BigNumber;
+  canVote: CanVote;
+  // Voting power (rep balance) of the connected wallet
+  votingPower: BigNumber;
   refetch: () => void;
 }) => {
   const { handleSubmit, watch, control } = useForm<VoteFormData>();
-  const { address } = useAccount();
-  const {
-    canVote,
-    loading,
-    error,
-    refetch: refetchCanVote,
-  } = useCanVote({
-    proposalId: proposal.id,
-    address,
-  });
-  const { votingClient } = useAragonSDKContext();
-  const { toast } = useToast();
+  const { isConnected } = useAccount();
 
   const onSubmitVote: SubmitHandler<VoteFormData> = (data) => {
-    if (!votingClient)
-      return toast({
-        title: 'Error submitting vote',
-        description: 'Voting client not found',
-        variant: 'error',
-      });
-    contractInteraction<VoteProposalStep, VoteProposalStepValue>(
+    contractTransaction(
       () =>
-        votingClient.methods.voteProposal({
-          proposalId: proposal.id,
-          vote: VoteValues[data.vote_value as VoteValueStringUpper],
-        }),
+        proposal.Vote(
+          VoteOption[data.vote_option as VoteOptionString],
+          votingPower.toNumber()
+        ),
       {
-        steps: {
-          confirmed: VoteProposalStep.DONE,
-          signed: VoteProposalStep.VOTING,
-        },
         messages: {
           error: 'Error submitting vote',
           success: 'Vote submitted!',
         },
         onFinish: () => {
           refetch();
-          refetchCanVote();
         },
       }
     );
   };
 
-  const voteValue = watch('vote_value');
-  const userCanVote =
-    !loading && error === null && canVote[voteValue as VoteValueStringUpper];
+  const voteOption = watch('vote_option');
+  const userCanVote: boolean = canVote[voteOption as VoteOptionString];
 
   return (
     <form onSubmit={handleSubmit(onSubmitVote)} className="space-y-2">
       <Controller
         control={control}
-        defaultValue={VoteValues[VoteValues.YES]}
-        name="vote_value"
+        defaultValue={VoteOption[VoteOption.Yes]}
+        name="vote_option"
         render={({ field: { onChange, name } }) => (
           <RadioGroup
             onChange={onChange}
-            defaultValue={VoteValues[VoteValues.YES]}
+            defaultValue={VoteOption[VoteOption.Yes]}
             name={name}
           >
             <Accordion type="single" collapsible className="space-y-2">
-              <VoteOption proposal={proposal} voteValue={VoteValues.YES} />
-              <VoteOption proposal={proposal} voteValue={VoteValues.NO} />
-              <VoteOption proposal={proposal} voteValue={VoteValues.ABSTAIN} />
+              <VotesContentOption
+                proposal={proposal}
+                voteOption={VoteOption.Yes}
+                totalVotingWeight={totalVotingWeight}
+              />
+              <VotesContentOption
+                proposal={proposal}
+                voteOption={VoteOption.No}
+                totalVotingWeight={totalVotingWeight}
+              />
+              <VotesContentOption
+                proposal={proposal}
+                voteOption={VoteOption.Abstain}
+                totalVotingWeight={totalVotingWeight}
+              />
             </Accordion>
           </RadioGroup>
         )}
@@ -154,17 +170,17 @@ const VotesContentActive = ({
 
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
       <div className="flex flex-row items-center gap-x-4">
-        <Button disabled={!userCanVote || !address} type="submit">
+        <Button disabled={!userCanVote || !isConnected} type="submit">
           Vote{' '}
-          {!userCanVote && address && !loading ? (
+          {!userCanVote && isConnected ? (
             'submitted'
           ) : (
             <span className="ml-1 inline-block lowercase">
-              {voteValue ?? 'yes'}
+              {voteOption ?? 'yes'}
             </span>
           )}
         </Button>
-        {!address && <ConnectWalletWarning action="to vote" />}
+        {!isConnected && <ConnectWalletWarning action="to vote" />}
       </div>
     </form>
   );
@@ -173,25 +189,25 @@ const VotesContentActive = ({
 /**
  * @returns Accordion (i.e. dropdown) for a specific vote value (e.g. Yes, No, Abstain), the content of which contains the addresses of the voters who voted for that value
  */
-const VoteOption = ({
+const VotesContentOption = ({
   proposal,
-  voteValue,
+  voteOption,
+  totalVotingWeight,
 }: {
-  proposal: DetailedProposal;
-  voteValue: VoteValues;
+  proposal: Proposal;
+  voteOption: VoteOption;
+  totalVotingWeight: BigNumber;
 }) => {
-  const voteValueString = VoteValues[voteValue];
+  const voteValueString = VoteOption[voteOption];
 
-  const voteValueLower = voteValueString.toLowerCase() as VoteValueString;
-  const votes = proposal.votes.filter((vote) => vote.vote === voteValue);
-  const percentage = calcBigintPercentage(
-    proposal.result[voteValueLower],
-    proposal.totalVotingWeight
-  );
+  const voteValueLower = voteValueString.toLowerCase() as VoteOptionStringLower;
+  const voteTally = proposal.data.tally[voteValueLower];
+  const votes = undefined; //.votes.filter((vote) => vote.vote === voteValue);
+  const percentage = calcBigNumberPercentage(voteTally, totalVotingWeight);
 
   return (
     <div className="flex flex-row items-center gap-x-2">
-      {proposal.status === ProposalStatus.ACTIVE && (
+      {proposal.status === ProposalStatus.Active && (
         <RadioGroupItem value={voteValueString} id={voteValueString} />
       )}
       <AccordionItem value={voteValueString}>
@@ -203,7 +219,7 @@ const VoteOption = ({
             <div className="flex flex-row items-center gap-x-4 text-right">
               <p className="text-popover-foreground/80">
                 {toAbbreviatedTokenAmount(
-                  proposal.result[voteValueLower],
+                  voteTally.toBigInt(),
                   CHAIN_METADATA.rep.nativeCurrency.decimals,
                   true
                 )}{' '}
@@ -238,11 +254,7 @@ const VoteOption = ({
                     {CHAIN_METADATA.rep.nativeCurrency.symbol}
                   </p>
                   <p>
-                    {calcBigintPercentage(
-                      vote.weight,
-                      proposal.totalVotingWeight
-                    )}
-                    %
+                    {calcBigNumberPercentage(vote.weight, totalVotingWeight)}%
                   </p>
                 </div>
               </div>

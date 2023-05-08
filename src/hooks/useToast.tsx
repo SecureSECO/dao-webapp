@@ -9,6 +9,7 @@ import * as React from 'react';
 import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
+import { ContractTransaction } from 'ethers';
 
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 3000;
@@ -389,6 +390,101 @@ async function contractInteraction<
   };
 }
 
+type ContractTransactionToastProps = {
+  messages: {
+    error: string;
+    success: string;
+  };
+  onFinish?: () => void;
+};
+
+/**
+ * Show a toast that will be updated based on interaction with a smart contract, using the provided content.
+ * This will show a loading toast that says "Awaiting signature" until the user signs the transaction, after which
+ * it will show a loading toast that says "Awaiting confirmation" until the transaction is confirmed. If it is successful, or an error occurs,
+ * a toast with corresponding style and using the given content will be shown.
+ * @type TStepKey The type of the key to switch on inside of the value of each step
+ * @type TStepValue The type of each step in the generator
+ * @param promise A promise that returns an ethers ContractTransaction object
+ * @param props An object containing the content to show when the async generator runs into an error, when it succeeds, the values for the steps and optionally a callback function to call when the transation is finished (and confirmed)
+ * @returns An object containing the id of the toast
+ */
+async function contractTransaction(
+  promise: () => Promise<ContractTransaction>,
+  props: ContractTransactionToastProps
+) {
+  const id = genId();
+
+  const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
+
+  dispatch({
+    type: 'ADD_TOAST',
+    toast: {
+      variant: 'loading',
+      duration: Infinity,
+      id,
+      title: 'Awaiting signature...',
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) dismiss();
+      },
+    },
+  });
+
+  try {
+    // Get block explorer url for the currently preferred network
+    const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
+    const transaction = await promise();
+
+    // Show link to transaction on block explorer
+    updateToast(
+      {
+        title: 'Awaiting confirmation...',
+        description: transaction.hash ? (
+          <a
+            href={`${etherscanURL}/tx/${transaction.hash}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex flex-row items-center gap-x-1 text-xs text-primary"
+          >
+            View on block explorer
+            <HiArrowTopRightOnSquare />
+          </a>
+        ) : (
+          ''
+        ),
+      },
+      id
+    );
+
+    await transaction.wait();
+    updateToast(
+      {
+        title: props.messages.success,
+        description: '',
+        variant: 'success',
+        duration: 3000,
+      },
+      id
+    );
+  } catch (e) {
+    // Will be shown when the user rejects transaction
+    updateToast(
+      {
+        title: props.messages.error,
+        description: '',
+        variant: 'error',
+        duration: 3000,
+      },
+      id
+    );
+  }
+  props.onFinish && props.onFinish();
+  return {
+    id: id,
+  };
+}
+
 /**
  * @returns An object containing the toasts, a function to show a toast, a function to show a promise toast and a function to dismiss a specific toast
  */
@@ -413,4 +509,4 @@ function useToast() {
   };
 }
 
-export { useToast, toast, promise, contractInteraction };
+export { useToast, toast, promise, contractInteraction, contractTransaction };

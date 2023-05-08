@@ -18,8 +18,8 @@ import {
   MainCardProps,
 } from '@/src/components/ui/MainCard';
 import { Card } from '@/src/components/ui/Card';
-import { ProposalResource } from '@/src/hooks/useProposal';
 import { cn } from '@/src/lib/utils';
+import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
 
 export interface ProposalResourcesProps
   extends Omit<MainCardProps, 'icon' | 'header'> {

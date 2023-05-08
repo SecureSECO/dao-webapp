@@ -12,6 +12,7 @@ import {
   differenceInMinutes,
   formatDistanceToNow,
 } from 'date-fns';
+import { BigNumber } from 'ethers';
 import { twMerge } from 'tailwind-merge';
 
 /**
@@ -82,6 +83,20 @@ export const calcBigintPercentage = (
   denominator: bigint
 ): number => {
   return Number((numerator * 10000n) / denominator) / 100;
+};
+
+/**
+ * Calculate the percentage of part of a whole of two BigNumbers (from ethers)
+ * @param numerator Numerator of the division
+ * @param denominator Denominator of the division
+ * @returns The percentage of the division as a number
+ * @note This function is a wrapper around calcBigintPercentage
+ */
+export const calcBigNumberPercentage = (
+  numerator: BigNumber,
+  denominator: BigNumber
+): number => {
+  return calcBigintPercentage(numerator.toBigInt(), denominator.toBigInt());
 };
 
 /**

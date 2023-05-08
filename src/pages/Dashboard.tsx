@@ -63,8 +63,6 @@ const Dashboard = () => {
   const { memberVerification } = useVerification({ useDummyData: true });
 
   if (daoError) {
-    console.log(daoError);
-
     return <p>error: {daoError}</p>;
   }
 
@@ -155,7 +153,6 @@ const Dashboard = () => {
           variant="outline"
           className="flex flex-row items-center gap-x-2"
           to="/governance"
-          onClick={() => console.log('View all proposals click!')}
         >
           <p>View all proposals</p>
           <HiArrowRight className="h-5 w-5" />

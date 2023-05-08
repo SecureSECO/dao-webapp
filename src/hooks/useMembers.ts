@@ -6,11 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
-import { TokenVotingClient } from '@aragon/sdk-client';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -89,7 +87,6 @@ export const useMembers = ({
     try {
       // Fetch the list of address that are members of the DAO
       const addressList: string[] = await client.sugar.GetMembers();
-      console.log(addressList);
 
       if (addressList) {
         // Fetch the balance of each member
