@@ -17,4 +17,9 @@ const meta: Meta<typeof ClaimReward> = {
 export default meta;
 type Story = StoryObj<typeof ClaimReward>;
 
-export const Primary: Story = {};
+export const Primary: Story = {
+  args: {
+    repToMonetaryFactor: 0.3,
+    repToBeClaimed: 123,
+  },
+};

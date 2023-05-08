@@ -7,22 +7,33 @@
  */
 
 export type ClaimRewardData = {
-  name: string;
   division: number;
 };
 
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Label } from '../components/ui/Label';
 import { Slider } from '../components/ui/Slider';
+import { Button } from '../components/ui/Button';
+import TokenAmount from '../components/ui/TokenAmount';
 
-export const ClaimReward = ({}) => {
+/*
+ * repToBeClaimed is the total amount of reputation the user may claim
+ * repToMonetaryFactor is the amount of monetary token 1 rep may be converted to.
+ * */
+export const ClaimReward = ({
+  repToBeClaimed,
+  repToMonetaryFactor,
+}: {
+  repToBeClaimed: number;
+  repToMonetaryFactor: number;
+}) => {
   const {
     register,
     formState: { errors },
     control,
     handleSubmit,
   } = useForm<ClaimRewardData>({
-    defaultValues: { name: 'onzin', division: 50 },
+    defaultValues: { division: 100 },
   });
 
   const name_division = 'division';
@@ -32,18 +43,19 @@ export const ClaimReward = ({}) => {
     name: name_division,
   });
 
+  const reputation = division * repToBeClaimed * 0.01 || 0;
+  const monetary =
+    (100 - division) * repToBeClaimed * repToMonetaryFactor * 0.01 || 0;
+
   const onSubmit = (data: ClaimRewardData) => {
     console.log(data);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 text-center"
-    >
-      <div className="flex flex-row gap-x-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <div className="flex w-full flex-row gap-x-4">
         <div className="flex flex-col gap-y-1">
-          Monetary
+          Reputation
           <span>{division}%</span>
         </div>
         <div className="flex w-full flex-col gap-y-2">
@@ -70,10 +82,21 @@ export const ClaimReward = ({}) => {
         </div>
         <div className="flex flex-col gap-y-1"></div>
         <div className="flex flex-col gap-y-1">
-          Reputation
+          Monetary
           <span>{100 - division}%</span>
         </div>
       </div>
+      <div>
+        You can claim:{' '}
+        <span className="font-bold">
+          <TokenAmount amountFloat={reputation} symbol="reputation token" />
+        </span>{' '}
+        and{' '}
+        <span className="font-bold">
+          <TokenAmount amountFloat={monetary} symbol="monetary token" />
+        </span>
+      </div>
+      <Button label="Claim" />
     </form>
   );
 };
