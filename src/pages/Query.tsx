@@ -27,6 +27,7 @@ import { promise } from '@/src/hooks/useToast';
 import { saveAs } from 'file-saver';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import { useAccount } from 'wagmi';
+import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 
 interface QueryFormData {
   searchUrl: string;
@@ -52,6 +53,8 @@ const Query = () => {
 
   const { address } = useAccount();
 
+  const [storedToken, setStoredToken] = useLocalStorage<string>('githubAccessToken', '');
+
   const downloadResults = () => {
     if (queryResult) {
       const data = new Blob([JSON.stringify(queryResult, null, 2)], {
@@ -68,6 +71,7 @@ const Query = () => {
       runQuery(data.searchUrl, data.token).then((results: ResultData[]) => {
         const hashes = results.map((result: ResultData) => result.Hash);
         setHashCount(hashes.length);
+        setStoredToken(data.token);
         return checkHashes(hashes);
       }),
       {
@@ -136,6 +140,7 @@ const Query = () => {
                     id="token"
                     aria-invalid={errors.token ? 'true' : 'false'}
                     error={errors.token}
+                    defaultValue={storedToken}
                   />
                 </ErrorWrapper>
               </div>
@@ -170,6 +175,7 @@ const Query = () => {
                           onClick={downloadResults}
                           className="mt-2"
                           disabled={!queryResult}
+                          icon={HiArrowDownTray}
                         >
                           Download as JSON file
                         </Button>
