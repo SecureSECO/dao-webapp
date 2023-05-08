@@ -37,16 +37,20 @@ export const ClaimReward = ({}) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-4 text-center"
+    >
       <div className="flex flex-row gap-x-4">
         <div className="flex flex-col gap-y-1">
-          Reputation
+          Monetary
           <span>{division}%</span>
         </div>
-        <div className="flex w-full flex-col gap-y-1">
+        <div className="flex w-full flex-col gap-y-2">
           <Label
             htmlFor="division"
-            tooltip="How to divide the reward between reputation and monetary value"
+            className="justify-center text-center"
+            tooltip="How to divide the reward between monetary value and repuation"
           >
             Division
           </Label>
@@ -66,7 +70,7 @@ export const ClaimReward = ({}) => {
         </div>
         <div className="flex flex-col gap-y-1"></div>
         <div className="flex flex-col gap-y-1">
-          Monetary
+          Reputation
           <span>{100 - division}%</span>
         </div>
       </div>
