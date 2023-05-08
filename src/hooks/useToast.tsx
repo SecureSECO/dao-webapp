@@ -403,10 +403,8 @@ type ContractTransactionToastProps = {
  * This will show a loading toast that says "Awaiting signature" until the user signs the transaction, after which
  * it will show a loading toast that says "Awaiting confirmation" until the transaction is confirmed. If it is successful, or an error occurs,
  * a toast with corresponding style and using the given content will be shown.
- * @type TStepKey The type of the key to switch on inside of the value of each step
- * @type TStepValue The type of each step in the generator
  * @param promise A promise that returns an ethers ContractTransaction object
- * @param props An object containing the content to show when the async generator runs into an error, when it succeeds, the values for the steps and optionally a callback function to call when the transation is finished (and confirmed)
+ * @param props An object containing the content to show when an error is encountered, and when the transaction has is successful, plus optionally a callback function to call when the transation is finished (and confirmed)
  * @returns An object containing the id of the toast
  */
 async function contractTransaction(
@@ -433,16 +431,16 @@ async function contractTransaction(
 
   try {
     // Get block explorer url for the currently preferred network
-    const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
+    const explorerURL = PREFERRED_NETWORK_METADATA.explorer;
     const transaction = await promise();
 
     // Show link to transaction on block explorer
     updateToast(
       {
         title: 'Awaiting confirmation...',
-        description: transaction.hash ? (
+        description: explorerURL ? (
           <a
-            href={`${etherscanURL}/tx/${transaction.hash}`}
+            href={`${explorerURL}/tx/${transaction.hash}`}
             target="_blank"
             rel="noreferrer"
             className="flex flex-row items-center gap-x-1 text-xs text-primary"
@@ -457,6 +455,7 @@ async function contractTransaction(
       id
     );
 
+    // Await confirmation of the transaction
     await transaction.wait();
     updateToast(
       {
@@ -479,6 +478,7 @@ async function contractTransaction(
       id
     );
   }
+  // Call the given callback function
   props.onFinish && props.onFinish();
   return {
     id: id,

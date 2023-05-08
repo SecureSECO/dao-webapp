@@ -39,10 +39,9 @@ import { useVerification } from '../hooks/useVerification';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
-  const { proposals: allProposals, loading: allProposalsLoading } =
-    useProposals({});
   const {
     proposals,
+    proposalCount,
     loading: proposalsLoading,
     error: proposalsError,
   } = useProposals({ limit: 5 });
@@ -133,11 +132,11 @@ const Dashboard = () => {
       {/* Proposal Card */}
       <MainCard
         className="col-span-full lg:col-span-4"
-        loading={allProposalsLoading}
+        loading={proposalsLoading}
         icon={HiInboxStack}
         header={
           <DefaultMainCardHeader
-            value={allProposals.length}
+            value={proposalCount}
             label="proposals created"
           />
         }

@@ -89,7 +89,6 @@ export const useMembers = ({
 
       // Fetch the list of address that are members of the DAO
       const addressList: string[] = await client.sugar.GetMembers();
-      console.log(addressList);
 
       if (addressList) {
         // Fetch the balance of each member

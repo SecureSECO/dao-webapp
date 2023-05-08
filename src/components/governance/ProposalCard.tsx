@@ -9,8 +9,6 @@
 import { Card } from '@/src/components/ui/Card';
 import { Address, AddressLength } from '@/src/components/ui//Address';
 import Header from '@/src/components/ui/Header';
-import { ProposalStatus } from '@aragon/sdk-client';
-import { Proposal } from '@/src/hooks/useProposals';
 import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
@@ -21,6 +19,7 @@ import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import Activity from '@/src/components/icons/Activity';
 import Check from '@/src/components/icons/Check';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
+import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 
 type StatusBadgePropsMap = {
   Pending: StatusBadgeProps;
@@ -68,7 +67,7 @@ type ProposalStatusVariant =
 
 interface ProposalStatusBadgeProps
   extends React.BaseHTMLAttributes<HTMLDivElement> {
-  status: ProposalStatus | ProposalStatusVariant;
+  status: ProposalStatusVariant;
   size?: 'sm' | 'md';
 }
 
@@ -104,7 +103,7 @@ export const ProposalStatusBadge = ({
 const getProposalTags = (proposal: Proposal) => {
   const res: ProposalTagProps[] = [];
 
-  if (proposal.status === ProposalStatus.PENDING)
+  if (proposal.status === ProposalStatus.Pending)
     res.push(
       {
         children: 'Starts in ' + countdownText(proposal.startDate),

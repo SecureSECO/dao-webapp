@@ -13,15 +13,10 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/src/components/ui/Tabs';
-import { Proposal, useProposals } from '@/src/hooks/useProposals';
+import { useProposals } from '@/src/hooks/useProposals';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Link } from '@/src/components/ui/Link';
 import { useState } from 'react';
-import {
-  ProposalSortBy,
-  ProposalStatus,
-  SortDirection,
-} from '@aragon/sdk-client';
 import SortSelector from '@/src/components/ui/SortSelector';
 
 import ProposalCard from '@/src/components/governance/ProposalCard';
@@ -33,6 +28,12 @@ import {
 import { HiChevronDown } from 'react-icons/hi2';
 import { cn } from '@/src/lib/utils';
 import { Skeleton } from '@/src/components/ui/Skeleton';
+import {
+  ProposalSorting,
+  ProposalStatus,
+  SortingOrder,
+} from '@plopmenz/diamond-governance-sdk';
+import { Proposal } from '@plopmenz/diamond-governance-sdk/dist/sdk/src/sugar/proposal';
 
 const Governance = () => {
   return (
@@ -53,45 +54,47 @@ const Governance = () => {
 };
 
 export type ProposalStatusString =
-  | 'ALL'
-  | 'PENDING'
-  | 'ACTIVE'
-  | 'SUCCEEDED'
-  | 'EXECUTED'
-  | 'DEFEATED';
+  | 'All'
+  | 'Pending'
+  | 'Active'
+  | 'Succeeded'
+  | 'Executed'
+  | 'Defeated';
 
 const statusStringToEnum = (
   status: ProposalStatusString
 ): ProposalStatus | undefined => {
-  if (status === 'ALL') return undefined;
+  if (status === 'All') return undefined;
   return ProposalStatus[status];
 };
 
 const tabs: ProposalStatusString[] = [
-  'ALL',
-  ...Object.keys(ProposalStatus).map((k) => k as ProposalStatusString),
+  'All',
+  'Pending',
+  'Active',
+  'Succeeded',
+  'Executed',
+  'Defeated',
 ];
 
 const ProposalTabs = () => {
   const [currentTab, setCurrentTab] = useState<ProposalStatus | undefined>(
     undefined
   );
-  const [sortBy, setSortBy] = useState<ProposalSortBy>(
-    ProposalSortBy.CREATED_AT
+  const [sorting, setSorting] = useState<ProposalSorting>(
+    ProposalSorting.Creation
   );
-  const [direction, setDirection] = useState<SortDirection | undefined>(
-    undefined
-  );
+  const [order, setOrder] = useState<SortingOrder | undefined>(undefined);
   const { proposals, loading, error } = useProposals({
     useDummyData: false,
     status: currentTab,
-    sortBy,
-    direction,
+    sorting,
+    order: order,
   });
 
   return (
     <Tabs
-      defaultValue="ALL"
+      defaultValue="All"
       onValueChange={(v) =>
         setCurrentTab(statusStringToEnum(v as ProposalStatusString))
       }
@@ -130,7 +133,7 @@ const ProposalTabs = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        <SortSelector setSortBy={setSortBy} setDirection={setDirection} />
+        <SortSelector setSorting={setSorting} setOrder={setOrder} />
       </div>
       {tabs.map((tab) => (
         <TabsContent key={tab} value={tab}>
@@ -171,7 +174,11 @@ export const ProposalCardList = ({
       </div>
     );
   if (error)
-    return <p className="text-center font-normal">An error was encountered</p>;
+    return (
+      <p className="font-normal italic text-highlight-foreground/80">
+        An error was encountered
+      </p>
+    );
   return (
     <div>
       {proposals.length > 0 ? (
@@ -186,7 +193,9 @@ export const ProposalCardList = ({
           })}
         </div>
       ) : (
-        <p className="text-center font-normal">No proposals found!</p>
+        <p className="font-normal italic text-highlight-foreground/80">
+          No proposals found!
+        </p>
       )}
     </div>
   );
