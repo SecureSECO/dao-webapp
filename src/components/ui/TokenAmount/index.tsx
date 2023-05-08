@@ -6,13 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { anyNullOrUndefined } from '@/src/lib/utils';
+import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
 import { TransferType } from '@aragon/sdk-client';
 import React from 'react';
 
 interface TokenAmountProps extends React.HTMLAttributes<HTMLSpanElement> {
   amount?: BigInt | null;
   tokenDecimals?: number | null;
+  amountFloat?: number;
   symbol?: string | null;
   sign?: string;
   displayDecimals?: number;
@@ -57,6 +58,9 @@ export function abbreviateTokenAmount(amount: string): string {
     const intNumber = Number.parseInt(integers);
     const totalNumber = intNumber + fractionNumber;
 
+    if (totalNumber === 0) {
+      return `0.00${symbol && ' ' + symbol}`;
+    }
     if (totalNumber < 0.01) {
       return ` < 0.01${symbol && ' ' + symbol}`;
     }
@@ -70,13 +74,20 @@ export function abbreviateTokenAmount(amount: string): string {
 export function toAbbreviatedTokenAmount(
   value: BigInt | null | undefined,
   decimals: number | null | undefined,
+  valueAsFloat: number | undefined,
   round = false
 ): string {
-  if (anyNullOrUndefined(value, decimals)) return 'N/A';
-  let asFloat = bigIntToFloat(value!, decimals!);
+  if (anyNullOrUndefined(value, decimals)) {
+    if (isNullOrUndefined(valueAsFloat)) {
+      return 'N/A';
+    }
+  } else {
+    valueAsFloat = bigIntToFloat(value!, decimals!);
+  }
+
   // Theoretically 'bigIntToFloat' never returns NaN, guaranteed by its type's preconditions. In practice, this might still happen.
-  if (isNaN(asFloat)) return 'N/A';
-  return abbreviateTokenAmount(asFloat.toFixed(round ? 0 : 2));
+  if (isNaN(valueAsFloat!)) return 'N/A';
+  return abbreviateTokenAmount(valueAsFloat!.toFixed(round ? 0 : 2));
 }
 
 /**
@@ -84,14 +95,16 @@ export function toAbbreviatedTokenAmount(
  * @param amount - The amount of the given token, default value is 1
  * @param decimals - The amount of decimals the token uses to represent its value. Default is zero
  *                   Tokens are a BigInt, where decimals represents where the decimal symbol is placed
+ * @param amount - The amount of the given token as javascript number.
+ *                   Will only be used if amount/decimals is not provided.
  * @param symbol - The symbol of the token, e.g. LINK, ETH, JSCL. Default is empty string.
  * @param sign - optional sign. Default value '' (empty string). Recommended values: '' (empty string), + (plus) or - (minus).
- * @param onError - Value to display if something went wrong. Default value '-'.
  */
 const TokenAmount = ({
   className = '',
   amount,
   tokenDecimals,
+  amountFloat,
   symbol,
   sign = '',
   ...props
@@ -99,7 +112,7 @@ const TokenAmount = ({
   return (
     <span className={className} {...props}>
       {sign}
-      {toAbbreviatedTokenAmount(amount, tokenDecimals)}
+      {toAbbreviatedTokenAmount(amount, tokenDecimals, amountFloat)}
       &nbsp;
       {symbol ?? ''}
     </span>
