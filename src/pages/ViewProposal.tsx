@@ -10,8 +10,10 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useProposal } from '@/src/hooks/useProposal';
 import { useParams } from 'react-router';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { ProposalStatus } from '@aragon/sdk-client';
-import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
+import {
+  ProposalStatusBadge,
+  ProposalStatusString,
+} from '@/src/components/governance/ProposalCard';
 import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
 import { Link } from '@/src/components/ui/Link';
 import { countdownText } from '@/src/lib/utils';
@@ -23,6 +25,7 @@ import { contractTransaction, toast } from '@/src/hooks/useToast';
 import { useAccount } from 'wagmi';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import { Button } from '@/src/components/ui/Button';
+import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -88,11 +91,15 @@ const ViewProposal = () => {
                 <div className="flex flex-row-reverse items-center justify-between gap-y-4 sm:flex-col sm:items-end">
                   <ProposalStatusBadge
                     size="md"
-                    status={proposal?.status ?? ProposalStatus.PENDING}
+                    status={
+                      ProposalStatus[
+                        proposal?.status ?? ProposalStatus.Pending
+                      ] as ProposalStatusString
+                    }
                   />
                   <div className="flex flex-row items-center gap-x-2 text-highlight-foreground/60">
                     <HiOutlineClock className="h-5 w-5 shrink-0" />
-                    {statusText(proposal?.status ?? ProposalStatus.PENDING)}
+                    {statusText(proposal?.status ?? ProposalStatus.Pending)}
                   </div>
                 </div>
               }
@@ -100,7 +107,7 @@ const ViewProposal = () => {
               {proposal && (
                 <div className="flex flex-col gap-y-3">
                   <p className="text-lg font-medium leading-5 text-highlight-foreground/80">
-                    {proposal.metadata.summary}
+                    {proposal.metadata.description}
                   </p>
                   <div className="flex items-center gap-x-1 text-sm">
                     <span className="text-highlight-foreground/60">

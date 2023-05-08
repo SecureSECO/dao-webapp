@@ -12,7 +12,7 @@ import Header from '@/src/components/ui/Header';
 import ProposalTag, {
   ProposalTagProps,
 } from '@/src/components/governance/ProposalTag';
-import { calcBigintPercentage, countdownText } from '@/src/lib/utils';
+import { calcBigNumberPercentage, countdownText } from '@/src/lib/utils';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { Link } from 'react-router-dom';
 import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
@@ -20,6 +20,9 @@ import Activity from '@/src/components/icons/Activity';
 import Check from '@/src/components/icons/Check';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { Proposal } from '@plopmenz/diamond-governance-sdk/dist/sdk/src/sugar/proposal';
+import { BigNumber } from 'ethers';
+import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 
 type StatusBadgePropsMap = {
   Pending: StatusBadgeProps;
@@ -58,7 +61,7 @@ const statusBadgeProps: StatusBadgePropsMap = {
 };
 
 // Different types of statuses, as a string rather than an enum
-type ProposalStatusVariant =
+export type ProposalStatusString =
   | 'Pending'
   | 'Active'
   | 'Succeeded'
@@ -67,7 +70,7 @@ type ProposalStatusVariant =
 
 interface ProposalStatusBadgeProps
   extends React.BaseHTMLAttributes<HTMLDivElement> {
-  status: ProposalStatusVariant;
+  status: ProposalStatusString;
   size?: 'sm' | 'md';
 }
 
@@ -81,7 +84,7 @@ export const ProposalStatusBadge = ({
   className,
   ...props
 }: ProposalStatusBadgeProps) => {
-  const statusString = status.toString() as ProposalStatusVariant;
+  const statusString = status.toString() as ProposalStatusString;
   const statusProps = statusBadgeProps[statusString];
 
   return (
@@ -100,28 +103,29 @@ export const ProposalStatusBadge = ({
  * @param proposal Proposal to extract the tags for
  * @returns A list of props for the ProposalTag component
  */
-const getProposalTags = (proposal: Proposal) => {
+const getProposalTags = (proposal: Proposal, totalVotingWeight: BigNumber) => {
   const res: ProposalTagProps[] = [];
 
   if (proposal.status === ProposalStatus.Pending)
     res.push(
       {
-        children: 'Starts in ' + countdownText(proposal.startDate),
+        children:
+          'Starts in ' + countdownText(proposal.data.parameters.startDate),
         variant: 'countdown',
       },
       {
-        children: 'Ends in ' + countdownText(proposal.endDate),
+        children: 'Ends in ' + countdownText(proposal.data.parameters.endDate),
         variant: 'countdown',
       }
     );
   else {
-    const yesPercentage = calcBigintPercentage(
-      proposal.result.yes,
-      proposal.totalVotingWeight
+    const yesPercentage = calcBigNumberPercentage(
+      proposal.data.tally.yes,
+      totalVotingWeight
     );
-    const noPercentage = calcBigintPercentage(
-      proposal.result.no,
-      proposal.totalVotingWeight
+    const noPercentage = calcBigNumberPercentage(
+      proposal.data.tally.no,
+      totalVotingWeight
     );
     res.push(
       {
@@ -135,9 +139,9 @@ const getProposalTags = (proposal: Proposal) => {
     );
   }
 
-  if (proposal.status === ProposalStatus.ACTIVE) {
+  if (proposal.status === ProposalStatus.Active) {
     res.push({
-      children: 'Ends in ' + countdownText(proposal.endDate),
+      children: 'Ends in ' + countdownText(proposal.data.parameters.endDate),
       variant: 'countdown',
     });
   }
@@ -146,15 +150,21 @@ const getProposalTags = (proposal: Proposal) => {
 
 const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
   const {
-    metadata: { title, summary },
+    metadata: { title, description },
     status,
     creatorAddress,
   } = proposal;
+  const { totalVotingWeight } = useTotalVotingWeight({
+    blockNumber: proposal.data.parameters.snapshotBlock,
+  });
 
   return (
     <Card variant="light" className="space-y-2 font-normal">
       <div className="flex flex-col gap-y-2">
-        <ProposalStatusBadge status={status} className="xs:hidden" />
+        <ProposalStatusBadge
+          status={ProposalStatus[status] as ProposalStatusString}
+          className="xs:hidden"
+        />
         <div className="flex flex-row justify-between">
           <Link
             to={`/governance/proposals/${proposal.id}`}
@@ -163,12 +173,15 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
             <Header level={2}>{title}</Header>
             <HiChevronRight className="h-5 w-5" />
           </Link>
-          <ProposalStatusBadge status={status} className="hidden xs:flex" />
+          <ProposalStatusBadge
+            status={ProposalStatus[status] as ProposalStatusString}
+            className="hidden xs:flex"
+          />
         </div>
-        <p className="leading-5 text-popover-foreground/80">{summary}</p>
+        <p className="leading-5 text-popover-foreground/80">{description}</p>
       </div>
       <div className="flex flex-wrap gap-1">
-        {getProposalTags(proposal).map((tagProps, i) => (
+        {getProposalTags(proposal, totalVotingWeight).map((tagProps, i) => (
           <ProposalTag key={i} {...tagProps} />
         ))}
       </div>

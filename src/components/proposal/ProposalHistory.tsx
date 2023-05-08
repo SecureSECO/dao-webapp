@@ -11,21 +11,19 @@ import ProposalMilestone, {
   ProposalMilestoneProps,
 } from '@/src/components/proposal/ProposalMilestone';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { DetailedProposal } from '@/src/hooks/useProposal';
-import { cn } from '@/src/lib/utils';
-import { ProposalStatus } from '@aragon/sdk-client';
+import { Proposal } from '@plopmenz/diamond-governance-sdk/dist/sdk/src/sugar/proposal';
 
 /**
  * Extract the milestones of a proposal, depending on its status. The following milestones are returned per status:
- * - PENDING: Published, Pending
- * - ACTIVE: Published, Started, Running
- * - SUCCEEDED: Published, Started, Succeeded, Awaiting execution
- * - DEFEATED: Published, Started, Defeated
- * - EXECUTED: Published, Started, Succeeded, Executed
+ * - Pending: Published, Pending
+ * - Active: Published, Started, Running
+ * - Succeeded: Published, Started, Succeeded, Awaiting execution
+ * - Defeated: Published, Started, Defeated
+ * - Executed: Published, Started, Succeeded, Executed
  * @param proposal Proposal to extract milestones from
  * @returns A list of ProposalMilestoneProps to be passed to a ProposalMilestone component
  */
-const getProposalMilestones = (proposal: DetailedProposal) => {
+const getProposalMilestones = (proposal: Proposal) => {
   const res: ProposalMilestoneProps[] = [];
 
   res.push({

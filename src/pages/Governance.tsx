@@ -53,7 +53,7 @@ const Governance = () => {
   );
 };
 
-export type ProposalStatusString =
+export type ProposalStatusTab =
   | 'All'
   | 'Pending'
   | 'Active'
@@ -62,13 +62,13 @@ export type ProposalStatusString =
   | 'Defeated';
 
 const statusStringToEnum = (
-  status: ProposalStatusString
+  status: ProposalStatusTab
 ): ProposalStatus | undefined => {
   if (status === 'All') return undefined;
   return ProposalStatus[status];
 };
 
-const tabs: ProposalStatusString[] = [
+const tabs: ProposalStatusTab[] = [
   'All',
   'Pending',
   'Active',
@@ -96,7 +96,7 @@ const ProposalTabs = () => {
     <Tabs
       defaultValue="All"
       onValueChange={(v) =>
-        setCurrentTab(statusStringToEnum(v as ProposalStatusString))
+        setCurrentTab(statusStringToEnum(v as ProposalStatusTab))
       }
     >
       <div className="flex flex-row items-center gap-x-2">
