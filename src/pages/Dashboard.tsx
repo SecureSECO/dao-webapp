@@ -104,7 +104,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex flex-row items-center gap-x-1">
                   <HiCube className="h-5 w-5 shrink-0 text-primary" />
-                  <p>{import.meta.env.DEV ? 'Goerli' : 'Polygon'}</p>
+                  <p>{import.meta.env.DEV ? 'Mumbai' : 'Polygon'}</p>
                 </div>
                 <div className="flex flex-row items-center gap-x-1">
                   <HiHome className="h-5 w-5 shrink-0 text-primary" />
@@ -120,7 +120,7 @@ const Dashboard = () => {
                   <a
                     key={i}
                     href={link.url}
-                    className="hover:text-primary-highlight/80 flex flex-row items-center gap-x-2 rounded-sm font-medium text-primary-highlight ring-ring ring-offset-2 ring-offset-background transition-colors duration-200 focus:outline-none focus:ring-1"
+                    className="flex flex-row items-center gap-x-2 rounded-sm font-medium text-primary-highlight ring-ring ring-offset-2 ring-offset-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
                   >
                     {link.name}
                     <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />

@@ -8,7 +8,6 @@
 
 import { defineConfig } from 'vite';
 import path from 'path';
-import { esbuildCommonjs } from '@originjs/vite-plugin-commonjs';
 
 export default defineConfig({
   resolve: {
@@ -17,8 +16,4 @@ export default defineConfig({
     },
     preserveSymlinks: true,
   },
-  optimizeDeps: {
-    exclude: ['@nomiclabs/buidler', '@nomicfoundation/solidity-analyzer'],
-  },
-  plugins: [esbuildCommonjs(['@plopmenz/diamond-governance-sdk'])],
 });
