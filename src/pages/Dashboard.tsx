@@ -33,9 +33,7 @@ import {
   HiInboxStack,
   HiUserGroup,
 } from 'react-icons/hi2';
-import { useAccount } from 'wagmi';
 import { MembershipStatus } from '../components/dashboard/MembershipStatus';
-import { useVerification } from '../hooks/useVerification';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao({});
@@ -59,9 +57,6 @@ const Dashboard = () => {
     memberCount,
   } = useMembers({ limit: 5 });
 
-  const { isConnected } = useAccount();
-  const { memberVerification } = useVerification({ useDummyData: true });
-
   if (daoError) {
     console.log(daoError);
 
@@ -75,10 +70,7 @@ const Dashboard = () => {
   return (
     <div className="grid grid-cols-7 gap-6">
       {/* Banner on top showing optional information about membership status */}
-      <MembershipStatus
-        isConnected={isConnected}
-        verification={memberVerification}
-      />
+      <MembershipStatus />
 
       {/* Card showing metadata about the DAO */}
       <Card
