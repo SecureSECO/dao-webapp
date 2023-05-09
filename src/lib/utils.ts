@@ -82,6 +82,7 @@ export const calcBigintPercentage = (
   numerator: bigint,
   denominator: bigint
 ): number => {
+  if (denominator === 0n) return 0;
   return Number((numerator * 10000n) / denominator) / 100;
 };
 

@@ -13,8 +13,8 @@ import {
   ProposalSorting,
   ProposalStatus,
   SortingOrder,
+  Proposal,
 } from '@plopmenz/diamond-governance-sdk';
-import { Proposal } from '@plopmenz/diamond-governance-sdk/dist/sdk/src/sugar/proposal';
 import { useEffect, useState } from 'react';
 
 export type UseProposalsData = {

@@ -8,7 +8,7 @@
 
 import VotesContent from '@/src/components/proposal/VotesContent';
 import { dummyProposal } from '@/src/hooks/useProposal';
-import { ProposalStatus } from '@aragon/sdk-client';
+import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -35,7 +35,10 @@ BigInt.prototype.toJSON = function () {
 
 export const Active: Story = {
   args: {
-    proposal: dummyProposal,
+    proposal: {
+      ...dummyProposal,
+      status: ProposalStatus.Active,
+    },
   },
 };
 
@@ -43,7 +46,7 @@ export const Pending: Story = {
   args: {
     proposal: {
       ...dummyProposal,
-      status: ProposalStatus.PENDING,
+      status: ProposalStatus.Pending,
     },
   },
 };
@@ -52,7 +55,7 @@ export const Succeeded: Story = {
   args: {
     proposal: {
       ...dummyProposal,
-      status: ProposalStatus.SUCCEEDED,
+      status: ProposalStatus.Succeeded,
     },
   },
 };
@@ -61,7 +64,7 @@ export const Executed: Story = {
   args: {
     proposal: {
       ...dummyProposal,
-      status: ProposalStatus.EXECUTED,
+      status: ProposalStatus.Executed,
     },
   },
 };
@@ -70,7 +73,7 @@ export const Defeated: Story = {
   args: {
     proposal: {
       ...dummyProposal,
-      status: ProposalStatus.DEFEATED,
+      status: ProposalStatus.Defeated,
     },
   },
 };

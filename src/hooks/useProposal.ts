@@ -8,8 +8,7 @@
 
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
-import { VoteOption } from '@plopmenz/diamond-governance-sdk';
-import { Proposal } from '@plopmenz/diamond-governance-sdk/dist/sdk/src/sugar/proposal';
+import { VoteOption, Proposal } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 
@@ -203,7 +202,7 @@ export const useProposal = ({
         const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
         const canVoteData = await Promise.all(
           values.map((vote) => {
-            return proposal.CanVote(vote, repBalance.toNumber());
+            return proposal.CanVote(vote, repBalance);
           })
         );
         setCanVote({

@@ -24,16 +24,23 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { DetailedProposal } from '@/src/hooks/useProposal';
-import { calcBigintPercentage, cn } from '@/src/lib/utils';
+import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
+import { CanVote } from '@/src/hooks/useProposal';
+import { CHAIN_METADATA } from '@/src/lib/constants/chains';
+import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
+import { Proposal } from '@plopmenz/diamond-governance-sdk';
 import { format } from 'date-fns';
+import { BigNumber } from 'ethers';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 
 interface ProposalVotesProps {
-  proposal: DetailedProposal | null;
+  proposal: Proposal | null;
   loading: boolean;
-  refetch: () => void;
   className?: string;
+  refetch: () => void;
+  canVote: CanVote;
+  totalVotingWeight: BigNumber;
+  votingPower: BigNumber;
 }
 
 /**
@@ -41,12 +48,17 @@ interface ProposalVotesProps {
  * @param proposal The proposal to show the voting details for
  * @returns List of Category objects to be passed to the CategoryList component
  */
-const getCategories = (proposal: DetailedProposal | null): Category[] => {
+const getCategories = (
+  proposal: Proposal | null,
+  totalVotingWeight: BigNumber
+): Category[] => {
   if (!proposal) return [];
 
-  const currentParticipation = calcBigintPercentage(
-    proposal.usedVotingWeight,
-    proposal.totalVotingWeight
+  const currentParticipation = calcBigNumberPercentage(
+    proposal.data.tally.yes
+      .add(proposal.data.tally.no)
+      .add(proposal.data.tally.abstain),
+    totalVotingWeight
   );
 
   const uniqueVoters = proposal.votes.reduce(
@@ -60,11 +72,16 @@ const getCategories = (proposal: DetailedProposal | null): Category[] => {
       items: [
         {
           label: 'Support threshold',
-          value: `${proposal.settings.supportThreshold * 100}%`,
+          value: `${proposal.data.parameters.supportThreshold * 100}%`,
         },
         {
           label: 'Minimum participation',
-          value: `${proposal.settings.minParticipation * 100}%`,
+          value: `${toAbbreviatedTokenAmount(
+            proposal.data.parameters.minParticipationThresholdPower.toBigInt(),
+            CHAIN_METADATA.rep.nativeCurrency.decimals,
+            true
+          )} 
+          ${CHAIN_METADATA.rep.nativeCurrency.symbol}%`,
         },
       ],
     },
@@ -104,8 +121,8 @@ const getCategories = (proposal: DetailedProposal | null): Category[] => {
 const ProposalVotes = ({
   proposal,
   loading,
-  refetch,
   className,
+  ...props
 }: ProposalVotesProps) => {
   return (
     <MainCard
@@ -130,7 +147,9 @@ const ProposalVotes = ({
             <DialogHeader>
               <DialogTitle>Voting details</DialogTitle>
               <DialogDescription asChild>
-                <CategoryList categories={getCategories(proposal)} />
+                <CategoryList
+                  categories={getCategories(proposal, props.totalVotingWeight)}
+                />
               </DialogDescription>
             </DialogHeader>
             <DialogClose asChild>
@@ -142,7 +161,7 @@ const ProposalVotes = ({
         </Dialog>
       }
     >
-      {proposal && <VotesContent proposal={proposal} refetch={refetch} />}
+      {proposal && <VotesContent proposal={proposal} {...props} />}
     </MainCard>
   );
 };

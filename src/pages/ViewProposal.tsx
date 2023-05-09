@@ -26,24 +26,33 @@ import { useAccount } from 'wagmi';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import { Button } from '@/src/components/ui/Button';
 import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 
 const ViewProposal = () => {
   const { id } = useParams();
   const { address } = useAccount();
-  const { proposal, loading, error, refetch, canExecute, canVote } =
-    useProposal({ id, address });
+  const {
+    proposal,
+    loading,
+    error,
+    refetch,
+    canExecute,
+    canVote,
+    votingPower,
+  } = useProposal({ id, address });
+  const { totalVotingWeight } = useTotalVotingWeight({
+    blockNumber: proposal?.data.parameters.snapshotBlock,
+  });
 
   const statusText = (status: ProposalStatus) => {
     if (!proposal) return '';
     switch (status) {
-      case ProposalStatus.PENDING:
-        return 'Starts in ' + countdownText(proposal.data.parameters.startDate);
-      case ProposalStatus.ACTIVE:
-        return 'Ends in ' + countdownText(proposal.data.parameters.endDate);
+      case ProposalStatus.Pending:
+        return 'Starts in ' + countdownText(proposal.startDate);
+      case ProposalStatus.Active:
+        return 'Ends in ' + countdownText(proposal.endDate);
       default:
-        return (
-          'Ended ' + countdownText(proposal.data.parameters.endDate) + ' ago'
-        );
+        return 'Ended ' + countdownText(proposal.endDate) + ' ago';
     }
   };
 
@@ -114,7 +123,7 @@ const ViewProposal = () => {
                       Published by
                     </span>
                     <Address
-                      address={proposal.creatorAddress}
+                      address={proposal}
                       maxLength={AddressLength.Medium}
                       hasLink={true}
                       showCopy={false}
@@ -130,6 +139,9 @@ const ViewProposal = () => {
                   loading={loading}
                   proposal={proposal}
                   refetch={refetch}
+                  canVote={canVote}
+                  totalVotingWeight={totalVotingWeight}
+                  votingPower={votingPower}
                 />
 
                 <ProposalActions

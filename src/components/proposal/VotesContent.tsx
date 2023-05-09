@@ -27,10 +27,12 @@ import { calcBigNumberPercentage } from '@/src/lib/utils';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { contractTransaction } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
-import { ProposalStatus, VoteOption } from '@plopmenz/diamond-governance-sdk';
-import { Proposal } from '@plopmenz/diamond-governance-sdk/dist/sdk/src/sugar/proposal';
+import {
+  ProposalStatus,
+  VoteOption,
+  Proposal,
+} from '@plopmenz/diamond-governance-sdk';
 import { CanVote } from '@/src/hooks/useProposal';
-import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 
@@ -45,17 +47,15 @@ type VoteFormData = {
  */
 const VotesContent = ({
   proposal,
+  totalVotingWeight,
   ...props
 }: {
   proposal: Proposal;
   canVote: CanVote;
   votingPower: BigNumber;
+  totalVotingWeight: BigNumber;
   refetch: () => void;
 }) => {
-  const { totalVotingWeight } = useTotalVotingWeight({
-    blockNumber: proposal.data.parameters.snapshotBlock,
-  });
-
   switch (proposal.status) {
     // Active proposals include radio button to vote
     case ProposalStatus.Active:
@@ -68,7 +68,7 @@ const VotesContent = ({
       );
     default:
       return (
-        <Accordion type="single" collapsible className="space-y-2">
+        <Accordion type="single" collapsible className="space-y-2 ">
           <VotesContentOption
             proposal={proposal}
             voteOption={VoteOption.Yes}

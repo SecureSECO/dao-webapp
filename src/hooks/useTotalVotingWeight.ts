@@ -19,7 +19,7 @@ export type UseCanVoteData = {
 };
 
 export type UseCanVoteProps = {
-  blockNumber: BigNumber;
+  blockNumber: BigNumber | undefined;
   useDummyData?: boolean;
 };
 
@@ -38,7 +38,7 @@ export const useTotalVotingWeight = ({
   const { client } = useDiamondSDKContext();
 
   const fetchVotingWeight = async () => {
-    if (!client) return;
+    if (!client || !blockNumber) return;
 
     try {
       const governance = await client.pure.IGovernanceStructure();

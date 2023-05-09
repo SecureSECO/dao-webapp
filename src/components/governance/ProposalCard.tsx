@@ -19,8 +19,7 @@ import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import Activity from '@/src/components/icons/Activity';
 import Check from '@/src/components/icons/Check';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
-import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
-import { Proposal } from '@plopmenz/diamond-governance-sdk/dist/sdk/src/sugar/proposal';
+import { ProposalStatus, Proposal } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 
@@ -109,12 +108,11 @@ const getProposalTags = (proposal: Proposal, totalVotingWeight: BigNumber) => {
   if (proposal.status === ProposalStatus.Pending)
     res.push(
       {
-        children:
-          'Starts in ' + countdownText(proposal.data.parameters.startDate),
+        children: 'Starts in ' + countdownText(proposal.startDate),
         variant: 'countdown',
       },
       {
-        children: 'Ends in ' + countdownText(proposal.data.parameters.endDate),
+        children: 'Ends in ' + countdownText(proposal.endDate),
         variant: 'countdown',
       }
     );
@@ -141,7 +139,7 @@ const getProposalTags = (proposal: Proposal, totalVotingWeight: BigNumber) => {
 
   if (proposal.status === ProposalStatus.Active) {
     res.push({
-      children: 'Ends in ' + countdownText(proposal.data.parameters.endDate),
+      children: 'Ends in ' + countdownText(proposal.endDate),
       variant: 'countdown',
     });
   }
