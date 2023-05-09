@@ -74,8 +74,8 @@ export function abbreviateTokenAmount(amount: string): string {
 export function toAbbreviatedTokenAmount(
   value: BigInt | null | undefined,
   decimals: number | null | undefined,
-  valueAsFloat: number | undefined,
-  round = false
+  round = false,
+  valueAsFloat: number | undefined = undefined
 ): string {
   if (anyNullOrUndefined(value, decimals)) {
     if (isNullOrUndefined(valueAsFloat)) {
@@ -112,7 +112,7 @@ const TokenAmount = ({
   return (
     <span className={className} {...props}>
       {sign}
-      {toAbbreviatedTokenAmount(amount, tokenDecimals, amountFloat)}
+      {toAbbreviatedTokenAmount(amount, tokenDecimals, false, amountFloat)}
       &nbsp;
       {symbol ?? ''}
     </span>
