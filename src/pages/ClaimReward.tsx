@@ -7,7 +7,7 @@
  */
 
 export type ClaimRewardData = {
-  division: number;
+  distribution: number;
 };
 
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -33,19 +33,19 @@ export const ClaimReward = ({
   repToMonetaryFactor: number;
 }) => {
   const { control, handleSubmit } = useForm<ClaimRewardData>({
-    defaultValues: { division: 100 },
+    defaultValues: { distribution: 100 },
   });
 
-  const name_division = 'division';
+  const name_distribution = 'distribution';
 
-  const division = useWatch({
+  const distribution = useWatch({
     control,
-    name: name_division,
+    name: name_distribution,
   });
 
-  const reputation = division * claimableRep * 0.01 || 0;
+  const reputation = distribution * claimableRep * 0.01 || 0;
   const monetary =
-    (100 - division) * claimableRep * repToMonetaryFactor * 0.01 || 0;
+    (100 - distribution) * claimableRep * repToMonetaryFactor * 0.01 || 0;
 
   const onSubmit = (data: ClaimRewardData) => {
     console.log(data);
@@ -55,10 +55,10 @@ export const ClaimReward = ({
     <MainCard icon={HiOutlineCurrencyDollar} header="Claim Reward">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-1">
         <Label
-          htmlFor="division"
-          tooltip="How to divide the reward between monetary value and repuation"
+          htmlFor="distribution"
+          tooltip={`How much of your reward you wish to receive in ${TOKENS.rep.symbol}, and how much in ${TOKENS.secoin.symbol}`}
         >
-          Reward division
+          Reward distribution
         </Label>
         <Card
           variant="outline"
@@ -66,16 +66,16 @@ export const ClaimReward = ({
         >
           <div className="col-span-4 flex flex-col">
             {TOKENS.rep.symbol}
-            <span>{division}%</span>
+            <span>{distribution}%</span>
           </div>
           <div className="col-span-4 flex flex-col md:order-last">
             {TOKENS.secoin.symbol}
-            <span>{100 - division}%</span>
+            <span>{100 - distribution}%</span>
           </div>
           <div className="col-span-8 flex flex-col justify-center gap-y-2 md:w-full">
             <Controller
               control={control}
-              name={name_division}
+              name={name_distribution}
               render={({ field: { onChange, name, value } }) => (
                 <Slider
                   defaultValue={[value]}
