@@ -19,6 +19,7 @@ import { MainCard } from '../components/ui/MainCard';
 import { IconBaseProps } from 'react-icons/lib';
 import { HiOutlineCurrencyDollar } from 'react-icons/hi2';
 import { Card } from '../components/ui/Card';
+import { TOKENS } from '../lib/constants/tokens';
 
 /*
  * repToBeClaimed is the total amount of reputation the user may claim
@@ -57,7 +58,7 @@ export const ClaimReward = ({
 
   return (
     <MainCard icon={HiOutlineCurrencyDollar} header="Claim Reward">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-1">
         <Label
           htmlFor="division"
           tooltip="How to divide the reward between monetary value and repuation"
@@ -66,17 +67,17 @@ export const ClaimReward = ({
         </Label>
         <Card
           variant="outline"
-          className="grid w-full grid-cols-8 flex-col gap-x-4 gap-y-4 text-center"
+          className="grid w-full grid-cols-8 gap-x-4 gap-y-4 text-center md:flex md:flex-row"
         >
-          <div className="col-span-4 flex flex-col gap-y-1 md:col-span-1">
-            Reputation
+          <div className="col-span-4 flex flex-col gap-y-1">
+            {TOKENS.rep.symbol}
             <span>{division}%</span>
           </div>
-          <div className="col-span-4 flex flex-col gap-y-1 md:order-last md:col-span-1">
-            Monetary
+          <div className="col-span-4 flex flex-col gap-y-1 md:order-last">
+            {TOKENS.secoin.symbol}
             <span>{100 - division}%</span>
           </div>
-          <div className="col-span-8 flex flex-col justify-center gap-y-2 md:col-span-6">
+          <div className="col-span-8 flex flex-col justify-center gap-y-2 md:w-full">
             <Controller
               control={control}
               name={name_division}
@@ -92,15 +93,15 @@ export const ClaimReward = ({
             />
           </div>
         </Card>
-        <div className="flex w-full flex-col gap-x-5 gap-y-2 md:flex-row">
+        <div className="mt-1 flex w-full flex-col gap-x-2 gap-y-2 md:flex-row">
           <Card variant="outline">
-            <TokenAmount amountFloat={reputation} symbol="reputation token" />
+            <TokenAmount amountFloat={reputation} symbol={TOKENS.rep.symbol} />
           </Card>
           <Card variant="outline">
-            <TokenAmount amountFloat={monetary} symbol="monetary token" />
+            <TokenAmount amountFloat={monetary} symbol={TOKENS.secoin.symbol} />
           </Card>
         </div>
-        <Button label="Claim reward" />
+        <Button label="Claim reward" className="mt-1" />
       </form>
     </MainCard>
   );
