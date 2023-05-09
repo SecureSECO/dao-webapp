@@ -85,8 +85,6 @@ export const useMembers = ({
 
   const fetchMembers = async (client: DiamondGovernanceClient) => {
     try {
-      console.log('Fetching members');
-
       // Fetch the list of address that are members of the DAO
       const addressList: string[] = await client.sugar.GetMembers();
 
