@@ -118,7 +118,7 @@ const VotesContentActive = ({
       () =>
         proposal.Vote(
           VoteOption[data.vote_option as VoteOptionString],
-          votingPower.toNumber()
+          votingPower
         ),
       {
         messages: {
@@ -171,12 +171,15 @@ const VotesContentActive = ({
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
       <div className="flex flex-row items-center gap-x-4">
         <Button disabled={!userCanVote || !isConnected} type="submit">
-          Vote{' '}
           {!userCanVote && isConnected ? (
-            'submitted'
+            votingPower.gt(0) ? (
+              'Vote submitted'
+            ) : (
+              'Insufficient balance'
+            )
           ) : (
             <span className="ml-1 inline-block lowercase">
-              {voteOption ?? 'yes'}
+              {'Vote ' + (voteOption ?? 'yes')}
             </span>
           )}
         </Button>
