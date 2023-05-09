@@ -7,7 +7,6 @@
  */
 
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
@@ -18,7 +17,6 @@ import { useSearchSECO } from '@/src/hooks/useSearchSECO';
 import { MainCard } from '@/src/components/ui/MainCard';
 import {
   HiOutlineCodeBracketSquare,
-  HiOutlineCurrencyDollar,
   HiOutlineDocumentMagnifyingGlass,
   HiArrowDownTray,
 } from 'react-icons/hi2';
@@ -185,7 +183,7 @@ const Query = () => {
                         disabled={!queryResult}
                         icon={HiArrowDownTray}
                       >
-                        Download as JSON file
+                        Download as JSON
                       </Button>
                     </>
                   ) : (

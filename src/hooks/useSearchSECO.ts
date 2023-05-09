@@ -31,7 +31,7 @@ interface ResultData {
   LineNumberEnd: number;
 }
 
-const dummyQueryResult = {
+export const dummyQueryResult = {
   methodData: [
     {
       method_hash: '9917d1b8a373ac2ac6d92ced37558db2',
