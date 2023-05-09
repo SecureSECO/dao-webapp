@@ -6,8 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { cn } from '@/src/lib/utils';
+import {
+  actionToName,
+  calcBigNumberPercentage,
+  cn,
+  countdownText,
+} from '@/src/lib/utils';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import { cva, VariantProps } from 'class-variance-authority';
+import { BigNumber } from 'ethers';
 import React from 'react';
 import { FaGithub } from 'react-icons/fa';
 import {
@@ -68,6 +75,95 @@ const ProposalTag = ({
       <div className="break-inside-avoid">{children}</div>
     </div>
   );
+};
+
+/**
+ * Find the data for tags of a specific proposal
+ * @example A pending proposal will have two countdown tags, one for when it starts and another for when it ends
+ * @param proposal Proposal to extract the tags for
+ * @returns A list of props for the ProposalTag component
+ */
+export const getProposalTags = (
+  proposal: Proposal,
+  totalVotingWeight: BigNumber
+) => {
+  const res: ProposalTagProps[] = [];
+
+  if (proposal.status === ProposalStatus.Pending)
+    res.push(
+      {
+        children: 'Starts in ' + countdownText(proposal.startDate),
+        variant: 'countdown',
+      },
+      {
+        children: 'Ends in ' + countdownText(proposal.endDate),
+        variant: 'countdown',
+      }
+    );
+  else {
+    const yesPercentage = calcBigNumberPercentage(
+      proposal.data.tally.yes,
+      totalVotingWeight
+    );
+    const noPercentage = calcBigNumberPercentage(
+      proposal.data.tally.no,
+      totalVotingWeight
+    );
+    res.push(
+      {
+        children: yesPercentage.toString() + '%',
+        variant: 'yes',
+      },
+      {
+        children: noPercentage.toString() + '%',
+        variant: 'no',
+      }
+    );
+  }
+
+  if (proposal.status === ProposalStatus.Active) {
+    res.push({
+      children: 'Ends in ' + countdownText(proposal.endDate),
+      variant: 'countdown',
+    });
+  }
+
+  // Add tag for each type of action that is attached to the proposal
+  const unqiueActions = new Set(proposal.actions.map(actionToName));
+  unqiueActions.forEach((action) => {
+    switch (action) {
+      case 'mint_tokens':
+        res.push({
+          children: 'Mint tokens',
+          variant: 'action',
+          icon: 'mint',
+        });
+        break;
+      case 'withdraw_assets':
+        res.push({
+          children: 'Withdraw assets',
+          variant: 'action',
+          icon: 'withdraw',
+        });
+        break;
+      case 'merge_pr':
+        res.push({
+          children: 'Merge PR',
+          variant: 'action',
+          icon: 'merge',
+        });
+        break;
+      case 'change_parameter':
+        res.push({
+          children: 'Change params',
+          variant: 'action',
+          icon: 'change',
+        });
+        break;
+    }
+  });
+
+  return res;
 };
 
 export default ProposalTag;

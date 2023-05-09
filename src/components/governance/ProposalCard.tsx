@@ -10,9 +10,8 @@ import { Card } from '@/src/components/ui/Card';
 import { Address, AddressLength } from '@/src/components/ui//Address';
 import Header from '@/src/components/ui/Header';
 import ProposalTag, {
-  ProposalTagProps,
+  getProposalTags,
 } from '@/src/components/governance/ProposalTag';
-import { calcBigNumberPercentage, countdownText } from '@/src/lib/utils';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { Link } from 'react-router-dom';
 import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
@@ -20,7 +19,6 @@ import Activity from '@/src/components/icons/Activity';
 import Check from '@/src/components/icons/Check';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { ProposalStatus, Proposal } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber } from 'ethers';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 
 type StatusBadgePropsMap = {
@@ -94,56 +92,6 @@ export const ProposalStatusBadge = ({
       className={className}
     />
   );
-};
-
-/**
- * Find the data for tags of a specific proposal
- * @example A pending proposal will have two countdown tags, one for when it starts and another for when it ends
- * @param proposal Proposal to extract the tags for
- * @returns A list of props for the ProposalTag component
- */
-const getProposalTags = (proposal: Proposal, totalVotingWeight: BigNumber) => {
-  const res: ProposalTagProps[] = [];
-
-  if (proposal.status === ProposalStatus.Pending)
-    res.push(
-      {
-        children: 'Starts in ' + countdownText(proposal.startDate),
-        variant: 'countdown',
-      },
-      {
-        children: 'Ends in ' + countdownText(proposal.endDate),
-        variant: 'countdown',
-      }
-    );
-  else {
-    const yesPercentage = calcBigNumberPercentage(
-      proposal.data.tally.yes,
-      totalVotingWeight
-    );
-    const noPercentage = calcBigNumberPercentage(
-      proposal.data.tally.no,
-      totalVotingWeight
-    );
-    res.push(
-      {
-        children: yesPercentage.toString() + '%',
-        variant: 'yes',
-      },
-      {
-        children: noPercentage.toString() + '%',
-        variant: 'no',
-      }
-    );
-  }
-
-  if (proposal.status === ProposalStatus.Active) {
-    res.push({
-      children: 'Ends in ' + countdownText(proposal.endDate),
-      variant: 'countdown',
-    });
-  }
-  return res;
 };
 
 const ProposalCard = ({ proposal }: { proposal: Proposal }) => {

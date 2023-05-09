@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import { ClassValue, clsx } from 'clsx';
 import {
   differenceInHours,
@@ -142,4 +143,33 @@ export const truncateMiddle = (address: string, maxLength: number) => {
  */
 export const copyToClipboard = (address: string) => {
   navigator.clipboard.writeText(address);
+};
+
+/**
+ * Function to get a more readable name for a proposal action.
+ * Used in ProposalCard to display tags for the actions attached to the proposal.
+ * @param action Instance of IProposalAction to get a more readable name for
+ * @returns A string that represents the action
+ * @example
+ * const action = {
+ *  interface: "IMintableGovernanceStructure",
+ *  method: "mintVotingPower(address,uint256,uint256)",
+ *  params: { ... }
+ * }
+ * const name = actionToName(action);
+ * console.log(name); // "mint_tokens"
+ */
+export const actionToName = (action: IProposalAction) => {
+  switch (action.interface + '.' + action.method) {
+    case 'IChange.change': // FIXME: not correct interface and method
+      return 'change_parameter';
+    case 'IGithubPullRequestFacet.merge(string,string,string)':
+      return 'merge_pr';
+    case 'IMintableGovernanceStructure.mintVotingPower(address,uint256,uint256)':
+      return 'mint_tokens';
+    case 'IWithdraw.withdraw': // FIXME: not correct interface and method
+      return 'withdraw_assets';
+    default:
+      return 'unknown';
+  }
 };

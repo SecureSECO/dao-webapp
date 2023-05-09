@@ -127,8 +127,8 @@ export const Confirmation = () => {
         switch (action.name) {
           case 'withdraw_assets':
             return {
-              method: 'withdraw',
-              interface: 'IWithdraw',
+              method: 'withdraw', // FIXME: This is not the correct method
+              interface: 'IWithdraw', // FIXME: This is not the correct interface
               params: {
                 to: action.recipient,
                 amount: action.amount,
@@ -137,8 +137,8 @@ export const Confirmation = () => {
             };
           case 'mint_tokens':
             return {
-              method: 'mint',
-              interface: 'IMint',
+              method: 'mintVotingPower(address,uint256,uint256)',
+              interface: 'IMintableGovernanceStructure',
               params: {
                 to: action.wallets.map((wallet) => {
                   return {
@@ -151,23 +151,22 @@ export const Confirmation = () => {
             };
           case 'merge_pr':
             return {
-              method: 'merge',
-              interface: 'IMerge', // FIXME: This is not the correct interface
+              method: 'merge(string,string,string)',
+              interface: 'IGithubPullRequestFacet',
               params: {
                 url: action.inputs.url,
               },
             };
           case 'change_parameter':
-            return{
-            method: 'change',
-            interface: 'IChange', //FIXME: This is not the correct interface
-            params: {
-              plugin: action.plugin,
-              parameter: action.parameter,
-              value: action.value,
-            }
-
-          }
+            return {
+              method: 'change', // FIXME: This is not the correct method
+              interface: 'IChange', //FIXME: This is not the correct interface
+              params: {
+                plugin: action.plugin,
+                parameter: action.parameter,
+                value: action.value,
+              },
+            };
           default:
             return {
               method: '',
