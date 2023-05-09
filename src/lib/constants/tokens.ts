@@ -17,6 +17,10 @@ type Tokens = {
   secoin: NativeToken;
 };
 
+/*
+ * Contains the metadata about DAO tokens.
+ * Similair to chains.ts.
+ * */
 export const TOKENS: Tokens = {
   rep: {
     name: 'SecureSECO Reputation',
