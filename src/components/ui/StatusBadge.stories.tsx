@@ -9,7 +9,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { StatusBadge } from '@/src/components/ui/StatusBadge';
 import Check from '@/src/components/icons/Check';
-import Activity from '@/src/components/icons/Actitivy';
+import Activity from '@/src/components/icons/Activity';
 import { HiOutlineClock, HiXMark } from 'react-icons/hi2';
 
 const meta = {

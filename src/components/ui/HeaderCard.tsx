@@ -46,7 +46,7 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
     return (
       <Card
         ref={ref}
-        padding="lg"
+        size="lg"
         className={cn(
           headerCardVariants({}),
           className,

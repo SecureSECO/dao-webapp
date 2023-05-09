@@ -64,3 +64,11 @@ export const MergeActionTag: Story = {
     icon: 'merge',
   },
 };
+
+export const ChangeParamsActionTag: Story = {
+  args: {
+    variant: 'action',
+    children: 'Change params',
+    icon: 'change',
+  },
+};

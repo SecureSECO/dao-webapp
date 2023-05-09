@@ -120,6 +120,35 @@ The general page structure is set up as follows:
 - `<MainCard />` or regular `<Card />` components for the content of the page, with `1.5rem` of spacing in between the cards (tailwind class is `gap-6`)
 - `<Card />` with prop `variant='light'` for items inside of the main cards
 
+#### Icons
+
+The project uses [react-icons](https://react-icons.github.io/react-icons/) for most of the icons. In particular, we aim to use [Heroicons v2](https://heroicons.com/), wherever necessary. As react-icons includes both v1 and v2 of Heroicons, it's important to make sure the the imports from the react-icons library are importing v2 (so make sure the icon is imported from `react-icons/hi2` rather than `react-icons/hi`). If there's something you'd like to use that is not included in Heroicons, you can try [Font Awesome](https://fontawesome.com/) instead. Font Awesome is especially useful for logos of various companies, such as Github. If Heroicons, nor Font Awesome, has what you're looking for, there's a heap of other icon libraries included in react-icons.
+
+If none of the icon libraries in react-icons are satisfactory, you may add a custom icon based on an svg to the [icons](/src/components/icons/) folder. Have a look at one of the other files already in that folder for an example on how to go about doing so. In the past, this approach has been used to add icons from [Lucide](https://lucide.dev/), which is an icon library that is not included in react-icons.
+
+#### Headers
+
+Headers, like `<h1 />`, `<h2 />` etc., should not be used directly. Instead, use the [Header](/src/components/ui/Header.tsx) component, and pass it a prop `level` corresponding to the component of choice. For example, when you need an `<h1 />`, you should instead use `<Header level={1}/>`.
+
+#### Inputs & Labels
+
+Similar to the headers, inputs and labels should not be used plainly like `<input />` or `<label />`. Instead, use the provided `<Input />` and `<Label />` components.
+
+#### Loading states
+
+When a component that requires some dynamic data to show its content is loading, it should show a loading state in the form of a pulsing placeholder.
+
+For top-level Card components (usually MainCard or HeaderCard), the `loading` prop should be used, which will show the card pulsing when the boolean variable passed to the prop is true. It also applies a minimum height depending on the `size` prop passed to the Card component, to make it clearly visible despite it not having any content yet (since the content is loading).
+
+When you need loading placeholders for a collection of items, or really any other component that is not a Card, there is a `<Skeleton />` component, which has styles for a pulsing animation and background color. Sizing should be done manually by passing the `className` prop. For example, the following would show two loading placeholders with a height of 80px, taking up the full width of the container:
+
+```jsx
+<div className="space-y-4">
+  <Skeleton className="h-20 w-full" />
+  <Skeleton className="h-20 w-full" />
+</div>
+```
+
 #### Colors
 
 Colors are defined using CSS variables in [index.css](/src/index.css) based on the approach taken by [shadcn](https://ui.shadcn.com/docs/theming). Each color has variants for light and dark mode, making it easy to change a color, without having to change the code everywhere that color is used.
@@ -134,78 +163,100 @@ The following is a list of the colors currently being used (light mode):
 - Default background color and corresponding text color of `<body />` etc.
 
 ```
+
 --background: 210 40% 98%;
 --foreground: 215 25% 27%;
+
 ```
 
 - Muted backgrounds for things like loading skeletons and background of `<Progress />`
 
 ```
+
 --muted: 214 32% 91%;
 --muted-foreground: 215 25% 27%;
+
 ```
 
 - Colors for top-level cards (first card on top of the background of the page), such as `<MainCard />`
 
 ```
+
 --highlight: 0 0% 100%;
 --highlight-foreground: 215 25% 27%;
+
 ```
 
 - Colors for second-level cards, such as the `light` variant of the `<Card />` component
 
 ```
+
 --popover: 210 40% 98%;
 --popover-foreground: 215 25% 27%;
+
 ```
 
 - Primary colors, where highlight is a lighter version of the main color, used in various places, such as `<Button />`
 
 ```
+
 --primary: 215 54% 34%;
 --primary-foreground: 210 40% 98%;
 --primary-highlight: 213 52% 60%;
+
 ```
 
 - Colors used for accents, such as the `subtle` variant of the `<Button />` component, certain hover effects, and separator lines such as the one in `<CategoryList />`
 
 ```
+
 --accent: 210 40% 94%;
 --accent-foreground: 222 47% 11%;
+
 ```
 
 - Green colors, used for things like successful toasts in `<Toast />` (note that the default color here is for green text, and the variable with the `-background` suffix is specifically meant for components with a green background)
 
 ```
+
 --success: 142 69% 58%;
 --success-background: 120 100% 90%;
 --success-foreground: 216 34% 17%;
+
 ```
 
 - Red colors, used for things like failed toasts, or showing form input errors in `<ErrorWrapper />` (note that the default color here is for red text, and the variable with the `-background` suffix is specifically meant for components with a red background)
 
 ```
+
 --destructive: 0 91% 71%;
 --destructive-background: 0 96% 89%;
 --destructive-foreground: 216 34% 17%;
+
 ```
 
 - Default border color
 
 ```
+
 --border: 214 32% 91%;
+
 ```
 
 - Border color for inputs, such as `<Input />`, `<Select />`, `<Textarea />` etc.
 
 ```
+
 --input: 214 32% 91%;
+
 ```
 
 - Color for the ring shown around certain focused components, such as `<Dialog />` (a lot of components, like `<Button />` use other ring colors)
 
 ```
+
 --ring: 215 20% 65%;
+
 ```
 
 Some specific examples of how to use the color classes:
@@ -406,3 +457,7 @@ These tests can be run using `npm test` (or optionally `npm run test`).
 ## License
 
 This repository is [MIT licensed](./LICENSE).
+
+```
+
+```

@@ -7,19 +7,19 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import Activity from '@/src/components/icons/Activity';
 
-const meta = {
-  component: Activity,
-  tags: ['autodocs'],
-  argTypes: {},
-} satisfies Meta<typeof Activity>;
+import { ClaimReward } from './ClaimReward';
+
+const meta: Meta<typeof ClaimReward> = {
+  component: ClaimReward,
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ClaimReward>;
 
-export const Default: Story = {
+export const Primary: Story = {
   args: {
-    className: 'w-5 h-5',
+    repToMonetaryFactor: 0.3,
+    claimableRep: 123,
   },
 };

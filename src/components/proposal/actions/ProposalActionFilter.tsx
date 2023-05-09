@@ -22,6 +22,10 @@ import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import {
+  ChangeParameterAction,
+  ProposalChangeParameterAction,
+} from './ChangeParameterAction';
 
 interface ProposalActionProps extends AccordionItemProps {
   action: IProposalAction;
@@ -42,6 +46,13 @@ const ProposalActionFilter = ({ action, ...props }: ProposalActionProps) => {
       return <MintAction action={action as ProposalMintAction} {...props} />;
     case 'merge':
       return <MergeAction action={action as ProposalMergeAction} {...props} />;
+    case 'change':
+      return (
+        <ChangeParameterAction
+          action={action as ProposalChangeParameterAction}
+          {...props}
+        />
+      );
     default:
       return <DefaultAction action={action} {...props} />;
   }

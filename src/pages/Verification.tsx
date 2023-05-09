@@ -169,7 +169,12 @@ const Verification = () => {
   const { toast } = useToast();
 
   // Gets all the stamps for the current address
-  const { data, isError, isLoading, refetch } = useContractRead({
+  const {
+    data,
+    isError,
+    isLoading: stampsLoading,
+    refetch,
+  } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getStamps',
@@ -177,7 +182,7 @@ const Verification = () => {
   });
 
   // Gets the reverification threshold
-  const { data: reverifyData } = useContractRead({
+  const { data: reverifyData, isLoading: reverifyLoading } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'reverifyThreshold',
@@ -185,7 +190,7 @@ const Verification = () => {
   });
 
   // Gets the verification threshold history
-  const { data: historyData } = useContractRead({
+  const { data: historyData, isLoading: historyLoading } = useContractRead({
     address: verificationAddress,
     abi: verificationAbi,
     functionName: 'getThresholdHistory',
@@ -403,8 +408,8 @@ const Verification = () => {
       <div className="grid grid-cols-7 gap-6">
         <MainCard
           className="col-span-full lg:col-span-4"
-          loading={false}
           icon={HiOutlineCheckBadge}
+          loading={stampsLoading || reverifyLoading}
           header={
             <DefaultMainCardHeader
               value={amountOfVerifiedStamps}
@@ -413,29 +418,21 @@ const Verification = () => {
           }
           aside={<ExplanationButton />}
         >
-          {isLoading ? (
-            <div className="flex flex-col gap-4">
-              <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
-              <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
-              <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
+          <div className="flex flex-col gap-y-8">
+            <div className="flex flex-wrap gap-6">
+              {availableStamps.map((stampInfo) => (
+                <StampCard
+                  key={stampInfo.id}
+                  stampInfo={stampInfo}
+                  stamp={stamps.find(([id]) => id === stampInfo.id) || null}
+                  thresholdHistory={thresholdHistory ?? []}
+                  verify={verify}
+                  refetch={refetch}
+                  isError={isError}
+                />
+              ))}
             </div>
-          ) : (
-            <div className="flex flex-col gap-y-8">
-              <div className="flex flex-wrap gap-6">
-                {availableStamps.map((stampInfo) => (
-                  <StampCard
-                    key={stampInfo.id}
-                    stampInfo={stampInfo}
-                    stamp={stamps.find(([id]) => id === stampInfo.id) || null}
-                    thresholdHistory={thresholdHistory ?? []}
-                    verify={verify}
-                    refetch={refetch}
-                    isError={isError}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+          </div>
         </MainCard>
 
         <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
@@ -470,7 +467,7 @@ const Verification = () => {
           </MainCard>
 
           <MainCard
-            loading={false}
+            loading={historyLoading}
             icon={History}
             header={
               <DefaultMainCardHeader
