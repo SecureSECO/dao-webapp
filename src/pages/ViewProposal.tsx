@@ -30,7 +30,7 @@ import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 
 const ViewProposal = () => {
   const { id } = useParams();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const {
     proposal,
     loading,
@@ -123,7 +123,7 @@ const ViewProposal = () => {
                       Published by
                     </span>
                     <Address
-                      address={proposal}
+                      address={proposal.creatorAddress}
                       maxLength={AddressLength.Medium}
                       hasLink={true}
                       showCopy={false}
@@ -166,7 +166,7 @@ const ViewProposal = () => {
                           label="Execute"
                           onClick={() => executeProposal()}
                         />
-                        {!address && (
+                        {!isConnected && (
                           <ConnectWalletWarning action="to execute this proposal" />
                         )}
                       </div>

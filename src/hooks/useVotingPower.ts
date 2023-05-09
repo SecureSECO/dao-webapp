@@ -11,45 +11,51 @@ import { getErrorMessage } from '@/src/lib/utils';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 
-export type UseTotalVotingWeightData = {
+export type CanVote = {
+  Yes: boolean;
+  No: boolean;
+  Abstain: boolean;
+};
+
+export type UseVotingPowerData = {
   loading: boolean;
   error: string | null;
-  totalVotingWeight: BigNumber;
+  // Voting power of given wallet
+  votingPower: BigNumber;
   refetch: () => void;
 };
 
-export type UseTotalVotingWeightProps = {
+export type UseVotingPowerProps = {
+  address: string | undefined;
   blockNumber: BigNumber | undefined;
   useDummyData?: boolean;
 };
 
 /**
- * @returns The total voting weight in the DAO
+ * Hook to fetch the voting power (rep balance) of a given wallet
+ * @param props.address Address of the wallet to fetch the voting power of
+ * @returns Object containing the votingPower and a refetch function, as well as loading and error states
  */
-export const useTotalVotingWeight = ({
+export const useVotingPower = ({
+  address,
   blockNumber,
   useDummyData = false,
-}: UseTotalVotingWeightProps): UseTotalVotingWeightData => {
-  const [totalVotingWeight, setTotalVotingWeight] = useState<BigNumber>(
-    BigNumber.from(0)
-  );
+}: UseVotingPowerProps): UseVotingPowerData => {
+  const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { client } = useDiamondSDKContext();
 
-  const fetchVotingWeight = async () => {
-    if (!client || !blockNumber) return;
+  const fetchVotingPower = async () => {
+    if (!client || !address || !blockNumber) return;
 
     try {
       const governance = await client.pure.IGovernanceStructure();
-      const totalVotingWeightData = await governance.totalVotingPower(
+      const repBalance = await governance?.walletVotingPower(
+        address,
         blockNumber
       );
-      if (totalVotingWeightData) {
-        setTotalVotingWeight(totalVotingWeightData);
-        setLoading(false);
-        setError(null);
-      } else setTotalVotingWeight(BigNumber.from(0));
+      setVotingPower(repBalance);
     } catch (e) {
       console.error(e);
       setError(getErrorMessage(e));
@@ -57,24 +63,24 @@ export const useTotalVotingWeight = ({
     }
   };
 
-  //** Set dummy data for development without querying Aragon API */
+  //** Set dummy data for development without querying SDK */
   const setDummyData = () => {
     setLoading(false);
     setError(null);
-    setTotalVotingWeight(BigNumber.from(100000));
+    setVotingPower(BigNumber.from(0));
   };
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
     if (client) setLoading(true);
-    fetchVotingWeight();
-    setLoading(false);
-  }, [client, blockNumber]);
+    fetchVotingPower();
+  }, [client]);
 
   return {
     loading,
     error,
-    totalVotingWeight,
-    refetch: () => (!useDummyData ? fetchVotingWeight() : void 0),
+    votingPower,
+    // Only allow refetching if not using dummy data
+    refetch: () => (!useDummyData ? fetchVotingPower() : void 0),
   };
 };

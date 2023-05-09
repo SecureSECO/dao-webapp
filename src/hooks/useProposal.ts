@@ -7,6 +7,7 @@
  */
 
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { getErrorMessage } from '@/src/lib/utils';
 import { VoteOption, Proposal } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
@@ -24,7 +25,8 @@ export type UseProposalData = {
   proposal: Proposal | null;
   canExecute: boolean;
   canVote: CanVote;
-  // Voting power of currently connected wallet
+  // Voting power of currently given address
+  // This value is simply a re-export of the useVotingPower hook
   votingPower: BigNumber;
   refetch: () => void;
 };
@@ -128,10 +130,14 @@ export const useProposal = ({
     No: false,
     Abstain: false,
   });
-  const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
+  // const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { client } = useDiamondSDKContext();
+  const { votingPower } = useVotingPower({
+    address,
+    blockNumber: proposal?.data.parameters.snapshotBlock,
+  });
 
   const fetchProposal = async () => {
     if (!client) return;
@@ -193,16 +199,10 @@ export const useProposal = ({
     const checkCanVote = async () => {
       if (!proposal || !address || !client) return;
       try {
-        const governance = await client.pure.IGovernanceStructure();
-        const repBalance = await governance?.walletVotingPower(
-          address,
-          proposal.data.parameters.snapshotBlock
-        );
-        setVotingPower(repBalance);
         const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
         const canVoteData = await Promise.all(
           values.map((vote) => {
-            return proposal.CanVote(vote, repBalance);
+            return proposal.CanVote(vote, votingPower);
           })
         );
         setCanVote({
