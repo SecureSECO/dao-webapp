@@ -27,15 +27,15 @@ export const MembershipStatus = () => {
     chainId: PREFERRED_NETWORK_METADATA.id,
   });
 
-  <MembershipStatusView
-    {...{
-      isConnected,
-      verification: memberVerification,
-      chainId: chain?.id,
-      openConnector: open,
-      switchNetwork,
-    }}
-  />;
+  return (
+    <MembershipStatusView
+      isConnected={isConnected}
+      verification={memberVerification}
+      chainId={chain?.id}
+      openConnector={open}
+      switchNetwork={switchNetwork}
+    />
+  );
 };
 
 /**
@@ -86,11 +86,11 @@ export const MembershipStatusView = ({
   // An informative banner, showing a button to change network.
   if (chainId !== undefined && chainId !== PREFERRED_NETWORK_METADATA.id)
     return (
-      <MembershipCard message="You are not on the incorrect network!">
+      <MembershipCard message="You are not on the correct network!">
         <Button
           variant="subtle"
           onClick={switchNetworkClick}
-          label="Connect Wallet"
+          label="Switch network"
         />
       </MembershipCard>
     );
