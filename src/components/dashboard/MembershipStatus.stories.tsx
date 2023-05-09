@@ -9,18 +9,32 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { addDays } from 'date-fns';
 
-import { MembershipStatus } from './MembershipStatus';
+import { MembershipStatusView } from './MembershipStatus';
 
-const meta: Meta<typeof MembershipStatus> = {
-  component: MembershipStatus,
+const meta: Meta<typeof MembershipStatusView> = {
+  component: MembershipStatusView,
   tags: ['autodocs'],
 };
 
 export default meta;
-type Story = StoryObj<typeof MembershipStatus>;
+type Story = StoryObj<typeof MembershipStatusView>;
 
 export const NotConnected: Story = {
   args: { isConnected: false, verification: null },
+};
+
+export const IncorrectNetworkCanNotSwitch: Story = {
+  args: { isConnected: true, chainId: 0.01 },
+};
+
+export const IncorrectNetworkCanSwitch: Story = {
+  args: {
+    isConnected: true,
+    chainId: 0.01,
+    switchNetwork: (n) => {
+      console.log(n);
+    },
+  },
 };
 
 export const NotMember: Story = {
@@ -49,7 +63,7 @@ export const AllOk: Story = {
   decorators: [
     (Story) => (
       <div>
-        This is just an empty element.
+        This is just an empty element, nothing should be visible below this.
         <Story />
       </div>
     ),
