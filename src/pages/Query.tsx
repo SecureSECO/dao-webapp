@@ -34,22 +34,16 @@ interface QueryFormData {
   token: string;
 }
 
-interface ResultData {
-  Hash: string;
-  FileName: string;
-  FunctionName: string;
-  LineNumber: number;
-  LineNumberEnd: number;
-}
-
 const Query = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<QueryFormData>();
-  const { queryResult, runQuery, checkHashes } = useSearchSECO({});
-  const [hashCount, setHashCount] = useState<number | null>(null);
+  const { queryResult, runQuery, checkHashes, hashCount } = useSearchSECO({
+    useDummyData: true,
+  });
+
   const { isConnected } = useAccount();
 
   const [storedToken, setStoredToken] = useLocalStorage<string>(
@@ -70,11 +64,11 @@ const Query = () => {
     console.log('Valid URL:', data.searchUrl);
 
     promise(
-      runQuery(data.searchUrl, data.token).then((results: ResultData[]) => {
-        const hashes = results.map((result: ResultData) => result.Hash);
-        setHashCount(hashes.length);
+      runQuery(data.searchUrl, data.token).then(() => {
+        // const hashes = results.map((result: ResultData) => result.Hash);
+        // setHashCount(hashes.length);
         setStoredToken(data.token);
-        return checkHashes(hashes);
+        // return checkHashes(hashes);
       }),
       {
         loading: 'Querying SearchSECO database...',

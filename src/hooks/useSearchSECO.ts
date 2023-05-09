@@ -18,9 +18,18 @@ type UseSearchSECOProps = {
 
 type UseSearchSECOData = {
   queryResult: QueryResponse;
+  hashCount: number | null;
   runQuery: (url: string, token: string) => Promise<QueryResponse>;
   checkHashes: (hashes: string[]) => Promise<any>;
 };
+
+interface ResultData {
+  Hash: string;
+  FileName: string;
+  FunctionName: string;
+  LineNumber: number;
+  LineNumberEnd: number;
+}
 
 const dummyQueryResult = {
   methodData: [
@@ -146,13 +155,22 @@ export const useSearchSECO = ({
   useDummyData,
 }: UseSearchSECOProps): UseSearchSECOData => {
   const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
+  const [hashCount, setHashCount] = useState<number | null>(null);
+
+  const API_URL = import.meta.env.VITE_SEARCHSECO_API_URL;
 
   const runQuery = async (
     url: string,
     token: string
   ): Promise<QueryResponse> => {
+    if (useDummyData) {
+      setQueryResult(dummyQueryResult);
+      setHashCount(dummyQueryResult.methodData.length);
+      return Promise.resolve();
+    }
+
     try {
-      const response = await fetch('http://localhost:8080/api/fetch', {
+      const response = await fetch(`${API_URL}/fetch`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -169,6 +187,10 @@ export const useSearchSECO = ({
 
       const res = await response.json();
       setQueryResult(res);
+
+      const hashes = res.map((result: ResultData) => result.Hash);
+      setHashCount(hashes.length);
+
       return res;
     } catch (e) {
       console.error(e);
@@ -178,7 +200,7 @@ export const useSearchSECO = ({
 
   const checkHashes = async (hashes: string[]): Promise<CheckResponse> =>
     new Promise((resolve, reject) => {
-      return fetch('http://localhost:8080/api/check', {
+      return fetch(`${API_URL}/check`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -202,6 +224,7 @@ export const useSearchSECO = ({
 
   return {
     queryResult,
+    hashCount,
     runQuery,
     checkHashes,
   };
