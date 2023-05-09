@@ -63,7 +63,7 @@ export const AllOk: Story = {
   decorators: [
     (Story) => (
       <div>
-        This is just an empty element.
+        This is just an empty element, nothing should be visible below this.
         <Story />
       </div>
     ),
