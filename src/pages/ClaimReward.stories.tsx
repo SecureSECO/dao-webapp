@@ -20,6 +20,6 @@ type Story = StoryObj<typeof ClaimReward>;
 export const Primary: Story = {
   args: {
     repToMonetaryFactor: 0.3,
-    repToBeClaimed: 123,
+    claimableRep: 123,
   },
 };

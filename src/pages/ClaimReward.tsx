@@ -22,22 +22,17 @@ import { Card } from '../components/ui/Card';
 import { TOKENS } from '../lib/constants/tokens';
 
 /*
- * repToBeClaimed is the total amount of reputation the user may claim
- * repToMonetaryFactor is the amount of monetary token 1 rep may be converted to.
+ * @param props.repToBeClaimed Total amount of reputation the user can claim
+ * @param props.repToMonetaryFactor Amount of monetary token 1 rep may be converted to
  * */
 export const ClaimReward = ({
-  repToBeClaimed,
+  claimableRep,
   repToMonetaryFactor,
 }: {
-  repToBeClaimed: number;
+  claimableRep: number;
   repToMonetaryFactor: number;
 }) => {
-  const {
-    register,
-    formState: { errors },
-    control,
-    handleSubmit,
-  } = useForm<ClaimRewardData>({
+  const { control, handleSubmit } = useForm<ClaimRewardData>({
     defaultValues: { division: 100 },
   });
 
@@ -48,9 +43,9 @@ export const ClaimReward = ({
     name: name_division,
   });
 
-  const reputation = division * repToBeClaimed * 0.01 || 0;
+  const reputation = division * claimableRep * 0.01 || 0;
   const monetary =
-    (100 - division) * repToBeClaimed * repToMonetaryFactor * 0.01 || 0;
+    (100 - division) * claimableRep * repToMonetaryFactor * 0.01 || 0;
 
   const onSubmit = (data: ClaimRewardData) => {
     console.log(data);
@@ -69,11 +64,11 @@ export const ClaimReward = ({
           variant="outline"
           className="grid w-full grid-cols-8 gap-x-4 gap-y-4 text-center md:flex md:flex-row"
         >
-          <div className="col-span-4 flex flex-col gap-y-1">
+          <div className="col-span-4 flex flex-col">
             {TOKENS.rep.symbol}
             <span>{division}%</span>
           </div>
-          <div className="col-span-4 flex flex-col gap-y-1 md:order-last">
+          <div className="col-span-4 flex flex-col md:order-last">
             {TOKENS.secoin.symbol}
             <span>{100 - division}%</span>
           </div>
