@@ -30,7 +30,7 @@ import { Skeleton } from '@/src/components/ui/Skeleton';
 type DaoTokenListProps = {
   loading: boolean;
   error: string | null;
-  daoBalances: DaoBalance[];
+  daoBalances: DaoBalance[] | null;
   limit: number;
 };
 
@@ -38,7 +38,7 @@ const DaoTokensList = ({
   loading,
   error,
   daoBalances,
-  limit = daoBalances.length,
+  limit = daoBalances?.length ?? 0,
 }: DaoTokenListProps): JSX.Element => {
   if (loading)
     return (
@@ -47,8 +47,21 @@ const DaoTokensList = ({
         <Skeleton className="h-16 w-full" />
       </div>
     );
-  if (error)
-    return <p className="text-center font-normal">An error was encountered</p>;
+  if (error) {
+    console.error(error);
+    return (
+      <p className="font-normal italic text-highlight-foreground/80">
+        An error was encountered.
+      </p>
+    );
+  }
+  if (daoBalances === null) {
+    return (
+      <p className="font-normal italic text-highlight-foreground/80">
+        Could not retrieve DAO balance.
+      </p>
+    );
+  }
 
   const balances = daoBalances
     .slice() //Copies array
@@ -184,7 +197,10 @@ const Finance = () => {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <MainCard
           header={
-            <DefaultMainCardHeader value={daoBalances.length} label="tokens" />
+            <DefaultMainCardHeader
+              value={daoBalances?.length ?? 0}
+              label="tokens"
+            />
           }
           loading={false}
           icon={HiCircleStack}
@@ -196,7 +212,7 @@ const Finance = () => {
               loading={tokensLoading}
               error={tokensError}
             />
-            {tokenLimit < daoBalances.length && (
+            {daoBalances && tokenLimit < daoBalances.length && (
               <Button
                 variant="outline"
                 label="Show more tokens"
