@@ -16,13 +16,12 @@ import { Slider } from '../components/ui/Slider';
 import { Button } from '../components/ui/Button';
 import TokenAmount from '../components/ui/TokenAmount';
 import { MainCard } from '../components/ui/MainCard';
-import { IconBaseProps } from 'react-icons/lib';
 import { HiOutlineCurrencyDollar } from 'react-icons/hi2';
 import { Card } from '../components/ui/Card';
 import { TOKENS } from '../lib/constants/tokens';
 
 /*
- * @param props.repToBeClaimed Total amount of reputation the user can claim
+ * @param props.claimableRep Total amount of reputation the user can claim
  * @param props.repToMonetaryFactor Amount of monetary token 1 rep may be converted to
  * */
 export const ClaimReward = ({
