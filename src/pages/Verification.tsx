@@ -36,6 +36,7 @@ import History from '@/src/components/icons/History';
 import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import PendingVerificationCard from '../components/verification/PendingVerificationCard';
+import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -165,7 +166,7 @@ const Verification = () => {
     PendingVerification[]
   >('pendingVerifications', []);
 
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { toast } = useToast();
 
   // Gets all the stamps for the current address
@@ -436,6 +437,7 @@ const Verification = () => {
         </MainCard>
 
         <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
+          {isConnected && <OneTimeRewardCard />}
           <MainCard
             loading={false}
             icon={HiOutlineClock}
