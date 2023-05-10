@@ -218,6 +218,18 @@ export const useSearchSECO = ({
   const runQuery = async (url: string, token: string): Promise<void> => {
     if (useDummyData) {
       setQueryResult(dummyQueryResult);
+      const session = {
+        id: 'dummySessionId',
+        secret: 'dummySecret',
+        fetch_status: 'success',
+        hashes: ['dummyHash'],
+        data: null,
+        cost: 0,
+      } as SessionData;
+      setSession(session);
+      setHashes(session.hashes);
+      setCost(session.cost);
+      setDoPoll(false);
       return Promise.resolve();
     }
 
@@ -254,14 +266,18 @@ export const useSearchSECO = ({
   const startSession = async (): Promise<SessionData> => {
     if (useDummyData) {
       setQueryResult(dummyQueryResult);
-      return {
+      const session = {
         id: 'dummySessionId',
         secret: 'dummySecret',
-        fetch_status: 'idle',
+        fetch_status: 'success',
         hashes: ['dummyHash'],
         data: null,
         cost: 0,
       } as SessionData;
+      setSession(session);
+      setHashes(session.hashes);
+      setCost(session.cost);
+      return session;
     }
 
     // Start a session
