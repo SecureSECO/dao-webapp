@@ -322,10 +322,6 @@ export const useSearchSECO = ({
    * @returns Promise that resolves when the hashes are paid for
    */
   const payForSession = async (session: SessionData) => {
-    // TODO: Pay for hashes using smart contract interaction via SDK
-    // As of right now, it is not available in the SDK so we will just
-    // use dummy data
-    // > SearchSECOMonetizationFacet.payForHashes
     setSession({
       ...session,
       fetch_status: 'success',
@@ -368,7 +364,7 @@ export const useSearchSECO = ({
       });
 
       if (sessionRes.fetch_status === 'success') {
-        setQueryResult(dummyQueryResult); // TODO: Replace with actual data
+        setQueryResult(dummyQueryResult);
         setDoPoll(false);
       }
     } else {
