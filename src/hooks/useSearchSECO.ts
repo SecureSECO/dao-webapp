@@ -7,7 +7,8 @@
  */
 
 import { getErrorMessage } from '@/src/lib/utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocalStorage } from './useLocalStorage';
 
 type QueryResponse = any;
 type CheckResponse = any;
@@ -18,9 +19,27 @@ type UseSearchSECOProps = {
 
 type UseSearchSECOData = {
   queryResult: QueryResponse;
-  hashCount: number | null;
+  hashes: string[];
+  cost: number | null;
+  session: SessionData | null;
   runQuery: (url: string, token: string) => Promise<QueryResponse>;
-  checkHashes: (hashes: string[]) => Promise<any>;
+  resetQuery: () => void;
+  startSession: () => Promise<SessionData>;
+  payForSession: (session: SessionData) => Promise<any>;
+};
+
+/**
+ * Represents a session. A session is used to track the status of a payment / query.
+ */
+type SessionData = {
+  id: string;
+  secret: string;
+  hashes: string[];
+  cost: number;
+  fetch_status: 'idle' | 'pending' | 'success' | 'error';
+  timestamp?: number;
+  data?: any;
+  error?: string;
 };
 
 interface ResultData {
@@ -155,22 +174,55 @@ export const useSearchSECO = ({
   useDummyData,
 }: UseSearchSECOProps): UseSearchSECOData => {
   const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
-  const [hashCount, setHashCount] = useState<number | null>(null);
+  const [hashes, setHashes] = useState<string[]>([]);
+  const [cost, setCost] = useState<number | null>(null);
+
+  const [session, setSession] = useLocalStorage<SessionData | null>(
+    'searchSECOSession',
+    null
+  );
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [doPoll, setDoPoll] = useState<boolean>(true);
 
   const API_URL = import.meta.env.VITE_SEARCHSECO_API_URL;
 
-  const runQuery = async (
-    url: string,
-    token: string
-  ): Promise<QueryResponse> => {
+  // Continuously poll for session data
+  useEffect(() => {
+    const poll = async () => {
+      if (session && doPoll) {
+        await getSessionData();
+      }
+    };
+
+    poll();
+    const interval = setInterval(poll, 10000);
+
+    return () => clearInterval(interval);
+  }, [sessionId, doPoll]);
+
+  // Recover session from local storage
+  useEffect(() => {
+    if (session) {
+      setSessionId(session.id);
+      setHashes(session.hashes);
+      setCost(session.cost);
+    }
+  }, [session]);
+
+  /**
+   * Runs the query and checks the cost of retrieving data about those hashes
+   * @param url Github URL repository
+   * @param token Github access token
+   * @returns Promise that resolves when the query is complete
+   */
+  const runQuery = async (url: string, token: string): Promise<void> => {
     if (useDummyData) {
       setQueryResult(dummyQueryResult);
-      setHashCount(dummyQueryResult.methodData.length);
       return Promise.resolve();
     }
 
     try {
-      const response = await fetch(`${API_URL}/fetch`, {
+      const response = await fetch(`${API_URL}/monetization/cost`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -186,46 +238,155 @@ export const useSearchSECO = ({
       }
 
       const res = await response.json();
-      setQueryResult(res);
-
-      const hashes = res.map((result: ResultData) => result.Hash);
-      setHashCount(hashes.length);
-
-      return res;
+      setCost(res.cost);
+      setHashes(res.hashes);
     } catch (e) {
       console.error(e);
       throw getErrorMessage(e);
     }
   };
 
-  const checkHashes = async (hashes: string[]): Promise<CheckResponse> =>
-    new Promise((resolve, reject) => {
-      return fetch(`${API_URL}/check`, {
+  /**
+   * Starts a session with the SearchSECO API. A session keeps track of
+   * the data fetching status and more
+   * @returns {Promise<SessionData>} Promise that resolves when the session is started
+   */
+  const startSession = async (): Promise<SessionData> => {
+    if (useDummyData) {
+      setQueryResult(dummyQueryResult);
+      return {
+        id: 'dummySessionId',
+        secret: 'dummySecret',
+        fetch_status: 'idle',
+        hashes: ['dummyHash'],
+        data: null,
+        cost: 0,
+      } as SessionData;
+    }
+
+    // Start a session
+    const sessionResponse = await fetch(
+      `${API_URL}/monetization/startSession`,
+      {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ hashes }),
-      })
-        .then((response) => {
-          if (!response.ok)
-            reject(`API request failed with status ${response.status}`);
-          return response.json();
-        })
-        .then((res) => {
-          setQueryResult(res);
-          resolve(res);
-        })
-        .catch((e) => {
-          console.error(e);
-          reject(getErrorMessage(e));
-        });
+        body: JSON.stringify({
+          hashes,
+        }),
+      }
+    );
+
+    if (!sessionResponse.ok) {
+      throw new Error(
+        `API request failed with status ${sessionResponse.status}`
+      );
+    }
+
+    const sessionRes = await sessionResponse.json();
+
+    // Store session in local storage
+    const session: SessionData = {
+      id: sessionRes.sessId,
+      secret: sessionRes.secret,
+      fetch_status: 'idle',
+      hashes,
+      data: null,
+      cost: cost || 0,
+    };
+    setSession(session);
+
+    return session;
+  };
+
+  /**
+   * Pay for hashes via SDK
+   * @param session Session data
+   * @returns Promise that resolves when the hashes are paid for
+   */
+  const payForSession = async (session: SessionData) => {
+    // TODO: Pay for hashes using smart contract interaction via SDK
+    // As of right now, it is not available in the SDK so we will just
+    // use dummy data
+    // > SearchSECOMonetizationFacet.payForHashes
+    setSession({
+      ...session,
+      fetch_status: 'success',
+      data: dummyQueryResult,
     });
+
+    setQueryResult(dummyQueryResult);
+    setDoPoll(false);
+
+    console.log('Paid for hashes (dummy)');
+
+    return Promise.resolve();
+  };
+
+  /**
+   * Updates `session` with the latest session data from the SearchSECO API
+   */
+  const getSessionData = async () => {
+    if (!session) {
+      return;
+    }
+
+    const sessionResponse = await fetch(
+      `${API_URL}/monetization/getData?sessId=${session.id}&secret=${session.secret}`
+    );
+
+    if (!sessionResponse.ok) {
+      throw new Error(
+        `API request failed with status ${sessionResponse.status}`
+      );
+    }
+
+    const sessionRes = await sessionResponse.json();
+    if (sessionRes.status === 'ok') {
+      setSession({
+        ...session,
+        fetch_status: sessionRes.fetch_status,
+        data: sessionRes.data,
+        timestamp: sessionRes.timestamp,
+      });
+
+      if (sessionRes.fetch_status === 'success') {
+        setQueryResult(dummyQueryResult); // TODO: Replace with actual data
+        setDoPoll(false);
+      }
+    } else {
+      console.error(sessionRes.error);
+      console.log(session);
+
+      setSession({
+        ...session,
+        fetch_status: 'error',
+        error: sessionRes.error ?? 'Unknown error',
+      });
+    }
+  };
+
+  /**
+   * Resets the query state & deletes the session
+   */
+  const resetQuery = () => {
+    setQueryResult(null);
+    setHashes([]);
+    setCost(null);
+    setSession(null);
+    setSessionId(null);
+    setDoPoll(true);
+  };
 
   return {
     queryResult,
-    hashCount,
+    hashes,
+    cost,
+    session,
     runQuery,
-    checkHashes,
+    resetQuery,
+    startSession,
+    payForSession,
   };
 };
