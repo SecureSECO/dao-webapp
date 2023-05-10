@@ -14,7 +14,7 @@ import StampCard from '@/src/components/verification/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import {
   HiArrowSmallRight,
-  HiCheckBadge,
+  HiOutlineCheckBadge,
   HiOutlineClock,
   HiUserCircle,
 } from 'react-icons/hi2';
@@ -409,8 +409,8 @@ const Verification = () => {
       <div className="grid grid-cols-7 gap-6">
         <MainCard
           className="col-span-full lg:col-span-4"
+          icon={HiOutlineCheckBadge}
           loading={stampsLoading || reverifyLoading}
-          icon={HiCheckBadge}
           header={
             <DefaultMainCardHeader
               value={amountOfVerifiedStamps}
