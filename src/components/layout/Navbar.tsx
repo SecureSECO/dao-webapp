@@ -43,8 +43,11 @@ const navItems: NavItem[] = [
     url: '/verification',
   },
   {
-    label: 'Query',
-    url: '/query',
+    label: 'SearchSECO',
+    pages: [
+      { label: 'Query', url: '/query' },
+      { label: 'Mining', url: '/mining' },
+    ],
   },
   {
     label: 'Settings',
@@ -71,7 +74,33 @@ const Navitempage = ({ item }: { item: NavItemPage }) => {
 };
 
 const Navitemcollection = ({ item }: { item: NavItemCollection }) => {
-  return <></>;
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={
+          //({ isActive, isPending }) =>
+          cn(
+            'flex w-full flex-row items-center gap-x-1 rounded-md px-4 py-2 text-lg font-semibold leading-4 ring-ring ring-offset-2 ring-offset-background hover:cursor-pointer focus:outline-none focus:ring-2'
+            // isActive && 'bg-highlight text-primary shadow-md',
+            // isPending && ''
+          )
+        }
+      >
+        <span>{item.label}</span>
+        <HiChevronDown className="mt-1 h-5 w-5 group-data-[state=open]:hidden" />
+        <HiXMark className="mt-1 h-5 w-5 group-data-[state=closed]:hidden" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="absolute -left-6 origin-top">
+        <DropdownMenuGroup>
+          {item.pages.map((page) => (
+            <DropdownMenuItem key={page.label} className="hover:cursor-pointer">
+              <Navitem item={page} />
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 };
 
 const Navitem = ({ item }: { item: NavItem }) => {
