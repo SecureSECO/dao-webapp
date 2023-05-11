@@ -14,9 +14,9 @@ import ActionWrapper from './ActionWrapper';
 
 export type ProposalChangeParameterAction = IProposalAction & {
   params: {
-    plugin: string;
-    parameter: string;
-    value: string;
+    _plugin: string;
+    _param: string;
+    _value: string;
   };
 };
 interface ChangeParameterActionProps extends AccordionItemProps {

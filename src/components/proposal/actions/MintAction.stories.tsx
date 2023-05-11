@@ -13,7 +13,23 @@ import type { Meta, StoryObj } from '@storybook/react';
 const meta = {
   component: MintAction,
   tags: ['autodocs'],
-  argTypes: {},
+  argTypes: {
+    action: {
+      table: {
+        disable: true,
+      },
+    },
+    asChild: {
+      table: {
+        disable: true,
+      },
+    },
+    value: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 } satisfies Meta<typeof MintAction>;
 
 export default meta;

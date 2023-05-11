@@ -15,7 +15,7 @@ import {
   IPartialVotingProposalFacet,
   ProposalStatus,
 } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber, ContractTransaction } from 'ethers';
+import { BigNumber, ContractTransaction, constants } from 'ethers';
 import { useEffect, useState } from 'react';
 
 export type CanVote = {
@@ -73,8 +73,8 @@ export const dummyWithdrawAction = {
   interface: 'IWithdraw',
   params: {
     _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
-    _amount: BigNumber.from(5),
-    _tokenId: 0,
+    _amount: BigNumber.from('0x4563918244F40000'),
+    _tokenAddress: constants.AddressZero,
   },
 };
 
@@ -101,7 +101,7 @@ export const dummyChangeParamsAction = {
   params: {
     _plugin: 'TokenVoting',
     _param: 'supportThreshold',
-    _value: 1,
+    _value: '1',
   },
 };
 

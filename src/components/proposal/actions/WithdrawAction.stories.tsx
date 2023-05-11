@@ -8,12 +8,28 @@
 
 import WithdrawAction from '@/src/components/proposal/actions/WithdrawAction';
 import { Accordion } from '@/src/components/ui/Accordion';
+import { dummyWithdrawAction } from '@/src/hooks/useProposal';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: WithdrawAction,
-  tags: ['autodocs'],
-  argTypes: {},
+  argTypes: {
+    action: {
+      table: {
+        disable: true,
+      },
+    },
+    asChild: {
+      table: {
+        disable: true,
+      },
+    },
+    value: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 } satisfies Meta<typeof WithdrawAction>;
 
 export default meta;
@@ -29,15 +45,7 @@ BigInt.prototype.toJSON = function () {
 export const Default: Story = {
   args: {
     value: 'first',
-    action: {
-      method: 'withdraw',
-      interface: 'IWithdraw',
-      params: {
-        to: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
-        amount: 1000000000000000000n,
-        tokenAddress: '0x0000000000000000000000000000000000000000',
-      },
-    },
+    action: dummyWithdrawAction,
   },
   decorators: [
     (Story) => (
@@ -52,12 +60,10 @@ export const UnknownToken: Story = {
   args: {
     value: 'first',
     action: {
-      method: 'withdraw',
-      interface: 'IWithdraw',
+      ...dummyWithdrawAction,
       params: {
-        to: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
-        amount: 1000000000000000000n,
-        tokenAddress: '0x2222222222222222222222222222222222222222',
+        ...dummyWithdrawAction.params,
+        _tokenAddress: '0x2222222222222222222222222222222222222222',
       },
     },
   },
