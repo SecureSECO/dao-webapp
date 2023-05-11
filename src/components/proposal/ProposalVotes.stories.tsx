@@ -8,8 +8,9 @@
 
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 import { dummyProposal } from '@/src/hooks/useProposal';
-import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
+import { BigNumber } from 'ethers';
 
 const meta = {
   component: ProposalVotes,
@@ -37,6 +38,13 @@ export const Active: Story = {
   args: {
     proposal: dummyProposal,
     loading: false,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
+    },
   },
 };
 
@@ -45,8 +53,15 @@ export const Pending: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Pending,
-    },
+    } as Proposal,
     loading: false,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
+    },
   },
 };
 
@@ -55,8 +70,15 @@ export const Succeeded: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Succeeded,
-    },
+    } as Proposal,
     loading: false,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
+    },
   },
 };
 
@@ -65,8 +87,15 @@ export const Executed: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Executed,
-    },
+    } as Proposal,
     loading: false,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
+    },
   },
 };
 
@@ -75,8 +104,15 @@ export const Defeated: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Defeated,
-    },
+    } as Proposal,
     loading: false,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
+    },
   },
 };
 
@@ -84,5 +120,12 @@ export const Loading: Story = {
   args: {
     proposal: dummyProposal,
     loading: true,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
+    },
   },
 };

@@ -9,12 +9,18 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import ProposalCard from '@/src/components/governance/ProposalCard';
 import { dummyProposal } from '@/src/hooks/useProposal';
-import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 
 const meta = {
   component: ProposalCard,
   tags: ['autodocs'],
-  argTypes: {},
+  argTypes: {
+    proposal: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 } satisfies Meta<typeof ProposalCard>;
 
 export default meta;
@@ -32,7 +38,7 @@ export const Pending: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Pending,
-    },
+    } as Proposal,
   },
 };
 
@@ -41,7 +47,7 @@ export const Active: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Active,
-    },
+    } as Proposal,
   },
 };
 
@@ -50,7 +56,7 @@ export const Succeeded: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Succeeded,
-    },
+    } as Proposal,
   },
 };
 
@@ -59,7 +65,7 @@ export const Defeated: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Defeated,
-    },
+    } as Proposal,
   },
 };
 
@@ -68,6 +74,6 @@ export const Executed: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Executed,
-    },
+    } as Proposal,
   },
 };

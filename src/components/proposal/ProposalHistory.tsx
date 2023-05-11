@@ -30,7 +30,7 @@ const getProposalMilestones = (proposal: Proposal) => {
     label: 'Published',
     variant: 'done',
     date: proposal.creationDate,
-    blockNumber: proposal.data.parameters.snapshotBlock,
+    blockNumber: proposal.data.parameters.snapshotBlock.toNumber(),
   });
 
   if (proposal.status !== ProposalStatus.Pending)
@@ -85,7 +85,7 @@ const getProposalMilestones = (proposal: Proposal) => {
           label: 'Executed',
           variant: 'executed',
           date: proposal.executionDate,
-          blockNumber: proposal.data.parameters.snapshotBlock,
+          blockNumber: proposal.data.parameters.snapshotBlock.toNumber(),
         }
       );
       break;

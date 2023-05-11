@@ -8,7 +8,7 @@
 
 import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import { dummyProposal } from '@/src/hooks/useProposal';
-import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -45,7 +45,7 @@ export const Pending: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Pending,
-    },
+    } as Proposal,
     loading: false,
   },
 };
@@ -55,7 +55,7 @@ export const Succeeded: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Succeeded,
-    },
+    } as Proposal,
     loading: false,
   },
 };
@@ -65,7 +65,7 @@ export const Executed: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Executed,
-    },
+    } as Proposal,
     loading: false,
   },
 };
@@ -75,7 +75,7 @@ export const Defeated: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Defeated,
-    },
+    } as Proposal,
     loading: false,
   },
 };

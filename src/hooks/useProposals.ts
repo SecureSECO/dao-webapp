@@ -40,7 +40,7 @@ const dummyProposals: Proposal[] = [
     id: 1,
     status: ProposalStatus.Executed,
     data: { ...dummyProposal.data, executed: true },
-  } as any as Proposal,
+  } as Proposal,
 ];
 
 export const useProposals = ({

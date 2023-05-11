@@ -8,8 +8,9 @@
 
 import VotesContent from '@/src/components/proposal/VotesContent';
 import { dummyProposal } from '@/src/hooks/useProposal';
-import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
+import { BigNumber } from 'ethers';
 
 const meta = {
   component: VotesContent,
@@ -38,6 +39,29 @@ export const Active: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Active,
+    } as Proposal,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
+    },
+  },
+};
+
+export const ActiveCannotVote: Story = {
+  args: {
+    proposal: {
+      ...dummyProposal,
+      status: ProposalStatus.Active,
+    } as Proposal,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: false,
+      No: false,
+      Abstain: false,
     },
   },
 };
@@ -47,6 +71,13 @@ export const Pending: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Pending,
+    } as Proposal,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
     },
   },
 };
@@ -56,6 +87,13 @@ export const Succeeded: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Succeeded,
+    } as Proposal,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
     },
   },
 };
@@ -65,6 +103,13 @@ export const Executed: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Executed,
+    } as Proposal,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
     },
   },
 };
@@ -74,6 +119,13 @@ export const Defeated: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Defeated,
+    } as Proposal,
+    totalVotingWeight: BigNumber.from(5),
+    votingPower: BigNumber.from(1),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
     },
   },
 };
