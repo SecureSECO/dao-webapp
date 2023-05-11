@@ -34,7 +34,8 @@ const proposalTagVariants = cva(
         countdown: 'bg-secondary/80 text-secondary-foreground/80',
         yes: 'bg-success-background/60 text-success-foreground',
         no: 'bg-destructive-background/60 text-destructive-foreground',
-        action: 'bg-primary-highlight/50 text-success-foreground',
+        action:
+          'bg-primary-highlight/40 dark:bg-primary-highlight/60 text-success-foreground',
       },
     },
     defaultVariants: {
@@ -130,6 +131,8 @@ export const getProposalTags = (
 
   // Add tag for each type of action that is attached to the proposal
   const unqiueActions = new Set(proposal.actions.map(actionToName));
+  console.log(unqiueActions);
+
   unqiueActions.forEach((action) => {
     switch (action) {
       case 'mint_tokens':

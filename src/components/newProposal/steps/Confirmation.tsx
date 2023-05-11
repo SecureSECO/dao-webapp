@@ -149,6 +149,7 @@ export const Confirmation = () => {
                 }),
               },
             };
+          // Refer to useProposal.ts for the correct method and interface
           case 'merge_pr':
             return {
               method: 'merge(string,string,string)',

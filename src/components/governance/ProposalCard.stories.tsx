@@ -8,8 +8,15 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import ProposalCard from '@/src/components/governance/ProposalCard';
-import { dummyProposal } from '@/src/hooks/useProposal';
+import {
+  dummyChangeParamsAction,
+  dummyMergeAction,
+  dummyMintAction,
+  dummyProposal,
+  dummyWithdrawAction,
+} from '@/src/hooks/useProposal';
 import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { add, sub } from 'date-fns';
 
 const meta = {
   component: ProposalCard,
@@ -38,6 +45,8 @@ export const Pending: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Pending,
+      startDate: add(new Date(), { days: 1 }),
+      endDate: add(new Date(), { days: 2 }),
     } as Proposal,
   },
 };
@@ -47,6 +56,8 @@ export const Active: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Active,
+      startDate: sub(new Date(), { days: 1 }),
+      endDate: add(new Date(), { days: 1 }),
     } as Proposal,
   },
 };
@@ -56,6 +67,8 @@ export const Succeeded: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Succeeded,
+      startDate: sub(new Date(), { days: 2 }),
+      endDate: sub(new Date(), { days: 1 }),
     } as Proposal,
   },
 };
@@ -65,6 +78,8 @@ export const Defeated: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Defeated,
+      startDate: sub(new Date(), { days: 2 }),
+      endDate: sub(new Date(), { days: 1 }),
     } as Proposal,
   },
 };
@@ -74,6 +89,25 @@ export const Executed: Story = {
     proposal: {
       ...dummyProposal,
       status: ProposalStatus.Executed,
+      startDate: sub(new Date(), { days: 2 }),
+      endDate: sub(new Date(), { days: 1 }),
     } as Proposal,
+  },
+};
+
+export const WithActions: Story = {
+  args: {
+    proposal: {
+      ...dummyProposal,
+      status: ProposalStatus.Succeeded,
+      startDate: sub(new Date(), { days: 2 }),
+      endDate: sub(new Date(), { days: 1 }),
+      actions: [
+        dummyMintAction,
+        dummyWithdrawAction,
+        dummyChangeParamsAction,
+        dummyMergeAction,
+      ],
+    } as any as Proposal,
   },
 };

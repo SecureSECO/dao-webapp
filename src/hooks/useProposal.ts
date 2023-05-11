@@ -43,6 +43,69 @@ export type UseProposalProps = {
 };
 
 /**
+ * Dummy mint tokens action
+ */
+export const dummyMintAction = {
+  method: 'mintVotingPower(address,uint256,uint256)',
+  interface: 'IMintableGovernanceStructure',
+  params: {
+    _to: [
+      {
+        _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+        _amount: BigNumber.from(5),
+        _tokenId: 0,
+      },
+      {
+        _to: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+        _amount: BigNumber.from(5),
+        _tokenId: 0,
+      },
+    ],
+  },
+};
+
+/**
+ * Dummy withdraw assets action
+ * @note Not yet correct
+ */
+export const dummyWithdrawAction = {
+  method: 'withdraw',
+  interface: 'IWithdraw',
+  params: {
+    _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+    _amount: BigNumber.from(5),
+    _tokenId: 0,
+  },
+};
+
+/**
+ * Dummy merge pull request action
+ */
+export const dummyMergeAction = {
+  method: 'mergePullRequest(string,string,string)',
+  interface: 'IGithubPullRequestFacet',
+  params: {
+    _owner: 'githubtraining',
+    _repo: 'hellogitworld',
+    _pull_number: '174',
+  },
+};
+
+/**
+ * Dummy mint tokens action
+ * @note Not yet correct
+ */
+export const dummyChangeParamsAction = {
+  method: 'change',
+  interface: 'IChange',
+  params: {
+    _plugin: 'TokenVoting',
+    _param: 'supportThreshold',
+    _value: 1,
+  },
+};
+
+/**
  * Dummy proposal data, representing what is returned by the SDK.
  * @note The Proposal type returned by the SDK is auto-generated, and therefore contains a lot of unnecessary fields, which are ignored here by casting to the right types.
  */

@@ -163,7 +163,7 @@ export const actionToName = (action: IProposalAction) => {
   switch (action.interface + '.' + action.method) {
     case 'IChange.change': // FIXME: not correct interface and method
       return 'change_parameter';
-    case 'IGithubPullRequestFacet.merge(string,string,string)':
+    case 'IGithubPullRequestFacet.mergePullRequest(string,string,string)':
       return 'merge_pr';
     case 'IMintableGovernanceStructure.mintVotingPower(address,uint256,uint256)':
       return 'mint_tokens';

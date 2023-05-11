@@ -86,7 +86,7 @@ const ProposalTabs = () => {
   );
   const [order, setOrder] = useState<SortingOrder | undefined>(undefined);
   const { proposals, loading, error } = useProposals({
-    useDummyData: true,
+    useDummyData: false,
     status: currentTab,
     sorting,
     order: order,
