@@ -29,6 +29,7 @@ import { HiChevronLeft } from 'react-icons/hi2';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { useAccount } from 'wagmi';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
 
 const totalSteps = 4;
 
@@ -149,9 +150,13 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
         <Button type="submit" disabled={isLastStep && !canCreate}>
           {isLastStep ? 'Submit' : 'Next'}
         </Button>
-        {isLastStep && !isConnected && (
-          <ConnectWalletWarning action="to submit" />
-        )}
+        {/* Show a warning to connect wallet if not connected, or unsifficient voting power if so */}
+        {isLastStep &&
+          (!isConnected ? (
+            <ConnectWalletWarning action="to submit" />
+          ) : (
+            votingPower.lte(0) && <InsufficientRepWarning action="to submit" />
+          ))}
       </div>
     </div>
   );

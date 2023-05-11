@@ -36,6 +36,7 @@ import { CanVote } from '@/src/hooks/useProposal';
 import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
+import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
 
 type VoteFormData = {
   vote_option: string;
@@ -148,7 +149,8 @@ const VotesContentActive = ({
   };
 
   const voteOption = watch('vote_option');
-  const userCanVote: boolean = canVote[voteOption as VoteOptionString];
+  const userCanVote: boolean =
+    canVote[voteOption as VoteOptionString] && votingPower.gt(0);
 
   return (
     <form onSubmit={handleSubmit(onSubmitVote)} className="space-y-2">
@@ -186,19 +188,19 @@ const VotesContentActive = ({
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
       <div className="flex flex-row items-center gap-x-4">
         <Button disabled={!userCanVote || !isConnected} type="submit">
-          {!userCanVote && isConnected ? (
-            votingPower.gt(0) ? (
-              'Vote submitted'
-            ) : (
-              'No voting power'
-            )
+          {!userCanVote && isConnected && votingPower.lte(0) ? (
+            'Vote submitted'
           ) : (
             <span className="ml-1 inline-block lowercase">
               {'Vote ' + (voteOption ?? 'yes')}
             </span>
           )}
         </Button>
-        {!isConnected && <ConnectWalletWarning action="to vote" />}
+        {!isConnected ? (
+          <ConnectWalletWarning action="to vote" />
+        ) : (
+          votingPower.lte(0) && <InsufficientRepWarning action="to vote" />
+        )}
       </div>
     </form>
   );
