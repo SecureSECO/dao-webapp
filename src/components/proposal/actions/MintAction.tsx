@@ -37,7 +37,7 @@ export type ProposalMintAction = IProposalAction & {
     _to: {
       _to: string;
       _amount: BigNumber;
-      _tokenId: bigint;
+      _tokenId: BigNumber;
     }[];
   };
 };

@@ -8,6 +8,7 @@
 
 import MintAction from '@/src/components/proposal/actions/MintAction';
 import { Accordion } from '@/src/components/ui/Accordion';
+import { dummyMintAction } from '@/src/hooks/useProposal';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -45,24 +46,7 @@ BigInt.prototype.toJSON = function () {
 export const Default: Story = {
   args: {
     value: 'first',
-    action: {
-      method: 'mint',
-      interface: 'IMint',
-      params: {
-        to: [
-          {
-            to: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
-            amount: 1000000000000000000n,
-            tokenId: 0n,
-          },
-          {
-            to: '0xD6E6C74C6054AD232C7A9833E89714EA39734A0F',
-            amount: 1000000000000000000n,
-            tokenId: 0n,
-          },
-        ],
-      },
-    },
+    action: dummyMintAction,
   },
   decorators: [
     (Story) => (
