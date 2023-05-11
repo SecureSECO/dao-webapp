@@ -250,6 +250,12 @@ export const useSearchSECO = ({
       }
 
       const res = await response.json();
+      if (res.status !== 'ok') {
+        console.log(res);
+        throw new Error(`API request failed, please try again`);
+      }
+
+      console.log(res);
       setCost(res.cost);
       setHashes(res.hashes);
     } catch (e) {
@@ -301,6 +307,11 @@ export const useSearchSECO = ({
     }
 
     const sessionRes = await sessionResponse.json();
+
+    if (sessionRes.status !== 'ok') {
+      console.log(sessionRes);
+      throw new Error(`API request failed, please try again.`);
+    }
 
     // Store session in local storage
     const session: SessionData = {
