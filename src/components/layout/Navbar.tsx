@@ -16,15 +16,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
-import { HiBars3, HiXMark } from 'react-icons/hi2';
+import { HiBars3, HiChevronDown, HiXMark } from 'react-icons/hi2';
 import ThemePicker from '@/src/components/layout/ThemePicker';
 import ConnectButton from '@/src/components/layout/ConnectButton';
 import { Button } from '@/src/components/ui/Button';
 
-type NavItem = {
-  label: string;
-  url: string;
-};
+type NavItemPage = { label: string; url: string };
+type NavItemCollection = { label: string; pages: NavItemPage[] };
+type NavItem = NavItemPage | NavItemCollection;
 
 const navItems: NavItem[] = [
   {
@@ -53,14 +52,14 @@ const navItems: NavItem[] = [
   },
 ];
 
-const Navitem = ({ item }: { item: NavItem }) => {
+const Navitempage = ({ item }: { item: NavItemPage }) => {
   return (
     <NavLink
       key={item.label}
       to={item.url}
       className={({ isActive, isPending }) =>
         cn(
-          'rounded-md px-4 py-2 text-lg font-semibold ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2',
+          'w-full rounded-md px-4 py-2 text-lg font-semibold ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2',
           isActive && 'bg-highlight text-primary shadow-md',
           isPending && ''
         )
@@ -69,6 +68,17 @@ const Navitem = ({ item }: { item: NavItem }) => {
       {item.label}
     </NavLink>
   );
+};
+
+const Navitemcollection = ({ item }: { item: NavItemCollection }) => {
+  return <></>;
+};
+
+const Navitem = ({ item }: { item: NavItem }) => {
+  if ((item as any).url) return <Navitempage item={item as NavItemPage} />;
+  if ((item as any).pages)
+    return <Navitemcollection item={item as NavItemCollection} />;
+  return <></>;
 };
 
 const Navbar = () => {
