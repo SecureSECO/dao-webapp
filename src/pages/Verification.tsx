@@ -14,7 +14,7 @@ import StampCard from '@/src/components/verification/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import {
   HiArrowSmallRight,
-  HiCheckBadge,
+  HiOutlineCheckBadge,
   HiOutlineClock,
   HiUserCircle,
 } from 'react-icons/hi2';
@@ -211,18 +211,21 @@ const Verification = () => {
     async onSuccess(data) {
       try {
         // Send the signature to the API
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/verify`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            address,
-            signature: data,
-            nonce: nonce.toString(),
-            providerId,
-          }),
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_VERIFICATION_API_URL}/verify`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              address,
+              signature: data,
+              nonce: nonce.toString(),
+              providerId,
+            }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error('Verification failed');
@@ -409,8 +412,8 @@ const Verification = () => {
       <div className="grid grid-cols-7 gap-6">
         <MainCard
           className="col-span-full lg:col-span-4"
+          icon={HiOutlineCheckBadge}
           loading={stampsLoading || reverifyLoading}
-          icon={HiCheckBadge}
           header={
             <DefaultMainCardHeader
               value={amountOfVerifiedStamps}

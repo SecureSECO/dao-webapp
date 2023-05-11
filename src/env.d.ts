@@ -7,7 +7,8 @@ interface ImportMetaEnv {
   readonly VITE_VOTING_PLUGIN: string;
   readonly VITE_REP_CONTRACT: string;
   readonly VITE_PREFERRED_NETWORK_ID: string;
-  readonly VITE_API_URL: string;
+  readonly VITE_VERIFICATION_API_URL: string;
+  readonly VITE_SEARCHSECO_API_URL: string;
   readonly VITE_VERIFY_CONTRACT: `0x${string}`;
   readonly VITE_USE_GANACHE: string;
 }
