@@ -14,7 +14,7 @@ import ProposalActions, {
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { useToast } from '@/src/hooks/useToast';
+import { contractTransaction, useToast } from '@/src/hooks/useToast';
 import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/date-utils';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import {
@@ -56,26 +56,26 @@ export const Confirmation = () => {
         description: 'SDK client not found',
         variant: 'error',
       });
-    // contractInteraction<ProposalCreationSteps, ProposalCreationStepValue>(
-    //   () =>
-    //     votingClient.methods.createProposal({
-    //       pluginAddress: votingPluginAddress,
-    //       actions: dataStep3?.actions ?? [],
-    //     }),
-    //   {
-    //     steps: {
-    //       confirmed: ProposalCreationSteps.DONE,
-    //       signed: ProposalCreationSteps.CREATING,
-    //     },
-    //     messages: {
-    //       error: 'Error creating proposal',
-    //       success: 'Proposal created!',
-    //     },
-    //     onFinish: () => {
-    //       // Send user to proposal page
-    //     },
-    //   }
-    // );
+
+    if (!dataStep1 || !dataStep2 || !dataStep3)
+      return toast({
+        title: 'Error submitting proposal',
+        description: 'Some data appears to be missing',
+        variant: 'error',
+      });
+
+    contractTransaction(
+      () => client.sugar.CreateProposal(dataStep1, [], new Date(), new Date()),
+      {
+        messages: {
+          error: 'Error creating proposal',
+          success: 'Proposal created!',
+        },
+        onFinish: () => {
+          // Send user to proposal page
+        },
+      }
+    );
   };
 
   /**
@@ -182,7 +182,7 @@ export const Confirmation = () => {
 
   // Sanitize the HTML of the body
   const htmlClean = DOMPurify.sanitize(
-    dataStep1?.description ?? '<p>Proposal has no body</p>'
+    dataStep1?.body ?? '<p>Proposal has no body</p>'
   );
 
   return (
@@ -195,10 +195,10 @@ export const Confirmation = () => {
           className="md:col-span-2"
         >
           <p className="text-lg font-medium leading-5 text-highlight-foreground/80">
-            {dataStep1?.summary ?? 'No summary'}{' '}
+            {dataStep1?.description ?? 'No description'}{' '}
           </p>
           {/* Note that since our HTML is sanitized, this dangerous action is safe */}
-          {dataStep1?.description !== '<p></p>' && (
+          {dataStep1?.body !== '<p></p>' && (
             <div
               className="styled-editor-content"
               dangerouslySetInnerHTML={{ __html: htmlClean }}

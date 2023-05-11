@@ -29,23 +29,16 @@ import { UrlPattern } from '@/src/lib/patterns';
 
 export interface ProposalFormMetadata {
   title: string;
-  summary: string;
   description: string;
+  body: string;
   resources: ProposalResource[];
-  media: Media;
-}
-
-export interface Media {
-  logo: string;
-  header: string;
 }
 
 const emptyDataStep1: ProposalFormMetadata = {
   title: '',
-  summary: '',
   description: '',
+  body: '',
   resources: [{ name: '', url: '' }],
-  media: { logo: '', header: '' },
 };
 
 export const Metadata = () => {
@@ -113,23 +106,23 @@ export const Metadata = () => {
           </ErrorWrapper>
         </div>
         <div className="space-y-1">
-          <Label htmlFor="summary">Summary</Label>
-          <ErrorWrapper name="Summary" error={errors.summary}>
+          <Label htmlFor="description">Description</Label>
+          <ErrorWrapper name="Description" error={errors.description}>
             <Textarea
-              {...register('summary', { required: true })}
-              placeholder="Summary"
-              id="summary"
+              {...register('description', { required: true })}
+              placeholder="Description"
+              id="description"
               className="..."
-              error={errors.summary}
+              error={errors.description}
             />
           </ErrorWrapper>
         </div>
         <div className="space-y-1">
           <Label htmlFor="body">Body</Label>
-          <ErrorWrapper name="Description" error={errors.description}>
+          <ErrorWrapper name="Body" error={errors.body}>
             <Controller
               control={control}
-              name="description" // Replace this with the name of the field you want to store the WYSIWYG content
+              name="body" // Replace this with the name of the field you want to store the WYSIWYG content
               defaultValue=""
               render={({ field }) => (
                 <TextareaWYSIWYG<ProposalFormMetadata>
@@ -138,14 +131,14 @@ export const Metadata = () => {
                   onBlur={() => field.onBlur()}
                   name={field.name}
                   placeholder="Enter your content"
-                  error={errors.description}
+                  error={errors.body}
                   setError={() =>
-                    setError('description', {
+                    setError('body', {
                       type: 'required',
-                      message: 'Description is required',
+                      message: 'Body is required',
                     })
                   }
-                  clearErrors={() => clearErrors('description')}
+                  clearErrors={() => clearErrors('body')}
                 />
               )}
             />

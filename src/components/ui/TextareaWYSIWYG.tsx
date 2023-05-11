@@ -19,13 +19,7 @@ import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import clsx from 'clsx';
 import React, { useCallback, useState, useEffect } from 'react';
-import {
-  FieldError,
-  FieldValues,
-  UseFormClearErrors,
-  UseFormSetError,
-  useFormContext,
-} from 'react-hook-form';
+import { FieldError, FieldValues } from 'react-hook-form';
 import ReactDOM from 'react-dom';
 import {
   FaBold,
@@ -374,7 +368,7 @@ const EditorComponent = ({
       <EditorContent
         name={name}
         editor={editor}
-        className="styled-editor-content placeholder:text-highlight-foreground/50"
+        className="styled-editor-content"
       />
     </EditorWrapper>
   );
