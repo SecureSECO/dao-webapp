@@ -49,7 +49,6 @@ const Dashboard = () => {
     loading: daoTransfersLoading,
     error: daoTransfersError,
   } = useDaoTransfers({});
-
   const {
     members,
     loading: membersLoading,
@@ -58,9 +57,14 @@ const Dashboard = () => {
   } = useMembers({ limit: 5 });
 
   if (daoError) {
-    console.log(daoError);
-
-    return <p>error: {daoError}</p>;
+    console.error(daoError);
+    return (
+      <Card size="lg" className="w-full">
+        <p className="text-xl font-normal italic text-highlight-foreground/80">
+          An error was encountered, the DAO dashboard could not be loaded.
+        </p>
+      </Card>
+    );
   }
 
   const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
@@ -195,7 +199,6 @@ const Dashboard = () => {
 
         {/* Card containing DAO members */}
         <MainCard
-          loading={membersLoading}
           icon={HiUserGroup}
           header={<DefaultMainCardHeader value={memberCount} label="members" />}
           aside={<Link label="Add members" to="/governance/new-proposal" />}
