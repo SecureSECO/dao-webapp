@@ -59,7 +59,7 @@ const Dashboard = () => {
   if (daoError) {
     console.error(daoError);
     return (
-      <Card className="w-full">
+      <Card size="lg" className="w-full">
         <p className="text-xl font-normal italic text-highlight-foreground/80">
           An error was encountered, the DAO dashboard could not be loaded.
         </p>

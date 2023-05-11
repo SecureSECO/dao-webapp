@@ -71,7 +71,7 @@ const Query = () => {
     resetQuery,
     payForSession,
   } = useSearchSECO({
-    useDummyData: true,
+    useDummyData: false,
   });
 
   const { isConnected } = useAccount();
