@@ -137,19 +137,10 @@
 }
 
 .styled-editor-content a {
-  color: #003bf5;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.styled-editor-content a:hover {
-  color: #0031ad;
+  @apply cursor-pointer rounded-sm font-bold text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80;
 }
 
 .styled-editor-content .ProseMirror p.is-editor-empty:first-child::before {
-  color: #adb5bd;
+  @apply pointer-events-none float-left h-0 text-highlight-foreground/50;
   content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
 }

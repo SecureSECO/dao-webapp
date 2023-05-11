@@ -374,7 +374,7 @@ const EditorComponent = ({
       <EditorContent
         name={name}
         editor={editor}
-        className="styled-editor-content"
+        className="styled-editor-content placeholder:text-highlight-foreground/50"
       />
     </EditorWrapper>
   );
