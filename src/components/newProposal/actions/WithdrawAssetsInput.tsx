@@ -164,12 +164,12 @@ export const WithdrawAssetsInput = ({
                       </SelectItem>
                     ))}
                   </SelectGroup>
-                    <SelectGroup>
+                  <SelectGroup>
                     <SelectLabel>Custom</SelectLabel>
-                      <SelectItem key={-1} value={'custom'}>
-                        Custom Token Address
-                      </SelectItem>
-                    </SelectGroup>
+                    <SelectItem key={-1} value={'custom'}>
+                      Custom Token Address
+                    </SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             )}
