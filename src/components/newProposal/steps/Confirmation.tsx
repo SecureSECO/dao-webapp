@@ -14,7 +14,6 @@ import ProposalActions, {
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
 import { useToast } from '@/src/hooks/useToast';
 import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/date-utils';
 import { anyNullOrUndefined } from '@/src/lib/utils';
@@ -28,11 +27,11 @@ import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import CategoryList from '@/src/components/ui/CategoryList';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
-
-  const { votingClient, votingPluginAddress } = useAragonSDKContext();
+  const { client } = useDiamondSDKContext();
   const { toast } = useToast();
 
   const {
@@ -51,10 +50,10 @@ export const Confirmation = () => {
   const onSubmitSend = async (data: any) => {
     console.log(data);
 
-    if (!votingClient || !votingPluginAddress)
+    if (!client)
       return toast({
         title: 'Error submitting proposal',
-        description: 'Voting client not found',
+        description: 'SDK client not found',
         variant: 'error',
       });
     // contractInteraction<ProposalCreationSteps, ProposalCreationStepValue>(
