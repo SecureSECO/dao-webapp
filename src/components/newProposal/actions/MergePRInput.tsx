@@ -9,7 +9,7 @@
 import { Input } from '../../ui/Input';
 import { HiCircleStack, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';
-import { Control, UseFormRegister } from 'react-hook-form';
+import { UseFormRegister } from 'react-hook-form';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
 import { ActionFormError, ProposalFormActions } from '../steps/Actions';
@@ -20,7 +20,6 @@ export type ProposalFormMergeData = {
   inputs: {
     url: string;
   };
-  summary: {};
 };
 
 export const emptyMergeAction: ProposalFormMergeData = {
@@ -28,7 +27,6 @@ export const emptyMergeAction: ProposalFormMergeData = {
   inputs: {
     url: '',
   },
-  summary: {},
 };
 
 export const emptyMergeData: ProposalFormMergeData = {
@@ -36,7 +34,6 @@ export const emptyMergeData: ProposalFormMergeData = {
   inputs: {
     url: '',
   },
-  summary: {},
 };
 
 /**

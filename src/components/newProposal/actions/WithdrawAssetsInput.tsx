@@ -14,9 +14,7 @@ import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
 import {
   Control,
   Controller,
-  FieldError,
   UseFormRegister,
-  useController,
   useWatch,
 } from 'react-hook-form';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
@@ -34,10 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/Select';
-import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
+import { useDaoBalance } from '@/src/hooks/useDaoBalance';
 import { anyNullOrUndefined, cn } from '@/src/lib/utils';
 import TokenAmount from '@/src/components/ui/TokenAmount';
-import { useState } from 'react';
 
 export type ProposalFormWithdrawData = {
   name: 'withdraw_assets';

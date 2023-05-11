@@ -30,27 +30,12 @@ export type ProposalFormMint = {
       amount: string | number;
     }[];
   };
-  summary: {
-    newTokens: number;
-    tokenSupply: number;
-    newHoldersCount: number;
-    daoTokenSymbol: string;
-    daoTokenAddress: string;
-    totalMembers?: number;
-  };
 };
 
 export const emptyMintAction: ProposalFormMint = {
   name: 'mint_tokens',
   inputs: {
     mintTokensToWallets: [{ address: '', amount: 0 }],
-  },
-  summary: {
-    newTokens: 0,
-    tokenSupply: 0,
-    newHoldersCount: 0,
-    daoTokenSymbol: '',
-    daoTokenAddress: '',
   },
 };
 

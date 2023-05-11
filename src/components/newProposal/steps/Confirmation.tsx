@@ -29,6 +29,113 @@ import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import CategoryList from '@/src/components/ui/CategoryList';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 
+/**
+ * Converts actions in their input form to IProposalAction objects, to be used to view proposals and sending proposal to SDK.
+ * @param actions List of actions in their input form
+ * @returns A list of corresponding IProposalAction objects
+ */
+const parseActionInputs = (
+  actions: ProposalFormAction[]
+): IProposalAction[] => {
+  const res: IProposalAction[] = [];
+  actions.forEach((action) => {
+    switch (action.name) {
+      case 'withdraw_assets':
+        res.push({
+          method: 'withdraw', // FIXME: This is not the correct method
+          interface: 'IWithdraw', // FIXME: This is not the correct interface
+          params: {
+            _to: action.recipient,
+            _amount: action.amount,
+            _tokenAddress:
+              action.tokenAddress === 'custom'
+                ? action.tokenAddressCustom
+                : action.tokenAddress,
+          },
+        });
+        break;
+      case 'mint_tokens':
+        res.push({
+          method: 'mintVotingPower(address,uint256,uint256)',
+          interface: 'IMintableGovernanceStructure',
+          params: {
+            _to: action.wallets.map((wallet) => {
+              return {
+                _to: wallet.address,
+                _amount: wallet.amount,
+                _tokenId: 0,
+              };
+            }),
+          },
+        });
+        break;
+      // Refer to useProposal.ts for the correct method and interface
+      case 'merge_pr': {
+        const url = new URL(action.inputs.url);
+        const owner = url.pathname.split('/')[1];
+        const repo = url.pathname.split('/')[2];
+        const pullNumber = url.pathname.split('/')[4];
+        if (!owner || !repo || !pullNumber) break;
+        res.push({
+          method: 'merge(string,string,string)',
+          interface: 'IGithubPullRequestFacet',
+          params: {
+            _owner: owner,
+            _repo: repo,
+            _pull_number: pullNumber,
+          },
+        });
+        break;
+      }
+      case 'change_parameter':
+        res.push({
+          method: 'change', // FIXME: This is not the correct method
+          interface: 'IChange', //FIXME: This is not the correct interface
+          params: {
+            _plugin: action.plugin,
+            _param: action.parameter,
+            _value: action.value,
+          },
+        });
+    }
+  });
+  return res;
+};
+
+/**
+ * Convert the proposal voting settings form input to a start date.
+ * @param settings Proposal voting settings form input
+ * @returns The start date of the proposal as a Date object
+ */
+const parseStartDate = (settings: ProposalFormVotingSettings): Date => {
+  return settings.start_time_type === 'custom'
+    ? inputToDate(
+        settings!.custom_start_date!,
+        settings!.custom_start_time!,
+        settings!.custom_start_timezone!
+      )
+    : new Date();
+};
+
+/**
+ * Convert the proposal voting settings form input to a end date.
+ * @param settings Proposal voting settings form input
+ * @returns The end of the proposal as a Date object
+ */
+const parseEndDate = (settings: ProposalFormVotingSettings): Date => {
+  return settings.end_time_type === 'end-custom'
+    ? inputToDate(
+        settings!.custom_end_date!,
+        settings!.custom_end_time!,
+        settings!.custom_end_timezone!
+      )
+    : add(new Date(), {
+        minutes: settings!.duration_minutes!,
+        hours: settings!.duration_hours!,
+        days: settings!.duration_days!,
+      });
+};
+
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
   const { client } = useDiamondSDKContext();
@@ -47,9 +154,7 @@ export const Confirmation = () => {
     },
   });
 
-  const onSubmitSend = async (data: any) => {
-    console.log(data);
-
+  const onSubmitSend = async () => {
     if (!client)
       return toast({
         title: 'Error submitting proposal',
@@ -65,7 +170,13 @@ export const Confirmation = () => {
       });
 
     contractTransaction(
-      () => client.sugar.CreateProposal(dataStep1, [], new Date(), new Date()),
+      () =>
+        client.sugar.CreateProposal(
+          dataStep1,
+          parseActionInputs(dataStep3.actions),
+          parseStartDate(dataStep2),
+          parseEndDate(dataStep2)
+        ),
       {
         messages: {
           error: 'Error creating proposal',
@@ -113,71 +224,16 @@ export const Confirmation = () => {
     return true;
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async () => {
     const valid = onSubmitValidate();
     if (isValid && valid) {
-      onSubmitSend(data);
+      onSubmitSend();
     }
   };
 
   // Map the actions to the IProposalAction interface
   const actions: IProposalAction[] = dataStep3
-    ? dataStep3?.actions.map((action: ProposalFormAction) => {
-        switch (action.name) {
-          case 'withdraw_assets':
-            return {
-              method: 'withdraw', // FIXME: This is not the correct method
-              interface: 'IWithdraw', // FIXME: This is not the correct interface
-              params: {
-                to: action.recipient,
-                amount: action.amount,
-                tokenAddress:
-                  action.tokenAddress === 'custom'
-                    ? action.tokenAddressCustom
-                    : action.tokenAddress,
-              },
-            };
-          case 'mint_tokens':
-            return {
-              method: 'mintVotingPower(address,uint256,uint256)',
-              interface: 'IMintableGovernanceStructure',
-              params: {
-                to: action.wallets.map((wallet) => {
-                  return {
-                    to: wallet.address,
-                    amount: wallet.amount,
-                    tokenId: 0,
-                  };
-                }),
-              },
-            };
-          // Refer to useProposal.ts for the correct method and interface
-          case 'merge_pr':
-            return {
-              method: 'merge(string,string,string)',
-              interface: 'IGithubPullRequestFacet',
-              params: {
-                url: action.inputs.url,
-              },
-            };
-          case 'change_parameter':
-            return {
-              method: 'change', // FIXME: This is not the correct method
-              interface: 'IChange', //FIXME: This is not the correct interface
-              params: {
-                plugin: action.plugin,
-                parameter: action.parameter,
-                value: action.value,
-              },
-            };
-          default:
-            return {
-              method: '',
-              interface: '',
-              params: {},
-            };
-        }
-      })
+    ? parseActionInputs(dataStep3.actions)
     : [];
 
   // Sanitize the HTML of the body

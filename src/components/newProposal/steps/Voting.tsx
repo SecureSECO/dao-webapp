@@ -89,10 +89,8 @@ export const Voting = () => {
   });
 
   const onSubmit = (data: ProposalFormVotingSettings) => {
-    console.log(data);
     setStep(3);
     setDataStep2(data);
-    // Handle submission
   };
 
   //rember the values of the inputs when the user clicks back, so it can be used when the user clicks next again.
