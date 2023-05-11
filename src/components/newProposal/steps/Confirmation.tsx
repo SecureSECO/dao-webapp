@@ -132,7 +132,10 @@ export const Confirmation = () => {
               params: {
                 to: action.recipient,
                 amount: action.amount,
-                tokenAddress: action.tokenAddress === 'custom' ? action.tokenAddressCustom : action.tokenAddress,
+                tokenAddress:
+                  action.tokenAddress === 'custom'
+                    ? action.tokenAddressCustom
+                    : action.tokenAddress,
               },
             };
           case 'mint_tokens':
@@ -158,16 +161,15 @@ export const Confirmation = () => {
               },
             };
           case 'change_parameter':
-            return{
-            method: 'change',
-            interface: 'IChange', //FIXME: This is not the correct interface
-            params: {
-              plugin: action.plugin,
-              parameter: action.parameter,
-              value: action.value,
-            }
-
-          }
+            return {
+              method: 'change',
+              interface: 'IChange', //FIXME: This is not the correct interface
+              params: {
+                plugin: action.plugin,
+                parameter: action.parameter,
+                value: action.value,
+              },
+            };
           default:
             return {
               method: '',

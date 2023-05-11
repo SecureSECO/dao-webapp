@@ -33,8 +33,6 @@ const meta: Meta<typeof DropdownMenu> = {
 export default meta;
 type Story = StoryObj<typeof DropdownMenu>;
 
-const exampleDropdown = <DropdownMenu></DropdownMenu>;
-
 export const Primary: Story = {
   args: {
     children: (
