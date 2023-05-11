@@ -22,6 +22,7 @@ import {
 } from '@/src/lib/constants/chains';
 import { getTokenInfo } from '@/src/lib/token-utils';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { HiCircleStack } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';
@@ -33,10 +34,10 @@ import { useProvider } from 'wagmi';
  */
 export type ProposalMintAction = IProposalAction & {
   params: {
-    to: {
-      to: string;
-      amount: bigint;
-      tokenId: bigint;
+    _to: {
+      _to: string;
+      _amount: BigNumber;
+      _tokenId: bigint;
     }[];
   };
 };
@@ -46,9 +47,9 @@ interface MintActionProps extends AccordionItemProps {
 }
 
 type MintActionSummary = {
-  newTokens: bigint;
+  newTokens: BigNumber;
   newHolders: number;
-  totalTokens: bigint;
+  totalTokens: BigNumber;
   totalHolders: number;
 };
 
@@ -64,7 +65,7 @@ const getCategory = (summary: MintActionSummary): Category[] => [
       {
         label: 'New tokens',
         value: `+ ${toAbbreviatedTokenAmount(
-          summary.newTokens,
+          summary.newTokens.toBigInt(),
           CHAIN_METADATA.rep.nativeCurrency.decimals,
           true
         )} ${CHAIN_METADATA.rep.nativeCurrency.symbol}`,
@@ -76,7 +77,7 @@ const getCategory = (summary: MintActionSummary): Category[] => [
       {
         label: 'Total tokens',
         value: `${toAbbreviatedTokenAmount(
-          summary.totalTokens,
+          summary.totalTokens.toBigInt(),
           CHAIN_METADATA.rep.nativeCurrency.decimals,
           true
         )} ${CHAIN_METADATA.rep.nativeCurrency.symbol}`,
@@ -109,18 +110,18 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
         provider,
         PREFERRED_NETWORK_METADATA.nativeCurrency
       );
-      const newTokens = action.params.to.reduce(
-        (acc, curr) => acc + curr.amount,
-        0n
+      const newTokens = action.params._to.reduce(
+        (acc, curr) => acc.add(curr._amount),
+        BigNumber.from(0)
       );
-      const newHolders = action.params.to.filter((item) =>
-        isMember(item.to)
+      const newHolders = action.params._to.filter((item) =>
+        isMember(item._to)
       ).length;
 
       setSummary({
         newTokens,
         newHolders,
-        totalTokens: (tokenInfo.totalSupply?.toBigInt() ?? 0n) + newTokens,
+        totalTokens: tokenInfo.totalSupply?.add(newTokens) ?? newTokens,
         totalHolders: memberCount + newHolders,
       });
     }
@@ -138,7 +139,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
       {...props}
     >
       <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
-        {action.params.to.map((item, index) => (
+        {action.params._to.map((item, index) => (
           <Card
             key={index}
             variant="outline"
@@ -146,7 +147,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
             className="flex flex-row items-center justify-between text-right"
           >
             <Address
-              address={item.to}
+              address={item._to}
               maxLength={AddressLength.Small}
               hasLink={true}
               showCopy={false}
@@ -156,7 +157,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
             <p className="text-popover-foreground/80">
               +{' '}
               {toAbbreviatedTokenAmount(
-                item.amount,
+                item._amount.toBigInt(),
                 CHAIN_METADATA.rep.nativeCurrency.decimals,
                 true
               )}{' '}

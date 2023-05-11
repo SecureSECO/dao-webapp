@@ -26,6 +26,7 @@ import {
   ChangeParameterAction,
   ProposalChangeParameterAction,
 } from './ChangeParameterAction';
+import { actionToName } from '@/src/lib/utils';
 
 interface ProposalActionProps extends AccordionItemProps {
   action: IProposalAction;
@@ -37,16 +38,16 @@ interface ProposalActionProps extends AccordionItemProps {
  * @returns An AccordionItem with information about the action
  */
 const ProposalActionFilter = ({ action, ...props }: ProposalActionProps) => {
-  switch (action.method) {
-    case 'withdraw':
+  switch (actionToName(action)) {
+    case 'withdraw_assets':
       return (
         <WithdrawAction action={action as ProposalWithdrawAction} {...props} />
       );
-    case 'mint':
+    case 'mint_tokens':
       return <MintAction action={action as ProposalMintAction} {...props} />;
-    case 'merge':
+    case 'merge_pr':
       return <MergeAction action={action as ProposalMergeAction} {...props} />;
-    case 'change':
+    case 'change_parameter':
       return (
         <ChangeParameterAction
           action={action as ProposalChangeParameterAction}

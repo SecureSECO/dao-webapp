@@ -52,12 +52,12 @@ export const dummyMintAction = {
     _to: [
       {
         _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
-        _amount: BigNumber.from(5),
+        _amount: BigNumber.from('0x4563918244F40000'),
         _tokenId: 0,
       },
       {
         _to: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
-        _amount: BigNumber.from(5),
+        _amount: BigNumber.from('0x4563918244F40000'),
         _tokenId: 0,
       },
     ],
