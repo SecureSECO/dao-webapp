@@ -25,7 +25,7 @@ import { Address, AddressLength } from '@/src/components/ui/Address';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { calcBigNumberPercentage } from '@/src/lib/utils';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
-import { contractTransaction } from '@/src/hooks/useToast';
+import { contractTransaction, toast } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import {
   ProposalStatus,
@@ -35,6 +35,7 @@ import {
 import { CanVote } from '@/src/hooks/useProposal';
 import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
+import { useVotingPower } from '@/src/hooks/useVotingPower';
 
 type VoteFormData = {
   vote_option: string;
@@ -52,7 +53,6 @@ const VotesContent = ({
 }: {
   proposal: Proposal;
   canVote: CanVote;
-  votingPower: BigNumber;
   totalVotingWeight: BigNumber;
   refetch: () => void;
 }) => {
@@ -100,36 +100,51 @@ const VotesContentActive = ({
   proposal,
   totalVotingWeight,
   canVote,
-  votingPower,
   refetch,
 }: {
   proposal: Proposal;
   totalVotingWeight: BigNumber;
   canVote: CanVote;
-  // Voting power (rep balance) of the connected wallet
-  votingPower: BigNumber;
   refetch: () => void;
 }) => {
   const { handleSubmit, watch, control } = useForm<VoteFormData>();
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+  const { getVotingPower, votingPower } = useVotingPower({ address });
 
-  const onSubmitVote: SubmitHandler<VoteFormData> = (data) => {
-    contractTransaction(
-      () =>
-        proposal.Vote(
-          VoteOption[data.vote_option as VoteOptionString],
-          votingPower
-        ),
-      {
-        messages: {
-          error: 'Error submitting vote',
-          success: 'Vote submitted!',
-        },
-        onFinish: () => {
-          refetch();
-        },
+  const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
+    try {
+      // Fetch most recent voting power, to vote with all available rep
+      const votingPower = await getVotingPower();
+      if (votingPower.lte(0)) {
+        return toast({
+          variant: 'error',
+          title: 'You do not have any voting power',
+        });
       }
-    );
+      contractTransaction(
+        () =>
+          proposal.Vote(
+            VoteOption[data.vote_option as VoteOptionString],
+            votingPower
+          ),
+        {
+          messages: {
+            error: 'Error submitting vote',
+            success: 'Vote submitted!',
+          },
+          onFinish: () => {
+            refetch();
+          },
+        }
+      );
+    } catch (e) {
+      console.error(e);
+      toast({
+        variant: 'error',
+        title: 'Error submitting vote',
+        description: 'Unable to get voting power',
+      });
+    }
   };
 
   const voteOption = watch('vote_option');
@@ -175,7 +190,7 @@ const VotesContentActive = ({
             votingPower.gt(0) ? (
               'Vote submitted'
             ) : (
-              'Insufficient balance'
+              'No voting power'
             )
           ) : (
             <span className="ml-1 inline-block lowercase">

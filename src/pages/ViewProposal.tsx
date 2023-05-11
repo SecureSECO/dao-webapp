@@ -31,15 +31,8 @@ import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 const ViewProposal = () => {
   const { id } = useParams();
   const { address, isConnected } = useAccount();
-  const {
-    proposal,
-    loading,
-    error,
-    refetch,
-    canExecute,
-    canVote,
-    votingPower,
-  } = useProposal({ id, address });
+  const { proposal, loading, error, refetch, canExecute, canVote } =
+    useProposal({ id, address });
   const { totalVotingWeight } = useTotalVotingWeight({
     blockNumber: proposal?.data.parameters.snapshotBlock,
   });
@@ -141,7 +134,6 @@ const ViewProposal = () => {
                   refetch={refetch}
                   canVote={canVote}
                   totalVotingWeight={totalVotingWeight}
-                  votingPower={votingPower}
                 />
 
                 <ProposalActions

@@ -28,6 +28,7 @@ import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import CategoryList from '@/src/components/ui/CategoryList';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { useNavigate } from 'react-router';
 
 /**
  * Converts actions in their input form to IProposalAction objects, to be used to view proposals and sending proposal to SDK.
@@ -140,6 +141,7 @@ export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
   const { client } = useDiamondSDKContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -183,7 +185,8 @@ export const Confirmation = () => {
           success: 'Proposal created!',
         },
         onFinish: () => {
-          // Send user to proposal page
+          // Send user to proposals page
+          navigate('/governance');
         },
       }
     );

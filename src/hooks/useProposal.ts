@@ -30,9 +30,6 @@ export type UseProposalData = {
   proposal: Proposal | null;
   canExecute: boolean;
   canVote: CanVote;
-  // Voting power of currently given address
-  // This value is simply a re-export of the useVotingPower hook
-  votingPower: BigNumber;
   refetch: () => void;
 };
 
@@ -166,14 +163,10 @@ export const useProposal = ({
     No: false,
     Abstain: false,
   });
-  // const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { client } = useDiamondSDKContext();
-  const { votingPower } = useVotingPower({
-    address,
-    blockNumber: proposal?.data.parameters.snapshotBlock,
-  });
+  const { votingPower } = useVotingPower({ address });
 
   const fetchProposal = async () => {
     if (!client) return;
@@ -221,12 +214,6 @@ export const useProposal = ({
       try {
         const canExecuteData = await proposal.CanExecute();
         setCanExecute(canExecuteData);
-        // Will fail if no signer is available, so check for signer existence first
-        // if (signer) {
-        //   const canExecuteProposal = await votingClient.methods.canExecute(id);
-        //   if (canExecuteProposal) setCanExecute(true);
-        //   else setCanExecute(false);
-        // }
       } catch (e) {
         console.error('Error fetching canExecute', e);
       }
@@ -261,7 +248,6 @@ export const useProposal = ({
     proposal,
     canExecute,
     canVote,
-    votingPower,
     // Only allow refetching if not using dummy data
     refetch: () => (!useDummyData ? fetchProposal() : void 0),
   };

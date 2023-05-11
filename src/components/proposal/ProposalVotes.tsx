@@ -40,7 +40,6 @@ interface ProposalVotesProps {
   refetch: () => void;
   canVote: CanVote;
   totalVotingWeight: BigNumber;
-  votingPower: BigNumber;
 }
 
 /**

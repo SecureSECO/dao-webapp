@@ -10,24 +10,19 @@ import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
-
-export type CanVote = {
-  Yes: boolean;
-  No: boolean;
-  Abstain: boolean;
-};
+import { useProvider } from 'wagmi';
 
 export type UseVotingPowerData = {
   loading: boolean;
   error: string | null;
   // Voting power of given wallet
   votingPower: BigNumber;
+  getVotingPower: () => Promise<BigNumber>;
   refetch: () => void;
 };
 
 export type UseVotingPowerProps = {
   address: string | undefined;
-  blockNumber: BigNumber | undefined;
   useDummyData?: boolean;
 };
 
@@ -38,23 +33,36 @@ export type UseVotingPowerProps = {
  */
 export const useVotingPower = ({
   address,
-  blockNumber,
   useDummyData = false,
 }: UseVotingPowerProps): UseVotingPowerData => {
   const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { client } = useDiamondSDKContext();
+  const provider = useProvider();
 
-  const fetchVotingPower = async () => {
-    if (!client || !address || !blockNumber) return;
+  /**
+   * Fetches the voting power of an address through the Diamond Governance SDK
+   * @returns Voting power of given wallet address
+   */
+  const getVotingPower = async (): Promise<BigNumber> => {
+    if (!client || !address) throw new Error('Client or address not set');
+
+    const blockNumber = await provider.getBlockNumber();
+    const governance = await client.pure.IGovernanceStructure();
+    const repBalance = await governance?.walletVotingPower(
+      address,
+      blockNumber
+    );
+    return repBalance;
+  };
+
+  // Update state varible for voting power
+  const updateVotingPower = async () => {
+    if (!client || !address) return;
 
     try {
-      const governance = await client.pure.IGovernanceStructure();
-      const repBalance = await governance?.walletVotingPower(
-        address,
-        blockNumber
-      );
+      const repBalance = await getVotingPower();
       setVotingPower(repBalance);
     } catch (e) {
       console.error(e);
@@ -73,14 +81,17 @@ export const useVotingPower = ({
   useEffect(() => {
     if (useDummyData) return setDummyData();
     if (client) setLoading(true);
-    fetchVotingPower();
+    updateVotingPower();
+    const id = setInterval(() => updateVotingPower(), 10000);
+    return () => clearInterval(id);
   }, [client]);
 
   return {
     loading,
     error,
     votingPower,
+    getVotingPower,
     // Only allow refetching if not using dummy data
-    refetch: () => (!useDummyData ? fetchVotingPower() : void 0),
+    refetch: () => (!useDummyData ? updateVotingPower() : void 0),
   };
 };
