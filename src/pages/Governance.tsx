@@ -92,10 +92,6 @@ const ProposalTabs = () => {
     order: order,
   });
 
-  useEffect(() => {
-    console.log(currentTab);
-  }, [currentTab]);
-
   return (
     <Tabs
       defaultValue="All"
