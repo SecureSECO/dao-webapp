@@ -6,26 +6,26 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useState } from 'react';
+import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { Link } from '@/src/components/ui/Link';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { Skeleton } from '@/src/components/ui/Skeleton';
+import TokenAmount, {
+  transfertypeToSign,
+} from '@/src/components/ui/TokenAmount';
+import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
+import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { TransferType } from '@aragon/sdk-client';
+import { format } from 'date-fns';
 import {
   HiArrowSmallRight,
   HiArrowsRightLeft,
   HiCircleStack,
 } from 'react-icons/hi2';
-import { Address, AddressLength } from '@/src/components/ui/Address';
-import { Button } from '@/src/components/ui/Button';
-import { Card } from '@/src/components/ui/Card';
-import { HeaderCard } from '@/src/components/ui/HeaderCard';
-import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
-import { format } from 'date-fns';
-import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
-import TokenAmount, {
-  transfertypeToSign,
-} from '@/src/components/ui/TokenAmount';
-import { useState } from 'react';
-import { Link } from '@/src/components/ui/Link';
-import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { Skeleton } from '@/src/components/ui/Skeleton';
 
 type DaoTokenListProps = {
   loading: boolean;
@@ -117,8 +117,14 @@ export const DaoTransfersList = ({
         <Skeleton className="h-16 w-full" />
       </div>
     );
-  if (error)
-    return <p className="text-center font-normal">An error was encountered</p>;
+
+  if (error) {
+    return (
+      <p className="font-normal italic text-highlight-foreground/80">
+        An error was encountered, the transfers could not be loaded.
+      </p>
+    );
+  }
 
   if (!daoTransfers)
     return (

@@ -6,27 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useForm } from 'react-hook-form';
-import { HeaderCard } from '@/src/components/ui/HeaderCard';
-import { Button } from '@/src/components/ui/Button';
-import { Input } from '@/src/components/ui/Input';
-import { Table } from '@/src/components/ui/Table';
-import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
-import { Label } from '@/src/components/ui/Label';
-import { useSearchSECO } from '@/src/hooks/useSearchSECO';
-import { MainCard } from '@/src/components/ui/MainCard';
-import {
-  HiOutlineCodeBracketSquare,
-  HiOutlineDocumentMagnifyingGlass,
-  HiArrowDownTray,
-} from 'react-icons/hi2';
-import { UrlPattern } from '@/src/lib/patterns';
-import { promise, useToast } from '@/src/hooks/useToast';
-import { saveAs } from 'file-saver';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
-import { useAccount } from 'wagmi';
-import { useLocalStorage } from '@/src/hooks/useLocalStorage';
-import { TOKENS } from '@/src/lib/constants/tokens';
+import { useState } from 'react';
+import Loading from '@/src/components/icons/Loading';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +19,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
+import { Button } from '@/src/components/ui/Button';
+import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import {
   Dialog,
   DialogClose,
@@ -47,8 +30,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
-import { useState } from 'react';
-import Loading from '@/src/components/icons/Loading';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { Input } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
+import { MainCard } from '@/src/components/ui/MainCard';
+import { Table } from '@/src/components/ui/Table';
+import { useLocalStorage } from '@/src/hooks/useLocalStorage';
+import { useSearchSECO } from '@/src/hooks/useSearchSECO';
+import { promise, useToast } from '@/src/hooks/useToast';
+import { TOKENS } from '@/src/lib/constants/tokens';
+import { UrlPattern } from '@/src/lib/patterns';
+import { saveAs } from 'file-saver';
+import { useForm } from 'react-hook-form';
+import {
+  HiArrowDownTray,
+  HiOutlineCodeBracketSquare,
+  HiOutlineDocumentMagnifyingGlass,
+} from 'react-icons/hi2';
+import { useAccount } from 'wagmi';
 
 interface QueryFormData {
   searchUrl: string;
@@ -71,7 +71,7 @@ const Query = () => {
     resetQuery,
     payForSession,
   } = useSearchSECO({
-    useDummyData: false,
+    useDummyData: true,
   });
 
   const { isConnected } = useAccount();

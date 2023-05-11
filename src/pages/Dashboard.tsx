@@ -49,7 +49,6 @@ const Dashboard = () => {
     loading: daoTransfersLoading,
     error: daoTransfersError,
   } = useDaoTransfers({});
-
   const {
     members,
     loading: membersLoading,
@@ -200,7 +199,6 @@ const Dashboard = () => {
 
         {/* Card containing DAO members */}
         <MainCard
-          loading={membersLoading}
           icon={HiUserGroup}
           header={<DefaultMainCardHeader value={memberCount} label="members" />}
           aside={<Link label="Add members" to="/governance/new-proposal" />}
