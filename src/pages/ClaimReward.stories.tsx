@@ -7,15 +7,19 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import Loader from '@/src/components/ui/Loader';
 
-const meta: Meta<typeof Loader> = {
-  component: Loader,
+import { ClaimReward } from './ClaimReward';
+
+const meta: Meta<typeof ClaimReward> = {
+  component: ClaimReward,
 };
 
 export default meta;
-type Story = StoryObj<typeof Loader>;
+type Story = StoryObj<typeof ClaimReward>;
 
 export const Primary: Story = {
-  args: {},
+  args: {
+    repToMonetaryFactor: 0.3,
+    claimableRep: 123,
+  },
 };

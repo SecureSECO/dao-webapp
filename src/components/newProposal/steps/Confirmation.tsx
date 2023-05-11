@@ -132,7 +132,10 @@ export const Confirmation = () => {
               params: {
                 to: action.recipient,
                 amount: action.amount,
-                tokenAddress: action.tokenAddress,
+                tokenAddress:
+                  action.tokenAddress === 'custom'
+                    ? action.tokenAddressCustom
+                    : action.tokenAddress,
               },
             };
           case 'mint_tokens':

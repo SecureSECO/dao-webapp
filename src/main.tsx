@@ -6,10 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import ErrorPage from '@/src/pages/ErrorPage';
-import Governance from '@/src/pages/Governance';
-import Dashboard from '@/src/pages/Dashboard';
-import Layout from '@/src/components/layout/Layout';
+import ErrorPage from './pages/ErrorPage';
+import Governance from './pages/Governance';
+import Query from './pages/Query';
+import Dashboard from './pages/Dashboard';
+import Layout from './components/layout/Layout';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -97,6 +98,10 @@ const router = createBrowserRouter([
       {
         path: '/verification',
         element: <Verification />,
+      },
+      {
+        path: '/query',
+        element: <Query />,
       },
       {
         path: '/settings',

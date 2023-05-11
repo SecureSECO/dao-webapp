@@ -6,63 +6,106 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Verification } from '@/src/hooks/useVerification';
+import { Verification, useVerification } from '@/src/hooks/useVerification';
 import { useWeb3Modal } from '@web3modal/react';
 import { addDays } from 'date-fns';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
-import { Card } from '../ui/Card';
-import { Link as RouterLink } from 'react-router-dom';
+import { Card, CardProps } from '@/src/components/ui/Card';
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { Button } from '@/src/components/ui/Button';
+import { cn } from '@/src/lib/utils';
+import { toast } from '@/src/hooks/useToast';
+import { Link } from '@/src/components/ui/Link';
 
-export const MembershipStatus = ({
+export const MembershipStatus = () => {
+  const { open } = useWeb3Modal();
+  const { isConnected } = useAccount();
+  const { memberVerification } = useVerification({ useDummyData: true });
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork({
+    chainId: PREFERRED_NETWORK_METADATA.id,
+  });
+
+  return (
+    <MembershipStatusView
+      isConnected={isConnected}
+      verification={memberVerification}
+      chainId={chain?.id}
+      openConnector={open}
+      switchNetwork={switchNetwork}
+    />
+  );
+};
+
+/**
+ * Conditionally renders a card about the mebership status showing a warning when applicable
+ * @returns Either a Card component with a warning, or an empty fragment if no warning is needed
+ */
+export const MembershipStatusView = ({
   isConnected,
   verification,
+  chainId,
+  openConnector,
+  switchNetwork,
 }: {
-  isConnected: Boolean;
+  isConnected: boolean;
   verification: Verification;
+  chainId?: number;
+  openConnector: (options?: any | undefined) => Promise<void>;
+  switchNetwork?: (chainId_?: number) => void;
 }) => {
-  const { open } = useWeb3Modal();
-
   // If user has not connected a wallet:
   // An informative banner, with button to connect wallet
-  if (!isConnected) {
+  if (!isConnected)
     return (
-      <Card
-        variant="warning"
-        className="col-span-full flex flex-row items-center gap-x-1"
-      >
-        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-        Your wallet is not yet connected:
-        <button
-          type="button"
-          className="rounded-sm text-primary-highlight underline ring-ring ring-offset-2 ring-offset-destructive-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
-          onClick={() => open()}
-        >
-          Connect Wallet.
-        </button>
-      </Card>
+      <MembershipCard message="Your wallet is not connected!">
+        <Button
+          variant="subtle"
+          onClick={() => openConnector()}
+          label="Connect Wallet"
+        />
+      </MembershipCard>
     );
-  }
+
+  /**
+   * Handles a click on the switch network button.
+   * If the switchNetwork function is not defined (provider does not support this function), an error toast is shown.
+   */
+  const switchNetworkClick = () => {
+    if (switchNetwork) switchNetwork();
+    else
+      toast({
+        title: 'Could not switch network',
+        description: 'Please switch network manually',
+        variant: 'error',
+      });
+  };
+
+  // If user has connected a wallet, but the wallet is not on the correct network:
+  // An informative banner, showing a button to change network.
+  if (chainId !== undefined && chainId !== PREFERRED_NETWORK_METADATA.id)
+    return (
+      <MembershipCard message="You are not on the correct network!">
+        <Button
+          variant="subtle"
+          onClick={switchNetworkClick}
+          label="Switch network"
+        />
+      </MembershipCard>
+    );
 
   // If user has connected wallet but is not member:
   // An informative banner on how to become member, with button
   const isNotMember = verification === null || verification.length === 0;
-  if (isNotMember) {
+  if (isNotMember)
     return (
-      <Card
-        variant="warning"
-        className="col-span-full flex flex-row items-center gap-x-1"
-      >
-        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-        You are not yet a member of this DAO:
-        <RouterLink
-          to="/verification"
-          className="rounded-sm text-primary-highlight underline ring-ring ring-offset-2 ring-offset-destructive-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
-        >
-          become a member!
-        </RouterLink>
-      </Card>
+      <MembershipCard message="You are not yet a member of this DAO!">
+        <Link to="/verification" variant="subtle">
+          Become member
+        </Link>
+      </MembershipCard>
     );
-  }
 
   // Set boolean values needed for futher code
   let now = new Date();
@@ -73,44 +116,59 @@ export const MembershipStatus = ({
 
   // If user has connected wallet but verification is about to expire:
   // A warning banner, with button to re-verify
-  if (almostExpired) {
+  if (almostExpired)
     return (
-      <Card
-        variant="warning"
-        className="col-span-full flex flex-row items-center gap-x-1"
-      >
-        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-        Your verification is almost expired:
-        <RouterLink
-          to="/verification"
-          className="rounded-sm text-primary-highlight underline ring-ring ring-offset-2 ring-offset-destructive-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
-        >
-          re-verify
-        </RouterLink>
-      </Card>
+      <MembershipCard message="Your verification is about to expire!">
+        <Link to="/verification" variant="subtle">
+          Reverify
+        </Link>
+      </MembershipCard>
     );
-  }
 
   // If user has connected wallet but verification is expired:
   // an important warning banner (red), with button to re-verify.
-  if (expired) {
+  if (expired)
     return (
-      <Card
-        variant="warning"
-        className="col-span-full flex flex-row items-center gap-x-1"
-      >
-        <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-        Your verification is expired:
-        <RouterLink
-          to="/verification"
-          className="rounded-sm text-primary-highlight underline ring-ring ring-offset-2 ring-offset-destructive-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
-        >
-          re-verify
-        </RouterLink>
-      </Card>
+      <MembershipCard message="Your verification has expired!">
+        <Link to="/verification" variant="subtle">
+          Reverify
+        </Link>
+      </MembershipCard>
     );
-  }
 
   // If membership Status is OK, don't show a banner
   return <></>;
+};
+
+interface MembershipCardProps extends CardProps {
+  message: string;
+}
+
+/**
+ * @param props.message Message to show in the card
+ * @returns A Card component with an exclamation mark icon, a message, and the children on the right side
+ */
+export const MembershipCard = ({
+  message,
+  children,
+  className,
+  variant = 'warning',
+  ...props
+}: MembershipCardProps) => {
+  return (
+    <Card
+      variant={variant}
+      className={cn(
+        'col-span-full flex flex-row items-center justify-between gap-x-1',
+        className
+      )}
+      {...props}
+    >
+      <div className="flex flex-row items-center gap-x-2">
+        <HiOutlineExclamationCircle className="h-7 w-7 shrink-0" />
+        <span className="text-lg">{message}</span>
+      </div>
+      {children}
+    </Card>
+  );
 };

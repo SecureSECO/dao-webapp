@@ -5,17 +5,21 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 import type { Meta, StoryObj } from '@storybook/react';
-import Loader from '@/src/components/ui/Loader';
 
-const meta: Meta<typeof Loader> = {
-  component: Loader,
+import { Slider } from './Slider';
+
+const meta: Meta<typeof Slider> = {
+  component: Slider,
 };
 
 export default meta;
-type Story = StoryObj<typeof Loader>;
+type Story = StoryObj<typeof Slider>;
 
 export const Primary: Story = {
-  args: {},
+  args: {
+    defaultValue: [50],
+    max: 100,
+    step: 1,
+  },
 };
