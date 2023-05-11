@@ -143,8 +143,8 @@ export const useDaoTransfers = ({
   };
 
   useEffect(() => {
-    if (!client) return;
     if (useDummyData) return setDummyData();
+    if (!client) return;
     fetchDaoTransfers(client);
   }, [client]);
 

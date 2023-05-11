@@ -13,20 +13,13 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import {
-  Client,
-  Context,
-  ContextParams,
-  TokenVotingClient,
-} from '@aragon/sdk-client';
+import { Client, Context, ContextParams } from '@aragon/sdk-client';
 import { useSigner } from 'wagmi';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 
 type SDKContext = {
   context?: Context;
   client?: Client;
-  votingClient?: TokenVotingClient;
-  votingPluginAddress?: string;
 };
 
 const AragonSDKContext = createContext<SDKContext>({});
@@ -62,7 +55,7 @@ export function AragonSDKWrapper({ children }: any): JSX.Element {
   }, [signer]);
 
   useEffect(() => {
-    if (!context || !signer) return;
+    if (!context) return;
     setClient(new Client(context));
   }, [context, signer]);
 

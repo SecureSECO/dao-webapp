@@ -43,6 +43,7 @@ const Dashboard = () => {
     loading: proposalsLoading,
     error: proposalsError,
   } = useProposals({ limit: 5 });
+
   const {
     daoTransfers,
     loading: daoTransfersLoading,
