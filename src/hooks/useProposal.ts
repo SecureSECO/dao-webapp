@@ -9,8 +9,13 @@
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { getErrorMessage } from '@/src/lib/utils';
-import { VoteOption, Proposal } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber } from 'ethers';
+import {
+  VoteOption,
+  Proposal,
+  IPartialVotingProposalFacet,
+  ProposalStatus,
+} from '@plopmenz/diamond-governance-sdk';
+import { BigNumber, ContractTransaction } from 'ethers';
 import { useEffect, useState } from 'react';
 
 export type CanVote = {
@@ -37,86 +42,54 @@ export type UseProposalProps = {
   useDummyData?: boolean;
 };
 
+/**
+ * Dummy proposal data, representing what is returned by the SDK.
+ * @note The Proposal type returned by the SDK is auto-generated, and therefore contains a lot of unnecessary fields, which are ignored here by casting to the right types.
+ */
 export const dummyProposal: Proposal = {
-  // id: '0x1234567890123456789012345678901234567890_0x0',
-  // dao: {
-  //   address: import.meta.env.VITE_DAO_ADDRESS,
-  //   name: 'SecureSECO dummy DAO',
-  // },
-  // creatorAddress: '0x1234567890123456789012345678901234567890',
-  // metadata: {
-  //   title: 'Test Proposal',
-  //   summary: 'test proposal summary',
-  //   description: 'this is a long description',
-  //   resources: [
-  //     {
-  //       url: 'https://dicord.com/...',
-  //       name: 'Discord',
-  //     },
-  //     {
-  //       url: 'https://docs.com/...',
-  //       name: 'Document',
-  //     },
-  //   ],
-  //   media: {
-  //     header: 'https://.../image.jpeg',
-  //     logo: 'https://.../image.jpeg',
-  //   },
-  // },
-  // startDate: new Date('2023-03-16T00:10:00.000Z'),
-  // endDate: new Date('2023-03-23T00:00:00.000Z'),
-  // creationDate: new Date('2023-03-16T00:00:00.000Z'),
-  // creationBlockNumber: 812345,
-  // executionDate: new Date('2023-03-25T00:00:00.000Z'),
-  // executionBlockNumber: 812345,
-  // actions: [
-  //   {
-  //     to: '0xD6E6C74C6054AD232C7A9833E89714EA39734A0F',
-  //     value: 0n,
-  //     data: new Uint8Array([
-  //       64, 193, 15, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 134, 140, 142,
-  //       209, 46, 173, 55, 239, 118, 69, 126, 123, 100, 67, 25, 46, 35, 20, 66,
-  //       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  //       13, 224, 182, 179, 167, 100, 0, 0,
-  //     ]),
-  //   },
-  // ],
-  // result: {
-  //   yes: 700000n,
-  //   no: 300000n,
-  //   abstain: 0n,
-  // },
-  // settings: {
-  //   minParticipation: 0.5,
-  //   supportThreshold: 0.25,
-  //   duration: 7200,
-  // },
-  // token: {
-  //   address: '0x1234567890123456789012345678901234567890',
-  //   name: 'The Token',
-  //   symbol: 'TOK',
-  //   decimals: 18,
-  //   type: TokenType.ERC20,
-  // },
-  // usedVotingWeight: 2000000000000000000n,
-  // totalVotingWeight: 7000000000000000000n,
-  // executionTxHash: null,
-  // votes: [
-  //   {
-  //     address: '0x123456789123456789123456789123456789',
-  //     vote: VoteValues.YES,
-  //     voteReplaced: false,
-  //     weight: 1000000000000000000n,
-  //   },
-  //   {
-  //     address: '0x234567891234567891234567891234567890',
-  //     vote: VoteValues.NO,
-  //     voteReplaced: false,
-  //     weight: 1000000000000000000n,
-  //   },
-  // ],
-  // status: ProposalStatus.ACTIVE,
-} as Proposal;
+  id: 0,
+  fromHexString: undefined,
+  getStatus: () => ProposalStatus.Active,
+  CanVote: () => Promise.resolve(true),
+  Vote: () => Promise.resolve({} as ContractTransaction),
+  Execute: () => Promise.resolve({} as ContractTransaction),
+  CanExecute: () => Promise.resolve(true),
+  Refresh: () => Promise.resolve(),
+  data: {
+    allowFailureMap: BigNumber.from('0x00'),
+    actions: [],
+    executed: false,
+    open: true,
+    metadata:
+      '0x697066733a2f2f516d51766d38383964544231315452516e37664b4a356545586e624d76376b5437574a4a62677a686472377a3166',
+    parameters: {
+      earlyExecution: true,
+      endDate: BigNumber.from('0x645be01d'),
+      startDate: BigNumber.from('0x64593d1d'),
+      maxSingleWalletPower: BigNumber.from('0x14'),
+      minParticipationThresholdPower: BigNumber.from('0x01'),
+      snapshotBlock: BigNumber.from('0x021b5d8c'),
+      supportThreshold: 1,
+      votingMode: 1,
+    } as IPartialVotingProposalFacet.ProposalParametersStructOutput,
+    tally: {
+      yes: BigNumber.from('0x01'),
+      no: BigNumber.from('0x00'),
+      abstain: BigNumber.from('0x01'),
+    } as IPartialVotingProposalFacet.TallyStructOutput,
+  },
+  metadata: {
+    title: 'Title',
+    description: 'Description',
+    resources: [],
+    body: '',
+  },
+  status: ProposalStatus.Active,
+  actions: [],
+  startDate: new Date('2023-05-08T18:19:09.000Z'),
+  endDate: new Date('2023-05-10T18:19:09.000Z'),
+  creatorAddress: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+} as any as Proposal;
 
 export const useProposal = ({
   id,

@@ -7,6 +7,7 @@
  */
 
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { dummyProposal } from '@/src/hooks/useProposal';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
   DiamondGovernanceClient,
@@ -33,72 +34,13 @@ export type UseProposalsProps = {
 };
 
 const dummyProposals: Proposal[] = [
-  // {
-  //   id: '0x22345',
-  //   dao: {
-  //     address: '0x1234567890123456789012345678901234567890',
-  //     name: 'Cool DAO',
-  //   },
-  //   creatorAddress: '0x1234567890123456789012345678901234567890',
-  //   metadata: {
-  //     title: 'Test Proposal',
-  //     summary: 'Test Proposal Summary',
-  //   },
-  //   startDate: new Date('2023-03-16T00:00:00.000Z'),
-  //   endDate: new Date('2023-03-23T00:00:00.000Z'),
-  //   status: ProposalStatus.ACTIVE,
-  //   token: {
-  //     address: '0x1234567890123456789012345678901234567890',
-  //     name: 'The Token',
-  //     symbol: 'TOK',
-  //     decimals: 18,
-  //     type: TokenType.ERC20,
-  //   },
-  //   result: {
-  //     yes: 100000n,
-  //     no: 77777n,
-  //     abstain: 0n,
-  //   },
-  //   settings: {
-  //     supportThreshold: 0.5,
-  //     duration: 87000,
-  //     minParticipation: 0.15,
-  //   },
-  //   totalVotingWeight: 1000000000000000000n,
-  // },
-  // {
-  //   id: '0x12345',
-  //   dao: {
-  //     address: '0x123456789012345678901234567890123456789',
-  //     name: 'Cool DAO',
-  //   },
-  //   creatorAddress: '0x1234567890123456789012345678901234567890',
-  //   metadata: {
-  //     title: 'Test Proposal 2',
-  //     summary: 'Test Proposal Summary 2',
-  //   },
-  //   startDate: new Date('2023-03-16T00:00:00.000Z'),
-  //   endDate: new Date('2023-03-23T00:00:00.000Z'),
-  //   status: ProposalStatus.PENDING,
-  //   token: {
-  //     address: '0x1234567890123456789012345678901234567890',
-  //     name: 'The Token',
-  //     symbol: 'TOK',
-  //     decimals: 18,
-  //     type: TokenType.ERC20,
-  //   },
-  //   result: {
-  //     yes: 100000n,
-  //     no: 77777n,
-  //     abstain: 0n,
-  //   },
-  //   settings: {
-  //     supportThreshold: 0.5,
-  //     duration: 87000,
-  //     minParticipation: 0.15,
-  //   },
-  //   totalVotingWeight: 1000000000000000000n,
-  // },
+  dummyProposal,
+  {
+    ...dummyProposal,
+    id: 1,
+    status: ProposalStatus.Executed,
+    data: { ...dummyProposal.data, executed: true },
+  } as any as Proposal,
 ];
 
 export const useProposals = ({
@@ -150,8 +92,15 @@ export const useProposals = ({
   //** Set dummy data for development without querying Aragon API */
   const setDummyData = () => {
     setProposalsLoading(false);
+    setCountLoading(false);
     setError(null);
-    setProposals(dummyProposals);
+    setProposalCount(dummyProposals.length);
+    setProposals(
+      dummyProposals.filter(
+        (p, i) =>
+          (limit ? i < limit : true) && (status ? p.status === status : true)
+      )
+    );
   };
 
   useEffect(() => {

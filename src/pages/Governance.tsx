@@ -16,7 +16,7 @@ import {
 import { useProposals } from '@/src/hooks/useProposals';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Link } from '@/src/components/ui/Link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SortSelector from '@/src/components/ui/SortSelector';
 
 import ProposalCard from '@/src/components/governance/ProposalCard';
@@ -86,11 +86,15 @@ const ProposalTabs = () => {
   );
   const [order, setOrder] = useState<SortingOrder | undefined>(undefined);
   const { proposals, loading, error } = useProposals({
-    useDummyData: false,
+    useDummyData: true,
     status: currentTab,
     sorting,
     order: order,
   });
+
+  useEffect(() => {
+    console.log(currentTab);
+  }, [currentTab]);
 
   return (
     <Tabs
@@ -106,7 +110,9 @@ const ProposalTabs = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="subtle" size="sm" className="group">
                 <div className="flex flex-row items-center gap-x-1">
-                  <p className="font-normal">{currentTab ?? 'All'}</p>
+                  <p className="font-normal">
+                    {currentTab ? ProposalStatus[currentTab] : 'All'}
+                  </p>
                   <HiChevronDown className="h-4 w-4 transition-all duration-200 group-data-[state=open]:rotate-180" />
                 </div>
               </Button>
