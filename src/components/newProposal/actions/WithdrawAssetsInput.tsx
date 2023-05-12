@@ -69,7 +69,7 @@ export const WithdrawAssetsInput = ({
 }) => {
   const { daoBalances, error, loading } = useDaoBalance({});
   const filteredDaoBalances =
-    error || loading
+    error || loading || !daoBalances
       ? []
       : daoBalances.filter(
           (token) =>

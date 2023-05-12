@@ -6,7 +6,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useState } from 'react';
+import ProposalCard from '@/src/components/governance/ProposalCard';
 import { Button } from '@/src/components/ui/Button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/src/components/ui/Dropdown';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { Link } from '@/src/components/ui/Link';
+import { Skeleton } from '@/src/components/ui/Skeleton';
+import SortSelector from '@/src/components/ui/SortSelector';
 import {
   Tabs,
   TabsContent,
@@ -14,20 +25,8 @@ import {
   TabsTrigger,
 } from '@/src/components/ui/Tabs';
 import { useProposals } from '@/src/hooks/useProposals';
-import { HeaderCard } from '@/src/components/ui/HeaderCard';
-import { Link } from '@/src/components/ui/Link';
-import { useEffect, useState } from 'react';
-import SortSelector from '@/src/components/ui/SortSelector';
-
-import ProposalCard from '@/src/components/governance/ProposalCard';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/src/components/ui/Dropdown';
 import { HiChevronDown } from 'react-icons/hi2';
 import { cn } from '@/src/lib/utils';
-import { Skeleton } from '@/src/components/ui/Skeleton';
 import {
   ProposalSorting,
   ProposalStatus,
@@ -178,7 +177,7 @@ export const ProposalCardList = ({
   if (error)
     return (
       <p className="font-normal italic text-highlight-foreground/80">
-        An error was encountered
+        An error was encountered, the proposals could not be loaded.
       </p>
     );
   return (
