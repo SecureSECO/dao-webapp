@@ -10,7 +10,6 @@ import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { Member } from '@/src/hooks/useMembers';
 import { CHAIN_METADATA } from '@/src/lib/constants/chains';
-import { cn } from '@/src/lib/utils';
 
 import { Skeleton } from '../ui/Skeleton';
 
@@ -62,13 +61,18 @@ const MembersList = ({
     );
   }
 
-  if (error) {
+  if (error)
     return (
       <p className="font-normal italic text-highlight-foreground/80">
-        An error was encountered, the members could not be loaded.
+        An error was encountered
       </p>
     );
-  }
+  if (members === null || members.length === 0)
+    return (
+      <p className="font-normal italic text-highlight-foreground/80">
+        No members found
+      </p>
+    );
 
   return (
     <div className="flex flex-col gap-y-2">

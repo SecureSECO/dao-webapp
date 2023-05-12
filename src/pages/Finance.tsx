@@ -51,17 +51,22 @@ const DaoTokensList = ({
     console.error(error);
     return (
       <p className="font-normal italic text-highlight-foreground/80">
-        An error was encountered.
+        An error was encountered
       </p>
     );
   }
-  if (daoBalances === null) {
+  if (daoBalances === null)
     return (
       <p className="font-normal italic text-highlight-foreground/80">
-        Could not retrieve DAO balance.
+        Could not retrieve DAO balance
       </p>
     );
-  }
+  if (daoBalances.length === 0)
+    return (
+      <p className="font-normal italic text-highlight-foreground/80">
+        No tokens found
+      </p>
+    );
 
   const balances = daoBalances
     .slice() //Copies array
@@ -121,14 +126,14 @@ export const DaoTransfersList = ({
   if (error) {
     return (
       <p className="font-normal italic text-highlight-foreground/80">
-        An error was encountered, the transfers could not be loaded.
+        An error was encountered
       </p>
     );
   }
 
-  if (!daoTransfers)
+  if (!daoTransfers || daoTransfers.length === 0)
     return (
-      <p className="text-center font-normal italic text-highlight-foreground/80">
+      <p className="font-normal italic text-highlight-foreground/80">
         No transfers found
       </p>
     );

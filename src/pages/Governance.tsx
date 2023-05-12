@@ -177,27 +177,29 @@ export const ProposalCardList = ({
   if (error)
     return (
       <p className="font-normal italic text-highlight-foreground/80">
-        An error was encountered, the proposals could not be loaded.
+        An error was encountered
       </p>
     );
+
+  if (proposals.length === 0)
+    return (
+      <p className="font-normal italic text-highlight-foreground/80">
+        No proposals found
+      </p>
+    );
+
   return (
     <div>
-      {proposals.length > 0 ? (
-        <div
-          className={cn(
-            'grid grid-cols-1 gap-4',
-            doubleColumn && 'lg:grid-cols-2'
-          )}
-        >
-          {proposals.map((proposal) => {
-            return <ProposalCard key={proposal.id} proposal={proposal} />;
-          })}
-        </div>
-      ) : (
-        <p className="font-normal italic text-highlight-foreground/80">
-          No proposals found!
-        </p>
-      )}
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-4',
+          doubleColumn && 'lg:grid-cols-2'
+        )}
+      >
+        {proposals.map((proposal) => (
+          <ProposalCard key={proposal.id} proposal={proposal} />
+        ))}
+      </div>
     </div>
   );
 };
