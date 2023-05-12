@@ -145,7 +145,7 @@ export const dummyProposal: Proposal = {
     title: 'Title',
     description: 'Description',
     resources: [],
-    body: '',
+    body: '<p>This is the body</p>',
   },
   status: ProposalStatus.Active,
   actions: [],

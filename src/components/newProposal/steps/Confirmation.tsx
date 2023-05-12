@@ -241,9 +241,7 @@ export const Confirmation = () => {
     : [];
 
   // Sanitize the HTML of the body
-  const htmlClean = DOMPurify.sanitize(
-    dataStep1?.body ?? '<p>Proposal has no body</p>'
-  );
+  const cleanedBody = DOMPurify.sanitize(dataStep1?.body ?? '<p></p>');
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -261,7 +259,7 @@ export const Confirmation = () => {
           {dataStep1?.body !== '<p></p>' && (
             <div
               className="styled-editor-content"
-              dangerouslySetInnerHTML={{ __html: htmlClean }}
+              dangerouslySetInnerHTML={{ __html: cleanedBody }}
             />
           )}
         </HeaderCard>

@@ -27,6 +27,7 @@ import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import { Button } from '@/src/components/ui/Button';
 import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
+import DOMPurify from 'dompurify';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -111,6 +112,16 @@ const ViewProposal = () => {
                   <p className="text-lg font-medium leading-5 text-highlight-foreground/80">
                     {proposal.metadata.description}
                   </p>
+                  {/* Note that since our HTML is sanitized, this dangerous action is safe */}
+                  {proposal.metadata.body &&
+                    proposal.metadata.body !== '<p></p>' && (
+                      <div
+                        className="styled-editor-content"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(proposal.metadata.body),
+                        }}
+                      />
+                    )}
                   <div>
                     <div className="flex items-center gap-x-1 text-sm">
                       <span className="text-highlight-foreground/60">
