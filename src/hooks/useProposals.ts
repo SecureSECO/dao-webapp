@@ -33,6 +33,14 @@ export type UseProposalsProps = {
   limit?: number | undefined;
 };
 
+const defaultProps: UseProposalsProps = {
+  useDummyData: false,
+  status: undefined,
+  sorting: ProposalSorting.Creation,
+  order: SortingOrder.Desc,
+  limit: undefined,
+};
+
 const dummyProposals: Proposal[] = [
   dummyProposal,
   {
@@ -40,16 +48,12 @@ const dummyProposals: Proposal[] = [
     id: 1,
     status: ProposalStatus.Executed,
     data: { ...dummyProposal.data, executed: true },
-  } as Proposal,
+  } as unknown as Proposal,
 ];
 
-export const useProposals = ({
-  useDummyData = false,
-  status = undefined,
-  sorting = ProposalSorting.Creation,
-  order = SortingOrder.Desc,
-  limit = undefined,
-}: UseProposalsProps): UseProposalsData => {
+export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
+  const { useDummyData, status, sorting, order, limit } = props ?? defaultProps;
+
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [proposalCount, setProposalCount] = useState<number>(0);
   const [proposalsLoading, setProposalsLoading] = useState<boolean>(true);

@@ -34,9 +34,14 @@ export type UseDaoBalanceProps = {
   useDummyData?: boolean;
 };
 
-export const useDaoBalance = ({
-  useDummyData = false,
-}: UseDaoBalanceProps): UseDaoBalanceData => {
+const defaultProps: UseDaoBalanceProps = {
+  useDummyData: false,
+};
+
+export const useDaoBalance = (
+  props?: UseDaoBalanceProps
+): UseDaoBalanceData => {
+  const { useDummyData } = props ?? defaultProps;
   const [daoBalances, setDaoBalances] = useState<DaoBalance[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

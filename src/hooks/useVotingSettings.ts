@@ -24,6 +24,10 @@ export type UseVotingSettingsProps = {
   useDummyData?: boolean;
 };
 
+const defaultProps: UseVotingSettingsProps = {
+  useDummyData: false,
+};
+
 const dummyVotingSettings: VotingSettings = {
   minDuration: 86400,
   // Below are currently not being fetched, but can be fetched from the SDK
@@ -38,9 +42,10 @@ const dummyVotingSettings: VotingSettings = {
  * @param useDummyData Whether to use dummy data for development
  * @returns plugin governance settings
  */
-export const useVotingSettings = ({
-  useDummyData = false,
-}: UseVotingSettingsProps): UseVotingSettingsData => {
+export const useVotingSettings = (
+  props?: UseVotingSettingsProps
+): UseVotingSettingsData => {
+  const { useDummyData } = props ?? defaultProps;
   const [data, setData] = useState<VotingSettings | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

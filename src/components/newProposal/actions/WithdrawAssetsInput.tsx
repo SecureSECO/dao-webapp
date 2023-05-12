@@ -67,7 +67,7 @@ export const WithdrawAssetsInput = ({
   onRemove: any;
   control: Control<ProposalFormActions, any>;
 }) => {
-  const { daoBalances, error, loading } = useDaoBalance({});
+  const { daoBalances, error, loading } = useDaoBalance();
   const filteredDaoBalances =
     error || loading || !daoBalances
       ? []

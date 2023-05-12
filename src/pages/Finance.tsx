@@ -184,14 +184,14 @@ const Finance = () => {
     daoBalances,
     loading: tokensLoading,
     error: tokensError,
-  } = useDaoBalance({});
+  } = useDaoBalance();
   const [tokenLimit, setTokenLimit] = useState(3);
 
   const {
     daoTransfers,
     loading: transfersLoading,
     error: trasnfersError,
-  } = useDaoTransfers({});
+  } = useDaoTransfers();
   const [transferLimit, setTransferLimit] = useState(3);
 
   return (

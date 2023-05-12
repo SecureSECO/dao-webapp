@@ -36,7 +36,7 @@ import {
 import { MembershipStatus } from '../components/dashboard/MembershipStatus';
 
 const Dashboard = () => {
-  const { dao, loading: daoLoading, error: daoError } = useDao({});
+  const { dao, loading: daoLoading, error: daoError } = useDao();
   const {
     proposals,
     proposalCount,
@@ -48,7 +48,7 @@ const Dashboard = () => {
     daoTransfers,
     loading: daoTransfersLoading,
     error: daoTransfersError,
-  } = useDaoTransfers({});
+  } = useDaoTransfers();
   const {
     members,
     loading: membersLoading,

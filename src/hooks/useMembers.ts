@@ -19,6 +19,12 @@ type UseMembersProps = {
   limit?: number | undefined;
 };
 
+const defaultProps: UseMembersProps = {
+  useDummyData: false,
+  includeBalances: true,
+  limit: undefined,
+};
+
 type UseMembersData = {
   loading: boolean;
   error: string | null;
@@ -31,11 +37,8 @@ export type Member = { address: string; bal: number | null };
 
 const dummyMembers: Member[] = [];
 
-export const useMembers = ({
-  useDummyData = false,
-  includeBalances = true,
-  limit = undefined,
-}: UseMembersProps): UseMembersData => {
+export const useMembers = (props?: UseMembersProps): UseMembersData => {
+  const { useDummyData, includeBalances, limit } = props ?? defaultProps;
   const [members, setMembers] = useState<Member[]>([]);
   const [memberCount, setMemberCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);

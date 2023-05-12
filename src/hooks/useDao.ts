@@ -32,7 +32,13 @@ export type UseDaoProps = {
   useDummyData?: boolean;
 };
 
-export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
+const defaultProps: UseDaoProps = {
+  useDummyData: false,
+};
+
+export const useDao = (props?: UseDaoProps): UseDaoData => {
+  const { useDummyData } = props ?? defaultProps;
+
   const [daoDetails, setDaoDetails] = useState<DaoDetails>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

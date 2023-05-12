@@ -58,7 +58,7 @@ export type EndTimeType = 'duration' | 'end-custom';
 export const Voting = () => {
   const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
 
-  const { settings, error } = useVotingSettings({});
+  const { settings, error } = useVotingSettings();
 
   if (error) console.error('Voting settings fetching error', error);
 
@@ -238,7 +238,7 @@ export const EndTime = ({
   } = getWatchers(control);
 
   //retrieve settings for the minDuration
-  const { settings, error } = useVotingSettings({});
+  const { settings, error } = useVotingSettings();
   if (error) console.error('Voting settings fetching error', error);
 
   //initialize minEndDate and minEndTime

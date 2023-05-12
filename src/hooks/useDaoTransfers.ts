@@ -48,10 +48,15 @@ export type UseDaoTransfersProps = {
   limit?: number;
 };
 
-export const useDaoTransfers = ({
-  useDummyData = false,
-  limit = 10,
-}: UseDaoTransfersProps): UseDaoTransfersData => {
+const defaultProps: UseDaoTransfersProps = {
+  useDummyData: false,
+  limit: 10,
+};
+
+export const useDaoTransfers = (
+  props?: UseDaoTransfersProps
+): UseDaoTransfersData => {
+  const { useDummyData, limit } = props ?? defaultProps;
   const [daoTransfers, setDaoTransfers] = useState<DaoTransfer[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
