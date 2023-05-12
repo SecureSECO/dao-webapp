@@ -160,7 +160,7 @@ const ProposalVotes = ({
         </Dialog>
       }
     >
-      {proposal && <VotesContent proposal={proposal} {...props} />}
+      {/* {proposal && <VotesContent proposal={proposal} {...props} />} */}
     </MainCard>
   );
 };

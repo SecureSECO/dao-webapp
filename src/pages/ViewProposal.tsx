@@ -32,7 +32,7 @@ const ViewProposal = () => {
   const { id } = useParams();
   const { address, isConnected } = useAccount();
   const { proposal, loading, error, refetch, canExecute, canVote } =
-    useProposal({ id, address });
+    useProposal({ id, address, useDummyData: true });
   const { totalVotingWeight } = useTotalVotingWeight({
     blockNumber: proposal?.data.parameters.snapshotBlock,
   });
@@ -111,16 +111,31 @@ const ViewProposal = () => {
                   <p className="text-lg font-medium leading-5 text-highlight-foreground/80">
                     {proposal.metadata.description}
                   </p>
-                  <div className="flex items-center gap-x-1 text-sm">
-                    <span className="text-highlight-foreground/60">
-                      Published by
-                    </span>
-                    <Address
-                      address={proposal.data.creator}
-                      maxLength={AddressLength.Medium}
-                      hasLink={true}
-                      showCopy={false}
-                    />
+                  <div>
+                    <div className="flex items-center gap-x-1 text-sm">
+                      <span className="text-highlight-foreground/60">
+                        Published by
+                      </span>
+                      <Address
+                        address={proposal.data.creator}
+                        maxLength={AddressLength.Medium}
+                        hasLink={true}
+                        showCopy={false}
+                      />
+                    </div>
+                    {proposal.status === ProposalStatus.Executed && (
+                      <div className="flex items-center gap-x-1 text-sm">
+                        <span className="text-highlight-foreground/60">
+                          Executed by
+                        </span>
+                        <Address
+                          address={proposal.data.executor}
+                          maxLength={AddressLength.Medium}
+                          hasLink={true}
+                          showCopy={false}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
