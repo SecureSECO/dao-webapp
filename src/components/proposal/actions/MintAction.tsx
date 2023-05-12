@@ -106,7 +106,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
   useEffect(() => {
     async function fetchSummary() {
       const tokenInfo = await getTokenInfo(
-        import.meta.env.VITE_REP_CONTRACT,
+        import.meta.env.VITE_DIAMOND_ADDRESS,
         provider,
         PREFERRED_NETWORK_METADATA.nativeCurrency
       );

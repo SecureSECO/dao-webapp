@@ -29,6 +29,7 @@ import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import CategoryList from '@/src/components/ui/CategoryList';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useNavigate } from 'react-router';
+import { BigNumber } from 'ethers';
 
 /**
  * Converts actions in their input form to IProposalAction objects, to be used to view proposals and sending proposal to SDK.
@@ -47,7 +48,7 @@ const parseActionInputs = (
           interface: 'IWithdraw', // FIXME: This is not the correct interface
           params: {
             _to: action.recipient,
-            _amount: action.amount,
+            _amount: BigNumber.from(action.amount),
             _tokenAddress:
               action.tokenAddress === 'custom'
                 ? action.tokenAddressCustom
@@ -63,8 +64,8 @@ const parseActionInputs = (
             _to: action.wallets.map((wallet) => {
               return {
                 _to: wallet.address,
-                _amount: wallet.amount,
-                _tokenId: 0,
+                _amount: BigNumber.from(wallet.amount),
+                _tokenId: BigNumber.from(0),
               };
             }),
           },

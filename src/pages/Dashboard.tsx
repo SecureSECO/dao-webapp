@@ -215,7 +215,7 @@ const Dashboard = () => {
             target="_blank"
             rel="noreferrer"
             to={`${etherscanURL}/token/tokenholderchart/${
-              import.meta.env.VITE_REP_CONTRACT
+              import.meta.env.VITE_DIAMOND_ADDRESS
             }`}
           >
             <p>View all members</p>

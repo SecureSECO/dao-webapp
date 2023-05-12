@@ -73,7 +73,7 @@ export const Primary: Story = {
             name: 'withdraw_assets',
             recipient: '0x123456',
             tokenAddress: '0x987654321',
-            amount: '3.141',
+            amount: 3.141,
           },
         ],
       }

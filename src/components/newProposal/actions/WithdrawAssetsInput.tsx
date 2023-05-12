@@ -41,14 +41,14 @@ export type ProposalFormWithdrawData = {
   recipient: string;
   tokenAddress: string | 'custom';
   tokenAddressCustom?: string;
-  amount: string;
+  amount: string | number;
 };
 
 export const emptyWithdrawData: ProposalFormWithdrawData = {
   name: 'withdraw_assets',
   recipient: '',
   tokenAddress: '',
-  amount: '',
+  amount: 0,
 };
 
 /**
@@ -205,9 +205,10 @@ export const WithdrawAssetsInput = ({
                   message: 'Please enter a number, e.g. 3.141',
                 },
               })}
-              type="text"
+              type="number"
               id="amount"
               placeholder="0"
+              min="0"
               error={errors?.amount}
             />
           </ErrorWrapper>

@@ -132,6 +132,15 @@ export const dummyProposal: Proposal = {
       supportThreshold: 1,
       votingMode: 1,
     } as IPartialVotingProposalFacet.ProposalParametersStructOutput,
+    creator: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+    executor: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+    votes: [
+      {
+        address: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+        vote: VoteOption.Yes,
+        weight: BigNumber.from('0x01'),
+      },
+    ],
     tally: {
       yes: BigNumber.from('0x01'),
       no: BigNumber.from('0x00'),
@@ -148,7 +157,6 @@ export const dummyProposal: Proposal = {
   actions: [],
   startDate: new Date('2023-05-08T18:19:09.000Z'),
   endDate: new Date('2023-05-10T18:19:09.000Z'),
-  creatorAddress: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
 } as unknown as Proposal;
 
 export const useProposal = ({
