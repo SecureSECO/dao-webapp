@@ -116,7 +116,7 @@ const ViewProposal = () => {
                       Published by
                     </span>
                     <Address
-                      address={proposal.creatorAddress}
+                      address={proposal.data.creator}
                       maxLength={AddressLength.Medium}
                       hasLink={true}
                       showCopy={false}

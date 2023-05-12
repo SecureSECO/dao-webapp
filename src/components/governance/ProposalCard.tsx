@@ -98,7 +98,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
   const {
     metadata: { title, description },
     status,
-    creatorAddress,
+    data: { creator },
   } = proposal;
   const { totalVotingWeight } = useTotalVotingWeight({
     blockNumber: proposal.data.parameters.snapshotBlock,
@@ -134,7 +134,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
       <div className="flex items-center gap-x-1 text-xs text-popover-foreground/60">
         <span>Published by</span>
         <Address
-          address={creatorAddress}
+          address={creator}
           maxLength={AddressLength.Medium}
           hasLink={true}
           showCopy={true}

@@ -41,7 +41,6 @@ export const Active: Story = {
       status: ProposalStatus.Active,
     } as Proposal,
     totalVotingWeight: BigNumber.from(5),
-    votingPower: BigNumber.from(1),
     canVote: {
       Yes: true,
       No: true,
@@ -57,7 +56,6 @@ export const ActiveCannotVote: Story = {
       status: ProposalStatus.Active,
     } as Proposal,
     totalVotingWeight: BigNumber.from(5),
-    votingPower: BigNumber.from(1),
     canVote: {
       Yes: false,
       No: false,
@@ -73,7 +71,6 @@ export const Pending: Story = {
       status: ProposalStatus.Pending,
     } as Proposal,
     totalVotingWeight: BigNumber.from(5),
-    votingPower: BigNumber.from(1),
     canVote: {
       Yes: true,
       No: true,
@@ -89,7 +86,6 @@ export const Succeeded: Story = {
       status: ProposalStatus.Succeeded,
     } as Proposal,
     totalVotingWeight: BigNumber.from(5),
-    votingPower: BigNumber.from(1),
     canVote: {
       Yes: true,
       No: true,
@@ -105,7 +101,6 @@ export const Executed: Story = {
       status: ProposalStatus.Executed,
     } as Proposal,
     totalVotingWeight: BigNumber.from(5),
-    votingPower: BigNumber.from(1),
     canVote: {
       Yes: true,
       No: true,
@@ -121,7 +116,6 @@ export const Defeated: Story = {
       status: ProposalStatus.Defeated,
     } as Proposal,
     totalVotingWeight: BigNumber.from(5),
-    votingPower: BigNumber.from(1),
     canVote: {
       Yes: true,
       No: true,

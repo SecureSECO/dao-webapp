@@ -149,7 +149,7 @@ export const dummyProposal: Proposal = {
   startDate: new Date('2023-05-08T18:19:09.000Z'),
   endDate: new Date('2023-05-10T18:19:09.000Z'),
   creatorAddress: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
-} as any as Proposal;
+} as unknown as Proposal;
 
 export const useProposal = ({
   id,

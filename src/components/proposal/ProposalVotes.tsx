@@ -60,8 +60,8 @@ const getCategories = (
     totalVotingWeight
   );
 
-  const uniqueVoters = proposal.votes.reduce(
-    (acc, vote) => acc.add(vote.address),
+  const uniqueVoters = proposal.data.voterList.reduce(
+    (acc, vote) => acc.add(vote),
     new Set<string>()
   ).size;
 
@@ -133,7 +133,7 @@ const ProposalVotes = ({
       icon={HiChatBubbleLeftRight}
       header={
         <DefaultMainCardHeader
-          value={proposal?.votes.length ?? 0}
+          value={proposal?.data.voterList.length ?? 0}
           label="votes"
         />
       }

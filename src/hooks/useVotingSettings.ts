@@ -6,10 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
-import { VotingMode, VotingSettings } from '@aragon/sdk-client';
+import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
+
+type VotingSettings = {
+  minDuration: BigNumber;
+};
 
 export type UseVotingSettingsData = {
   loading: boolean;
@@ -22,11 +26,12 @@ export type UseVotingSettingsProps = {
 };
 
 const dummyVotingSettings: VotingSettings = {
-  minDuration: 86400,
-  minParticipation: 0.15,
-  minProposerVotingPower: 1000000000000000000n,
-  supportThreshold: 0.5,
-  votingMode: VotingMode.EARLY_EXECUTION,
+  minDuration: BigNumber.from(86400),
+  // Below are currently not being fetched, but can be fetched from the SDK
+  // minParticipation: 0.15,
+  // minProposerVotingPower: 1000000000000000000n,
+  // supportThreshold: 0.5,
+  // votingMode: VotingMode.EARLY_EXECUTION,
 };
 
 /**
@@ -40,28 +45,16 @@ export const useVotingSettings = ({
   const [data, setData] = useState<VotingSettings | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
-  const { votingClient, votingPluginAddress } = useAragonSDKContext();
+  const { client } = useDiamondSDKContext();
 
   const fetchVotingSettings = async () => {
-    if (!votingClient) return;
-    if (!votingPluginAddress) {
-      setError('Voting plugin address not set');
-      setLoading(false);
-      return;
-    }
+    if (!client) return;
 
     try {
-      const votingSettings: VotingSettings | null =
-        await votingClient.methods.getVotingSettings(votingPluginAddress);
-
-      if (votingSettings) {
-        setData(votingSettings);
-        setLoading(false);
-      } else {
-        setError('Voting settings not found');
-        setLoading(false);
-      }
+      const proposalFacet = await client?.pure.IPartialVotingProposalFacet();
+      const minDurationData = await proposalFacet.minDuration();
+      setLoading(false);
+      setData({ minDuration: minDurationData });
     } catch (e) {
       console.error(e);
       setError(getErrorMessage(e));
@@ -78,9 +71,9 @@ export const useVotingSettings = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (votingClient) setLoading(true);
+    if (client) setLoading(true);
     fetchVotingSettings();
-  }, [votingClient, votingPluginAddress]);
+  }, [client]);
 
   return { settings: data, error, loading };
 };
