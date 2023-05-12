@@ -8,11 +8,10 @@
 
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
-import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 
 type VotingSettings = {
-  minDuration: BigNumber;
+  minDuration: number;
 };
 
 export type UseVotingSettingsData = {
@@ -26,7 +25,7 @@ export type UseVotingSettingsProps = {
 };
 
 const dummyVotingSettings: VotingSettings = {
-  minDuration: BigNumber.from(86400),
+  minDuration: 86400,
   // Below are currently not being fetched, but can be fetched from the SDK
   // minParticipation: 0.15,
   // minProposerVotingPower: 1000000000000000000n,
@@ -54,7 +53,7 @@ export const useVotingSettings = ({
       const proposalFacet = await client?.pure.IPartialVotingProposalFacet();
       const minDurationData = await proposalFacet.minDuration();
       setLoading(false);
-      setData({ minDuration: minDurationData });
+      setData({ minDuration: minDurationData.toNumber() });
     } catch (e) {
       console.error(e);
       setError(getErrorMessage(e));
