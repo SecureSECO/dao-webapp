@@ -33,7 +33,7 @@ const ViewProposal = () => {
   const { id } = useParams();
   const { address, isConnected } = useAccount();
   const { proposal, loading, error, refetch, canExecute, canVote } =
-    useProposal({ id, address, useDummyData: true });
+    useProposal({ id, address });
   const { totalVotingWeight } = useTotalVotingWeight({
     blockNumber: proposal?.data.parameters.snapshotBlock,
   });

@@ -31,77 +31,107 @@ import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useNavigate } from 'react-router';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
+import { TOKENS } from '@/src/lib/constants/tokens';
+import { getTokenInfo } from '@/src/lib/token-utils';
+import { Provider } from '@wagmi/core';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { useProvider } from 'wagmi';
+import { useEffect, useState } from 'react';
 
 /**
  * Converts actions in their input form to IProposalAction objects, to be used to view proposals and sending proposal to SDK.
  * @param actions List of actions in their input form
  * @returns A list of corresponding IProposalAction objects
  */
-const parseActionInputs = (
-  actions: ProposalFormAction[]
-): IProposalAction[] => {
+const parseActionInputs = async (
+  actions: ProposalFormAction[],
+  provider: Provider
+): Promise<IProposalAction[]> => {
   const res: IProposalAction[] = [];
-  actions.forEach((action) => {
-    switch (action.name) {
-      case 'withdraw_assets':
-        res.push({
-          method: 'withdraw', // FIXME: This is not the correct method
-          interface: 'IWithdraw', // FIXME: This is not the correct interface
-          params: {
-            _to: action.recipient,
-            _amount: parseUnits(action.amount.toString()),
-            _tokenAddress:
-              action.tokenAddress === 'custom'
-                ? action.tokenAddressCustom
-                : action.tokenAddress,
-          },
-        });
-        break;
-      case 'mint_tokens':
-        res.push({
-          method: 'mintVotingPower(address,uint256,uint256)',
-          interface: 'IMintableGovernanceStructure',
-          params: {
-            _to: action.wallets.map((wallet) => {
-              return {
-                _to: wallet.address,
-                _amount: parseUnits(wallet.amount.toString()),
-                _tokenId: BigNumber.from(0), // only used for NFTs, not currently supported
-              };
-            }),
-          },
-        });
-        break;
-      // Refer to useProposal.ts for the correct method and interface
-      case 'merge_pr': {
-        const url = new URL(action.inputs.url);
-        const owner = url.pathname.split('/')[1];
-        const repo = url.pathname.split('/')[2];
-        const pullNumber = url.pathname.split('/')[4];
-        if (!owner || !repo || !pullNumber) break;
-        res.push({
-          method: 'merge(string,string,string)',
-          interface: 'IGithubPullRequestFacet',
-          params: {
-            _owner: owner,
-            _repo: repo,
-            _pull_number: pullNumber,
-          },
-        });
-        break;
+  await Promise.all(
+    actions.map(async (action) => {
+      switch (action.name) {
+        case 'withdraw_assets': {
+          // Fetch token info of the token to withdraw to access its decimals
+          try {
+            const tokenInfo = await getTokenInfo(
+              action.tokenAddress,
+              provider,
+              PREFERRED_NETWORK_METADATA.nativeCurrency
+            );
+
+            res.push({
+              method: 'withdraw', // FIXME: This is not the correct method
+              interface: 'IWithdraw', // FIXME: This is not the correct interface
+              params: {
+                _to: action.recipient,
+                // Convert to correct number of tokens using the fetched decimals
+                _amount: parseUnits(
+                  action.amount.toString(),
+                  tokenInfo.decimals
+                ),
+                _tokenAddress:
+                  action.tokenAddress === 'custom'
+                    ? action.tokenAddressCustom
+                    : action.tokenAddress,
+              },
+            });
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        }
+        case 'mint_tokens':
+          res.push({
+            method: 'mintVotingPower(address,uint256,uint256)',
+            interface: 'IMintableGovernanceStructure',
+            params: {
+              _to: action.wallets.map((wallet) => {
+                return {
+                  _to: wallet.address,
+                  // parseUnits converts the amount to the correct BigNumber (i.e. * 10^decimals)
+                  _amount: parseUnits(
+                    wallet.amount.toString(),
+                    TOKENS.rep.decimals
+                  ),
+                  _tokenId: BigNumber.from(0), // only used for NFTs, not currently supported
+                };
+              }),
+            },
+          });
+          break;
+        // Refer to useProposal.ts for the correct method and interface
+        case 'merge_pr': {
+          const url = new URL(action.inputs.url);
+          const owner = url.pathname.split('/')[1];
+          const repo = url.pathname.split('/')[2];
+          const pullNumber = url.pathname.split('/')[4];
+          if (!owner || !repo || !pullNumber) break;
+          res.push({
+            method: 'merge(string,string,string)',
+            interface: 'IGithubPullRequestFacet',
+            params: {
+              _owner: owner,
+              _repo: repo,
+              _pull_number: pullNumber,
+            },
+          });
+          break;
+        }
+        case 'change_parameter':
+          res.push({
+            method: 'change', // FIXME: This is not the correct method
+            interface: 'IChange', //FIXME: This is not the correct interface
+            params: {
+              _plugin: action.plugin,
+              _param: action.parameter,
+              _value: action.value,
+            },
+          });
       }
-      case 'change_parameter':
-        res.push({
-          method: 'change', // FIXME: This is not the correct method
-          interface: 'IChange', //FIXME: This is not the correct interface
-          params: {
-            _plugin: action.plugin,
-            _param: action.parameter,
-            _value: action.value,
-          },
-        });
-    }
-  });
+    })
+  );
+
   return res;
 };
 
@@ -141,9 +171,19 @@ const parseEndDate = (settings: ProposalFormVotingSettings): Date => {
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
+  const [actions, setActions] = useState<IProposalAction[]>([]);
   const { client } = useDiamondSDKContext();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const provider = useProvider();
+
+  // Maps the action form iputs to IProposalAction interface
+  useEffect(() => {
+    if (dataStep3)
+      parseActionInputs(dataStep3.actions, provider).then((res) =>
+        setActions(res)
+      );
+  }, [dataStep3]);
 
   const {
     handleSubmit,
@@ -173,11 +213,12 @@ export const Confirmation = () => {
         variant: 'error',
       });
 
+    const parsedActions = await parseActionInputs(dataStep3.actions, provider);
     contractTransaction(
       () =>
         client.sugar.CreateProposal(
           dataStep1,
-          parseActionInputs(dataStep3.actions),
+          parsedActions,
           parseStartDate(dataStep2),
           parseEndDate(dataStep2)
         ),
@@ -235,11 +276,6 @@ export const Confirmation = () => {
       onSubmitSend();
     }
   };
-
-  // Map the actions to the IProposalAction interface
-  const actions: IProposalAction[] = dataStep3
-    ? parseActionInputs(dataStep3.actions)
-    : [];
 
   // Sanitize the HTML of the body
   const cleanedBody = DOMPurify.sanitize(dataStep1?.body ?? '<p></p>');
