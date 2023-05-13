@@ -30,6 +30,7 @@ import CategoryList from '@/src/components/ui/CategoryList';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useNavigate } from 'react-router';
 import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils.js';
 
 /**
  * Converts actions in their input form to IProposalAction objects, to be used to view proposals and sending proposal to SDK.
@@ -48,7 +49,7 @@ const parseActionInputs = (
           interface: 'IWithdraw', // FIXME: This is not the correct interface
           params: {
             _to: action.recipient,
-            _amount: BigNumber.from(action.amount),
+            _amount: parseUnits(action.amount.toString()),
             _tokenAddress:
               action.tokenAddress === 'custom'
                 ? action.tokenAddressCustom
@@ -64,8 +65,8 @@ const parseActionInputs = (
             _to: action.wallets.map((wallet) => {
               return {
                 _to: wallet.address,
-                _amount: BigNumber.from(wallet.amount),
-                _tokenId: BigNumber.from(0),
+                _amount: parseUnits(wallet.amount.toString()),
+                _tokenId: BigNumber.from(0), // only used for NFTs, not currently supported
               };
             }),
           },

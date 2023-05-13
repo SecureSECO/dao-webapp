@@ -13,6 +13,7 @@ import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import { ProposalFormMetadata } from '@/src/components/newProposal/steps/Metadata';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
 import { ProposalFormActions } from '@/src/components/newProposal/steps/Actions';
+import { constants } from 'ethers';
 
 const meta: Meta<typeof Confirmation> = {
   component: Confirmation,
@@ -72,7 +73,7 @@ export const Primary: Story = {
           {
             name: 'withdraw_assets',
             recipient: '0x123456',
-            tokenAddress: '0x987654321',
+            tokenAddress: constants.AddressZero,
             amount: 3.141,
           },
         ],
