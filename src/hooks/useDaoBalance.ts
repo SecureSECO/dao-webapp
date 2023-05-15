@@ -14,7 +14,7 @@ import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
 
 export type UseDaoBalanceData = {
-  daoBalances: DaoBalance[];
+  daoBalances: DaoBalance[] | null;
   loading: boolean;
   error: string | null;
 };
@@ -36,7 +36,7 @@ export type UseDaoBalanceProps = {
 export const useDaoBalance = ({
   useDummyData = false,
 }: UseDaoBalanceProps): UseDaoBalanceData => {
-  const [daoBalances, setDaoBalances] = useState<DaoBalance[]>([]);
+  const [daoBalances, setDaoBalances] = useState<DaoBalance[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
