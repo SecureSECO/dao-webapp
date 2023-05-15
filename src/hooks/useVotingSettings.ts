@@ -10,7 +10,7 @@ import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
 import { useEffect, useState } from 'react';
 
-type VotingSettings = {
+export type VotingSettings = {
   minDuration: number;
 };
 
