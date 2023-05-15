@@ -133,7 +133,7 @@ const VotesContentActive = ({
             error: 'Error submitting vote',
             success: 'Vote submitted!',
           },
-          onFinish: () => {
+          onSuccess: () => {
             refetch();
           },
         }

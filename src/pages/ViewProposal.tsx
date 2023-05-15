@@ -66,7 +66,7 @@ const ViewProposal = () => {
         error: 'Error executing proposal',
         success: 'Execution successful!',
       },
-      onFinish: () => {
+      onSuccess: () => {
         refetch();
       },
     });

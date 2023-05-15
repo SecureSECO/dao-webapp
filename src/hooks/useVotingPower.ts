@@ -52,6 +52,8 @@ export const useVotingPower = ({
 
     const governance = await client.pure.IERC20();
     const repBalance = await governance.balanceOf(address);
+    console.log('repBalance', repBalance);
+
     return repBalance;
   };
 

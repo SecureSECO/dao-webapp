@@ -227,7 +227,7 @@ export const Confirmation = () => {
           error: 'Error creating proposal',
           success: 'Proposal created!',
         },
-        onFinish: () => {
+        onSuccess: () => {
           // Send user to proposals page
           navigate('/governance');
         },
