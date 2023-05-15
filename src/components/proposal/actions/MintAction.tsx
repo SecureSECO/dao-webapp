@@ -34,11 +34,8 @@ import { useProvider } from 'wagmi';
  */
 export type ProposalMintAction = IProposalAction & {
   params: {
-    _to: {
-      _to: string;
-      _amount: BigNumber;
-      _tokenId: BigNumber;
-    }[];
+    _addresses: string[];
+    _amounts: BigNumber[];
   };
 };
 
@@ -110,12 +107,12 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
         provider,
         PREFERRED_NETWORK_METADATA.nativeCurrency
       );
-      const newTokens = action.params._to.reduce(
-        (acc, curr) => acc.add(curr._amount),
+      const newTokens = action.params._amounts.reduce(
+        (acc, curr) => acc.add(curr),
         BigNumber.from(0)
       );
-      const newHolders = action.params._to.filter((item) =>
-        isMember(item._to)
+      const newHolders = action.params._addresses.filter(
+        (address) => !isMember(address)
       ).length;
 
       setSummary({
@@ -139,7 +136,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
       {...props}
     >
       <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
-        {action.params._to.map((item, index) => (
+        {action.params._addresses.map((address, index) => (
           <Card
             key={index}
             variant="outline"
@@ -147,7 +144,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
             className="flex flex-row items-center justify-between text-right"
           >
             <Address
-              address={item._to}
+              address={address}
               maxLength={AddressLength.Small}
               hasLink={true}
               showCopy={false}
@@ -157,7 +154,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
             <p className="text-popover-foreground/80">
               +{' '}
               {toAbbreviatedTokenAmount(
-                item._amount.toBigInt(),
+                action.params._amounts[index].toBigInt(),
                 CHAIN_METADATA.rep.nativeCurrency.decimals,
                 true
               )}{' '}

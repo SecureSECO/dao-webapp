@@ -165,7 +165,7 @@ export const actionToName = (action: IProposalAction) => {
       return 'change_parameter';
     case 'IGithubPullRequestFacet.mergePullRequest(string,string,string)':
       return 'merge_pr';
-    case 'IMintableGovernanceStructure.mintVotingPower(address,uint256,uint256)':
+    case 'IERC20MultiMinterFacet.multimint(address[],uint256[])':
       return 'mint_tokens';
     case 'IWithdraw.withdraw': // FIXME: not correct interface and method
       return 'withdraw_assets';

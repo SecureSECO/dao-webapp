@@ -29,7 +29,6 @@ import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import CategoryList from '@/src/components/ui/CategoryList';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useNavigate } from 'react-router';
-import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { getTokenInfo } from '@/src/lib/token-utils';
@@ -83,19 +82,15 @@ const parseActionInputs = async (
         }
         case 'mint_tokens':
           res.push({
-            method: 'mintVotingPower(address,uint256,uint256)',
-            interface: 'IMintableGovernanceStructure',
+            method: 'multimint(address[],uint256[])',
+            interface: 'IERC20MultiMinterFacet',
             params: {
-              _to: action.wallets.map((wallet) => {
-                return {
-                  _to: wallet.address,
-                  // parseUnits converts the amount to the correct BigNumber (i.e. * 10^decimals)
-                  _amount: parseUnits(
-                    wallet.amount.toString(),
-                    TOKENS.rep.decimals
-                  ),
-                  _tokenId: BigNumber.from(0), // only used for NFTs, not currently supported
-                };
+              _addresses: action.wallets.map((wallet) => wallet.address),
+              _amounts: action.wallets.map((wallet) => {
+                return parseUnits(
+                  wallet.amount.toString(),
+                  TOKENS.rep.decimals
+                );
               }),
             },
           });
@@ -230,6 +225,9 @@ export const Confirmation = () => {
         onSuccess: () => {
           // Send user to proposals page
           navigate('/governance');
+        },
+        onError: (e) => {
+          console.error(e);
         },
       }
     );
