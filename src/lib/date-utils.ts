@@ -162,3 +162,9 @@ export function getUserTimezone(): string {
 
   return timezoneString;
 }
+
+export const getDurationInSeconds = (
+  days: number,
+  hours: number,
+  minutes: number
+): number => ((days * 24 + hours) * 60 + minutes) * 60;
