@@ -177,7 +177,7 @@ export const dummyQueryResult = {
 export const useSearchSECO = (
   props?: UseSearchSECOProps
 ): UseSearchSECOData => {
-  const { useDummyData } = props ?? defaultProps;
+  const { useDummyData } = Object.assign(defaultProps, props);
   const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
   const [hashes, setHashes] = useState<string[]>([]);
   const [cost, setCost] = useState<number | null>(null);

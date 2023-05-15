@@ -7,7 +7,6 @@
  */
 
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
@@ -33,26 +32,21 @@ type UseMembersData = {
   isMember: (address: string) => boolean;
 };
 
-export type Member = { address: string; bal: number | null };
+export type Member = { address: string; bal: BigNumber | null };
 
 const dummyMembers: Member[] = [];
 
 export const useMembers = (props?: UseMembersProps): UseMembersData => {
-  const { useDummyData, includeBalances, limit } = props ?? defaultProps;
+  const { useDummyData, includeBalances, limit } = Object.assign(
+    defaultProps,
+    props
+  );
+
   const [members, setMembers] = useState<Member[]>([]);
   const [memberCount, setMemberCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { client, repTokenContract } = useDiamondSDKContext();
-
-  /**
-   * Fetch the REP balance for a single address. Throws an error if the REP token contract is not set
-   * @returns The REP balance of the given address
-   */
-  const fetchBalance = async (address: string): Promise<BigNumber> => {
-    if (!repTokenContract) throw new Error('REP token contract not set');
-    return repTokenContract.balanceOf(address);
-  };
+  const { client } = useDiamondSDKContext();
 
   /**
    * Fetch balances for a list of addresses
@@ -61,28 +55,24 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
    * @see Member for the type of object returned in the list
    */
   const fetchBalances = async (addressList: string[]): Promise<Member[]> => {
+    if (!client) throw new Error('Client not set');
     return Promise.all(
-      addressList.map(
-        async (address) =>
-          new Promise((resolve) => {
-            fetchBalance(address)
-              .then((bal: BigNumber) => {
-                return resolve({
-                  address,
-                  bal: Number(
-                    bal.toBigInt() /
-                      BigInt(10 ** CHAIN_METADATA.rep.nativeCurrency.decimals)
-                  ),
-                });
-              })
-              .catch(() =>
-                resolve({
-                  address,
-                  bal: null,
-                })
-              );
-          })
-      )
+      addressList.map(async (address) => {
+        try {
+          const contract = await client.pure.IERC20();
+          const bal = await contract.balanceOf(address);
+          return {
+            address,
+            bal: bal,
+          };
+        } catch (e) {
+          console.error(e);
+          return {
+            address,
+            bal: null,
+          };
+        }
+      })
     );
   };
 
@@ -107,7 +97,7 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
         daoMembers.sort((a, b) => {
           if (a.bal === null) return 1;
           if (b.bal === null) return -1;
-          return b.bal - a.bal;
+          return b.bal.sub(a.bal).toNumber();
         });
         // If a limit is set, only return that many members (with the highest balance)
         if (limit) setMembers(daoMembers.splice(0, limit));

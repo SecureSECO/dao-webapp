@@ -41,7 +41,7 @@ const defaultProps: UseDaoBalanceProps = {
 export const useDaoBalance = (
   props?: UseDaoBalanceProps
 ): UseDaoBalanceData => {
-  const { useDummyData } = props ?? defaultProps;
+  const { useDummyData } = Object.assign(defaultProps, props);
   const [daoBalances, setDaoBalances] = useState<DaoBalance[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

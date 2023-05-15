@@ -37,7 +37,7 @@ const defaultProps: UseDaoProps = {
 };
 
 export const useDao = (props?: UseDaoProps): UseDaoData => {
-  const { useDummyData } = props ?? defaultProps;
+  const { useDummyData } = Object.assign(defaultProps, props);
 
   const [daoDetails, setDaoDetails] = useState<DaoDetails>(null);
   const [loading, setLoading] = useState<boolean>(true);

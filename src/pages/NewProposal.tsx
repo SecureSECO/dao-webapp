@@ -124,7 +124,7 @@ export const NewProposalFormProvider = ({
 export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
   const { step, setStep } = useNewProposalFormContext();
   const { address, isConnected } = useAccount();
-  const { votingPower } = useVotingPower({
+  const { votingPower, minProposalVotingPower } = useVotingPower({
     address,
   });
 
@@ -138,7 +138,7 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
   };
 
   const isLastStep = step === totalSteps;
-  const canCreate = isConnected && votingPower.gt(0);
+  const canCreate = isConnected && votingPower.gte(minProposalVotingPower);
 
   return (
     <div className="flex items-center gap-2">
@@ -155,7 +155,9 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
           (!isConnected ? (
             <ConnectWalletWarning action="to submit" />
           ) : (
-            votingPower.lte(0) && <InsufficientRepWarning action="to submit" />
+            votingPower.lt(minProposalVotingPower) && (
+              <InsufficientRepWarning action="to submit" />
+            )
           ))}
       </div>
     </div>

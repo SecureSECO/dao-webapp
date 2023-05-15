@@ -56,7 +56,7 @@ const defaultProps: UseDaoTransfersProps = {
 export const useDaoTransfers = (
   props?: UseDaoTransfersProps
 ): UseDaoTransfersData => {
-  const { useDummyData, limit } = props ?? defaultProps;
+  const { useDummyData, limit } = Object.assign(defaultProps, props);
   const [daoTransfers, setDaoTransfers] = useState<DaoTransfer[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

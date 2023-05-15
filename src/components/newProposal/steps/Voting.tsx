@@ -238,8 +238,7 @@ export const EndTime = ({
   } = getWatchers(control);
 
   //retrieve settings for the minDuration
-  const { settings, error } = useVotingSettings();
-  if (error) console.error('Voting settings fetching error', error);
+  const { settings } = useVotingSettings();
 
   //initialize minEndDate and minEndTime
   let minEndDate = undefined;

@@ -10,13 +10,14 @@ import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useProvider } from 'wagmi';
 
 export type UseVotingPowerData = {
   loading: boolean;
   error: string | null;
   // Voting power of given wallet
   votingPower: BigNumber;
+  // Minimum voting power required to create a proposal
+  minProposalVotingPower: BigNumber;
   getVotingPower: () => Promise<BigNumber>;
   refetch: () => void;
 };
@@ -36,10 +37,11 @@ export const useVotingPower = ({
   useDummyData = false,
 }: UseVotingPowerProps): UseVotingPowerData => {
   const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
+  const [minProposalVotingPower, setMinProposalVotingPower] =
+    useState<BigNumber>(BigNumber.from(0));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { client } = useDiamondSDKContext();
-  const provider = useProvider();
 
   /**
    * Fetches the voting power of an address through the Diamond Governance SDK
@@ -48,16 +50,12 @@ export const useVotingPower = ({
   const getVotingPower = async (): Promise<BigNumber> => {
     if (!client || !address) throw new Error('Client or address not set');
 
-    const blockNumber = await provider.getBlockNumber();
-    const governance = await client.pure.IGovernanceStructure();
-    const repBalance = await governance?.walletVotingPower(
-      address,
-      blockNumber
-    );
+    const governance = await client.pure.IERC20();
+    const repBalance = await governance.balanceOf(address);
     return repBalance;
   };
 
-  // Update state varible for voting power
+  // Update state variable for voting power
   const updateVotingPower = async () => {
     if (!client || !address) return;
 
@@ -65,9 +63,22 @@ export const useVotingPower = ({
       const repBalance = await getVotingPower();
       setVotingPower(repBalance);
     } catch (e) {
-      console.error(e);
+      console.error('Error fetching voting power', e);
       setError(getErrorMessage(e));
       setLoading(false);
+    }
+  };
+
+  // Update state variable for minimum voting power required to create a proposal
+  const updateMinProposalVotingPower = async () => {
+    if (!client) return;
+
+    try {
+      const partialVoting = await client.pure.IPartialVotingProposalFacet();
+      const minVotingPowerData = await partialVoting.minProposerVotingPower();
+      setMinProposalVotingPower(minVotingPowerData);
+    } catch (e) {
+      console.error('Error fetching min proposal voting power', e);
     }
   };
 
@@ -82,6 +93,7 @@ export const useVotingPower = ({
     if (useDummyData) return setDummyData();
     if (client) setLoading(true);
     updateVotingPower();
+    updateMinProposalVotingPower();
     const id = setInterval(() => updateVotingPower(), 10000);
     return () => clearInterval(id);
   }, [client]);
@@ -90,6 +102,7 @@ export const useVotingPower = ({
     loading,
     error,
     votingPower,
+    minProposalVotingPower,
     getVotingPower,
     // Only allow refetching if not using dummy data
     refetch: () => (!useDummyData ? updateVotingPower() : void 0),

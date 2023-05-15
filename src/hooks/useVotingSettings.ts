@@ -45,7 +45,7 @@ const dummyVotingSettings: VotingSettings = {
 export const useVotingSettings = (
   props?: UseVotingSettingsProps
 ): UseVotingSettingsData => {
-  const { useDummyData } = props ?? defaultProps;
+  const { useDummyData } = Object.assign(defaultProps, props);
   const [data, setData] = useState<VotingSettings | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -60,7 +60,7 @@ export const useVotingSettings = (
       setLoading(false);
       setData({ minDuration: minDurationData.toNumber() });
     } catch (e) {
-      console.error(e);
+      console.error('Error fetching voting settings', e);
       setError(getErrorMessage(e));
       setLoading(false);
     }
