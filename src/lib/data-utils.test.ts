@@ -1,5 +1,6 @@
 import {
   getDurationDateAhead,
+  getDurationInSeconds,
   inputToDate,
   isGapEnough,
   timezoneOffsetDifference,
@@ -44,4 +45,10 @@ test('isGapEnough is correct for various options', () => {
   expect(
     isGapEnough('2022-12-15', '12:00', '2022-12-15', '12:01', 61)
   ).toBeFalsy();
+});
+
+test('getDurationInSeconds is correct for various options', () => {
+  expect(getDurationInSeconds(1, 0, 0)).toBe(24 * 60 * 60);
+  expect(getDurationInSeconds(0, 1, 0)).toBe(60 * 60);
+  expect(getDurationInSeconds(0, 0, 1)).toBe(60);
 });
