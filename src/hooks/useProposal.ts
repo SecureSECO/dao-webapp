@@ -49,17 +49,13 @@ export const dummyMintAction = {
   method: 'mintVotingPower(address,uint256,uint256)',
   interface: 'IMintableGovernanceStructure',
   params: {
-    _to: [
-      {
-        _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
-        _amount: BigNumber.from('0x4563918244F40000'),
-        _tokenId: BigNumber.from(0),
-      },
-      {
-        _to: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
-        _amount: BigNumber.from('0x4563918244F40000'),
-        _tokenId: BigNumber.from(0),
-      },
+    _addresses: [
+      '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+    ],
+    _amounts: [
+      BigNumber.from('0x4563918244F40000'),
+      BigNumber.from('0x4563918244F40000'),
     ],
   },
 };

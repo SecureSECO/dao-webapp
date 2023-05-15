@@ -12,6 +12,7 @@ import ProposalMilestone, {
 } from '@/src/components/proposal/ProposalMilestone';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { ProposalStatus, Proposal } from '@plopmenz/diamond-governance-sdk';
+import { compareAsc } from 'date-fns';
 
 /**
  * Extract the milestones of a proposal, depending on its status. The following milestones are returned per status:
@@ -59,7 +60,12 @@ const getProposalMilestones = (proposal: Proposal) => {
       res.push({
         label: 'Succeeded',
         variant: 'done',
-        date: proposal.endDate,
+        // If the executionDate is earlier than endDate, there was an early execution, so endDate executionDate is also the end date
+        date:
+          proposal.executionDate &&
+          compareAsc(proposal.executionDate, proposal.endDate) === -1
+            ? proposal.executionDate
+            : proposal.endDate,
       });
       if (proposal.actions.length > 0)
         res.push({
