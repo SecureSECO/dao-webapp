@@ -7,7 +7,7 @@
  */
 
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
-import { dummyProposal } from '@/src/hooks/useProposal';
+import { dummyProposal, dummyVotes } from '@/src/hooks/useProposal';
 import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
 import { BigNumber } from 'ethers';
@@ -37,6 +37,7 @@ BigInt.prototype.toJSON = function () {
 export const Active: Story = {
   args: {
     proposal: dummyProposal,
+    votes: dummyVotes,
     loading: false,
     totalVotingWeight: BigNumber.from(5),
     canVote: {
@@ -53,6 +54,7 @@ export const Pending: Story = {
       ...dummyProposal,
       status: ProposalStatus.Pending,
     } as Proposal,
+    votes: dummyVotes,
     loading: false,
     totalVotingWeight: BigNumber.from(5),
     canVote: {
@@ -69,6 +71,7 @@ export const Succeeded: Story = {
       ...dummyProposal,
       status: ProposalStatus.Succeeded,
     } as Proposal,
+    votes: dummyVotes,
     loading: false,
     totalVotingWeight: BigNumber.from(5),
     canVote: {
@@ -85,6 +88,7 @@ export const Executed: Story = {
       ...dummyProposal,
       status: ProposalStatus.Executed,
     } as Proposal,
+    votes: dummyVotes,
     loading: false,
     totalVotingWeight: BigNumber.from(5),
     canVote: {
@@ -101,6 +105,7 @@ export const Defeated: Story = {
       ...dummyProposal,
       status: ProposalStatus.Defeated,
     } as Proposal,
+    votes: dummyVotes,
     loading: false,
     totalVotingWeight: BigNumber.from(5),
     canVote: {
@@ -114,6 +119,7 @@ export const Defeated: Story = {
 export const Loading: Story = {
   args: {
     proposal: dummyProposal,
+    votes: dummyVotes,
     loading: true,
     totalVotingWeight: BigNumber.from(5),
     canVote: {

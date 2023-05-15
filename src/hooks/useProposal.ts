@@ -14,6 +14,8 @@ import {
   Proposal,
   IPartialVotingProposalFacet,
   ProposalStatus,
+  AddressVotes,
+  IPartialVotingFacet,
 } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber, ContractTransaction, constants } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -30,6 +32,7 @@ export type UseProposalData = {
   proposal: Proposal | null;
   canExecute: boolean;
   canVote: CanVote;
+  votes: AddressVotes[] | null;
   refetch: () => void;
 };
 
@@ -136,9 +139,9 @@ export const dummyProposal: Proposal = {
     executor: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
     voterList: ['0x2B868C8ed12EAD37ef76457e7B6443192e231442'],
     tally: {
-      yes: BigNumber.from('0x01'),
+      yes: BigNumber.from('0x4563918244F40000'),
       no: BigNumber.from('0x00'),
-      abstain: BigNumber.from('0x01'),
+      abstain: BigNumber.from('0x00'),
     } as IPartialVotingProposalFacet.TallyStructOutput,
   },
   metadata: {
@@ -154,6 +157,18 @@ export const dummyProposal: Proposal = {
   creationDate: new Date('2023-05-08T18:09:09.000Z'),
 } as unknown as Proposal;
 
+export const dummyVotes: AddressVotes[] = [
+  {
+    address: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+    votes: [
+      {
+        option: VoteOption.Yes,
+        amount: BigNumber.from('0x4563918244F40000'),
+      } as unknown as IPartialVotingFacet.PartialVoteStructOutput,
+    ],
+  },
+];
+
 export const useProposal = ({
   id,
   address,
@@ -166,6 +181,7 @@ export const useProposal = ({
     No: false,
     Abstain: false,
   });
+  const [votes, setVotes] = useState<AddressVotes[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { client } = useDiamondSDKContext();
@@ -181,14 +197,17 @@ export const useProposal = ({
 
     try {
       const daoProposal: Proposal = await client.sugar.GetProposal(+id);
+      console.log('daoProposal', daoProposal);
 
       if (daoProposal) {
         setProposal(daoProposal);
         setError(null);
         setLoading(false);
+        fetchVotes(daoProposal);
       } else {
         setError('Proposal not found');
         setLoading(false);
+        setVotes(null);
       }
     } catch (e) {
       console.error(e);
@@ -197,11 +216,22 @@ export const useProposal = ({
     }
   };
 
+  const fetchVotes = async (proposal: Proposal) => {
+    if (!client || !proposal) return;
+    try {
+      const votes = await proposal.GetVotes();
+      setVotes(votes);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   //** Set dummy data for development without querying Aragon API */
   const setDummyData = () => {
     setLoading(false);
     setError(null);
     setProposal(dummyProposal);
+    setVotes(dummyVotes);
   };
 
   useEffect(() => {
@@ -251,6 +281,7 @@ export const useProposal = ({
     proposal,
     canExecute,
     canVote,
+    votes,
     // Only allow refetching if not using dummy data
     refetch: () => (!useDummyData ? fetchProposal() : void 0),
   };

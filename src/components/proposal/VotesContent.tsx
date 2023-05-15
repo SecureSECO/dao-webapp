@@ -22,7 +22,6 @@ import { Button } from '@/src/components/ui/Button';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { calcBigNumberPercentage } from '@/src/lib/utils';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { contractTransaction, toast } from '@/src/hooks/useToast';
@@ -31,12 +30,14 @@ import {
   ProposalStatus,
   VoteOption,
   Proposal,
+  AddressVotes,
 } from '@plopmenz/diamond-governance-sdk';
 import { CanVote } from '@/src/hooks/useProposal';
 import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
 import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
+import { TOKENS } from '@/src/lib/constants/tokens';
 
 type VoteFormData = {
   vote_option: string;
@@ -49,10 +50,12 @@ type VoteFormData = {
  */
 const VotesContent = ({
   proposal,
+  votes,
   totalVotingWeight,
   ...props
 }: {
   proposal: Proposal;
+  votes: AddressVotes[];
   canVote: CanVote;
   totalVotingWeight: BigNumber;
   refetch: () => void;
@@ -63,6 +66,7 @@ const VotesContent = ({
       return (
         <VotesContentActive
           proposal={proposal}
+          votes={votes}
           totalVotingWeight={totalVotingWeight}
           {...props}
         />
@@ -72,16 +76,19 @@ const VotesContent = ({
         <Accordion type="single" collapsible className="space-y-2 ">
           <VotesContentOption
             proposal={proposal}
+            votes={votes}
             voteOption={VoteOption.Yes}
             totalVotingWeight={totalVotingWeight}
           />
           <VotesContentOption
             proposal={proposal}
+            votes={votes}
             voteOption={VoteOption.No}
             totalVotingWeight={totalVotingWeight}
           />
           <VotesContentOption
             proposal={proposal}
+            votes={votes}
             voteOption={VoteOption.Abstain}
             totalVotingWeight={totalVotingWeight}
           />
@@ -99,11 +106,13 @@ type VoteOptionStringLower = 'yes' | 'no' | 'abstain';
  */
 const VotesContentActive = ({
   proposal,
+  votes,
   totalVotingWeight,
   canVote,
   refetch,
 }: {
   proposal: Proposal;
+  votes: AddressVotes[];
   totalVotingWeight: BigNumber;
   canVote: CanVote;
   refetch: () => void;
@@ -167,16 +176,19 @@ const VotesContentActive = ({
             <Accordion type="single" collapsible className="space-y-2">
               <VotesContentOption
                 proposal={proposal}
+                votes={votes}
                 voteOption={VoteOption.Yes}
                 totalVotingWeight={totalVotingWeight}
               />
               <VotesContentOption
                 proposal={proposal}
+                votes={votes}
                 voteOption={VoteOption.No}
                 totalVotingWeight={totalVotingWeight}
               />
               <VotesContentOption
                 proposal={proposal}
+                votes={votes}
                 voteOption={VoteOption.Abstain}
                 totalVotingWeight={totalVotingWeight}
               />
@@ -186,12 +198,12 @@ const VotesContentActive = ({
       />
 
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
-      <div className="flex flex-row items-center gap-x-4">
+      <div className="ml-6 flex flex-row items-center gap-x-4">
         <Button disabled={!userCanVote || !isConnected} type="submit">
-          {!userCanVote && isConnected && votingPower.lte(0) ? (
+          {!userCanVote && isConnected && votingPower.gt(0) ? (
             'Vote submitted'
           ) : (
-            <span className="ml-1 inline-block lowercase">
+            <span className="ml-1 inline-block ">
               {'Vote ' + (voteOption ?? 'yes')}
             </span>
           )}
@@ -211,10 +223,12 @@ const VotesContentActive = ({
  */
 const VotesContentOption = ({
   proposal,
+  votes,
   voteOption,
   totalVotingWeight,
 }: {
   proposal: Proposal;
+  votes: AddressVotes[];
   voteOption: VoteOption;
   totalVotingWeight: BigNumber;
 }) => {
@@ -222,7 +236,9 @@ const VotesContentOption = ({
 
   const voteValueLower = voteValueString.toLowerCase() as VoteOptionStringLower;
   const voteTally = proposal.data.tally[voteValueLower];
-  const votes = undefined; //proposal.data.voterList.filter((vote) => vote.vote === voteValue);
+  const filteredVotes = votes.filter(
+    (vote) => vote.votes[0].option === voteOption
+  );
   const percentage = calcBigNumberPercentage(voteTally, totalVotingWeight);
 
   return (
@@ -240,10 +256,10 @@ const VotesContentOption = ({
               <p className="text-popover-foreground/80">
                 {toAbbreviatedTokenAmount(
                   voteTally.toBigInt(),
-                  CHAIN_METADATA.rep.nativeCurrency.decimals,
+                  TOKENS.rep.decimals,
                   true
                 )}{' '}
-                {CHAIN_METADATA.rep.nativeCurrency.symbol}
+                {TOKENS.rep.symbol}
               </p>
               <p className="w-12 text-right text-primary">{percentage}%</p>
             </div>
@@ -251,8 +267,8 @@ const VotesContentOption = ({
           <Progress value={percentage} size="sm" />
         </AccordionTrigger>
         <AccordionContent className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
-          {votes.length > 0 ? (
-            votes.map((vote) => (
+          {filteredVotes.length > 0 ? (
+            filteredVotes.map((vote) => (
               <div
                 key={vote.address}
                 className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-border px-3 py-1"
@@ -264,17 +280,24 @@ const VotesContentOption = ({
                   showCopy={false}
                   replaceYou={false}
                 />
-                <div className="grid grid-cols-2 text-right opacity-80">
-                  <p>
+                <div className="grid grid-cols-4 text-right opacity-80">
+                  <p className="col-span-3">
+                    {/* The vote.votes is an array of how much was voted for each option, because the underlying 
+                        smart contract implements partial voting, but this is not supported in the web-app
+                        meaning realistically, the vote.votes array will only ever have 1 entry */}
                     {toAbbreviatedTokenAmount(
-                      vote.weight,
-                      CHAIN_METADATA.rep.nativeCurrency.decimals,
+                      vote.votes[0].amount.toBigInt(),
+                      TOKENS.rep.decimals,
                       true
                     )}{' '}
-                    {CHAIN_METADATA.rep.nativeCurrency.symbol}
+                    {TOKENS.rep.symbol}
                   </p>
                   <p>
-                    {calcBigNumberPercentage(vote.weight, totalVotingWeight)}%
+                    {calcBigNumberPercentage(
+                      vote.votes[0].amount,
+                      totalVotingWeight
+                    )}
+                    %
                   </p>
                 </div>
               </div>

@@ -32,7 +32,7 @@ import DOMPurify from 'dompurify';
 const ViewProposal = () => {
   const { id } = useParams();
   const { address, isConnected } = useAccount();
-  const { proposal, loading, error, refetch, canExecute, canVote } =
+  const { proposal, votes, loading, error, refetch, canExecute, canVote } =
     useProposal({ id, address });
   const { totalVotingWeight } = useTotalVotingWeight({
     blockNumber: proposal?.data.parameters.snapshotBlock,
@@ -157,6 +157,7 @@ const ViewProposal = () => {
                 <ProposalVotes
                   loading={loading}
                   proposal={proposal}
+                  votes={votes}
                   refetch={refetch}
                   canVote={canVote}
                   totalVotingWeight={totalVotingWeight}

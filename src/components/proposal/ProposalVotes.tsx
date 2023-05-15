@@ -26,15 +26,16 @@ import {
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { CanVote } from '@/src/hooks/useProposal';
-import { CHAIN_METADATA } from '@/src/lib/constants/chains';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
-import { Proposal } from '@plopmenz/diamond-governance-sdk';
+import { AddressVotes, Proposal } from '@plopmenz/diamond-governance-sdk';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 
 interface ProposalVotesProps {
   proposal: Proposal | null;
+  votes: AddressVotes[] | null;
   loading: boolean;
   className?: string;
   refetch: () => void;
@@ -77,10 +78,10 @@ const getCategories = (
           label: 'Minimum participation',
           value: `${toAbbreviatedTokenAmount(
             proposal.data.parameters.minParticipationThresholdPower.toBigInt(),
-            CHAIN_METADATA.rep.nativeCurrency.decimals,
+            TOKENS.rep.decimals,
             true
           )} 
-          ${CHAIN_METADATA.rep.nativeCurrency.symbol}%`,
+          ${TOKENS.rep.symbol}%`,
         },
       ],
     },
@@ -119,6 +120,7 @@ const getCategories = (
  */
 const ProposalVotes = ({
   proposal,
+  votes,
   loading,
   className,
   ...props
@@ -160,7 +162,9 @@ const ProposalVotes = ({
         </Dialog>
       }
     >
-      {proposal && <VotesContent proposal={proposal} {...props} />}
+      {proposal && (
+        <VotesContent proposal={proposal} votes={votes ?? []} {...props} />
+      )}
     </MainCard>
   );
 };

@@ -7,7 +7,7 @@
  */
 
 import VotesContent from '@/src/components/proposal/VotesContent';
-import { dummyProposal } from '@/src/hooks/useProposal';
+import { dummyProposal, dummyVotes } from '@/src/hooks/useProposal';
 import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
 import { BigNumber } from 'ethers';
@@ -40,7 +40,8 @@ export const Active: Story = {
       ...dummyProposal,
       status: ProposalStatus.Active,
     } as Proposal,
-    totalVotingWeight: BigNumber.from(5),
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
     canVote: {
       Yes: true,
       No: true,
@@ -55,7 +56,8 @@ export const ActiveCannotVote: Story = {
       ...dummyProposal,
       status: ProposalStatus.Active,
     } as Proposal,
-    totalVotingWeight: BigNumber.from(5),
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
     canVote: {
       Yes: false,
       No: false,
@@ -70,7 +72,8 @@ export const Pending: Story = {
       ...dummyProposal,
       status: ProposalStatus.Pending,
     } as Proposal,
-    totalVotingWeight: BigNumber.from(5),
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
     canVote: {
       Yes: true,
       No: true,
@@ -85,7 +88,8 @@ export const Succeeded: Story = {
       ...dummyProposal,
       status: ProposalStatus.Succeeded,
     } as Proposal,
-    totalVotingWeight: BigNumber.from(5),
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
     canVote: {
       Yes: true,
       No: true,
@@ -100,7 +104,8 @@ export const Executed: Story = {
       ...dummyProposal,
       status: ProposalStatus.Executed,
     } as Proposal,
-    totalVotingWeight: BigNumber.from(5),
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
     canVote: {
       Yes: true,
       No: true,
@@ -115,7 +120,8 @@ export const Defeated: Story = {
       ...dummyProposal,
       status: ProposalStatus.Defeated,
     } as Proposal,
-    totalVotingWeight: BigNumber.from(5),
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
     canVote: {
       Yes: true,
       No: true,

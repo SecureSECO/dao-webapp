@@ -16,10 +16,8 @@ import CategoryList from '@/src/components/ui/CategoryList';
 import { Category } from '@/src/components/ui/CategoryList';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { useMembers } from '@/src/hooks/useMembers';
-import {
-  CHAIN_METADATA,
-  PREFERRED_NETWORK_METADATA,
-} from '@/src/lib/constants/chains';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { getTokenInfo } from '@/src/lib/token-utils';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';
@@ -63,9 +61,9 @@ const getCategory = (summary: MintActionSummary): Category[] => [
         label: 'New tokens',
         value: `+ ${toAbbreviatedTokenAmount(
           summary.newTokens.toBigInt(),
-          CHAIN_METADATA.rep.nativeCurrency.decimals,
+          TOKENS.rep.decimals,
           true
-        )} ${CHAIN_METADATA.rep.nativeCurrency.symbol}`,
+        )} ${TOKENS.rep.symbol}`,
       },
       {
         label: 'New holders',
@@ -75,9 +73,9 @@ const getCategory = (summary: MintActionSummary): Category[] => [
         label: 'Total tokens',
         value: `${toAbbreviatedTokenAmount(
           summary.totalTokens.toBigInt(),
-          CHAIN_METADATA.rep.nativeCurrency.decimals,
+          TOKENS.rep.decimals,
           true
-        )} ${CHAIN_METADATA.rep.nativeCurrency.symbol}`,
+        )} ${TOKENS.rep.symbol}`,
       },
       {
         label: 'Total holders',
@@ -155,10 +153,10 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
               +{' '}
               {toAbbreviatedTokenAmount(
                 action.params._amounts[index].toBigInt(),
-                CHAIN_METADATA.rep.nativeCurrency.decimals,
+                TOKENS.rep.decimals,
                 true
               )}{' '}
-              {CHAIN_METADATA.rep.nativeCurrency.symbol}
+              {TOKENS.rep.symbol}
             </p>
           </Card>
         ))}
