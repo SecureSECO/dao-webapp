@@ -35,7 +35,6 @@ import { Provider } from '@wagmi/core';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { useProvider } from 'wagmi';
 import { useEffect, useState } from 'react';
-import { BigNumber } from 'ethers';
 import { TOKENS } from '@/src/lib/constants/tokens';
 
 /**
@@ -213,17 +212,14 @@ export const Confirmation = () => {
       });
 
     const parsedActions = await parseActionInputs(dataStep3.actions, provider);
-    console.log(
-      dataStep1,
-      parsedActions,
-      parseStartDate(dataStep2),
-      parseEndDate(dataStep2)
-    );
 
     contractTransaction(
       () =>
         client.sugar.CreateProposal(
-          dataStep1,
+          {
+            ...dataStep1,
+            resources: dataStep1.resources.filter((res) => res.url !== ''),
+          },
           parsedActions,
           parseStartDate(dataStep2),
           parseEndDate(dataStep2)
@@ -313,7 +309,9 @@ export const Confirmation = () => {
         <div className="flex flex-col gap-y-4">
           <ProposalResources
             variant="outline"
-            resources={dataStep1?.resources ?? []}
+            resources={
+              dataStep1?.resources.filter((res) => res.url !== '') ?? []
+            }
           />
 
           {/* View actions */}

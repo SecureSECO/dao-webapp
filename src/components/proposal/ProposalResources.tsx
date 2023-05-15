@@ -38,9 +38,6 @@ export const ProposalResources = ({
   className,
   ...props
 }: ProposalResourcesProps) => {
-  // Filter out empty entries in resources array
-  const filtered = resources?.filter((resource) => resource.url !== '');
-
   return (
     <MainCard
       loading={loading ?? resources ? true : false}
@@ -54,13 +51,13 @@ export const ProposalResources = ({
       }
       {...props}
     >
-      {!filtered || filtered.length === 0 ? (
+      {!resources || resources.length === 0 ? (
         <div className="italic text-highlight-foreground/80">
           No resources added
         </div>
       ) : (
         <ul className="space-y-2">
-          {filtered.map((resource) => (
+          {resources.map((resource) => (
             <li key={resource.url}>
               <Card size="sm" variant="light">
                 <a
