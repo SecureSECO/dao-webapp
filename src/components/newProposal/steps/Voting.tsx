@@ -6,6 +6,38 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Card } from '@/src/components/ui/Card';
+import { LabelledInput } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
+import Legend from '@/src/components/ui/Legend';
+import { RadioButtonCard, RadioGroup } from '@/src/components/ui/RadioGroup';
+import { TimezoneSelector } from '@/src/components/ui/TimeZoneSelector';
+import {
+  VotingSettings,
+  useVotingSettings,
+} from '@/src/hooks/useVotingSettings';
+import {
+  getDurationDateAhead,
+  getDurationInSeconds,
+  getTimeIn10Minutes,
+  getTodayDateString,
+  getUserTimezone,
+  inputToDate,
+  isGapEnough,
+  timezoneOffsetDifference,
+} from '@/src/lib/date-utils';
+import { cn } from '@/src/lib/utils';
+import {
+  StepNavigator,
+  useNewProposalFormContext,
+} from '@/src/pages/NewProposal';
+import {
+  add,
+  format,
+  formatDuration,
+  intervalToDuration,
+  isToday,
+} from 'date-fns';
 import {
   Control,
   Controller,
@@ -14,27 +46,8 @@ import {
   useForm,
   useWatch,
 } from 'react-hook-form';
-import { RadioButtonCard, RadioGroup } from '@/src/components/ui/RadioGroup';
-import { LabelledInput } from '@/src/components/ui/Input';
-import {
-  StepNavigator,
-  useNewProposalFormContext,
-} from '@/src/pages/NewProposal';
-import { Card } from '@/src/components/ui/Card';
-import { TimezoneSelector } from '@/src/components/ui/TimeZoneSelector';
-import { useVotingSettings } from '@/src/hooks/useVotingSettings';
-import { add, format, isToday } from 'date-fns';
-import {
-  getDurationDateAhead,
-  getTimeIn10Minutes,
-  getTodayDateString,
-  getUserTimezone,
-  inputToDate,
-  isGapEnough,
-  timezoneOffsetDifference,
-} from '@/src/lib/date-utils';
-import { Label } from '@/src/components/ui/Label';
-import Legend from '@/src/components/ui/Legend';
+
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
 
 export type ProposalFormVotingSettings = {
   option: VoteOption;
@@ -66,6 +79,7 @@ export const Voting = () => {
     register,
     getValues,
     handleSubmit,
+    setError,
     control,
     formState: { errors },
   } = useForm<ProposalFormVotingSettings>({
@@ -89,6 +103,14 @@ export const Voting = () => {
   });
 
   const onSubmit = (data: ProposalFormVotingSettings) => {
+    const duration_too_low = durationTooLow(data, settings);
+    if (duration_too_low) {
+      setError('root.durationTooLow', {
+        type: 'custom',
+        message: duration_too_low,
+      });
+      return;
+    }
     setStep(3);
     setDataStep2(data);
   };
@@ -305,55 +327,50 @@ export const EndTime = ({
         />
 
         {endTimeType === 'duration' ? (
-          <Card variant="light" className="flex gap-2">
-            <LabelledInput
-              id="duration_days"
-              type="number"
-              label="Days"
-              {...register('duration_days', { required: true })}
-              min={
-                //calculates the minimum hours, rounded down, based on the minimum duration
-                settings ? Math.floor(settings.minDuration / 60 / 60 / 24) : 1
-              }
-              max="364"
-              error={errors.duration_days}
-              className="text-center"
-            />
-            <LabelledInput
-              id="duration_hours"
-              type="number"
-              label="Hours"
-              {...register('duration_hours', { required: true })}
-              min={
-                settings
-                  ? //calculates the minimum hours, rounded down, based on the minimum duration
-                    Math.floor(
-                      (settings.minDuration % (60 * 60 * 24)) / 60 / 60
-                    )
-                  : 0
-              }
-              max="23"
-              error={errors.duration_hours}
-              className="text-center"
-            />
-            <LabelledInput
-              id="duration_minutes"
-              type="number"
-              label="Minutes"
-              {...register('duration_minutes', { required: true })}
-              min={
-                settings
-                  ? //calculates the minimum minutes, rounded up, based on the minimum duration
-                    Math.ceil(
-                      ((settings.minDuration % (60 * 60 * 24)) % (60 * 60)) / 60
-                    )
-                  : 0
-              }
-              max="59"
-              error={errors.duration_minutes}
-              className="text-center"
-            />
-          </Card>
+          <ErrorWrapper
+            error={errors?.root?.durationTooLow as any}
+            name="Duration too low"
+          >
+            <Card
+              variant="light"
+              className={cn(
+                'flex gap-2',
+                errors?.root?.durationTooLow &&
+                  'border-2 border-destructive focus:ring-destructive'
+              )}
+            >
+              <LabelledInput
+                id="duration_days"
+                type="number"
+                label="Days"
+                {...register('duration_days', { required: true })}
+                min="0"
+                max="364"
+                error={errors.duration_days}
+                className="text-center"
+              />
+              <LabelledInput
+                id="duration_hours"
+                type="number"
+                label="Hours"
+                {...register('duration_hours', { required: true })}
+                min="0"
+                max="23"
+                error={errors.duration_hours}
+                className="text-center"
+              />
+              <LabelledInput
+                id="duration_minutes"
+                type="number"
+                label="Minutes"
+                {...register('duration_minutes', { required: true })}
+                min="0"
+                max="59"
+                error={errors.duration_minutes}
+                className="text-center"
+              />
+            </Card>
+          </ErrorWrapper>
         ) : (
           endTimeType === 'end-custom' && (
             <Card variant="light" className="flex gap-2">
@@ -461,3 +478,41 @@ function getWatchers(control: Control<ProposalFormVotingSettings, any>) {
     endTimezone,
   };
 }
+
+const durationTooLow = (
+  data: ProposalFormVotingSettings,
+  settings: VotingSettings | null
+): false | string => {
+  // If it is not a duration end type, no majority voting setting is known, or if duration data is not defined.
+  // Then the duration is not too low.
+  if (
+    data.end_time_type !== 'duration' ||
+    !settings ||
+    data.duration_days === undefined ||
+    data.duration_hours === undefined ||
+    data.duration_minutes === undefined
+  ) {
+    return false;
+  }
+  const duration = getDurationInSeconds(
+    data.duration_days,
+    data.duration_hours,
+    data.duration_minutes
+  );
+  // Duration is not too low if it is larger or equal to the minimum duration.
+  if (duration >= settings.minDuration) {
+    return false;
+  }
+
+  // Duration is too low, return a formated duration message.
+
+  const minDur = formatDuration(
+    intervalToDuration({
+      start: 0,
+      end: (settings?.minDuration ?? 0) * 1000,
+    })
+  );
+  const msg = `Duration should be at least ${minDur}`;
+
+  return msg;
+};

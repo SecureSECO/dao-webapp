@@ -8,7 +8,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ClaimReward } from './ClaimReward';
+import { ClaimReward } from './Mining';
 
 const meta: Meta<typeof ClaimReward> = {
   component: ClaimReward,

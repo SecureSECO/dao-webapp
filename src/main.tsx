@@ -33,6 +33,7 @@ import Verification from '@/src/pages/Verification';
 import { Toaster } from '@/src/components/ui/Toaster';
 import ViewProposal from '@/src/pages/ViewProposal';
 import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
+import { Mining } from './pages/Mining';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -98,6 +99,10 @@ const router = createBrowserRouter([
       {
         path: '/verification',
         element: <Verification />,
+      },
+      {
+        path: '/mining',
+        element: <Mining />,
       },
       {
         path: '/query',
