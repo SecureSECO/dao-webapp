@@ -6,9 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { NavLink } from 'react-router-dom';
-import { cn } from '@/src/lib/utils';
 import LogoFull from '@/src/components/LogoFull';
+import ConnectButton from '@/src/components/layout/ConnectButton';
+import ThemePicker from '@/src/components/layout/ThemePicker';
+import { Button } from '@/src/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,15 +17,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
-import { HiBars3, HiXMark } from 'react-icons/hi2';
-import ThemePicker from '@/src/components/layout/ThemePicker';
-import ConnectButton from '@/src/components/layout/ConnectButton';
-import { Button } from '@/src/components/ui/Button';
+import { cn } from '@/src/lib/utils';
+import { HiBars3, HiChevronDown, HiXMark } from 'react-icons/hi2';
+import { NavLink, useLocation } from 'react-router-dom';
 
-type NavItem = {
-  label: string;
-  url: string;
-};
+type NavItemPage = { label: string; url: string };
+type NavItemCollection = { label: string; pages: NavItemPage[] };
+type NavItem = NavItemPage | NavItemCollection;
 
 const navItems: NavItem[] = [
   {
@@ -44,8 +43,11 @@ const navItems: NavItem[] = [
     url: '/verification',
   },
   {
-    label: 'Query',
-    url: '/query',
+    label: 'SearchSECO',
+    pages: [
+      { label: 'Query', url: '/query' },
+      { label: 'Mining', url: '/mining' },
+    ],
   },
   {
     label: 'Settings',
@@ -53,15 +55,15 @@ const navItems: NavItem[] = [
   },
 ];
 
-const Navitem = ({ item }: { item: NavItem }) => {
+const Navitempage = ({ item }: { item: NavItemPage }) => {
   return (
     <NavLink
       key={item.label}
       to={item.url}
       className={({ isActive, isPending }) =>
         cn(
-          'rounded-md px-4 py-2 text-lg font-semibold ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2',
-          isActive && 'bg-highlight text-primary shadow-md',
+          'w-full rounded-md px-4 py-2 text-lg font-semibold ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2',
+          isActive && 'active bg-highlight text-primary shadow-md',
           isPending && ''
         )
       }
@@ -69,6 +71,42 @@ const Navitem = ({ item }: { item: NavItem }) => {
       {item.label}
     </NavLink>
   );
+};
+
+const Navitemcollection = ({ item }: { item: NavItemCollection }) => {
+  const location = useLocation();
+  console.log(location);
+  const isActive = item.pages.some((x) => x.url === location.pathname);
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={cn(
+          'flex w-full flex-row items-center gap-x-1 rounded-md px-4 py-2 text-lg font-semibold leading-4 ring-ring ring-offset-2 ring-offset-background hover:cursor-pointer focus:outline-none focus:ring-2',
+          isActive && 'active bg-highlight text-primary shadow-md'
+        )}
+      >
+        {item.label}
+        <HiChevronDown className="mt-1 h-5 w-5 group-data-[state=open]:hidden" />
+        <HiXMark className="mt-1 h-5 w-5 group-data-[state=closed]:hidden" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="absolute -left-6 origin-top">
+        <DropdownMenuGroup>
+          {item.pages.map((page) => (
+            <DropdownMenuItem key={page.label} className="hover:cursor-pointer">
+              <Navitem item={page} />
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+const Navitem = ({ item }: { item: NavItem }) => {
+  if ((item as any).url) return <Navitempage item={item as NavItemPage} />;
+  if ((item as any).pages)
+    return <Navitemcollection item={item as NavItemCollection} />;
+  return <></>;
 };
 
 const Navbar = () => {

@@ -1,3 +1,14 @@
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { HiOutlineCurrencyDollar } from 'react-icons/hi2';
+
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import { Label } from '../components/ui/Label';
+import { MainCard } from '../components/ui/MainCard';
+import { Slider } from '../components/ui/Slider';
+import TokenAmount from '../components/ui/TokenAmount';
+import { TOKENS } from '../lib/constants/tokens';
+
 /**
  * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
  * © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -10,15 +21,17 @@ export type ClaimRewardData = {
   distribution: number;
 };
 
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import { Label } from '../components/ui/Label';
-import { Slider } from '../components/ui/Slider';
-import { Button } from '../components/ui/Button';
-import TokenAmount from '../components/ui/TokenAmount';
-import { MainCard } from '../components/ui/MainCard';
-import { HiOutlineCurrencyDollar } from 'react-icons/hi2';
-import { Card } from '../components/ui/Card';
-import { TOKENS } from '../lib/constants/tokens';
+export const Mining = ({}) => {
+  //TODO: implement with SDK
+  const claimableRep = 123;
+  const repToMonetaryFactor = 0.3;
+  return (
+    <ClaimReward
+      claimableRep={claimableRep}
+      repToMonetaryFactor={repToMonetaryFactor}
+    />
+  );
+};
 
 /*
  * @param props.claimableRep Total amount of reputation the user can claim
