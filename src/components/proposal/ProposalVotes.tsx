@@ -81,7 +81,7 @@ const getCategories = (
             TOKENS.rep.decimals,
             true
           )} 
-          ${TOKENS.rep.symbol}%`,
+          ${TOKENS.rep.symbol}`,
         },
       ],
     },
