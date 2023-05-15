@@ -123,51 +123,8 @@ const Navitemcollection = ({ item }: { item: NavItemCollection }) => {
         <HiChevronDown className="transi h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-screen max-w-xs origin-top flex-col divide-popover-foreground/10 rounded-3xl p-0 text-sm leading-5 shadow-lg">
-        <DropdownMenuGroup className="p-2">
-          {item.pages.map((page) => (
-            <div
-              key={page.label}
-              className={cn(
-                location.pathname == page.url
-                  ? 'text-primary dark:text-primary-highlight'
-                  : '',
-                'group relative flex gap-x-6 rounded-lg p-4 transition-colors hover:bg-popover-foreground/5'
-              )}
-            >
-              <div
-                className={cn(
-                  location.pathname == page.url
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-popover-foreground/5 group-hover:bg-popover group-hover:text-primary',
-                  'mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg '
-                )}
-              >
-                <page.icon className="h-6 w-6" aria-hidden="true" />
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <NavLink to={page.url}>
-                  <span className=" font-semibold">{page.label}</span>
-                  <p className="opacity-80">{page.description}</p>
-                </NavLink>
-              </div>
-            </div>
-          ))}
-        </DropdownMenuGroup>
-        <DropdownMenuGroup className="grid h-full w-full grid-cols-2 divide-x divide-popover-foreground/10 bg-popover-foreground/5">
-          {item.alternativeLinks &&
-            item.alternativeLinks.map((item) => (
-              <NavLink
-                key={item.label}
-                to={item.url}
-                className="flex items-center justify-center gap-x-2.5 p-3 font-semibold hover:bg-popover-foreground/20"
-              >
-                <item.icon
-                  className="h-5 w-5 flex-none opacity-80"
-                  aria-hidden="true"
-                />
-                {item.label}
-              </NavLink>
-            ))}
+        <DropdownMenuGroup>
+          <DropdownContent item={item} />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -196,7 +153,7 @@ const Navbar = () => {
               <HiXMark className="h-6 w-6 group-data-[state=closed]:hidden" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="absolute -left-6 origin-top">
+          <DropdownMenuContent className="absolute -left-6 origin-top lg:hidden">
             <DropdownMenuGroup>
               {navItems.map((item) => (
                 <DropdownMenuItem
@@ -227,6 +184,59 @@ const Navbar = () => {
         <ConnectButton />
       </div>
     </div>
+  );
+};
+
+export const DropdownContent = ({ item }: { item: NavItemCollection }) => {
+  return (
+    <>
+      <div className="p-2">
+        {item.pages.map((page) => (
+          <div
+            key={page.label}
+            className={cn(
+              location.pathname == page.url
+                ? 'text-primary dark:text-primary-highlight'
+                : '',
+              'group relative flex gap-x-6 rounded-lg p-4 transition-colors hover:bg-popover-foreground/5'
+            )}
+          >
+            <div
+              className={cn(
+                location.pathname == page.url
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-popover-foreground/5 group-hover:bg-popover group-hover:text-primary',
+                'mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg '
+              )}
+            >
+              <page.icon className="h-6 w-6" aria-hidden="true" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <NavLink to={page.url}>
+                <span className=" font-semibold">{page.label}</span>
+                <p className="opacity-80">{page.description}</p>
+              </NavLink>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="grid h-full w-full grid-cols-2 divide-x divide-popover-foreground/10 bg-popover-foreground/5">
+        {item.alternativeLinks &&
+          item.alternativeLinks.map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.url}
+              className="flex items-center justify-center gap-x-2.5 p-3 font-semibold hover:bg-popover-foreground/20"
+            >
+              <item.icon
+                className="h-5 w-5 flex-none opacity-80"
+                aria-hidden="true"
+              />
+              {item.label}
+            </NavLink>
+          ))}
+      </div>
+    </>
   );
 };
 
