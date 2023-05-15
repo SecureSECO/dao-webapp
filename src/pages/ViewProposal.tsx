@@ -166,13 +166,7 @@ const ViewProposal = () => {
                 <ProposalActions
                   loading={loading}
                   // Will be replaced with proper actions when switching to custom SDK
-                  actions={proposal?.actions.map(() => {
-                    return {
-                      method: '',
-                      interface: '',
-                      params: {},
-                    };
-                  })}
+                  actions={proposal?.actions}
                 >
                   {/* Execute button */}
                   {canExecute &&

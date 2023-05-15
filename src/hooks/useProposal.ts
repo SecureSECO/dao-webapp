@@ -197,7 +197,6 @@ export const useProposal = ({
 
     try {
       const daoProposal: Proposal = await client.sugar.GetProposal(+id);
-      console.log('daoProposal', daoProposal);
 
       if (daoProposal) {
         setProposal(daoProposal);
