@@ -6,9 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { NavLink } from 'react-router-dom';
-import { cn } from '@/src/lib/utils';
 import LogoFull from '@/src/components/LogoFull';
+import ConnectButton from '@/src/components/layout/ConnectButton';
+import ThemePicker from '@/src/components/layout/ThemePicker';
+import { Button } from '@/src/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +17,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
+import { cn } from '@/src/lib/utils';
 import { HiBars3, HiChevronDown, HiXMark } from 'react-icons/hi2';
-import ThemePicker from '@/src/components/layout/ThemePicker';
-import ConnectButton from '@/src/components/layout/ConnectButton';
-import { Button } from '@/src/components/ui/Button';
+import { NavLink, useLocation } from 'react-router-dom';
 
 type NavItemPage = { label: string; url: string };
 type NavItemCollection = { label: string; pages: NavItemPage[] };
@@ -63,7 +63,7 @@ const Navitempage = ({ item }: { item: NavItemPage }) => {
       className={({ isActive, isPending }) =>
         cn(
           'w-full rounded-md px-4 py-2 text-lg font-semibold ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2',
-          isActive && 'bg-highlight text-primary shadow-md',
+          isActive && 'active bg-highlight text-primary shadow-md',
           isPending && ''
         )
       }
@@ -74,19 +74,18 @@ const Navitempage = ({ item }: { item: NavItemPage }) => {
 };
 
 const Navitemcollection = ({ item }: { item: NavItemCollection }) => {
+  const location = useLocation();
+  console.log(location);
+  const isActive = item.pages.some((x) => x.url === location.pathname);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className={
-          //({ isActive, isPending }) =>
-          cn(
-            'flex w-full flex-row items-center gap-x-1 rounded-md px-4 py-2 text-lg font-semibold leading-4 ring-ring ring-offset-2 ring-offset-background hover:cursor-pointer focus:outline-none focus:ring-2'
-            // isActive && 'bg-highlight text-primary shadow-md',
-            // isPending && ''
-          )
-        }
+        className={cn(
+          'flex w-full flex-row items-center gap-x-1 rounded-md px-4 py-2 text-lg font-semibold leading-4 ring-ring ring-offset-2 ring-offset-background hover:cursor-pointer focus:outline-none focus:ring-2',
+          isActive && 'active bg-highlight text-primary shadow-md'
+        )}
       >
-        <span>{item.label}</span>
+        {item.label}
         <HiChevronDown className="mt-1 h-5 w-5 group-data-[state=open]:hidden" />
         <HiXMark className="mt-1 h-5 w-5 group-data-[state=closed]:hidden" />
       </DropdownMenuTrigger>
