@@ -30,12 +30,13 @@ import CategoryList from '@/src/components/ui/CategoryList';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useNavigate } from 'react-router';
 import { parseUnits } from 'ethers/lib/utils.js';
-import { TOKENS } from '@/src/lib/constants/tokens';
 import { getTokenInfo } from '@/src/lib/token-utils';
 import { Provider } from '@wagmi/core';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { useProvider } from 'wagmi';
 import { useEffect, useState } from 'react';
+import { BigNumber } from 'ethers';
+import { TOKENS } from '@/src/lib/constants/tokens';
 
 /**
  * Converts actions in their input form to IProposalAction objects, to be used to view proposals and sending proposal to SDK.
@@ -136,13 +137,16 @@ const parseActionInputs = async (
  * @returns The start date of the proposal as a Date object
  */
 const parseStartDate = (settings: ProposalFormVotingSettings): Date => {
-  return settings.start_time_type === 'custom'
-    ? inputToDate(
-        settings!.custom_start_date!,
-        settings!.custom_start_time!,
-        settings!.custom_start_timezone!
-      )
-    : new Date();
+  if (settings.start_time_type === 'now') {
+    const res = new Date();
+    res.setTime(0);
+    return res;
+  } else
+    return inputToDate(
+      settings!.custom_start_date!,
+      settings!.custom_start_time!,
+      settings!.custom_start_timezone!
+    );
 };
 
 /**
@@ -209,6 +213,13 @@ export const Confirmation = () => {
       });
 
     const parsedActions = await parseActionInputs(dataStep3.actions, provider);
+    console.log(
+      dataStep1,
+      parsedActions,
+      parseStartDate(dataStep2),
+      parseEndDate(dataStep2)
+    );
+
     contractTransaction(
       () =>
         client.sugar.CreateProposal(
