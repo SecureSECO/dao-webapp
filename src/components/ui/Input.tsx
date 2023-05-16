@@ -12,10 +12,10 @@
  * Inspired by https://ui.shadcn.com/docs/primitives/input
  */
 import * as React from 'react';
-import { cn } from '@/src/lib/utils';
-import { FieldError } from 'react-hook-form';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { Label } from '@/src/components/ui/Label';
+import { cn } from '@/src/lib/utils';
+import { FieldError } from 'react-hook-form';
 
 /**
  * InputProps interface represents the props for the Input component.
@@ -57,13 +57,16 @@ Input.displayName = 'Input';
 export interface LabelledInputProps extends InputProps {
   id: string;
   label: string;
+  tooltip?: string;
 }
 
 const LabelledInput = React.forwardRef<HTMLInputElement, LabelledInputProps>(
-  ({ id, label, error, className, ...props }, ref) => {
+  ({ id, label, tooltip, error, className, ...props }, ref) => {
     return (
       <div className="w-full">
-        <Label htmlFor={id}>{label}</Label>
+        <Label htmlFor={id} tooltip={tooltip}>
+          {label}
+        </Label>
         <ErrorWrapper name={label} error={error}>
           <Input
             ref={ref}
