@@ -181,7 +181,12 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       {children}
-      <SheetPrimitive.Close className={buttonVariants({ variant: 'outline' })}>
+      <SheetPrimitive.Close
+        className={cn(
+          buttonVariants({ variant: 'outline' }),
+          'absolute right-2 top-2 sm:right-4 md:right-10'
+        )}
+      >
         <HiX className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>

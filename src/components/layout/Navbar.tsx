@@ -17,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
+import Header from '@/src/components/ui/Header';
 import { Sheet, SheetContent, SheetTrigger } from '@/src/components/ui/Sheet';
 import { cn } from '@/src/lib/utils';
 import { createElement, useState } from 'react';
@@ -65,6 +66,10 @@ const navItems: NavItem[] = [
     url: '/verification',
   },
   {
+    label: 'Settings',
+    url: '/settings',
+  },
+  {
     label: 'SearchSECO',
     pages: [
       {
@@ -84,10 +89,6 @@ const navItems: NavItem[] = [
       { label: 'Website', url: '#', icon: HiOutlineGlobeAlt },
       { label: 'Discord', url: '#', icon: FaDiscord },
     ],
-  },
-  {
-    label: 'Settings',
-    url: '/settings',
   },
 ];
 
@@ -138,7 +139,7 @@ const Navitemcollection = ({
         {item.label}
         <HiChevronDown className="transi h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-screen max-w-xs origin-top flex-col divide-popover-foreground/10 rounded-3xl p-0 text-sm leading-5 shadow-lg">
+      <DropdownMenuContent className="w-screen max-w-xs origin-top rounded-3xl text-sm leading-5 shadow-lg">
         <DropdownMenuGroup>
           <DropdownContent item={item} />
         </DropdownMenuGroup>
@@ -158,10 +159,18 @@ const Navitem = ({
     return <Navitempage item={item as NavItemPage} className={className} />;
   if ((item as any).pages)
     return (
-      <Navitemcollection
-        item={item as NavItemCollection}
-        className={className}
-      />
+      <>
+        <Navitemcollection
+          item={item as NavItemCollection}
+          className={className + ' hidden lg:flex'}
+        />
+        <div className="rounded-3xl border border-border text-sm leading-5 shadow-lg lg:hidden">
+          <DropdownContent
+            title={'Secure Seco'}
+            item={item as NavItemCollection}
+          />
+        </div>
+      </>
     );
   return <></>;
 };
@@ -183,7 +192,7 @@ const Navbar = () => {
       </nav>
 
       {/* Wallet connection + dark mode toggler */}
-      <div className="flex flex-row items-center gap-x-2">
+      <div className="flex flex-row items-center gap-x-2 ">
         <ThemePicker />
         <ConnectButton />
       </div>
@@ -191,9 +200,22 @@ const Navbar = () => {
   );
 };
 
-export const DropdownContent = ({ item }: { item: NavItemCollection }) => {
+export const DropdownContent = ({
+  title,
+  item,
+  className,
+}: {
+  item: NavItemCollection;
+  title?: string;
+  className?: string;
+}) => {
   return (
-    <>
+    <div className={cn('divide-popover-foreground/10', className)}>
+      {title && (
+        <Header level={2} className="px-6 pt-4">
+          {title}
+        </Header>
+      )}
       <div className="p-2">
         {item.pages.map((page) => (
           <div
@@ -240,7 +262,7 @@ export const DropdownContent = ({ item }: { item: NavItemCollection }) => {
             </NavLink>
           ))}
       </div>
-    </>
+    </div>
   );
 };
 
@@ -271,10 +293,6 @@ function MobileNav() {
             {navItems.map((item) => (
               <Navitem item={item} className="text-center" />
             ))}
-          </div>
-          <div className="mt-8 flex flex-col gap-4">
-            <Button variant="outline">Log in</Button>
-            <Button>Download the app</Button>
           </div>
         </SheetContent>
       </Sheet>
