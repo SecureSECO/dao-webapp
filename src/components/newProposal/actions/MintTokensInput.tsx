@@ -40,9 +40,10 @@ export const emptyMintAction: ProposalFormMint = {
   },
 };
 
-export interface ProposalFormMintData extends ProposalFormAction {
+export type ProposalFormMintData = {
+  name: 'mint_tokens';
   wallets: ProposalFormMintWallet[];
-}
+};
 
 export type ProposalFormMintWallet = {
   address: string;

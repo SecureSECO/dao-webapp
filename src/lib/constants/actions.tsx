@@ -6,11 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { ProposalFormChangeParameter } from '@/src/components/newProposal/actions/ChangeParametersInput';
+import { ProposalFormMergeData } from '@/src/components/newProposal/actions/MergePRInput';
 import {
   MintTokensInputProps,
   ProposalFormMintData,
 } from '@/src/components/newProposal/actions/MintTokensInput';
 import { MintTokensInput } from '@/src/components/newProposal/actions/MintTokensInput';
+import { ProposalFormWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
 import MintAction, {
@@ -37,9 +40,14 @@ export type ActionName =
   | 'change_param'
   | 'unknown';
 
-export interface ProposalFormAction {
-  name: ActionName;
-}
+  export type ProposalFormAction =
+  | ProposalFormWithdrawData
+  | ProposalFormMintData
+  | ProposalFormMergeData
+  | ProposalFormChangeParameter;
+// export interface ProposalFormAction {
+//   name: ActionName;
+// }
 
 interface ActionViewProps<TAction> extends AccordionItemProps {
   action: TAction;
