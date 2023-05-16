@@ -53,26 +53,6 @@ export function anyNullOrUndefined(...values: any[]): boolean {
 }
 
 /**
- * Utility function to create count down text for dates
- * @param date The date
- * @returns
- */
-export const countdownText = (date: Date) => {
-  const now = new Date();
-  const hourDif = Math.abs(differenceInHours(date, now));
-  const minuteDif = Math.abs(differenceInMinutes(date, now));
-  if (hourDif > 24) {
-    return formatDistanceToNow(date);
-  } else if (minuteDif > 60) {
-    return `${hourDif} hours`;
-  } else if (minuteDif > 1) {
-    return `${minuteDif} minutes`;
-  } else {
-    return 'less than a minute';
-  }
-};
-
-/**
  * Calculate the percentage of part of a whole of two bigints
  * @param numerator Numerator of the division
  * @param denominator Denominator of the division
