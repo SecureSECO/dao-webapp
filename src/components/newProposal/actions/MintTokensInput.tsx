@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
+import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
 import { Input } from '@/src/components/ui/Input';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
 import { Button } from '../../ui/Button';

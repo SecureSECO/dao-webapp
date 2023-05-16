@@ -1,4 +1,8 @@
-import { AddressPattern, NumberPattern, UrlPattern } from './patterns';
+import {
+  AddressPattern,
+  NumberPattern,
+  UrlPattern,
+} from './constants/patterns';
 
 describe('Success cases for Number Pattern', () => {
   const successes = [

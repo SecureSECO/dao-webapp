@@ -10,7 +10,7 @@ import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { Button } from '@/src/components/ui/Button';
-import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
+import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
 import {
   Control,
   Controller,
