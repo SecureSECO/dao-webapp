@@ -6,14 +6,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Input } from '../../ui/Input';
-import { HiCircleStack, HiXMark } from 'react-icons/hi2';
-import { Button } from '../../ui/Button';
-import { UseFormRegister } from 'react-hook-form';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { MainCard } from '../../ui/MainCard';
-import { ActionFormError, ProposalFormActions } from '../steps/Actions';
+import { useContext } from 'react';
 import { Label } from '@/src/components/ui/Label';
+import { UseFormRegister, useFormContext } from 'react-hook-form';
+import { HiCircleStack, HiXMark } from 'react-icons/hi2';
+
+import { Button } from '../../ui/Button';
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
+import { Input } from '../../ui/Input';
+import { MainCard } from '../../ui/MainCard';
+import {
+  ActionFormContext,
+  ActionFormError,
+  ProposalFormActions,
+} from '../steps/Actions';
 
 export type ProposalFormMergeData = {
   name: 'merge_pr';
@@ -39,17 +45,19 @@ export const emptyMergeData: ProposalFormMergeData = {
 /**
  * @returns Component to be used within a form to describe the action of merging a pull request.
  */
-export const MergePRInput = ({
-  register,
-  prefix,
-  errors,
-  onRemove,
-}: {
-  register: UseFormRegister<ProposalFormActions>;
-  prefix: `actions.${number}`;
-  errors: ActionFormError<ProposalFormMergeData>;
-  onRemove: () => void;
-}) => {
+export const MergePRInput = () => {
+  const {
+    register,
+    formState: { errors: formErrors },
+    control,
+  } = useFormContext<ProposalFormActions>();
+
+  const { prefix, index, onRemove } = useContext(ActionFormContext);
+
+  const errors: ActionFormError<ProposalFormMergeData> = formErrors.actions
+    ? formErrors.actions[index]
+    : undefined;
+
   return (
     <MainCard
       header="Merge Pull Request"

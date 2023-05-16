@@ -6,49 +6,63 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {
-  useForm,
-  useFieldArray,
-  FieldError,
-  FieldErrors,
-  FieldValues,
-  Merge,
-} from 'react-hook-form';
-import {
-  StepNavigator,
-  useNewProposalFormContext,
-} from '@/src/pages/NewProposal';
-import {
-  ProposalFormWithdrawData,
-  WithdrawAssetsInput,
-  emptyWithdrawData,
-} from '@/src/components/newProposal/actions/WithdrawAssetsInput';
-import {
-  MintTokensInput,
-  ProposalFormMintData,
-  emptyMintData,
-} from '@/src/components/newProposal/actions/MintTokensInput';
+import { createContext } from 'react';
 import {
   MergePRInput,
   ProposalFormMergeData,
   emptyMergeData,
 } from '@/src/components/newProposal/actions/MergePRInput';
 import {
+  MintTokensInput,
+  ProposalFormMintData,
+  emptyMintData,
+} from '@/src/components/newProposal/actions/MintTokensInput';
+import {
+  ProposalFormWithdrawData,
+  WithdrawAssetsInput,
+  emptyWithdrawData,
+} from '@/src/components/newProposal/actions/WithdrawAssetsInput';
+import { Button } from '@/src/components/ui/Button';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuTrigger,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
-import { Button } from '@/src/components/ui/Button';
-import { HiBanknotes, HiCircleStack, HiCog, HiPlus } from 'react-icons/hi2';
 import { Label } from '@/src/components/ui/Label';
+import { ProposalFormAction, actions } from '@/src/lib/constants/actions';
+import {
+  StepNavigator,
+  useNewProposalFormContext,
+} from '@/src/pages/NewProposal';
+import {
+  FieldError,
+  FieldErrors,
+  FieldValues,
+  FormProvider,
+  Merge,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form';
 import { FaGithub } from 'react-icons/fa';
+import { HiBanknotes, HiCircleStack, HiCog, HiPlus } from 'react-icons/hi2';
+
 import {
   ChangeParametersInput,
   emptyChangeParameter,
 } from '../actions/ChangeParametersInput';
-import { ProposalFormActionData, actions } from '@/src/lib/constants/actions';
+import {
+  ProposalFormActionData,
+  actions as actionMap,
+} from '@/src/lib/constants/actions';
+
+export type ActionFormContextData = {
+  index: number;
+  prefix: `actions.${number}`;
+  onRemove: () => void;
+};
+export const ActionFormContext = createContext<ActionFormContextData>(null!);
 
 export interface ProposalFormActions {
   actions: ProposalFormActionData[];
@@ -57,17 +71,11 @@ export interface ProposalFormActions {
 export const Actions = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    getValues,
-    control,
-  } = useForm<ProposalFormActions>({ defaultValues: dataStep3 });
+  const methods = useForm<ProposalFormActions>({ defaultValues: dataStep3 });
 
   const { fields, append, remove } = useFieldArray<ProposalFormActions>({
     name: 'actions',
-    control: control,
+    control: methods.control,
   });
 
   const onSubmit = (data: ProposalFormActions) => {
@@ -76,12 +84,15 @@ export const Actions = () => {
   };
 
   const handleBack = () => {
-    const data = getValues();
+    const data = methods.getValues();
     setDataStep3(data);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={methods.handleSubmit(onSubmit)}
+      className="flex flex-col gap-4"
+    >
       <div className="space-y-2">
         <div className="flex flex-col gap-y-1">
           <Label tooltip="These actions can be executed after a vote successfully passes">
@@ -92,74 +103,47 @@ export const Actions = () => {
           ) : (
             <>
               {/* List of proposal actions */}
-              <div className="flex flex-col gap-6">
-                {fields.map((field: Record<'id', string>, index: number) => {
-                  const prefix: `actions.${number}` = `actions.${index}`;
-                  const action: ProposalFormActionData = getValues(prefix);
-                  const { form: ActionFormInput } = actions[action.name];
+              <FormProvider {...methods}>
+                <div className="flex flex-col gap-6">
+                  {fields.map((field: Record<'id', string>, index: number) => {
+                    const prefix: `actions.${number}` = `actions.${index}`;
+                    const action: ProposalFormActionData =
+                      methods.getValues(prefix);
+                    const context: ActionFormContextData = {
+                      prefix: prefix,
+                      index: index,
+                      onRemove: () => remove(index),
+                    };
 
-                  // return <ActionFormInput
-                  switch (action.name) {
-                    case 'withdraw_assets':
-                      return (
-                        <WithdrawAssetsInput
-                          register={register}
-                          prefix={prefix}
-                          key={field.id}
-                          errors={
-                            errors.actions ? errors.actions[index] : undefined
-                          }
-                          onRemove={() => remove(index)}
-                          control={control}
-                        />
-                      );
-                    case 'mint_tokens':
-                      return (
-                        <MintTokensInput
-                          register={register}
-                          control={control}
-                          prefix={prefix}
-                          key={field.id}
-                          errors={
-                            errors.actions ? errors.actions[index] : undefined
-                          }
-                          onRemove={() => remove(index)}
-                          getValues={getValues}
-                        />
-                      );
-                    case 'merge_pr':
-                      return (
-                        <MergePRInput
-                          register={register}
-                          prefix={prefix}
-                          key={field.id}
-                          errors={
-                            errors.actions ? errors.actions[index] : undefined
-                          }
-                          onRemove={() => remove(index)}
-                        />
-                      );
-                    case 'change_parameter':
-                      return (
-                        <ChangeParametersInput
-                          control={control}
-                          register={register}
-                          errors={errors?.actions?.[index]}
-                          prefix={prefix}
-                          onRemove={() => remove(index)}
-                        />
-                      );
-                  }
-                })}
-              </div>
+                    return (
+                      <ActionFormContext.Provider value={context}>
+                        {SelectActionInput(action)}
+                      </ActionFormContext.Provider>
+                    );
+                  })}
+                </div>
+              </FormProvider>
             </>
           )}
         </div>
-        <AddActionButton append={append} actions={getValues()} />
+        <AddActionButton append={append} actions={methods.getValues()} />
       </div>
       <StepNavigator onBack={handleBack} />
     </form>
   );
+};
+
+const SelectActionInput = (action: ProposalFormActionData) => {
+  switch (action.name) {
+    case 'withdraw_assets':
+      return <WithdrawAssetsInput />;
+    case 'mint_tokens':
+      return <MintTokensInput />;
+    case 'merge_pr':
+      return <MergePRInput />;
+    case 'change_param':
+      return <ChangeParametersInput />;
+  }
 };
 
 export type ActionFormError<T extends FieldValues> =

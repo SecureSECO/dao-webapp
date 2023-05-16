@@ -6,22 +6,29 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { useContext } from 'react';
 import { Input } from '@/src/components/ui/Input';
-import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
-import { Button } from '../../ui/Button';
+import { Label } from '@/src/components/ui/Label';
+import { ProposalFormAction } from '@/src/lib/constants/actions';
+import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { someUntil } from '@/src/lib/utils';
 import {
   Control,
+  UseFormGetValues,
   UseFormRegister,
   useFieldArray,
-  UseFormGetValues,
+  useFormContext,
 } from 'react-hook-form';
+import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
+
+import { Button } from '../../ui/Button';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import { ActionFormError, ProposalFormActions } from '../steps/Actions';
-import { Label } from '@/src/components/ui/Label';
-import { someUntil } from '@/src/lib/utils';
-import { ProposalFormAction } from '@/src/lib/constants/actions';
+import {
+  ActionFormContext,
+  ActionFormError,
+  ProposalFormActions,
+} from '../steps/Actions';
 
 export interface ProposalFormMint extends ProposalFormAction {
   name: 'mint_tokens';
@@ -60,26 +67,23 @@ export const emptyMintData: ProposalFormMintData = {
   wallets: [emptyMintWallet],
 };
 
-export type MintTokensInputProps = {
-  register: UseFormRegister<ProposalFormActions>;
-  control: Control<ProposalFormActions>;
-  prefix: `actions.${number}`;
-  errors: ActionFormError<ProposalFormMintData>;
-  onRemove: () => void;
-  getValues: UseFormGetValues<ProposalFormActions>;
-};
-
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.
  */
-export const MintTokensInput = ({
-  register,
-  control,
-  prefix,
-  errors,
-  onRemove,
-  getValues,
-}: MintTokensInputProps) => {
+export const MintTokensInput = () => {
+  const {
+    register,
+    formState: { errors: formErrors },
+    control,
+    getValues,
+  } = useFormContext<ProposalFormActions>();
+
+  const { prefix, index, onRemove } = useContext(ActionFormContext);
+
+  const errors: ActionFormError<ProposalFormMintData> = formErrors.actions
+    ? formErrors.actions[index]
+    : undefined;
+
   const { fields, append, remove } = useFieldArray({
     name: `${prefix}.wallets`,
     control: control,

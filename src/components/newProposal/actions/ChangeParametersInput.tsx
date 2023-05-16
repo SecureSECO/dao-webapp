@@ -6,30 +6,37 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { useContext } from 'react';
+import { Input } from '@/src/components/ui/Input';
 import {
   Select,
-  SelectGroup,
-  SelectTrigger,
   SelectContent,
-  SelectLabel,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/Select';
+import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { isNullOrUndefined } from '@/src/lib/utils';
 import {
   Control,
   Controller,
   UseFormRegister,
+  useFormContext,
   useWatch,
 } from 'react-hook-form';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { isNullOrUndefined } from '@/src/lib/utils';
-import { Input } from '@/src/components/ui/Input';
-import { MainCard } from '../../ui/MainCard';
 import { HiCog, HiXMark } from 'react-icons/hi2';
-import { Label } from '../../ui/Label';
-import { ActionFormError } from '../steps/Actions';
+
 import { Button } from '../../ui/Button';
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
+import { Label } from '../../ui/Label';
+import { MainCard } from '../../ui/MainCard';
+import {
+  ActionFormContext,
+  ActionFormError,
+  ProposalFormActions,
+} from '../steps/Actions';
 
 export type ProposalFormChangeParameter = {
   name: 'change_parameter';
@@ -130,23 +137,22 @@ const PluginParameterOptions: { plugins: Plugin[] } = {
   ],
 };
 
-export const ChangeParametersInput = ({
-  control,
-  register,
-  onRemove,
-  errors,
-  prefix,
-}: {
-  control: Control<any, any>;
-  register: UseFormRegister<any>;
-  onRemove: any;
-  errors?: ActionFormError<ProposalFormChangeParameter>;
-  prefix: `actions.${number}`;
-}) => {
+export const ChangeParametersInput = () => {
+  const {
+    register,
+    formState: { errors: formErrors },
+    control,
+  } = useFormContext<ProposalFormActions>();
+
+  const { prefix, index, onRemove } = useContext(ActionFormContext);
+
+  const errors: ActionFormError<ProposalFormChangeParameter> =
+    formErrors.actions ? formErrors.actions[index] : undefined;
+
   // react-hook-form input names
-  const name_plugin = `${prefix}.plugin`;
-  const name_param = `${prefix}.parameter`;
-  const name_value = `${prefix}.value`;
+  const name_plugin: `${typeof prefix}.plugin` = `${prefix}.plugin`;
+  const name_param: `${typeof prefix}.parameter` = `${prefix}.parameter`;
+  const name_value: `${typeof prefix}.value` = `${prefix}.value`;
 
   //Watches
   const watchPluginText = useWatch({ control: control, name: name_plugin });

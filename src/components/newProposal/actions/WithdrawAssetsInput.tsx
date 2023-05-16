@@ -6,23 +6,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Input } from '@/src/components/ui/Input';
-import { Label } from '@/src/components/ui/Label';
-import { HiBanknotes, HiXMark } from 'react-icons/hi2';
-import { Button } from '@/src/components/ui/Button';
-import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { useContext } from 'react';
 import {
-  Control,
-  Controller,
-  UseFormRegister,
-  useWatch,
-} from 'react-hook-form';
-import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
-import { MainCard } from '@/src/components/ui/MainCard';
-import {
+  ActionFormContext,
   ActionFormError,
   ProposalFormActions,
 } from '@/src/components/newProposal/steps/Actions';
+import { Button } from '@/src/components/ui/Button';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { Input } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
+import { MainCard } from '@/src/components/ui/MainCard';
 import {
   Select,
   SelectContent,
@@ -32,10 +26,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/Select';
-import { useDaoBalance } from '@/src/hooks/useDaoBalance';
-import { anyNullOrUndefined, cn } from '@/src/lib/utils';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { ActionName, ProposalFormAction } from '@/src/lib/constants/actions';
+import { useDaoBalance } from '@/src/hooks/useDaoBalance';
+import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { anyNullOrUndefined, cn } from '@/src/lib/utils';
+import {
+  Control,
+  Controller,
+  UseFormRegister,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
+import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 
 export type ProposalFormWithdrawData = ProposalFormAction & {
   recipient: string;
@@ -54,19 +57,19 @@ export const emptyWithdrawData: ProposalFormWithdrawData = {
 /**
  * @returns Component to be used within a form to describe the action of withdrawing assets.
  */
-export const WithdrawAssetsInput = ({
-  register,
-  prefix,
-  errors,
-  onRemove,
-  control,
-}: {
-  register: UseFormRegister<ProposalFormActions>;
-  prefix: `actions.${number}`;
-  errors: ActionFormError<ProposalFormWithdrawData>;
-  onRemove: any;
-  control: Control<ProposalFormActions, any>;
-}) => {
+export const WithdrawAssetsInput = () => {
+  const {
+    register,
+    formState: { errors: formErrors },
+    control,
+  } = useFormContext<ProposalFormActions>();
+
+  const { prefix, index, onRemove } = useContext(ActionFormContext);
+
+  const errors: ActionFormError<ProposalFormWithdrawData> = formErrors.actions
+    ? formErrors.actions[index]
+    : undefined;
+
   const { daoBalances, error, loading } = useDaoBalance();
   const filteredDaoBalances =
     error || loading || !daoBalances
