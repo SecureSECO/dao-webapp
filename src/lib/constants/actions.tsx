@@ -7,7 +7,10 @@
  */
 
 import { ProposalFormChangeParameter } from '@/src/components/newProposal/actions/ChangeParametersInput';
-import { ProposalFormMergeData } from '@/src/components/newProposal/actions/MergePRInput';
+import {
+  MergePRInput,
+  ProposalFormMergeData,
+} from '@/src/components/newProposal/actions/MergePRInput';
 import {
   MintTokensInputProps,
   ProposalFormMintData,
@@ -16,6 +19,9 @@ import { MintTokensInput } from '@/src/components/newProposal/actions/MintTokens
 import { ProposalFormWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
+import MergeAction, {
+  ProposalMergeAction,
+} from '@/src/components/proposal/actions/MergeAction';
 import MintAction, {
   ProposalMintAction,
 } from '@/src/components/proposal/actions/MintAction';
@@ -24,6 +30,7 @@ import { TOKENS } from '@/src/lib/constants/tokens';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { parseUnits } from 'ethers/lib/utils.js';
 import { IconType } from 'react-icons';
+import { FaGithub } from 'react-icons/fa';
 import {
   HiOutlineCircleStack,
   HiOutlineQuestionMarkCircle,
@@ -40,7 +47,10 @@ export type ActionName =
   | 'change_param'
   | 'unknown';
 
-  export type ProposalFormAction =
+export interface ProposalFormAction {
+  name: ActionName;
+}
+export type ProposalFormActionData =
   | ProposalFormWithdrawData
   | ProposalFormMintData
   | ProposalFormMergeData
@@ -53,11 +63,7 @@ interface ActionViewProps<TAction> extends AccordionItemProps {
   action: TAction;
 }
 
-export interface ActionInputProps {
-  onRemove: () => void;
-}
-
-type Action<TAction, TFormProps, TInputData> = {
+type Action<TAction, TInputData> = {
   method: string;
   interface: string;
   // Used on proposal tags
@@ -66,24 +72,19 @@ type Action<TAction, TFormProps, TInputData> = {
   // Component to view the action in the UI
   view: (props: ActionViewProps<TAction>) => JSX.Element;
   // Component to be used inside a form to input data for the action
-  form: (props: TFormProps) => JSX.Element;
+  input: () => JSX.Element;
   /**
    *
    * @param input
    * @returns
    */
-  parseInput: (input: TInputData) => Promise<IProposalAction>;
+  parseInput: (input: TInputData) => Promise<TAction>;
 };
 
-
 type Actions = {
-  mint_tokens: Action<
-    ProposalMintAction,
-    // note to self: don't need this
-    MintTokensInputProps,
-    ProposalFormMintData
-  >;
-  withdraw_assets: Action<ProposalWithdrawAction, 
+  mint_tokens: Action<ProposalMintAction, ProposalFormMintData>;
+  withdraw_assets: Action<ProposalWithdrawAction, ProposalFormWithdrawData>;
+  merge_pr: Action<ProposalMergeAction, ProposalFormMergeData>;
 };
 
 // merge: FaGithub
@@ -96,7 +97,7 @@ export const actions: Actions = {
     label: 'Mint tokens',
     icon: HiOutlineCircleStack,
     view: MintAction,
-    form: MintTokensInput,
+    input: MintTokensInput,
     parseInput: async (input: ProposalFormMintData) => ({
       method: actions.mint_tokens.method,
       interface: actions.mint_tokens.interface,
@@ -107,6 +108,29 @@ export const actions: Actions = {
         }),
       },
     }),
+  },
+  merge_pr: {
+    method: 'mergePullRequest(string,string,string)',
+    interface: 'IGithubPullRequestFacet',
+    label: 'Merge PR',
+    icon: FaGithub,
+    view: MergeAction,
+    input: MergePRInput,
+    parseInput: async (input: ProposalFormMergeData) => {
+      const url = new URL(input.inputs.url);
+      const owner = url.pathname.split('/')[1];
+      const repo = url.pathname.split('/')[2];
+      const pullNumber = url.pathname.split('/')[4];
+      return {
+        method: 'merge(string,string,string)',
+        interface: 'IGithubPullRequestFacet',
+        params: {
+          _owner: owner,
+          _repo: repo,
+          _pull_number: pullNumber,
+        },
+      };
+    },
   },
   // unknown: {
   //   method: '',

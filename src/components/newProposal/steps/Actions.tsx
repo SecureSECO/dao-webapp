@@ -48,10 +48,10 @@ import {
   ChangeParametersInput,
   emptyChangeParameter,
 } from '../actions/ChangeParametersInput';
-import { ProposalFormAction, actions } from '@/src/lib/constants/actions';
+import { ProposalFormActionData, actions } from '@/src/lib/constants/actions';
 
 export interface ProposalFormActions {
-  actions: ProposalFormAction[];
+  actions: ProposalFormActionData[];
 }
 
 export const Actions = () => {
@@ -95,7 +95,7 @@ export const Actions = () => {
               <div className="flex flex-col gap-6">
                 {fields.map((field: Record<'id', string>, index: number) => {
                   const prefix: `actions.${number}` = `actions.${index}`;
-                  const action: ProposalFormAction = getValues(prefix);
+                  const action: ProposalFormActionData = getValues(prefix);
                   const { form: ActionFormInput } = actions[action.name];
 
                   // return <ActionFormInput
@@ -175,7 +175,7 @@ export const AddActionButton = ({
   actions,
 }: {
   // eslint-disable-next-line no-unused-vars
-  append: (fn: ProposalFormAction) => void;
+  append: (fn: ProposalFormActionData) => void;
   actions: ProposalFormActions;
 }) => {
   return (

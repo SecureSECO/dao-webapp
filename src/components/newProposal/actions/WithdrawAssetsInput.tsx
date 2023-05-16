@@ -35,9 +35,9 @@ import {
 import { useDaoBalance } from '@/src/hooks/useDaoBalance';
 import { anyNullOrUndefined, cn } from '@/src/lib/utils';
 import TokenAmount from '@/src/components/ui/TokenAmount';
+import { ActionName, ProposalFormAction } from '@/src/lib/constants/actions';
 
-export type ProposalFormWithdrawData = {
-  name: 'withdraw_assets';
+export type ProposalFormWithdrawData = ProposalFormAction & {
   recipient: string;
   tokenAddress: string | 'custom';
   tokenAddressCustom?: string;
