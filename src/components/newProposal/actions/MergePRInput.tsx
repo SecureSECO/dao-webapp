@@ -8,7 +8,8 @@
 
 import { useContext } from 'react';
 import { Label } from '@/src/components/ui/Label';
-import { UseFormRegister, useFormContext } from 'react-hook-form';
+import { GithubPullRequestPattern } from '@/src/lib/constants/patterns';
+import { useFormContext } from 'react-hook-form';
 import { HiCircleStack, HiXMark } from 'react-icons/hi2';
 
 import { Button } from '../../ui/Button';
@@ -84,7 +85,7 @@ export const MergePRInput = () => {
             {...register(`${prefix}.inputs.url`, {
               required: true,
               pattern: {
-                value: /^(https:\/\/github.com\/.+\/.+\/pull\/\d+)$/,
+                value: GithubPullRequestPattern,
                 message: 'Please enter a valid GitHub pull request URL',
               },
             })}
