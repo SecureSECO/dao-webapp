@@ -6,18 +6,130 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useForm } from 'react-hook-form';
+import { NumberPattern } from '@/src/lib/patterns';
+import { isNullOrUndefined } from '@/src/lib/utils';
+import { errors } from 'ethers';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { HiInboxArrowDown } from 'react-icons/hi2';
 
+import { Address, AddressLength } from '../ui/Address';
+import { Button } from '../ui/Button';
+import { ErrorWrapper } from '../ui/ErrorWrapper';
+import { Input, LabelledInput } from '../ui/Input';
+import { Label } from '../ui/Label';
+import { MainCard } from '../ui/MainCard';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/Select';
+
+const Tokens = ['Matic', 'SECOIN', 'Other'] as const;
+type Token = (typeof Tokens)[number];
 type DepositAssetsData = {
-  name: string;
+  token: Token;
+  amount?: string;
 };
 
 export const DepositAssets = ({}) => {
-  const { register, handleSubmit } = useForm<DepositAssetsData>({});
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DepositAssetsData>({});
+
+  const watchToken = useWatch({ control: control, name: 'token' });
+  const isKnownToken = watchToken !== undefined && watchToken !== 'Other';
 
   const onSubmit = (data: DepositAssetsData) => {
     console.log(data);
   };
 
-  return <form onSubmit={handleSubmit(onSubmit)}></form>;
+  return (
+    <MainCard header="Deposit assets" variant="light" icon={HiInboxArrowDown}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Label tooltip="Asset to deposit" htmlFor="token">
+          Plugin
+        </Label>
+        <ErrorWrapper name="token" error={errors?.token}>
+          <Controller
+            control={control}
+            name="token"
+            rules={{ required: true }}
+            render={({ field: { onChange, name, value } }) => (
+              <Select defaultValue={value} onValueChange={onChange} name={name}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Token" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Tokens</SelectLabel>
+                    {Tokens.map((token) => (
+                      <SelectItem key={token} value={token}>
+                        {token}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </ErrorWrapper>
+        {isKnownToken ? (
+          <LabelledInput
+            {...register('amount', {
+              validate: (v) => {
+                // only Validate if this is active
+                if (!isKnownToken) return true;
+
+                // Required
+                if (v === undefined || v === '')
+                  return 'Please enter an amount';
+
+                // Number Pattern
+                if (!NumberPattern.test(v))
+                  return 'Please enter a number, e.g. 3.141';
+
+                // Otherwise this is valid
+                return true;
+              },
+            })}
+            id="amount"
+            tooltip={`Amount of ${watchToken} to deposit`}
+            label="Token Amount"
+            error={errors.amount}
+          />
+        ) : (
+          <></>
+        )}
+        {watchToken === 'Other' ? (
+          <div>
+            Copy the <span className="underline">ENS</span> or{' '}
+            <span className="underline">address</span> below and use your
+            wallet's send feature to send money to your DAO's treasury.
+            <Address
+              showCopy={true}
+              hasLink={true}
+              maxLength={AddressLength.Medium}
+              address={'TODO: Add Contract address'}
+            />
+            <Address
+              showCopy={true}
+              hasLink={false}
+              maxLength={AddressLength.Full}
+              address={'TODO: Add ENS'}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
+        <Button label="Deposit assets" />
+      </form>
+    </MainCard>
+  );
 };
