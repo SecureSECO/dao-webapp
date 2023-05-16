@@ -27,8 +27,8 @@ import {
   SelectValue,
 } from '@/src/components/ui/Select';
 import TokenAmount from '@/src/components/ui/TokenAmount';
+import { ActionName, ProposalFormAction } from '@/src/lib/constants/actions';
 import { useDaoBalance } from '@/src/hooks/useDaoBalance';
-import { ActionInputProps } from '@/src/lib/constants/actions';
 import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
 import { anyNullOrUndefined, cn } from '@/src/lib/utils';
 import {
@@ -40,8 +40,7 @@ import {
 } from 'react-hook-form';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 
-export type ProposalFormWithdrawData = {
-  name: 'withdraw_assets';
+export type ProposalFormWithdrawData = ProposalFormAction & {
   recipient: string;
   tokenAddress: string | 'custom';
   tokenAddressCustom?: string;

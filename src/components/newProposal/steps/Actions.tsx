@@ -52,6 +52,10 @@ import {
   ChangeParametersInput,
   emptyChangeParameter,
 } from '../actions/ChangeParametersInput';
+import {
+  ProposalFormActionData,
+  actions as actionMap,
+} from '@/src/lib/constants/actions';
 
 export type ActionFormContextData = {
   index: number;
@@ -61,7 +65,7 @@ export type ActionFormContextData = {
 export const ActionFormContext = createContext<ActionFormContextData>(null!);
 
 export interface ProposalFormActions {
-  actions: ProposalFormAction[];
+  actions: ProposalFormActionData[];
 }
 
 export const Actions = () => {
@@ -103,7 +107,7 @@ export const Actions = () => {
                 <div className="flex flex-col gap-6">
                   {fields.map((field: Record<'id', string>, index: number) => {
                     const prefix: `actions.${number}` = `actions.${index}`;
-                    const action: ProposalFormAction =
+                    const action: ProposalFormActionData =
                       methods.getValues(prefix);
                     const context: ActionFormContextData = {
                       prefix: prefix,
@@ -129,7 +133,7 @@ export const Actions = () => {
   );
 };
 
-const SelectActionInput = (action: ProposalFormAction) => {
+const SelectActionInput = (action: ProposalFormActionData) => {
   switch (action.name) {
     case 'withdraw_assets':
       return <WithdrawAssetsInput />;
@@ -137,7 +141,7 @@ const SelectActionInput = (action: ProposalFormAction) => {
       return <MintTokensInput />;
     case 'merge_pr':
       return <MergePRInput />;
-    case 'change_parameter':
+    case 'change_param':
       return <ChangeParametersInput />;
   }
 };
@@ -155,7 +159,7 @@ export const AddActionButton = ({
   actions,
 }: {
   // eslint-disable-next-line no-unused-vars
-  append: (fn: ProposalFormAction) => void;
+  append: (fn: ProposalFormActionData) => void;
   actions: ProposalFormActions;
 }) => {
   return (
