@@ -17,7 +17,10 @@ import {
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
-import ProposalActionFilter from '@/src/components/proposal/actions/ProposalActionFilter';
+import {
+  actions as actionMap,
+  actionToName,
+} from '@/src/lib/constants/actions';
 
 export interface IProposalAction {
   interface: string;
@@ -58,13 +61,10 @@ const ProposalActions = ({
         </div>
       ) : (
         <Accordion type="single" collapsible className="space-y-2">
-          {actions.map((action, i) => (
-            <ProposalActionFilter
-              key={i}
-              value={i.toString()}
-              action={action}
-            />
-          ))}
+          {actions.map((action, i) => {
+            const { view: View } = actionMap[actionToName(action)];
+            return <View key={i} value={i.toString()} action={action} />;
+          })}
         </Accordion>
       )}
       {children}

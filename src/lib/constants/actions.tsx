@@ -10,11 +10,15 @@ import { ProposalFormMintData } from '@/src/components/newProposal/actions/MintT
 import { MintTokensInput } from '@/src/components/newProposal/actions/MintTokensInput';
 import { ProposalFormAction } from '@/src/components/newProposal/steps/Actions';
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
+import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
 import MintAction from '@/src/components/proposal/actions/MintAction';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { parseUnits } from 'ethers/lib/utils.js';
 import { IconType } from 'react-icons';
-import { HiOutlineCircleStack } from 'react-icons/hi2';
+import {
+  HiOutlineCircleStack,
+  HiOutlineQuestionMarkCircle,
+} from 'react-icons/hi2';
 
 /**
  * This file contains
@@ -49,6 +53,9 @@ type Actions = {
   [name in ActionName]: Action;
 };
 
+// merge: FaGithub
+// withdraw: HiBankNotes
+/// param: HiOutlineCog
 export const actions: Actions = {
   mint_tokens: {
     method: 'multimint(address[],uint256[])',
@@ -66,6 +73,19 @@ export const actions: Actions = {
           return parseUnits(wallet.amount.toString(), TOKENS.rep.decimals);
         }),
       },
+    }),
+  },
+  unknown: {
+    method: '',
+    interface: '',
+    label: 'Unknown',
+    icon: HiOutlineQuestionMarkCircle,
+    view: DefaultAction,
+    form: () => <></>,
+    parseInput: () => ({
+      method: '',
+      interface: '',
+      params: {},
     }),
   },
 };
