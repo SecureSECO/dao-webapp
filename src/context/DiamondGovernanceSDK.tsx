@@ -13,13 +13,7 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import {
-  erc20ABI,
-  useNetwork,
-  useProvider,
-  useSigner,
-  useSwitchNetwork,
-} from 'wagmi';
+import { useNetwork, useSigner, useSwitchNetwork } from 'wagmi';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { Contract, ethers } from 'ethers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
@@ -36,14 +30,8 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
   const [client, setClient] = useState<DiamondGovernanceClient | undefined>(
     undefined
   );
-  const [repTokenContract, setRepTokenContract] = useState<
-    Contract | undefined
-  >(undefined);
 
   const signer = useSigner().data || undefined;
-  const provider = useProvider({
-    chainId: PREFERRED_NETWORK_METADATA.id,
-  });
 
   // Make sure the user is on the correct network
   const network = useSwitchNetwork({
@@ -78,15 +66,10 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     setClient(new DiamondGovernanceClient(diamondAddress, signer));
   }, [signer]);
 
-  useEffect(() => {
-    setRepTokenContract(new Contract(diamondAddress, erc20ABI, provider));
-  }, [provider]);
-
   return (
     <DiamondSDKContext.Provider
       value={{
         client,
-        repTokenContract,
       }}
     >
       {children}

@@ -205,7 +205,7 @@ export const WithdrawAssetsInput = ({
                   message: 'Please enter a number, e.g. 3.141',
                 },
               })}
-              type="number"
+              type="string"
               id="amount"
               placeholder="0"
               min="0"
