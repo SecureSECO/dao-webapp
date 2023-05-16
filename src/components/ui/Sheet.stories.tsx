@@ -42,7 +42,7 @@ export const Primary: Story = {
         <SheetTrigger asChild>
           <Button variant="outline">Open</Button>
         </SheetTrigger>
-        <SheetContent position="right" size="md">
+        <SheetContent position="top">
           <SheetHeader>
             <SheetTitle>Edit profile</SheetTitle>
             <SheetDescription>

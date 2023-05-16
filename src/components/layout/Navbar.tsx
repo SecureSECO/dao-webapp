@@ -17,14 +17,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
+import { Sheet, SheetContent, SheetTrigger } from '@/src/components/ui/Sheet';
 import { cn } from '@/src/lib/utils';
-import { createElement } from 'react';
+import { createElement, useState } from 'react';
 import { IconType } from 'react-icons';
 import { FaDiscord } from 'react-icons/fa';
 import { HiOutlineTerminal } from 'react-icons/hi';
 import {
   HiBars3,
   HiChevronDown,
+  HiChevronUp,
   HiDocumentMagnifyingGlass,
   HiOutlineDocumentMagnifyingGlass,
   HiOutlineGlobeAlt,
@@ -89,7 +91,13 @@ const navItems: NavItem[] = [
   },
 ];
 
-const Navitempage = ({ item }: { item: NavItemPage }) => {
+const Navitempage = ({
+  item,
+  className,
+}: {
+  item: NavItemPage;
+  className?: string;
+}) => {
   return (
     <NavLink
       key={item.label}
@@ -98,7 +106,8 @@ const Navitempage = ({ item }: { item: NavItemPage }) => {
         cn(
           'w-full select-none rounded-md px-4 py-2 text-lg font-semibold ring-ring ring-offset-2 ring-offset-background hover:bg-highlight/50 focus:outline-none focus:ring-2',
           isActive && 'bg-highlight text-primary shadow-md',
-          isPending && ''
+          isPending && '',
+          className
         )
       }
     >
@@ -107,7 +116,13 @@ const Navitempage = ({ item }: { item: NavItemPage }) => {
   );
 };
 
-const Navitemcollection = ({ item }: { item: NavItemCollection }) => {
+const Navitemcollection = ({
+  item,
+  className,
+}: {
+  item: NavItemCollection;
+  className?: string;
+}) => {
   const location = useLocation();
   console.log(location);
   const isActive = item.pages.some((x) => x.url === location.pathname);
@@ -116,7 +131,8 @@ const Navitemcollection = ({ item }: { item: NavItemCollection }) => {
       <DropdownMenuTrigger
         className={cn(
           'flex w-full select-none items-center justify-center gap-x-1 rounded-md px-4 py-2 text-lg font-semibold leading-4 ring-ring ring-offset-2 ring-offset-background hover:cursor-pointer hover:bg-highlight/50 focus:outline-none focus:ring-2 data-[state=open]:bg-highlight/50',
-          isActive && 'bg-highlight text-primary shadow-md '
+          isActive && 'bg-highlight text-primary shadow-md ',
+          className
         )}
       >
         {item.label}
@@ -131,45 +147,33 @@ const Navitemcollection = ({ item }: { item: NavItemCollection }) => {
   );
 };
 
-const Navitem = ({ item }: { item: NavItem }) => {
-  if ((item as any).url) return <Navitempage item={item as NavItemPage} />;
+const Navitem = ({
+  item,
+  className,
+}: {
+  item: NavItem;
+  className?: string;
+}) => {
+  if ((item as any).url)
+    return <Navitempage item={item as NavItemPage} className={className} />;
   if ((item as any).pages)
-    return <Navitemcollection item={item as NavItemCollection} />;
+    return (
+      <Navitemcollection
+        item={item as NavItemCollection}
+        className={className}
+      />
+    );
   return <></>;
 };
 
 const Navbar = () => {
   return (
-    <div className="mt-2 flex w-full flex-row items-center justify-between lg:mt-0">
+    <div className="mt-2 flex w-full flex-row-reverse items-center justify-between lg:mt-0 lg:flex-row">
       {/* Desktop logo */}
       <LogoFull className="hidden h-fit w-40 lg:block" />
 
       {/* Mobile nav */}
-      <nav className="relative lg:hidden">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="group" size="sm">
-              <HiBars3 className="h-6 w-6 group-data-[state=open]:hidden" />
-              <HiXMark className="h-6 w-6 group-data-[state=closed]:hidden" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="absolute -left-6 origin-top lg:hidden">
-            <DropdownMenuGroup>
-              {navItems.map((item) => (
-                <DropdownMenuItem
-                  key={item.label}
-                  className="hover:cursor-pointer"
-                >
-                  <Navitem item={item} />
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </nav>
-
-      {/* Mobile logo */}
-      <LogoFull className="h-fit w-32 xs:w-40 lg:hidden" />
+      <MobileNav />
 
       {/* Desktop nav */}
       <nav className="hidden px-4 py-6 lg:flex lg:flex-row lg:gap-x-2">
@@ -241,3 +245,39 @@ export const DropdownContent = ({ item }: { item: NavItemCollection }) => {
 };
 
 export default Navbar;
+
+function MobileNav() {
+  return (
+    <nav className="relative lg:hidden">
+      <Sheet>
+        <SheetTrigger asChild>
+          <div>
+            <Button
+              variant="outline"
+              aria-label="Toggle site navigation"
+              icon={HiBars3}
+            />
+            <span className="sr-only">Open</span>
+          </div>
+        </SheetTrigger>
+        <SheetContent
+          position="top"
+          size="content"
+          className="overflow-y-scroll"
+        >
+          {/* Mobile logo */}
+          <div className="flex flex-col items-center space-y-4">
+            <LogoFull className="h-fit w-32 xs:w-40" />
+            {navItems.map((item) => (
+              <Navitem item={item} className="text-center" />
+            ))}
+          </div>
+          <div className="mt-8 flex flex-col gap-4">
+            <Button variant="outline">Log in</Button>
+            <Button>Download the app</Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </nav>
+  );
+}
