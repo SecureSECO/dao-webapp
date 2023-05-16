@@ -7,15 +7,13 @@
  */
 
 import { NumberPattern } from '@/src/lib/patterns';
-import { isNullOrUndefined } from '@/src/lib/utils';
-import { errors } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiInboxArrowDown } from 'react-icons/hi2';
 
 import { Address, AddressLength } from '../ui/Address';
 import { Button } from '../ui/Button';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
-import { Input, LabelledInput } from '../ui/Input';
+import { LabelledInput } from '../ui/Input';
 import { Label } from '../ui/Label';
 import { MainCard } from '../ui/MainCard';
 import {
@@ -27,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/Select';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 
 const Tokens = ['Matic', 'SECOIN', 'Other'] as const;
 type Token = (typeof Tokens)[number];
@@ -42,6 +41,7 @@ export const DepositAssets = ({}) => {
     handleSubmit,
     formState: { errors },
   } = useForm<DepositAssetsData>({});
+  const { daoAddress } = useDiamondSDKContext();
 
   const watchToken = useWatch({ control: control, name: 'token' });
   const isKnownToken = watchToken !== undefined && watchToken !== 'Other';
@@ -111,12 +111,13 @@ export const DepositAssets = ({}) => {
           <div>
             Copy the <span className="underline">ENS</span> or{' '}
             <span className="underline">address</span> below and use your
-            wallet's send feature to send money to your DAO's treasury.
+            wallet&apos;s send feature to send money to your DAO&apos;s
+            treasury.
             <Address
               showCopy={true}
               hasLink={true}
               maxLength={AddressLength.Medium}
-              address={'TODO: Add Contract address'}
+              address={daoAddress ?? ''}
             />
             <Address
               showCopy={true}
