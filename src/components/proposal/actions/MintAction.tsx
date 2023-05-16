@@ -30,12 +30,12 @@ import { useProvider } from 'wagmi';
  * @note The tokenId is only used if governance is done through NFT's, which is not currently the case
  * @note By default, it is assumed that this action will mint the reputation (governance) token
  */
-export type ProposalMintAction = IProposalAction & {
+export interface ProposalMintAction extends IProposalAction {
   params: {
     _addresses: string[];
     _amounts: BigNumber[];
   };
-};
+}
 
 interface MintActionProps extends AccordionItemProps {
   action: ProposalMintAction;

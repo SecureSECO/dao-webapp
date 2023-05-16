@@ -21,8 +21,9 @@ import { MainCard } from '../../ui/MainCard';
 import { ActionFormError, ProposalFormActions } from '../steps/Actions';
 import { Label } from '@/src/components/ui/Label';
 import { someUntil } from '@/src/lib/utils';
+import { ProposalFormAction } from '@/src/lib/constants/actions';
 
-export type ProposalFormMint = {
+export interface ProposalFormMint extends ProposalFormAction {
   name: 'mint_tokens';
   inputs: {
     mintTokensToWallets: {
@@ -30,7 +31,7 @@ export type ProposalFormMint = {
       amount: string | number;
     }[];
   };
-};
+}
 
 export const emptyMintAction: ProposalFormMint = {
   name: 'mint_tokens',
@@ -39,10 +40,9 @@ export const emptyMintAction: ProposalFormMint = {
   },
 };
 
-export type ProposalFormMintData = {
-  name: 'mint_tokens';
+export interface ProposalFormMintData extends ProposalFormAction {
   wallets: ProposalFormMintWallet[];
-};
+}
 
 export type ProposalFormMintWallet = {
   address: string;
@@ -59,6 +59,15 @@ export const emptyMintData: ProposalFormMintData = {
   wallets: [emptyMintWallet],
 };
 
+export type MintTokensInputProps = {
+  register: UseFormRegister<ProposalFormActions>;
+  control: Control<ProposalFormActions>;
+  prefix: `actions.${number}`;
+  errors: ActionFormError<ProposalFormMintData>;
+  onRemove: () => void;
+  getValues: UseFormGetValues<ProposalFormActions>;
+};
+
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.
  */
@@ -69,14 +78,7 @@ export const MintTokensInput = ({
   errors,
   onRemove,
   getValues,
-}: {
-  register: UseFormRegister<ProposalFormActions>;
-  control: Control<ProposalFormActions>;
-  prefix: `actions.${number}`;
-  errors: ActionFormError<ProposalFormMintData>;
-  onRemove: () => void;
-  getValues: UseFormGetValues<ProposalFormActions>;
-}) => {
+}: MintTokensInputProps) => {
   const { fields, append, remove } = useFieldArray({
     name: `${prefix}.wallets`,
     control: control,

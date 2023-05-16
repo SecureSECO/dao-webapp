@@ -47,18 +47,12 @@ import { FaGithub } from 'react-icons/fa';
 import {
   ChangeParametersInput,
   emptyChangeParameter,
-  ProposalFormChangeParameter,
 } from '../actions/ChangeParametersInput';
+import { ProposalFormAction, actions } from '@/src/lib/constants/actions';
 
 export interface ProposalFormActions {
   actions: ProposalFormAction[];
 }
-
-export type ProposalFormAction =
-  | ProposalFormWithdrawData
-  | ProposalFormMintData
-  | ProposalFormMergeData
-  | ProposalFormChangeParameter;
 
 export const Actions = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
@@ -102,7 +96,9 @@ export const Actions = () => {
                 {fields.map((field: Record<'id', string>, index: number) => {
                   const prefix: `actions.${number}` = `actions.${index}`;
                   const action: ProposalFormAction = getValues(prefix);
+                  const { form: ActionFormInput } = actions[action.name];
 
+                  // return <ActionFormInput
                   switch (action.name) {
                     case 'withdraw_assets':
                       return (

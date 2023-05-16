@@ -6,13 +6,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { ProposalFormMintData } from '@/src/components/newProposal/actions/MintTokensInput';
+import {
+  MintTokensInputProps,
+  ProposalFormMintData,
+} from '@/src/components/newProposal/actions/MintTokensInput';
 import { MintTokensInput } from '@/src/components/newProposal/actions/MintTokensInput';
-import { ProposalFormAction } from '@/src/components/newProposal/steps/Actions';
 import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
-import MintAction from '@/src/components/proposal/actions/MintAction';
+import MintAction, {
+  ProposalMintAction,
+} from '@/src/components/proposal/actions/MintAction';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { parseUnits } from 'ethers/lib/utils.js';
 import { IconType } from 'react-icons';
 import {
@@ -31,26 +36,42 @@ export type ActionName =
   | 'change_param'
   | 'unknown';
 
-type Action = {
+export interface ProposalFormAction {
+  name: ActionName;
+}
+
+interface ActionViewProps extends AccordionItemProps {
+  action: IProposalAction;
+}
+
+type Action<TAction, TFormProps, TInputData> = {
   method: string;
   interface: string;
   // Used on proposal tags
   label: string;
   icon: IconType;
   // Component to view the action in the UI
-  view: (props: any) => JSX.Element;
+  view: (props: ViewActionProps<TAction>) => JSX.Element;
   // Component to be used inside a form to input data for the action
-  form: (props: any) => JSX.Element;
+  form: (props: TFormProps) => JSX.Element;
   /**
    *
    * @param input
    * @returns
    */
-  parseInput: (input: ProposalFormAction) => IProposalAction;
+  parseInput: (input: TInputData) => Promise<IProposalAction>;
 };
 
+interface ViewActionProps<TAction> extends AccordionItemProps {
+  action: TAction;
+}
+
 type Actions = {
-  [name in ActionName]: Action;
+  mint_tokens: Action<
+    ProposalMintAction,
+    MintTokensInputProps,
+    ProposalFormMintData
+  >;
 };
 
 // merge: FaGithub
@@ -64,7 +85,7 @@ export const actions: Actions = {
     icon: HiOutlineCircleStack,
     view: MintAction,
     form: MintTokensInput,
-    parseInput: (input: ProposalFormMintData) => ({
+    parseInput: async (input: ProposalFormMintData) => ({
       method: actions.mint_tokens.method,
       interface: actions.mint_tokens.interface,
       params: {
@@ -75,19 +96,19 @@ export const actions: Actions = {
       },
     }),
   },
-  unknown: {
-    method: '',
-    interface: '',
-    label: 'Unknown',
-    icon: HiOutlineQuestionMarkCircle,
-    view: DefaultAction,
-    form: () => <></>,
-    parseInput: () => ({
-      method: '',
-      interface: '',
-      params: {},
-    }),
-  },
+  // unknown: {
+  //   method: '',
+  //   interface: '',
+  //   label: 'Unknown',
+  //   icon: HiOutlineQuestionMarkCircle,
+  //   view: DefaultAction,
+  //   form: () => <></>,
+  //   parseInput: async () => ({
+  //     method: '',
+  //     interface: '',
+  //     params: {},
+  //   }),
+  // },
 };
 
 /**
@@ -117,5 +138,5 @@ export const actionToName = (action: IProposalAction): ActionName => {
   const identifier = getIdentifier(action);
   return actionNames[identifier] ?? 'unknown';
 };
-const getIdentifier = (action: IProposalAction | Action) =>
+const getIdentifier = (action: IProposalAction) =>
   `${action.interface}.${action.method}`;
