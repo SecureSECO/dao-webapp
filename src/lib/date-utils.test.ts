@@ -1,10 +1,13 @@
 import {
+  countdownText,
   getDurationDateAhead,
+  getDurationInSeconds,
   inputToDate,
   isGapEnough,
   timezoneOffsetDifference,
   timezoneStringFormat,
 } from '@/src/lib/date-utils';
+import { addDays, addHours, addMinutes, addSeconds } from 'date-fns';
 
 test("'2022-12-15' + 1 day (=86400 secs) to be 2022-12-16", () => {
   expect(getDurationDateAhead(86400, '2022-12-15')).toBe('2022-12-16');
@@ -44,4 +47,19 @@ test('isGapEnough is correct for various options', () => {
   expect(
     isGapEnough('2022-12-15', '12:00', '2022-12-15', '12:01', 61)
   ).toBeFalsy();
+});
+
+test('getDurationInSeconds is correct for various options', () => {
+  expect(getDurationInSeconds(1, 0, 0)).toBe(24 * 60 * 60);
+  expect(getDurationInSeconds(0, 1, 0)).toBe(60 * 60);
+  expect(getDurationInSeconds(0, 0, 1)).toBe(60);
+});
+
+test('CountDownText various dates', () => {
+  const now = new Date();
+  expect(countdownText(addDays(now, 2))).toBe('2 days');
+  expect(countdownText(addDays(now, 54))).toBe('about 2 months');
+  expect(countdownText(addMinutes(addHours(now, 7), 35))).toBe('7 hours');
+  expect(countdownText(addSeconds(addMinutes(now, 4), 35))).toBe('4 minutes');
+  expect(countdownText(addSeconds(now, 4))).toBe('less than a minute');
 });

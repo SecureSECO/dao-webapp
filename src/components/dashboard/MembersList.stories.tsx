@@ -8,6 +8,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import MembersList from '@/src/components/dashboard/MembersList';
+import { BigNumber } from 'ethers';
 
 const meta = {
   component: MembersList,
@@ -23,11 +24,11 @@ export const Default: Story = {
     members: [
       {
         address: '0xD6E6C74C6054AD232C7A9833E89714EA39734A0F',
-        bal: 2,
+        bal: BigNumber.from('0x4563918244F40000'),
       },
       {
         address: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
-        bal: 1,
+        bal: BigNumber.from('0x4563918244F40000'),
       },
     ],
     loading: false,
@@ -40,11 +41,11 @@ export const Loading: Story = {
     members: [
       {
         address: '0xD6E6C74C6054AD232C7A9833E89714EA39734A0F',
-        bal: 2,
+        bal: BigNumber.from('0x4563918244F40000'),
       },
       {
         address: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
-        bal: 1,
+        bal: BigNumber.from('0x4563918244F40000'),
       },
     ],
     loading: true,
@@ -57,11 +58,11 @@ export const Error: Story = {
     members: [
       {
         address: '0xD6E6C74C6054AD232C7A9833E89714EA39734A0F',
-        bal: 2,
+        bal: BigNumber.from('0x4563918244F40000'),
       },
       {
         address: '0xD42B4BA7E532E3947FB1829C22EAA7DE754D79A8',
-        bal: 1,
+        bal: BigNumber.from('0x4563918244F40000'),
       },
     ],
     loading: true,

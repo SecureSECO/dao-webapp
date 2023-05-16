@@ -23,7 +23,7 @@ import {
 } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { goerli, polygon } from 'wagmi/chains';
+import { polygon, polygonMumbai } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import Finance from '@/src/pages/Finance';
 import Settings from '@/src/pages/Settings';
@@ -32,7 +32,7 @@ import NewProposal from '@/src/pages/NewProposal';
 import Verification from '@/src/pages/Verification';
 import { Toaster } from '@/src/components/ui/Toaster';
 import ViewProposal from '@/src/pages/ViewProposal';
-import { ganache } from '@/src/lib/constants/GanacheChain';
+import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
 import { Mining } from './pages/Mining';
 
 // 1. Get projectID at https://cloud.walletconnect.com
@@ -42,7 +42,7 @@ if (!import.meta.env.VITE_APP_PROJECT_ID) {
 const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 
 // 2. Configure wagmi client
-const chains = [goerli, polygon, ganache];
+const chains = [polygonMumbai, polygon];
 
 const { provider } = configureChains(chains, [
   import.meta.env.PROD || import.meta.env.VITE_USE_GANACHE !== 'true'
@@ -121,7 +121,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <Toaster />
     <WagmiConfig client={wagmiClient}>
       <AragonSDKWrapper>
-        <RouterProvider router={router} />
+        <DiamondSDKWrapper>
+          <RouterProvider router={router} />
+        </DiamondSDKWrapper>
       </AragonSDKWrapper>
     </WagmiConfig>
 

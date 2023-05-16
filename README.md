@@ -277,8 +277,9 @@ Additionally, the following files should be updated:
 
 - [ProposalActionFilter.tsx](/src/components/proposal/actions/ProposalActionFilter.tsx) - a case should be added for the action, which should return the `<ExampleAction />` component newly defined in `ExampleAction.tsx`
 - [Actions.tsx](/src/components/newProposal/steps/Actions.tsx) - a case should be added for the new action in the switch statement of the component in this file, which should return the `<ExampleInput />` component newly defined in `ExampleInput.tsx`
-- [Confirmation.tsx](/src/components/newProposal/steps/Confirmation.tsx) - a case should be added for the new action to map the form data as defined in `ExampleInput.tsx` to the format expected by the `IProposalAction` interface (as defined in [ProposalActions.tsx](/src/components/proposal/ProposalActions.tsx))
-- [ProposalTag.tsx](/src/components/governance/ProposalTag.tsx) - an icon should be added to the `proposalTagIcon` object and the name of the action to the props interface `ProposalTagProps.icon`
+- [Confirmation.tsx](/src/components/newProposal/steps/Confirmation.tsx) - a case should be added to the function `parseActionInputs` for the new action to map the form data as defined in `ExampleInput.tsx` to the format expected by the `IProposalAction` interface (as defined in [ProposalActions.tsx](/src/components/proposal/ProposalActions.tsx))
+- [utils.ts](/src/lib/utils.ts) - a case should be added for the new action to map it to a readable name, which is used in the `getPropsalTags` function inside of the `ProposalTag.tsx` file (this is only necessary if you wish to add a tag for this action to the proposal cards)
+- [ProposalTag.tsx](/src/components/governance/ProposalTag.tsx) - an icon should be added to the `proposalTagIcon` object and the name of the action to the props interface `ProposalTagProps.icon`. Additionally, the new action should be added to the switch statement in the `getProposalTags` function
 
 ## Dependencies
 

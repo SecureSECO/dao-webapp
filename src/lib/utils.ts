@@ -6,12 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import { ClassValue, clsx } from 'clsx';
 import {
   differenceInHours,
   differenceInMinutes,
   formatDistanceToNow,
 } from 'date-fns';
+import { BigNumber } from 'ethers';
 import { twMerge } from 'tailwind-merge';
 
 /**
@@ -52,26 +54,6 @@ export function anyNullOrUndefined(...values: any[]): boolean {
 }
 
 /**
- * Utility function to create count down text for dates
- * @param date The date
- * @returns
- */
-export const countdownText = (date: Date) => {
-  const now = new Date();
-  const hourDif = Math.abs(differenceInHours(date, now));
-  const minuteDif = Math.abs(differenceInMinutes(date, now));
-  if (hourDif > 24) {
-    return formatDistanceToNow(date);
-  } else if (minuteDif > 60) {
-    return `${hourDif} hours`;
-  } else if (minuteDif > 1) {
-    return `${minuteDif} minutes`;
-  } else {
-    return 'less than a minute';
-  }
-};
-
-/**
  * Calculate the percentage of part of a whole of two bigints
  * @param numerator Numerator of the division
  * @param denominator Denominator of the division
@@ -81,7 +63,22 @@ export const calcBigintPercentage = (
   numerator: bigint,
   denominator: bigint
 ): number => {
+  if (denominator === 0n) return 0;
   return Number((numerator * 10000n) / denominator) / 100;
+};
+
+/**
+ * Calculate the percentage of part of a whole of two BigNumbers (from ethers)
+ * @param numerator Numerator of the division
+ * @param denominator Denominator of the division
+ * @returns The percentage of the division as a number
+ * @note This function is a wrapper around calcBigintPercentage
+ */
+export const calcBigNumberPercentage = (
+  numerator: BigNumber,
+  denominator: BigNumber
+): number => {
+  return calcBigintPercentage(numerator.toBigInt(), denominator.toBigInt());
 };
 
 /**
@@ -126,4 +123,33 @@ export const truncateMiddle = (address: string, maxLength: number) => {
  */
 export const copyToClipboard = (address: string) => {
   navigator.clipboard.writeText(address);
+};
+
+/**
+ * Function to get a more readable name for a proposal action.
+ * Used in ProposalCard to display tags for the actions attached to the proposal.
+ * @param action Instance of IProposalAction to get a more readable name for
+ * @returns A string that represents the action
+ * @example
+ * const action = {
+ *  interface: "IMintableGovernanceStructure",
+ *  method: "mintVotingPower(address,uint256,uint256)",
+ *  params: { ... }
+ * }
+ * const name = actionToName(action);
+ * console.log(name); // "mint_tokens"
+ */
+export const actionToName = (action: IProposalAction) => {
+  switch (action.interface + '.' + action.method) {
+    case 'IChange.change': // FIXME: not correct interface and method
+      return 'change_parameter';
+    case 'IGithubPullRequestFacet.mergePullRequest(string,string,string)':
+      return 'merge_pr';
+    case 'IERC20MultiMinterFacet.multimint(address[],uint256[])':
+      return 'mint_tokens';
+    case 'IWithdraw.withdraw': // FIXME: not correct interface and method
+      return 'withdraw_assets';
+    default:
+      return 'unknown';
+  }
 };

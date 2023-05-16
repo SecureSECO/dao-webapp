@@ -12,7 +12,7 @@
  * It is built with the Dropdown, Button, and Tooltip components.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DropdownMenu as Dropdown,
   DropdownMenuContent,
@@ -24,63 +24,60 @@ import { Button } from '@/src/components/ui/Button';
 import {
   HiBarsArrowDown,
   HiCalendar,
-  HiChartBar,
   HiChevronDown,
   HiChevronUp,
   HiIdentification,
 } from 'react-icons/hi2';
 import { HiThumbUp } from 'react-icons/hi';
 import { cn } from '@/src/lib/utils';
-import { ProposalSortBy, SortDirection } from '@aragon/sdk-client';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
+import {
+  ProposalSorting,
+  SortingOrder,
+} from '@plopmenz/diamond-governance-sdk';
 
-type ProposalSortByString = 'CREATED_AT'; // | 'NAME' | 'POPULARITY' | 'VOTES';
+type ProposalSortingString = 'Creation' | 'Title' | 'TotalVotes';
 const sortProps = [
   {
-    value: 'CREATED_AT',
+    value: 'Creation',
     icon: HiCalendar,
     label: 'Creation date',
   },
-  // {
-  //   value: 'NAME',
-  //   icon: HiIdentification,
-  //   label: 'Name',
-  // },
-  // {
-  //   value: 'POPULARITY',
-  //   icon: HiChartBar,
-  //   label: 'Popularity',
-  // },
-  // {
-  //   value: 'VOTES',
-  //   icon: HiThumbUp,
-  //   label: 'Votes',
-  // },
+  {
+    value: 'Title',
+    icon: HiIdentification,
+    label: 'Title',
+  },
+  {
+    value: 'TotalVotes',
+    icon: HiThumbUp,
+    label: 'Votes',
+  },
 ];
 
 // eslint vies the below as unused, but they are used in the JSX
 // eslint-disable-next-line no-unused-vars
-enum DirectionState {
+enum SortOrderState {
   // eslint-disable-next-line no-unused-vars
-  NONE,
+  None,
   // eslint-disable-next-line no-unused-vars
-  ASC,
+  Asc,
   // eslint-disable-next-line no-unused-vars
-  DESC,
+  Desc,
 }
 
 /**
- * Increment the direction state to obtain the next direction in the cycle of the DirectionState enum  (NONE -> ASC -> DESC -> NONE)
- * @see DirectionState for the enum of directions this will cycle through
+ * Increment the direction state to obtain the next direction in the cycle of the DirectionState enum  (None -> Asc -> Desc -> None)
+ * @see SortOrderState for the enum of directions this will cycle through
  * @param state The direction to increment
  * @returns The next direction in the cycle
  */
-const incrementDirectionState = (state: DirectionState) => {
+const incrementSortOrder = (state: SortOrderState) => {
   // Increment to get the next direction inside of the  enum
   return (state + 1) % 3;
 };
@@ -94,39 +91,38 @@ const incrementDirectionState = (state: DirectionState) => {
  * @returns A SortSelector React element.
  */
 const SortSelector = ({
-  setSortBy,
-  setDirection,
+  setSorting,
+  setOrder,
 }: {
   // eslint-disable-next-line no-unused-vars
-  setSortBy: (sortBy: ProposalSortBy) => void;
+  setSorting: (sorting: ProposalSorting) => void;
   // eslint-disable-next-line no-unused-vars
-  setDirection: (direction: SortDirection | undefined) => void;
+  setOrder: (order: SortingOrder | undefined) => void;
 }) => {
-  const [sortBySelected, setSortBySelected] =
-    useState<ProposalSortByString>('CREATED_AT');
-  const [directionSelected, setDirectionSelected] = useState<DirectionState>(
-    DirectionState.NONE
+  const [sortingSelected, setSortingSelected] =
+    useState<ProposalSortingString>('Creation');
+  const [orderSelected, setOrderSelected] = useState<SortOrderState>(
+    SortOrderState.None
   );
 
   useEffect(() => {
-    setSortBy(ProposalSortBy[sortBySelected]);
-  }, [sortBySelected]);
+    setSorting(ProposalSorting[sortingSelected]);
+  }, [sortingSelected]);
 
-  // This code is used to set the direction of the table
-  // It is used to set the direction state based on the direction selected
+  // This code is used to set the sorting order for the call to GetProposals
   useEffect(() => {
-    switch (directionSelected) {
-      case DirectionState.NONE:
-        setDirection(undefined);
+    switch (orderSelected) {
+      case SortOrderState.None:
+        setOrder(undefined);
         break;
-      case DirectionState.ASC:
-        setDirection(SortDirection.ASC);
+      case SortOrderState.Asc:
+        setOrder(SortingOrder.Asc);
         break;
-      case DirectionState.DESC:
-        setDirection(SortDirection.DESC);
+      case SortOrderState.Desc:
+        setOrder(SortingOrder.Desc);
         break;
     }
-  }, [directionSelected]);
+  }, [orderSelected]);
 
   return (
     <>
@@ -136,8 +132,10 @@ const SortSelector = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent className="">
           <DropdownMenuRadioGroup
-            value={sortBySelected}
-            onValueChange={(v) => setSortBySelected(v as ProposalSortByString)}
+            value={sortingSelected}
+            onValueChange={(v) =>
+              setSortingSelected(v as ProposalSortingString)
+            }
           >
             {sortProps.map((prop) => (
               <DropdownMenuRadioItem
@@ -145,7 +143,7 @@ const SortSelector = ({
                 value={prop.value}
                 className={cn(
                   'flex flex-row justify-start gap-x-2 hover:cursor-pointer',
-                  sortBySelected == prop.value && 'text-primary-highlight'
+                  sortingSelected == prop.value && 'text-primary-highlight'
                 )}
               >
                 <prop.icon className="h-5 w-5" />
@@ -167,34 +165,32 @@ const SortSelector = ({
                   <HiChevronUp
                     className={cn(
                       'h-3 w-3 shrink-0 transition-all duration-200',
-                      directionSelected === DirectionState.ASC && 'scale-150',
-                      directionSelected === DirectionState.DESC &&
+                      orderSelected === SortOrderState.Asc && 'scale-150',
+                      orderSelected === SortOrderState.Desc &&
                         'rotate-180 scale-150',
-                      directionSelected === DirectionState.NONE && '-mb-0.5'
+                      orderSelected === SortOrderState.None && '-mb-0.5'
                     )}
                   />
                   <HiChevronDown
                     className={cn(
                       'h-3 w-3 shrink-0 transition-all duration-200',
-                      (directionSelected === DirectionState.DESC ||
-                        directionSelected === DirectionState.ASC) &&
+                      (orderSelected === SortOrderState.Desc ||
+                        orderSelected === SortOrderState.Asc) &&
                         'hidden rotate-180 scale-150',
-                      directionSelected === DirectionState.NONE && '-mt-0.5'
+                      orderSelected === SortOrderState.None && '-mt-0.5'
                     )}
                   />
                 </div>
               }
               onClick={() => {
-                setDirectionSelected(
-                  incrementDirectionState(directionSelected)
-                );
+                setOrderSelected(incrementSortOrder(orderSelected));
               }}
             />
           </TooltipTrigger>
           <TooltipContent>
             <p>
               Sort{' '}
-              {directionSelected === DirectionState.ASC
+              {orderSelected === SortOrderState.Asc
                 ? 'ascending'
                 : 'descending'}
             </p>

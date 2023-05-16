@@ -14,15 +14,16 @@ import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { TokenInfo, getTokenInfo } from '@/src/lib/token-utils';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { HiArrowRight, HiBanknotes } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';
 
 export type ProposalWithdrawAction = IProposalAction & {
   params: {
-    amount: bigint;
-    tokenAddress: string;
-    to: string;
+    _amount: BigNumber;
+    _tokenAddress: string;
+    _to: string;
   };
 };
 
@@ -45,7 +46,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
   useEffect(() => {
     async function fetchTokenInfo() {
       const fetchedTokenInfo = await getTokenInfo(
-        action.params.tokenAddress,
+        action.params._tokenAddress,
         provider,
         PREFERRED_NETWORK_METADATA.nativeCurrency
       );
@@ -76,7 +77,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
           <p className="text-base text-popover-foreground/80">
             {tokenInfo?.decimals
               ? toAbbreviatedTokenAmount(
-                  action.params.amount,
+                  action.params._amount.toBigInt(),
                   tokenInfo?.decimals ?? 0
                 )
               : '?'}{' '}
@@ -92,7 +93,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
           <Card variant="outline" size="sm" className="font-medium">
             <p className="text-xs font-normal text-popover-foreground/80">To</p>
             <Address
-              address={action.params.to}
+              address={action.params._to}
               maxLength={AddressLength.Medium}
               hasLink={false}
               showCopy={false}

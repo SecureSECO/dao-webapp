@@ -6,8 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { addDays, addHours, addMinutes, addSeconds } from 'date-fns';
-import { anyNullOrUndefined, cn, countdownText } from '@/src/lib/utils';
+import { anyNullOrUndefined, cn } from '@/src/lib/utils';
 
 // These are very simplistic tests, mostly meant as example tests.
 
@@ -34,13 +33,4 @@ test('anyNullOrUndefined works for null and undefined', () => {
 
 test('anyNullOrUndefined does not trigger for falsy values', () => {
   expect(anyNullOrUndefined(0, '', 'null', 'undefined')).toBeFalsy;
-});
-
-test('CountDownText various dates', () => {
-  const now = new Date();
-  expect(countdownText(addDays(now, 2))).toBe('2 days');
-  expect(countdownText(addDays(now, 54))).toBe('about 2 months');
-  expect(countdownText(addMinutes(addHours(now, 7), 35))).toBe('7 hours');
-  expect(countdownText(addSeconds(addMinutes(now, 4), 35))).toBe('4 minutes');
-  expect(countdownText(addSeconds(now, 4))).toBe('less than a minute');
 });

@@ -13,6 +13,7 @@ import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import { ProposalFormMetadata } from '@/src/components/newProposal/steps/Metadata';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
 import { ProposalFormActions } from '@/src/components/newProposal/steps/Actions';
+import { constants } from 'ethers';
 
 const meta: Meta<typeof Confirmation> = {
   component: Confirmation,
@@ -44,17 +45,12 @@ export const Primary: Story = {
     FormProviderDecoratorFactory(
       {
         title: 'A nice title for a proposal with a rich description',
-        summary: 'This is a proposal ',
-        description:
-          '<p>This is richt text content</p><p><strong>This line is bold</strong></p><p><em>This is in italics</em></p><p><a target="_blank" rel="noopener noreferrer nofollow" href="http://www.example.com">This is a link</a></p><ol><li><p>We even have lists</p></li><li><p>With multiple elements</p></li><li><p>This one is numbered</p></li></ol><p>But we can also have bullet point lists</p><ul><li><p>Bullet 1</p></li><li><p>Bullet 2</p></li><li><p>Last bullet 3</p></li></ul><p></p>',
+        description: 'This is a proposal ',
+        body: '<p>This is richt text content</p><p><strong>This line is bold</strong></p><p><em>This is in italics</em></p><p><a target="_blank" rel="noopener noreferrer nofollow" href="http://www.example.com">This is a link</a></p><ol><li><p>We even have lists</p></li><li><p>With multiple elements</p></li><li><p>This one is numbered</p></li></ol><p>But we can also have bullet point lists</p><ul><li><p>Bullet 1</p></li><li><p>Bullet 2</p></li><li><p>Last bullet 3</p></li></ul><p></p>',
         resources: [
           { name: 'Example resource 1', url: 'https:://www.example.com/1' },
           { name: 'Example resource 2', url: 'https:://www.example.com/2' },
         ],
-        media: {
-          logo: '',
-          header: '',
-        },
       },
       {
         option: 'yes-no-abstain',
@@ -69,16 +65,25 @@ export const Primary: Story = {
           {
             name: 'mint_tokens',
             wallets: [
-              { address: '0x123', amount: 1 },
-              { address: '0x098765432123456789', amount: 3.141 },
-              { address: '0x765656565656566566', amount: 1000 },
+              {
+                address: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+                amount: 1,
+              },
+              {
+                address: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+                amount: 3.141,
+              },
+              {
+                address: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+                amount: 1000,
+              },
             ],
           },
           {
             name: 'withdraw_assets',
-            recipient: '0x123456',
-            tokenAddress: '0x987654321',
-            amount: '3.141',
+            recipient: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+            tokenAddress: constants.AddressZero,
+            amount: 3.141,
           },
         ],
       }

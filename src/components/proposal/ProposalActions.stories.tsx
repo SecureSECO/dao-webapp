@@ -7,6 +7,12 @@
  */
 
 import ProposalActions from '@/src/components/proposal/ProposalActions';
+import {
+  dummyChangeParamsAction,
+  dummyMergeAction,
+  dummyMintAction,
+  dummyWithdrawAction,
+} from '@/src/hooks/useProposal';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -31,51 +37,21 @@ BigInt.prototype.toJSON = function () {
   return this.toString();
 };
 
-const dummyActions = [
-  {
-    method: 'withdraw',
-    interface: 'IWithdraw',
-    params: {
-      to: '0x000000002',
-      amount: 1000000000000000000n,
-      tokenAddress: '0x000000002',
-    },
-  },
-  {
-    method: 'mint',
-    interface: 'IMint',
-    params: {
-      to: [
-        {
-          to: '0x000000002',
-          amount: 1000000000000000000n,
-          tokenAddress: '0x000000002',
-        },
-        {
-          to: '0x000000001',
-          amount: 1000000000000000000n,
-          tokenAddress: '0x000000001',
-        },
-      ],
-    },
-  },
-  {
-    method: 'merge',
-    interface: 'IMerge',
-    params: {
-      url: 'https://github.com/SecureSECODAO/dao-webapp/pull/43',
-    },
-  },
-  {
-    method: 'unknown',
-    interface: 'IUnknown',
-    params: {},
-  },
-];
+const dummyUnknownAction = {
+  method: 'unknown()',
+  interface: 'IUnknown',
+  params: {},
+};
 
 export const Primary: Story = {
   args: {
-    actions: dummyActions,
+    actions: [
+      dummyMintAction,
+      dummyWithdrawAction,
+      dummyMergeAction,
+      dummyChangeParamsAction,
+      dummyUnknownAction,
+    ],
   },
 };
 
@@ -87,7 +63,13 @@ export const NoActions: Story = {
 
 export const Loading: Story = {
   args: {
-    actions: dummyActions,
+    actions: [
+      dummyMintAction,
+      dummyWithdrawAction,
+      dummyMergeAction,
+      dummyChangeParamsAction,
+      dummyUnknownAction,
+    ],
     loading: true,
   },
 };
