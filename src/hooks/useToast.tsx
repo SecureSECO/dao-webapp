@@ -9,6 +9,7 @@ import * as React from 'react';
 import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
+import { ContractTransaction } from 'ethers';
 
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 3000;
@@ -250,40 +251,27 @@ function promise(promise: Promise<any>, props: PromiseToast) {
   };
 }
 
-type ContractToastProps<TStepKey> = {
-  steps: {
-    signed: TStepKey;
-    confirmed: TStepKey;
-  };
+type ContractTransactionToastProps = {
   messages: {
     error: string;
     success: string;
   };
-  onFinish?: () => void;
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
 };
-
-interface ContractToastStepValue<TStepKey> {
-  key: TStepKey;
-  txHash?: string;
-}
 
 /**
  * Show a toast that will be updated based on interaction with a smart contract, using the provided content.
  * This will show a loading toast that says "Awaiting signature" until the user signs the transaction, after which
  * it will show a loading toast that says "Awaiting confirmation" until the transaction is confirmed. If it is successful, or an error occurs,
  * a toast with corresponding style and using the given content will be shown.
- * @type TStepKey The type of the key to switch on inside of the value of each step
- * @type TStepValue The type of each step in the generator
- * @param promise The AsyncGenerator to update the toast based off of
- * @param props An object containing the content to show when the async generator runs into an error, when it succeeds, the values for the steps and optionally a callback function to call when the transation is finished (and confirmed)
+ * @param promise A promise that returns an ethers ContractTransaction object
+ * @param props An object containing the content to show when an error is encountered, and when the transaction has is successful, plus optionally a callback function to call when the transation is finished (and confirmed)
  * @returns An object containing the id of the toast
  */
-async function contractInteraction<
-  TStepKey,
-  TStepValue extends ContractToastStepValue<TStepKey>
->(
-  method: () => AsyncGenerator<TStepValue, any, any>,
-  props: ContractToastProps<TStepKey>
+async function contractTransaction(
+  promise: () => Promise<ContractTransaction>,
+  props: ContractTransactionToastProps
 ) {
   const id = genId();
 
@@ -305,74 +293,47 @@ async function contractInteraction<
 
   try {
     // Get block explorer url for the currently preferred network
-    const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
-    const steps = method();
+    const explorerURL = PREFERRED_NETWORK_METADATA.explorer;
+    const transaction = await promise();
 
-    try {
-      for await (const step of steps) {
-        try {
-          switch (step.key) {
-            case props.steps.signed:
-              // Show link to transaction on etherscan if txHash is provided
-              updateToast(
-                {
-                  title: 'Awaiting confirmation...',
-                  description: step.txHash ? (
-                    <a
-                      href={`${etherscanURL}/tx/${step.txHash}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex flex-row items-center gap-x-1 text-xs text-primary"
-                    >
-                      View on etherscan
-                      <HiArrowTopRightOnSquare />
-                    </a>
-                  ) : (
-                    ''
-                  ),
-                },
-                id
-              );
-              break;
-            case props.steps.confirmed:
-              updateToast(
-                {
-                  title: props.messages.success,
-                  description: '',
-                  variant: 'success',
-                  duration: 3000,
-                },
-                id
-              );
-              break;
-          }
-        } catch (err) {
-          updateToast(
-            {
-              title: 'Error submitting vote',
-              description: '',
-              variant: 'error',
-              duration: 3000,
-            },
-            id
-          );
-          console.error(err);
-        }
-      }
-    } catch (e) {
-      // Will be shown when something goes wrong during the process of sending transaction
-      updateToast(
-        {
-          title: props.messages.error,
-          description: '',
-          variant: 'error',
-          duration: 3000,
-        },
-        id
-      );
-    }
+    // Show link to transaction on block explorer
+    updateToast(
+      {
+        title: 'Awaiting confirmation...',
+        description: explorerURL ? (
+          <a
+            href={`${explorerURL}/tx/${transaction.hash}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex flex-row items-center gap-x-1 text-xs text-primary"
+          >
+            View on block explorer
+            <HiArrowTopRightOnSquare />
+          </a>
+        ) : (
+          ''
+        ),
+      },
+      id
+    );
+
+    // Await confirmation of the transaction
+    await transaction.wait();
+    // Call the given success callback function
+    props.onSuccess && props.onSuccess();
+    updateToast(
+      {
+        title: props.messages.success,
+        description: '',
+        variant: 'success',
+        duration: 3000,
+      },
+      id
+    );
   } catch (e) {
-    // Will be shown when the user rejects transaction
+    // Call the given callback function
+    props.onError && props.onError(e);
+    // Will be shown when the user rejects transaction or another error occurs
     updateToast(
       {
         title: props.messages.error,
@@ -383,7 +344,6 @@ async function contractInteraction<
       id
     );
   }
-  props.onFinish && props.onFinish();
   return {
     id: id,
   };
@@ -413,4 +373,4 @@ function useToast() {
   };
 }
 
-export { useToast, toast, promise, contractInteraction };
+export { useToast, toast, promise, contractTransaction };

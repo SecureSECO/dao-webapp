@@ -26,6 +26,10 @@ import {
 import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import { Link } from '@/src/components/ui/Link';
 import { HiChevronLeft } from 'react-icons/hi2';
+import { useVotingPower } from '@/src/hooks/useVotingPower';
+import { useAccount } from 'wagmi';
+import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
 
 const totalSteps = 4;
 
@@ -119,6 +123,10 @@ export const NewProposalFormProvider = ({
 
 export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
   const { step, setStep } = useNewProposalFormContext();
+  const { address, isConnected } = useAccount();
+  const { votingPower, minProposalVotingPower } = useVotingPower({
+    address,
+  });
 
   const handlePrevStep = () => {
     if (onBack) {
@@ -130,6 +138,7 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
   };
 
   const isLastStep = step === totalSteps;
+  const canCreate = isConnected && votingPower.gte(minProposalVotingPower);
 
   return (
     <div className="flex items-center gap-2">
@@ -137,7 +146,20 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
         Back
       </Button>
 
-      <Button type="submit">{isLastStep ? 'Submit' : 'Next'}</Button>
+      <div className="flex flex-row items-center gap-x-4">
+        <Button type="submit" disabled={isLastStep && !canCreate}>
+          {isLastStep ? 'Submit' : 'Next'}
+        </Button>
+        {/* Show a warning to connect wallet if not connected, or unsifficient voting power if so */}
+        {isLastStep &&
+          (!isConnected ? (
+            <ConnectWalletWarning action="to submit" />
+          ) : (
+            votingPower.lt(minProposalVotingPower) && (
+              <InsufficientRepWarning action="to submit" />
+            )
+          ))}
+      </div>
     </div>
   );
 };

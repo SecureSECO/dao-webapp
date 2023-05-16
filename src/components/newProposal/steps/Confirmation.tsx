@@ -14,8 +14,7 @@ import ProposalActions, {
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
-import { useToast } from '@/src/hooks/useToast';
+import { contractTransaction, useToast } from '@/src/hooks/useToast';
 import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/date-utils';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import {
@@ -28,12 +27,161 @@ import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import CategoryList from '@/src/components/ui/CategoryList';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { useNavigate } from 'react-router';
+import { parseUnits } from 'ethers/lib/utils.js';
+import { getTokenInfo } from '@/src/lib/token-utils';
+import { Provider } from '@wagmi/core';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { useProvider } from 'wagmi';
+import { useEffect, useState } from 'react';
+import { TOKENS } from '@/src/lib/constants/tokens';
+
+/**
+ * Converts actions in their input form to IProposalAction objects, to be used to view proposals and sending proposal to SDK.
+ * @param actions List of actions in their input form
+ * @returns A list of corresponding IProposalAction objects
+ */
+const parseActionInputs = async (
+  actions: ProposalFormAction[],
+  provider: Provider
+): Promise<IProposalAction[]> => {
+  const res: IProposalAction[] = [];
+  await Promise.all(
+    actions.map(async (action) => {
+      switch (action.name) {
+        case 'withdraw_assets': {
+          // Fetch token info of the token to withdraw to access its decimals
+          try {
+            const tokenInfo = await getTokenInfo(
+              action.tokenAddress,
+              provider,
+              PREFERRED_NETWORK_METADATA.nativeCurrency
+            );
+
+            res.push({
+              method: 'withdraw', // FIXME: This is not the correct method
+              interface: 'IWithdraw', // FIXME: This is not the correct interface
+              params: {
+                _to: action.recipient,
+                // Convert to correct number of tokens using the fetched decimals
+                _amount: parseUnits(
+                  action.amount.toString(),
+                  tokenInfo.decimals
+                ),
+                _tokenAddress:
+                  action.tokenAddress === 'custom'
+                    ? action.tokenAddressCustom
+                    : action.tokenAddress,
+              },
+            });
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        }
+        case 'mint_tokens':
+          res.push({
+            method: 'multimint(address[],uint256[])',
+            interface: 'IERC20MultiMinterFacet',
+            params: {
+              _addresses: action.wallets.map((wallet) => wallet.address),
+              _amounts: action.wallets.map((wallet) => {
+                return parseUnits(
+                  wallet.amount.toString(),
+                  TOKENS.rep.decimals
+                );
+              }),
+            },
+          });
+          break;
+        // Refer to useProposal.ts for the correct method and interface
+        case 'merge_pr': {
+          const url = new URL(action.inputs.url);
+          const owner = url.pathname.split('/')[1];
+          const repo = url.pathname.split('/')[2];
+          const pullNumber = url.pathname.split('/')[4];
+          if (!owner || !repo || !pullNumber) break;
+          res.push({
+            method: 'merge(string,string,string)',
+            interface: 'IGithubPullRequestFacet',
+            params: {
+              _owner: owner,
+              _repo: repo,
+              _pull_number: pullNumber,
+            },
+          });
+          break;
+        }
+        case 'change_parameter':
+          res.push({
+            method: 'change', // FIXME: This is not the correct method
+            interface: 'IChange', //FIXME: This is not the correct interface
+            params: {
+              _plugin: action.plugin,
+              _param: action.parameter,
+              _value: action.value,
+            },
+          });
+      }
+    })
+  );
+
+  return res;
+};
+
+/**
+ * Convert the proposal voting settings form input to a start date.
+ * @param settings Proposal voting settings form input
+ * @returns The start date of the proposal as a Date object
+ */
+const parseStartDate = (settings: ProposalFormVotingSettings): Date => {
+  if (settings.start_time_type === 'now') {
+    const res = new Date();
+    res.setTime(0);
+    return res;
+  } else
+    return inputToDate(
+      settings!.custom_start_date!,
+      settings!.custom_start_time!,
+      settings!.custom_start_timezone!
+    );
+};
+
+/**
+ * Convert the proposal voting settings form input to a end date.
+ * @param settings Proposal voting settings form input
+ * @returns The end of the proposal as a Date object
+ */
+const parseEndDate = (settings: ProposalFormVotingSettings): Date => {
+  return settings.end_time_type === 'end-custom'
+    ? inputToDate(
+        settings!.custom_end_date!,
+        settings!.custom_end_time!,
+        settings!.custom_end_timezone!
+      )
+    : add(new Date(), {
+        minutes: settings!.duration_minutes!,
+        hours: settings!.duration_hours!,
+        days: settings!.duration_days!,
+      });
+};
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
-
-  const { votingClient, votingPluginAddress } = useAragonSDKContext();
+  const [actions, setActions] = useState<IProposalAction[]>([]);
+  const { client } = useDiamondSDKContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const provider = useProvider();
+
+  // Maps the action form iputs to IProposalAction interface
+  useEffect(() => {
+    if (dataStep3)
+      parseActionInputs(dataStep3.actions, provider).then((res) =>
+        setActions(res)
+      );
+  }, [dataStep3]);
 
   const {
     handleSubmit,
@@ -48,35 +196,48 @@ export const Confirmation = () => {
     },
   });
 
-  const onSubmitSend = async (data: any) => {
-    console.log(data);
-
-    if (!votingClient || !votingPluginAddress)
+  const onSubmitSend = async () => {
+    if (!client)
       return toast({
         title: 'Error submitting proposal',
-        description: 'Voting client not found',
+        description: 'SDK client not found',
         variant: 'error',
       });
-    // contractInteraction<ProposalCreationSteps, ProposalCreationStepValue>(
-    //   () =>
-    //     votingClient.methods.createProposal({
-    //       pluginAddress: votingPluginAddress,
-    //       actions: dataStep3?.actions ?? [],
-    //     }),
-    //   {
-    //     steps: {
-    //       confirmed: ProposalCreationSteps.DONE,
-    //       signed: ProposalCreationSteps.CREATING,
-    //     },
-    //     messages: {
-    //       error: 'Error creating proposal',
-    //       success: 'Proposal created!',
-    //     },
-    //     onFinish: () => {
-    //       // Send user to proposal page
-    //     },
-    //   }
-    // );
+
+    if (!dataStep1 || !dataStep2 || !dataStep3)
+      return toast({
+        title: 'Error submitting proposal',
+        description: 'Some data appears to be missing',
+        variant: 'error',
+      });
+
+    const parsedActions = await parseActionInputs(dataStep3.actions, provider);
+
+    contractTransaction(
+      () =>
+        client.sugar.CreateProposal(
+          {
+            ...dataStep1,
+            resources: dataStep1.resources.filter((res) => res.url !== ''),
+          },
+          parsedActions,
+          parseStartDate(dataStep2),
+          parseEndDate(dataStep2)
+        ),
+      {
+        messages: {
+          error: 'Error creating proposal',
+          success: 'Proposal created!',
+        },
+        onSuccess: () => {
+          // Send user to proposals page
+          navigate('/governance');
+        },
+        onError: (e) => {
+          console.error(e);
+        },
+      }
+    );
   };
 
   /**
@@ -114,76 +275,15 @@ export const Confirmation = () => {
     return true;
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async () => {
     const valid = onSubmitValidate();
     if (isValid && valid) {
-      onSubmitSend(data);
+      onSubmitSend();
     }
   };
 
-  // Map the actions to the IProposalAction interface
-  const actions: IProposalAction[] = dataStep3
-    ? dataStep3?.actions.map((action: ProposalFormAction) => {
-        switch (action.name) {
-          case 'withdraw_assets':
-            return {
-              method: 'withdraw',
-              interface: 'IWithdraw',
-              params: {
-                to: action.recipient,
-                amount: action.amount,
-                tokenAddress:
-                  action.tokenAddress === 'custom'
-                    ? action.tokenAddressCustom
-                    : action.tokenAddress,
-              },
-            };
-          case 'mint_tokens':
-            return {
-              method: 'mint',
-              interface: 'IMint',
-              params: {
-                to: action.wallets.map((wallet) => {
-                  return {
-                    to: wallet.address,
-                    amount: wallet.amount,
-                    tokenId: 0,
-                  };
-                }),
-              },
-            };
-          case 'merge_pr':
-            return {
-              method: 'merge',
-              interface: 'IMerge', // FIXME: This is not the correct interface
-              params: {
-                url: action.inputs.url,
-              },
-            };
-          case 'change_parameter':
-            return {
-              method: 'change',
-              interface: 'IChange', //FIXME: This is not the correct interface
-              params: {
-                plugin: action.plugin,
-                parameter: action.parameter,
-                value: action.value,
-              },
-            };
-          default:
-            return {
-              method: '',
-              interface: '',
-              params: {},
-            };
-        }
-      })
-    : [];
-
   // Sanitize the HTML of the body
-  const htmlClean = DOMPurify.sanitize(
-    dataStep1?.description ?? '<p>Proposal has no body</p>'
-  );
+  const cleanedBody = DOMPurify.sanitize(dataStep1?.body ?? '<p></p>');
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -195,13 +295,13 @@ export const Confirmation = () => {
           className="md:col-span-2"
         >
           <p className="text-lg font-medium leading-5 text-highlight-foreground/80">
-            {dataStep1?.summary ?? 'No summary'}{' '}
+            {dataStep1?.description ?? 'No description'}{' '}
           </p>
           {/* Note that since our HTML is sanitized, this dangerous action is safe */}
-          {dataStep1?.description !== '<p></p>' && (
+          {dataStep1?.body !== '<p></p>' && (
             <div
               className="styled-editor-content"
-              dangerouslySetInnerHTML={{ __html: htmlClean }}
+              dangerouslySetInnerHTML={{ __html: cleanedBody }}
             />
           )}
         </HeaderCard>
@@ -209,7 +309,9 @@ export const Confirmation = () => {
         <div className="flex flex-col gap-y-4">
           <ProposalResources
             variant="outline"
-            resources={dataStep1?.resources ?? []}
+            resources={
+              dataStep1?.resources.filter((res) => res.url !== '') ?? []
+            }
           />
 
           {/* View actions */}

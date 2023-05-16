@@ -12,6 +12,7 @@ import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 
 export type UseDaoBalanceData = {
   daoBalances: DaoBalance[] | null;
@@ -33,29 +34,40 @@ export type UseDaoBalanceProps = {
   useDummyData?: boolean;
 };
 
-export const useDaoBalance = ({
-  useDummyData = false,
-}: UseDaoBalanceProps): UseDaoBalanceData => {
+const defaultProps: UseDaoBalanceProps = {
+  useDummyData: false,
+};
+
+export const useDaoBalance = (
+  props?: UseDaoBalanceProps
+): UseDaoBalanceData => {
+  const { useDummyData } = Object.assign(defaultProps, props);
   const [daoBalances, setDaoBalances] = useState<DaoBalance[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const { client } = useAragonSDKContext();
+  const { client: diamondClient } = useDiamondSDKContext();
 
   const fetchDaoBalance = async (client: Client) => {
-    if (!import.meta.env.VITE_DAO_ADDRESS) {
+    if (!diamondClient) {
       setLoading(false);
-      setError("DAO address env variable isn't set");
+      setError('No DiamondGovernanceSDK client found');
       return;
     }
-    const daoAddressOrEns: string = import.meta.env.VITE_DAO_ADDRESS;
+
     try {
+      // Fetch DAO address from Diamond governance facet
+      const daoRef = await diamondClient?.pure.IDAOReferenceFacet();
+      const daoAddress = await daoRef.dao();
       const daoBal: AssetBalance[] | null = await client.methods.getDaoBalances(
-        { daoAddressOrEns }
+        { daoAddressOrEns: daoAddress }
       );
       let balances: DaoBalance[] = [];
       if (daoBal != null) {
-        balances = daoBal.map(assetBalanceToDaoBalance);
+        balances = daoBal.map((dBal) =>
+          assetBalanceToDaoBalance(dBal, daoAddress)
+        );
       }
       setDaoBalances(balances);
 
@@ -93,11 +105,12 @@ export const useDaoBalance = ({
       symbol: 'TOK2',
       updateDate: new Date(2023, 2, 10),
     };
+    const daoAddress = '0x16905fC451f755B1893c0BEcC4C179eB010fe070';
 
     setDaoBalances([
-      assetBalanceToDaoBalance(nativeBal),
-      assetBalanceToDaoBalance(erc20Bal),
-      assetBalanceToDaoBalance(erc721Bal),
+      assetBalanceToDaoBalance(nativeBal, daoAddress),
+      assetBalanceToDaoBalance(erc20Bal, daoAddress),
+      assetBalanceToDaoBalance(erc721Bal, daoAddress),
     ]);
   };
 
@@ -114,7 +127,10 @@ export const useDaoBalance = ({
   };
 };
 
-function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
+function assetBalanceToDaoBalance(
+  assetBalance: AssetBalance,
+  daoAddress: string
+): DaoBalance {
   const x = assetBalance as any;
   let result = {
     type: assetBalance.type,
@@ -130,7 +146,7 @@ function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
       // eslint-disable-next-line no-case-declarations
       const metadata = PREFERRED_NETWORK_METADATA;
       result.decimals = metadata.nativeCurrency.decimals;
-      result.address = import.meta.env.VITE_DAO_ADDRESS;
+      result.address = daoAddress;
       result.name = metadata.nativeCurrency.name;
       result.symbol = metadata.nativeCurrency.symbol;
       break;

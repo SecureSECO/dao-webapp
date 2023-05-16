@@ -77,7 +77,6 @@ export const Actions = () => {
   });
 
   const onSubmit = (data: ProposalFormActions) => {
-    console.log(data);
     setDataStep3(data);
     setStep(4);
   };

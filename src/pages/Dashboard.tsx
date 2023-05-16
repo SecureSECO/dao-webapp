@@ -17,8 +17,8 @@ import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { useMembers } from '@/src/hooks/useMembers';
 import { useProposals } from '@/src/hooks/useProposals';
 import {
-  getChainDataByChainId,
-  getSupportedNetworkByChainId,
+  PREFERRED_NETWORK,
+  PREFERRED_NETWORK_METADATA,
 } from '@/src/lib/constants/chains';
 import { DaoTransfersList } from '@/src/pages/Finance';
 import { ProposalCardList } from '@/src/pages/Governance';
@@ -36,19 +36,19 @@ import {
 import { MembershipStatus } from '../components/dashboard/MembershipStatus';
 
 const Dashboard = () => {
-  const { dao, loading: daoLoading, error: daoError } = useDao({});
-  const { proposals: allProposals, loading: allProposalsLoading } =
-    useProposals({});
+  const { dao, loading: daoLoading, error: daoError } = useDao();
   const {
     proposals,
+    proposalCount,
     loading: proposalsLoading,
     error: proposalsError,
   } = useProposals({ limit: 5 });
+
   const {
     daoTransfers,
     loading: daoTransfersLoading,
     error: daoTransfersError,
-  } = useDaoTransfers({});
+  } = useDaoTransfers();
   const {
     members,
     loading: membersLoading,
@@ -60,16 +60,18 @@ const Dashboard = () => {
     console.error(daoError);
     return (
       <Card size="lg" className="w-full">
-        <p className="text-xl font-normal italic text-highlight-foreground/80">
-          An error was encountered, the DAO dashboard could not be loaded.
-        </p>
+        <div className="space-y-2">
+          <Header>An error occurred</Header>
+          <p className="text-base font-normal text-highlight-foreground/80">
+            DAO data could not be loaded
+          </p>
+        </div>
       </Card>
     );
   }
 
-  const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
-  const currentNetwork = getSupportedNetworkByChainId(+chainId);
-  const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
+  const currentNetwork = PREFERRED_NETWORK;
+  const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
 
   return (
     <div className="grid grid-cols-7 gap-6">
@@ -101,7 +103,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex flex-row items-center gap-x-1">
                   <HiCube className="h-5 w-5 shrink-0 text-primary" />
-                  <p>{import.meta.env.DEV ? 'Goerli' : 'Polygon'}</p>
+                  <p>{import.meta.env.DEV ? 'Mumbai' : 'Polygon'}</p>
                 </div>
                 <div className="flex flex-row items-center gap-x-1">
                   <HiHome className="h-5 w-5 shrink-0 text-primary" />
@@ -132,11 +134,11 @@ const Dashboard = () => {
       {/* Proposal Card */}
       <MainCard
         className="col-span-full lg:col-span-4"
-        loading={allProposalsLoading}
+        loading={proposalsLoading}
         icon={HiInboxStack}
         header={
           <DefaultMainCardHeader
-            value={allProposals.length}
+            value={proposalCount}
             label="proposals created"
           />
         }
@@ -152,7 +154,6 @@ const Dashboard = () => {
           variant="outline"
           className="flex flex-row items-center gap-x-2"
           to="/governance"
-          onClick={() => console.log('View all proposals click!')}
         >
           <p>View all proposals</p>
           <HiArrowRight className="h-5 w-5" />
@@ -214,7 +215,7 @@ const Dashboard = () => {
             target="_blank"
             rel="noreferrer"
             to={`${etherscanURL}/token/tokenholderchart/${
-              import.meta.env.VITE_REP_CONTRACT
+              import.meta.env.VITE_DIAMOND_ADDRESS
             }`}
           >
             <p>View all members</p>

@@ -17,6 +17,10 @@ type UseSearchSECOProps = {
   useDummyData?: boolean;
 };
 
+const defaultProps: UseSearchSECOProps = {
+  useDummyData: false,
+};
+
 type UseSearchSECOData = {
   queryResult: QueryResponse;
   hashes: string[];
@@ -170,9 +174,10 @@ export const dummyQueryResult = {
  * Utility functions to interact with the SearchSECO database and API
  * @returns Functions and results of interacting with the SearchSECO database and API
  */
-export const useSearchSECO = ({
-  useDummyData,
-}: UseSearchSECOProps): UseSearchSECOData => {
+export const useSearchSECO = (
+  props?: UseSearchSECOProps
+): UseSearchSECOData => {
+  const { useDummyData } = Object.assign(defaultProps, props);
   const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
   const [hashes, setHashes] = useState<string[]>([]);
   const [cost, setCost] = useState<number | null>(null);

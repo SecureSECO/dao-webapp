@@ -6,14 +6,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useEffect } from 'react';
 import { Card } from '@/src/components/ui/Card';
 import { LabelledInput } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import Legend from '@/src/components/ui/Legend';
 import { RadioButtonCard, RadioGroup } from '@/src/components/ui/RadioGroup';
 import { TimezoneSelector } from '@/src/components/ui/TimeZoneSelector';
-import { useVotingSettings } from '@/src/hooks/useVotingSettings';
+import {
+  VotingSettings,
+  useVotingSettings,
+} from '@/src/hooks/useVotingSettings';
 import {
   getDurationDateAhead,
   getDurationInSeconds,
@@ -24,12 +26,11 @@ import {
   isGapEnough,
   timezoneOffsetDifference,
 } from '@/src/lib/date-utils';
-import { anyNullOrUndefined, cn, isNullOrUndefined } from '@/src/lib/utils';
+import { cn } from '@/src/lib/utils';
 import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import { MajorityVotingSettings } from '@aragon/sdk-client';
 import {
   add,
   format,
@@ -70,7 +71,7 @@ export type EndTimeType = 'duration' | 'end-custom';
 export const Voting = () => {
   const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
 
-  const { settings, error } = useVotingSettings({});
+  const { settings, error } = useVotingSettings();
 
   if (error) console.error('Voting settings fetching error', error);
 
@@ -110,10 +111,8 @@ export const Voting = () => {
       });
       return;
     }
-    console.log(data);
     setStep(3);
     setDataStep2(data);
-    // Handle submission
   };
 
   //rember the values of the inputs when the user clicks back, so it can be used when the user clicks next again.
@@ -261,8 +260,7 @@ export const EndTime = ({
   } = getWatchers(control);
 
   //retrieve settings for the minDuration
-  const { settings, error } = useVotingSettings({});
-  if (error) console.error('Voting settings fetching error', error);
+  const { settings } = useVotingSettings();
 
   //initialize minEndDate and minEndTime
   let minEndDate = undefined;
@@ -483,7 +481,7 @@ function getWatchers(control: Control<ProposalFormVotingSettings, any>) {
 
 const durationTooLow = (
   data: ProposalFormVotingSettings,
-  settings: MajorityVotingSettings | null
+  settings: VotingSettings | null
 ): false | string => {
   // If it is not a duration end type, no majority voting setting is known, or if duration data is not defined.
   // Then the duration is not too low.

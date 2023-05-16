@@ -20,6 +20,7 @@ import {
 import { useEffect, useState } from 'react';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 
 export type UseDaoTransfersData = {
   daoTransfers: DaoTransfer[] | null;
@@ -47,36 +48,46 @@ export type UseDaoTransfersProps = {
   limit?: number;
 };
 
-export const useDaoTransfers = ({
-  useDummyData = false,
-  limit = 10,
-}: UseDaoTransfersProps): UseDaoTransfersData => {
+const defaultProps: UseDaoTransfersProps = {
+  useDummyData: false,
+  limit: 10,
+};
+
+export const useDaoTransfers = (
+  props?: UseDaoTransfersProps
+): UseDaoTransfersData => {
+  const { useDummyData, limit } = Object.assign(defaultProps, props);
   const [daoTransfers, setDaoTransfers] = useState<DaoTransfer[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
   const { client } = useAragonSDKContext();
+  const { client: diamondClient } = useDiamondSDKContext();
 
   const fetchDaoTransfers = async (client: Client) => {
-    if (!import.meta.env.VITE_DAO_ADDRESS) {
+    if (!diamondClient) {
       setLoading(false);
-      setError("DAO address env variable isn't set");
+      setError('No DiamondGovernanceSDK client found');
       return;
     }
 
-    const address: string = import.meta.env.VITE_DAO_ADDRESS;
-
-    const params: ITransferQueryParams = {
-      daoAddressOrEns: address,
-      sortBy: TransferSortBy.CREATED_AT, // optional
-      limit, // optional
-      skip: 0, // optional
-      direction: SortDirection.DESC, // optional, options: DESC or ASC
-    };
-
     try {
+      // Fetch DAO address from Diamond governance facet
+      const daoRef = await diamondClient?.pure.IDAOReferenceFacet();
+      const daoAddress = await daoRef.dao();
+
+      const params: ITransferQueryParams = {
+        daoAddressOrEns: daoAddress,
+        sortBy: TransferSortBy.CREATED_AT, // optional
+        limit, // optional
+        skip: 0, // optional
+        direction: SortDirection.DESC, // optional, options: DESC or ASC
+      };
+
       const transfers: Transfer[] | null = await client.methods.getDaoTransfers(
         params
       );
+
       const daoTransfers = transfers?.map(transferToDaoTransfer) ?? null;
       setDaoTransfers(daoTransfers);
       setLoading(false);
@@ -142,8 +153,8 @@ export const useDaoTransfers = ({
   };
 
   useEffect(() => {
-    if (!client) return;
     if (useDummyData) return setDummyData();
+    if (!client) return;
     fetchDaoTransfers(client);
   }, [client]);
 

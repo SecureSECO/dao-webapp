@@ -15,7 +15,9 @@ import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
 
 export type ProposalMergeAction = IProposalAction & {
   params: {
-    url: string;
+    _owner: string;
+    _repo: string;
+    _pull_number: string;
   };
 };
 
@@ -29,22 +31,6 @@ interface MergeActionProps extends AccordionItemProps {
  * @returns Details of a mint action wrapped in a GeneralAction component
  */
 const MergeAction = ({ action, ...props }: MergeActionProps) => {
-  // Parse URL
-  const getParsedUrl = () => {
-    const url = new URL(action.params.url);
-    const owner = url.pathname.split('/')[1] ?? 'Unknown';
-    const repo = url.pathname.split('/')[2] ?? 'Unknown';
-    const pullNumber = url.pathname.split('/')[4] ?? 'Unknown';
-
-    return {
-      owner,
-      repo,
-      pullNumber,
-    };
-  };
-
-  const parsedUrl = getParsedUrl();
-
   return (
     <ActionWrapper
       icon={FaGithub}
@@ -56,20 +42,20 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
         <div className="grid grid-cols-2 gap-2">
           <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">Owner</p>
-            <p className="font-medium">{parsedUrl.owner}</p>
+            <p className="font-medium">{action.params._owner}</p>
           </Card>
           <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">Repository</p>
-            <p className="font-medium">{parsedUrl.repo}</p>
+            <p className="font-medium">{action.params._repo}</p>
           </Card>
         </div>
         <Card variant="outline" size="sm">
           <p className="text-xs text-popover-foreground/80">
-            Pull request #{parsedUrl.pullNumber}
+            Pull request #{action.params._pull_number}
           </p>
           <a
             className="flex flex-row items-center gap-x-2 text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
-            href={action.params.url}
+            href={`https://github.com/${action.params._owner}/${action.params._repo}/pull/${action.params._pull_number}`}
             target="_blank"
             rel="noreferrer"
           >

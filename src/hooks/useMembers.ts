@@ -6,10 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
-import { CHAIN_METADATA } from '@/src/lib/constants/chains';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
-import { TokenVotingClient } from '@aragon/sdk-client';
+import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 
@@ -17,6 +16,12 @@ type UseMembersProps = {
   useDummyData?: boolean;
   includeBalances?: boolean;
   limit?: number | undefined;
+};
+
+const defaultProps: UseMembersProps = {
+  useDummyData: false,
+  includeBalances: true,
+  limit: undefined,
 };
 
 type UseMembersData = {
@@ -27,30 +32,21 @@ type UseMembersData = {
   isMember: (address: string) => boolean;
 };
 
-export type Member = { address: string; bal: number | null };
+export type Member = { address: string; bal: BigNumber | null };
 
 const dummyMembers: Member[] = [];
 
-export const useMembers = ({
-  useDummyData = false,
-  includeBalances = true,
-  limit = undefined,
-}: UseMembersProps): UseMembersData => {
+export const useMembers = (props?: UseMembersProps): UseMembersData => {
+  const { useDummyData, includeBalances, limit } = Object.assign(
+    defaultProps,
+    props
+  );
+
   const [members, setMembers] = useState<Member[]>([]);
   const [memberCount, setMemberCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { votingClient, votingPluginAddress, repTokenContract } =
-    useAragonSDKContext();
-
-  /**
-   * Fetch the REP balance for a single address. Throws an error if the REP token contract is not set
-   * @returns The REP balance of the given address
-   */
-  const fetchBalance = async (address: string): Promise<BigNumber> => {
-    if (!repTokenContract) throw new Error('REP token contract not set');
-    return repTokenContract.balanceOf(address);
-  };
+  const { client } = useDiamondSDKContext();
 
   /**
    * Fetch balances for a list of addresses
@@ -59,43 +55,32 @@ export const useMembers = ({
    * @see Member for the type of object returned in the list
    */
   const fetchBalances = async (addressList: string[]): Promise<Member[]> => {
+    if (!client) throw new Error('Client not set');
     return Promise.all(
-      addressList.map(
-        async (address) =>
-          new Promise((resolve) => {
-            fetchBalance(address)
-              .then((bal: BigNumber) => {
-                return resolve({
-                  address,
-                  bal: Number(
-                    bal.toBigInt() /
-                      BigInt(10 ** CHAIN_METADATA.rep.nativeCurrency.decimals)
-                  ),
-                });
-              })
-              .catch(() =>
-                resolve({
-                  address,
-                  bal: null,
-                })
-              );
-          })
-      )
+      addressList.map(async (address) => {
+        try {
+          const contract = await client.pure.IERC20();
+          const bal = await contract.balanceOf(address);
+          return {
+            address,
+            bal: bal,
+          };
+        } catch (e) {
+          console.error(e);
+          return {
+            address,
+            bal: null,
+          };
+        }
+      })
     );
   };
 
-  const fetchMembers = async (client: TokenVotingClient) => {
-    if (!votingPluginAddress) {
-      setLoading(false);
-      setError('Voting plugin address not set');
-      return;
-    }
-
+  const fetchMembers = async (client: DiamondGovernanceClient) => {
     try {
       // Fetch the list of address that are members of the DAO
-      const addressList: string[] | null = await client.methods.getMembers(
-        votingPluginAddress
-      );
+      const addressList: string[] = await client.sugar.GetMembers();
+
       if (addressList) {
         // Fetch the balance of each member
         let daoMembers;
@@ -112,7 +97,7 @@ export const useMembers = ({
         daoMembers.sort((a, b) => {
           if (a.bal === null) return 1;
           if (b.bal === null) return -1;
-          return b.bal - a.bal;
+          return b.bal.sub(a.bal).toNumber();
         });
         // If a limit is set, only return that many members (with the highest balance)
         if (limit) setMembers(daoMembers.splice(0, limit));
@@ -139,9 +124,9 @@ export const useMembers = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!votingClient) return;
-    fetchMembers(votingClient);
-  }, [votingClient]);
+    if (!client) return;
+    fetchMembers(client);
+  }, [client]);
 
   /**
    * Check if an address is a member of the DAO

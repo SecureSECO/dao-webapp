@@ -7,6 +7,7 @@
  */
 
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
 import { Client, DaoDetails as DaoApiData } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
@@ -31,23 +32,31 @@ export type UseDaoProps = {
   useDummyData?: boolean;
 };
 
-export const useDao = ({ useDummyData = false }: UseDaoProps): UseDaoData => {
+const defaultProps: UseDaoProps = {
+  useDummyData: false,
+};
+
+export const useDao = (props?: UseDaoProps): UseDaoData => {
+  const { useDummyData } = Object.assign(defaultProps, props);
+
   const [daoDetails, setDaoDetails] = useState<DaoDetails>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { client } = useAragonSDKContext();
+  const { client: diamondClient } = useDiamondSDKContext();
 
   const fetchDaoDetails = async (client: Client) => {
-    if (!import.meta.env.VITE_DAO_ADDRESS) {
+    if (!diamondClient) {
       setLoading(false);
-      setError("DAO address env variable isn't set");
+      setError('No DiamondGovernanceSDK client found');
       return;
     }
 
     try {
-      const dao: DaoApiData | null = await client.methods.getDao(
-        import.meta.env.VITE_DAO_ADDRESS
-      );
+      const daoRef = await diamondClient.pure.IDAOReferenceFacet();
+      const daoAddress = await daoRef.dao();
+      const dao: DaoApiData | null = await client.methods.getDao(daoAddress);
+
       if (dao) {
         setDaoDetails({
           name: dao.metadata.name,

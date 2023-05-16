@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 import { toast } from '@/src/hooks/useToast';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { copyToClipboard, truncateMiddle } from '@/src/lib/utils';
 import React, { useState } from 'react';
 import { HiCheck, HiDocumentDuplicate } from 'react-icons/hi2';
@@ -69,7 +70,7 @@ export const Address: React.FC<AddressProps> = ({
 }) => {
   const [status, setStatus] = useState<'idle' | 'copied'>('idle');
   const { address: currentUser } = useAccount();
-  const etherscanURL = `https://etherscan.io/address/${address}`;
+  const blockExplorer = `${PREFERRED_NETWORK_METADATA.explorer}address/${address}`;
 
   // if the address is the current user's address, replace it with "you"
   const linkContent =
@@ -103,7 +104,7 @@ export const Address: React.FC<AddressProps> = ({
             <TooltipTrigger asChild className="rounded-sm">
               {hasLink ? (
                 <a
-                  href={etherscanURL}
+                  href={blockExplorer}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"

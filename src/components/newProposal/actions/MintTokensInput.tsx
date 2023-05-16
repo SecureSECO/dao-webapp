@@ -30,27 +30,12 @@ export type ProposalFormMint = {
       amount: string | number;
     }[];
   };
-  summary: {
-    newTokens: number;
-    tokenSupply: number;
-    newHoldersCount: number;
-    daoTokenSymbol: string;
-    daoTokenAddress: string;
-    totalMembers?: number;
-  };
 };
 
 export const emptyMintAction: ProposalFormMint = {
   name: 'mint_tokens',
   inputs: {
     mintTokensToWallets: [{ address: '', amount: 0 }],
-  },
-  summary: {
-    newTokens: 0,
-    tokenSupply: 0,
-    newHoldersCount: 0,
-    daoTokenSymbol: '',
-    daoTokenAddress: '',
   },
 };
 
@@ -202,6 +187,7 @@ const MintListItem = ({
             error={errors?.amount}
             className="w-full basis-2/3"
             min="0"
+            step="1" // Only allow integers
             required
           />
         </ErrorWrapper>

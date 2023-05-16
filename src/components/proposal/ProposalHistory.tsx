@@ -11,31 +11,30 @@ import ProposalMilestone, {
   ProposalMilestoneProps,
 } from '@/src/components/proposal/ProposalMilestone';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { DetailedProposal } from '@/src/hooks/useProposal';
-import { cn } from '@/src/lib/utils';
-import { ProposalStatus } from '@aragon/sdk-client';
+import { ProposalStatus, Proposal } from '@plopmenz/diamond-governance-sdk';
+import { compareAsc } from 'date-fns';
 
 /**
  * Extract the milestones of a proposal, depending on its status. The following milestones are returned per status:
- * - PENDING: Published, Pending
- * - ACTIVE: Published, Started, Running
- * - SUCCEEDED: Published, Started, Succeeded, Awaiting execution
- * - DEFEATED: Published, Started, Defeated
- * - EXECUTED: Published, Started, Succeeded, Executed
+ * - Pending: Published, Pending
+ * - Active: Published, Started, Running
+ * - Succeeded: Published, Started, Succeeded, Awaiting execution
+ * - Defeated: Published, Started, Defeated
+ * - Executed: Published, Started, Succeeded, Executed
  * @param proposal Proposal to extract milestones from
  * @returns A list of ProposalMilestoneProps to be passed to a ProposalMilestone component
  */
-const getProposalMilestones = (proposal: DetailedProposal) => {
+const getProposalMilestones = (proposal: Proposal) => {
   const res: ProposalMilestoneProps[] = [];
 
   res.push({
     label: 'Published',
     variant: 'done',
     date: proposal.creationDate,
-    blockNumber: proposal.creationBlockNumber,
+    blockNumber: proposal.data.parameters.snapshotBlock.toNumber(),
   });
 
-  if (proposal.status !== ProposalStatus.PENDING)
+  if (proposal.status !== ProposalStatus.Pending)
     res.push({
       label: 'Started',
       variant: 'done',
@@ -43,25 +42,30 @@ const getProposalMilestones = (proposal: DetailedProposal) => {
     });
 
   switch (proposal.status) {
-    case ProposalStatus.PENDING:
+    case ProposalStatus.Pending:
       res.push({
         label: 'Pending',
         variant: 'loading',
         date: proposal.startDate,
       });
       break;
-    case ProposalStatus.ACTIVE:
+    case ProposalStatus.Active:
       res.push({
         label: 'Running',
         variant: 'loading',
         date: proposal.endDate,
       });
       break;
-    case ProposalStatus.SUCCEEDED:
+    case ProposalStatus.Succeeded:
       res.push({
         label: 'Succeeded',
         variant: 'done',
-        date: proposal.endDate,
+        // If the executionDate is earlier than endDate, there was an early execution, so endDate executionDate is also the end date
+        date:
+          proposal.executionDate &&
+          compareAsc(proposal.executionDate, proposal.endDate) === -1
+            ? proposal.executionDate
+            : proposal.endDate,
       });
       if (proposal.actions.length > 0)
         res.push({
@@ -69,14 +73,14 @@ const getProposalMilestones = (proposal: DetailedProposal) => {
           variant: 'loading',
         });
       break;
-    case ProposalStatus.DEFEATED:
+    case ProposalStatus.Defeated:
       res.push({
         label: 'Defeated',
         variant: 'failed',
         date: proposal.endDate,
       });
       break;
-    case ProposalStatus.EXECUTED:
+    case ProposalStatus.Executed:
       res.push(
         {
           label: 'Succeeded',
@@ -87,7 +91,7 @@ const getProposalMilestones = (proposal: DetailedProposal) => {
           label: 'Executed',
           variant: 'executed',
           date: proposal.executionDate,
-          blockNumber: proposal.executionBlockNumber,
+          blockNumber: proposal.data.parameters.snapshotBlock.toNumber(),
         }
       );
       break;
@@ -107,7 +111,7 @@ const ProposalHistory = ({
   loading = false,
   className,
 }: {
-  proposal: DetailedProposal | null;
+  proposal: Proposal | null;
   loading?: boolean;
   className?: string;
 }) => {

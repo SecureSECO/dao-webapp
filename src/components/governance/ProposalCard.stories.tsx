@@ -8,13 +8,26 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import ProposalCard from '@/src/components/governance/ProposalCard';
-import { ProposalStatus, TokenType } from '@aragon/sdk-client';
-import { addDays, subDays } from 'date-fns';
+import {
+  dummyChangeParamsAction,
+  dummyMergeAction,
+  dummyMintAction,
+  dummyProposal,
+  dummyWithdrawAction,
+} from '@/src/hooks/useProposal';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { add, sub } from 'date-fns';
 
 const meta = {
   component: ProposalCard,
   tags: ['autodocs'],
-  argTypes: {},
+  argTypes: {
+    proposal: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 } satisfies Meta<typeof ProposalCard>;
 
 export default meta;
@@ -30,189 +43,71 @@ BigInt.prototype.toJSON = function () {
 export const Pending: Story = {
   args: {
     proposal: {
-      id: '0x22345',
-      dao: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'Cool DAO',
-      },
-      creatorAddress: '0x1234567890123456789012345678901234567890',
-      metadata: {
-        title: 'Test Proposal',
-        summary: 'Test Proposal Summary',
-      },
-      startDate: addDays(new Date(), 2),
-      endDate: addDays(new Date(), 5),
-      status: ProposalStatus.PENDING,
-      token: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'The Token',
-        symbol: 'TOK',
-        decimals: 18,
-        type: TokenType.ERC20,
-      },
-      result: {
-        yes: 100000n,
-        no: 0n,
-        abstain: 0n,
-      },
-      settings: {
-        supportThreshold: 0.5,
-        duration: 87000,
-        minParticipation: 0.15,
-      },
-      totalVotingWeight: 1000000000000000000n,
-    },
+      ...dummyProposal,
+      status: ProposalStatus.Pending,
+      startDate: add(new Date(), { days: 1 }),
+      endDate: add(new Date(), { days: 2 }),
+    } as Proposal,
   },
 };
 
 export const Active: Story = {
   args: {
     proposal: {
-      id: '0x22345',
-      dao: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'Cool DAO',
-      },
-      creatorAddress: '0x1234567890123456789012345678901234567890',
-      metadata: {
-        title: 'Test Proposal',
-        summary: 'Test Proposal Summary',
-      },
-      startDate: addDays(new Date(), 2),
-      endDate: addDays(new Date(), 5),
-      status: ProposalStatus.ACTIVE,
-      token: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'The Token',
-        symbol: 'TOK',
-        decimals: 18,
-        type: TokenType.ERC20,
-      },
-      result: {
-        yes: 100000n,
-        no: 0n,
-        abstain: 0n,
-      },
-      settings: {
-        supportThreshold: 0.5,
-        duration: 87000,
-        minParticipation: 0.15,
-      },
-      totalVotingWeight: 1000000000000000000n,
-    },
+      ...dummyProposal,
+      status: ProposalStatus.Active,
+      startDate: sub(new Date(), { days: 1 }),
+      endDate: add(new Date(), { days: 1 }),
+    } as Proposal,
   },
 };
 
 export const Succeeded: Story = {
   args: {
     proposal: {
-      id: '0x22345',
-      dao: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'Cool DAO',
-      },
-      creatorAddress: '0x1234567890123456789012345678901234567890',
-      metadata: {
-        title: 'Test Proposal',
-        summary: 'Test Proposal Summary',
-      },
-      startDate: subDays(new Date(), 5),
-      endDate: subDays(new Date(), 2),
-      status: ProposalStatus.SUCCEEDED,
-      token: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'The Token',
-        symbol: 'TOK',
-        decimals: 18,
-        type: TokenType.ERC20,
-      },
-      result: {
-        yes: 100000n,
-        no: 0n,
-        abstain: 0n,
-      },
-      settings: {
-        supportThreshold: 0.5,
-        duration: 87000,
-        minParticipation: 0.15,
-      },
-      totalVotingWeight: 1000000000000000000n,
-    },
+      ...dummyProposal,
+      status: ProposalStatus.Succeeded,
+      startDate: sub(new Date(), { days: 2 }),
+      endDate: sub(new Date(), { days: 1 }),
+    } as Proposal,
   },
 };
 
 export const Defeated: Story = {
   args: {
     proposal: {
-      id: '0x22345',
-      dao: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'Cool DAO',
-      },
-      creatorAddress: '0x1234567890123456789012345678901234567890',
-      metadata: {
-        title: 'Test Proposal',
-        summary: 'Test Proposal Summary',
-      },
-      startDate: subDays(new Date(), 5),
-      endDate: subDays(new Date(), 2),
-      status: ProposalStatus.DEFEATED,
-      token: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'The Token',
-        symbol: 'TOK',
-        decimals: 18,
-        type: TokenType.ERC20,
-      },
-      result: {
-        yes: 100000n,
-        no: 0n,
-        abstain: 0n,
-      },
-      settings: {
-        supportThreshold: 0.5,
-        duration: 87000,
-        minParticipation: 0.15,
-      },
-      totalVotingWeight: 1000000000000000000n,
-    },
+      ...dummyProposal,
+      status: ProposalStatus.Defeated,
+      startDate: sub(new Date(), { days: 2 }),
+      endDate: sub(new Date(), { days: 1 }),
+    } as Proposal,
   },
 };
 
 export const Executed: Story = {
   args: {
     proposal: {
-      id: '0x22345',
-      dao: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'Cool DAO',
-      },
-      creatorAddress: '0x1234567890123456789012345678901234567890',
-      metadata: {
-        title: 'Test Proposal',
-        summary: 'Test Proposal Summary',
-      },
-      startDate: subDays(new Date(), 5),
-      endDate: subDays(new Date(), 2),
-      status: ProposalStatus.EXECUTED,
-      token: {
-        address: '0x1234567890123456789012345678901234567890',
-        name: 'The Token',
-        symbol: 'TOK',
-        decimals: 18,
-        type: TokenType.ERC20,
-      },
-      result: {
-        yes: 100000n,
-        no: 0n,
-        abstain: 0n,
-      },
-      settings: {
-        supportThreshold: 0.5,
-        duration: 87000,
-        minParticipation: 0.15,
-      },
-      totalVotingWeight: 1000000000000000000n,
-    },
+      ...dummyProposal,
+      status: ProposalStatus.Executed,
+      startDate: sub(new Date(), { days: 2 }),
+      endDate: sub(new Date(), { days: 1 }),
+    } as Proposal,
+  },
+};
+
+export const WithActions: Story = {
+  args: {
+    proposal: {
+      ...dummyProposal,
+      status: ProposalStatus.Succeeded,
+      startDate: sub(new Date(), { days: 2 }),
+      endDate: sub(new Date(), { days: 1 }),
+      actions: [
+        dummyMintAction,
+        dummyWithdrawAction,
+        dummyChangeParamsAction,
+        dummyMergeAction,
+      ],
+    } as any as Proposal,
   },
 };
