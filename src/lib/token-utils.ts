@@ -17,10 +17,12 @@ export type TokenInfo = {
  * @returns Decimals, name, symbol and total supply of the token (where possible)
  */
 export async function getTokenInfo(
-  address: string,
+  address: string | undefined,
   provider: providers.Provider,
   nativeTokenData: NativeTokenData | undefined
 ): Promise<TokenInfo> {
+  if (!address) return {};
+
   if (isNativeToken(address)) return { ...nativeTokenData };
 
   const contract = new Contract(address, erc20ABI, provider);

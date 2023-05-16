@@ -65,14 +65,23 @@ export const Primary: Story = {
           {
             name: 'mint_tokens',
             wallets: [
-              { address: '0x123', amount: 1 },
-              { address: '0x098765432123456789', amount: 3.141 },
-              { address: '0x765656565656566566', amount: 1000 },
+              {
+                address: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+                amount: 1,
+              },
+              {
+                address: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+                amount: 3.141,
+              },
+              {
+                address: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+                amount: 1000,
+              },
             ],
           },
           {
             name: 'withdraw_assets',
-            recipient: '0x123456',
+            recipient: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
             tokenAddress: constants.AddressZero,
             amount: 3.141,
           },
