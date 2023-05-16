@@ -6,12 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {
-  actionToName,
-  calcBigNumberPercentage,
-  cn,
-  countdownText,
-} from '@/src/lib/utils';
+import { countdownText } from '@/src/lib/date-utils';
+import { actionToName, calcBigNumberPercentage, cn } from '@/src/lib/utils';
 import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import { cva, VariantProps } from 'class-variance-authority';
 import { BigNumber } from 'ethers';
