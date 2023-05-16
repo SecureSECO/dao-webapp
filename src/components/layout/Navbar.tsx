@@ -14,24 +14,19 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
 import Header from '@/src/components/ui/Header';
 import { Sheet, SheetContent, SheetTrigger } from '@/src/components/ui/Sheet';
 import { cn } from '@/src/lib/utils';
-import { createElement, useState } from 'react';
 import { IconType } from 'react-icons';
 import { FaDiscord } from 'react-icons/fa';
 import { HiOutlineTerminal } from 'react-icons/hi';
 import {
   HiBars3,
   HiChevronDown,
-  HiChevronUp,
-  HiDocumentMagnifyingGlass,
   HiOutlineDocumentMagnifyingGlass,
   HiOutlineGlobeAlt,
-  HiXMark,
 } from 'react-icons/hi2';
 import { NavLink, useLocation } from 'react-router-dom';
 
@@ -164,9 +159,9 @@ const Navitem = ({
           item={item as NavItemCollection}
           className={className + ' hidden lg:flex'}
         />
-        <div className="rounded-3xl border border-border text-sm leading-5 shadow-lg lg:hidden">
+        <div className="w-full rounded-3xl border border-border text-sm leading-5 shadow-lg md:col-span-2 lg:hidden">
           <DropdownContent
-            title={'Secure Seco'}
+            title={'SearchSECO'}
             item={item as NavItemCollection}
           />
         </div>
@@ -177,9 +172,8 @@ const Navitem = ({
 
 const Navbar = () => {
   return (
-    <div className="mt-2 flex w-full flex-row-reverse items-center justify-between lg:mt-0 lg:flex-row">
-      {/* Desktop logo */}
-      <LogoFull className="hidden h-fit w-40 lg:block" />
+    <div className="mt-2 flex w-full items-center justify-between lg:mt-0">
+      <LogoFull className="h-fit w-32 lg:w-40" />
 
       {/* Mobile nav */}
       <MobileNav />
@@ -192,8 +186,9 @@ const Navbar = () => {
       </nav>
 
       {/* Wallet connection + dark mode toggler */}
-      <div className="flex flex-row items-center gap-x-2 ">
+      <div className=" hidden items-center gap-x-2 lg:flex">
         <ThemePicker />
+
         <ConnectButton />
       </div>
     </div>
@@ -210,7 +205,7 @@ export const DropdownContent = ({
   className?: string;
 }) => {
   return (
-    <div className={cn('divide-popover-foreground/10', className)}>
+    <div className={cn('w-full divide-popover-foreground/10', className)}>
       {title && (
         <Header level={2} className="px-6 pt-4">
           {title}
@@ -270,7 +265,8 @@ export default Navbar;
 
 function MobileNav() {
   return (
-    <nav className="relative lg:hidden">
+    <nav className="relative flex items-center gap-x-2 lg:hidden">
+      <ThemePicker />
       <Sheet>
         <SheetTrigger asChild>
           <div>
@@ -285,14 +281,19 @@ function MobileNav() {
         <SheetContent
           position="top"
           size="content"
-          className="overflow-y-scroll"
+          className="flex justify-center overflow-y-scroll"
         >
-          {/* Mobile logo */}
-          <div className="flex flex-col items-center space-y-4">
-            <LogoFull className="h-fit w-32 xs:w-40" />
-            {navItems.map((item) => (
-              <Navitem item={item} className="text-center" />
-            ))}
+          <div className="mt-10 flex max-w-md flex-col items-center space-y-4 sm:mt-0">
+            <div className="flex w-full items-center justify-between">
+              <LogoFull className="h-fit w-32 xs:w-40" />
+              <ConnectButton buttonClassName={''} />
+            </div>
+
+            <div className="grid w-full grid-cols-1 place-items-center gap-4 pb-6 md:grid-cols-2">
+              {navItems.map((item) => (
+                <Navitem item={item} className="text-center" />
+              ))}
+            </div>
           </div>
         </SheetContent>
       </Sheet>
