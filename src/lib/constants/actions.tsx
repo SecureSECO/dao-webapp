@@ -16,6 +16,7 @@ import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
 import MintAction, {
   ProposalMintAction,
 } from '@/src/components/proposal/actions/MintAction';
+import { ProposalWithdrawAction } from '@/src/components/proposal/actions/WithdrawAction';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { parseUnits } from 'ethers/lib/utils.js';
@@ -40,8 +41,12 @@ export interface ProposalFormAction {
   name: ActionName;
 }
 
-interface ActionViewProps extends AccordionItemProps {
-  action: IProposalAction;
+interface ActionViewProps<TAction> extends AccordionItemProps {
+  action: TAction;
+}
+
+export interface ActionInputProps {
+  onRemove: () => void;
 }
 
 type Action<TAction, TFormProps, TInputData> = {
@@ -51,7 +56,7 @@ type Action<TAction, TFormProps, TInputData> = {
   label: string;
   icon: IconType;
   // Component to view the action in the UI
-  view: (props: ViewActionProps<TAction>) => JSX.Element;
+  view: (props: ActionViewProps<TAction>) => JSX.Element;
   // Component to be used inside a form to input data for the action
   form: (props: TFormProps) => JSX.Element;
   /**
@@ -62,16 +67,15 @@ type Action<TAction, TFormProps, TInputData> = {
   parseInput: (input: TInputData) => Promise<IProposalAction>;
 };
 
-interface ViewActionProps<TAction> extends AccordionItemProps {
-  action: TAction;
-}
 
 type Actions = {
   mint_tokens: Action<
     ProposalMintAction,
+    // note to self: don't need this
     MintTokensInputProps,
     ProposalFormMintData
   >;
+  withdraw_assets: Action<ProposalWithdrawAction, 
 };
 
 // merge: FaGithub
