@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { withReactHookForm } from '@/src/lib/decorators/reactHookFormDecorator';
+import { withProposalAction } from '@/src/lib/decorators/proposalActionDecorator';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { WithdrawAssetsInput } from './WithdrawAssetsInput';
@@ -20,11 +20,18 @@ export default meta;
 type Story = StoryObj<typeof WithdrawAssetsInput>;
 
 export const Primary: Story = {
-  args: {
-    register: (() => {}) as any,
-    prefix: 'actions.1.',
-    errors: {},
-    onRemove: (() => {}) as any,
+  parameters: {
+    defaultValues: {
+      actions: [
+        {
+          name: 'withdraw_assets',
+          recipient: '0x123456789012345678901234567890',
+          tokenAddress: 'custom',
+          tokenAddressCustom: '0x99999999999999999999999',
+          amount: 3.21,
+        },
+      ],
+    },
   },
-  decorators: [withReactHookForm],
+  decorators: [withProposalAction],
 };

@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { withReactHookForm } from '@/src/lib/decorators/reactHookFormDecorator';
+import { withProposalAction } from '@/src/lib/decorators/proposalActionDecorator';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { ChangeParametersInput } from './ChangeParametersInput';
@@ -19,11 +19,5 @@ export default meta;
 type Story = StoryObj<typeof ChangeParametersInput>;
 
 export const Primary: Story = {
-  args: {
-    register: (() => {}) as any,
-    errors: undefined,
-    onRemove: (() => {}) as any,
-    prefix: 'actions.0',
-  },
-  decorators: [withReactHookForm],
+  decorators: [withProposalAction],
 };
