@@ -14,7 +14,7 @@ import { Button } from '@/src/components/ui/Button';
 /**
  * @returns A card that allows the users to claim their reward for verifying
  */
-const OneTimeRewardCard = () => {
+const OneTimeRewardCard = ({ reward }: { reward: number }) => {
   // const fetchData = async () => {
   // }
 
@@ -43,7 +43,7 @@ const OneTimeRewardCard = () => {
         providers, you are eligible to claim a reward.
       </p>
       <p>
-        Claimable tokens: <strong>100</strong>
+        Claimable tokens: <strong>{reward}</strong>
       </p>
       <Button onClick={claimReward}>Claim reward</Button>
     </Card>

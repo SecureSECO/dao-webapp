@@ -21,7 +21,6 @@ import { Link } from '@/src/components/ui/Link';
 export const MembershipStatus = () => {
   const { open } = useWeb3Modal();
   const { isConnected } = useAccount();
-  const { memberVerification } = useVerification({ useDummyData: true });
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork({
     chainId: PREFERRED_NETWORK_METADATA.id,
@@ -30,7 +29,6 @@ export const MembershipStatus = () => {
   return (
     <MembershipStatusView
       isConnected={isConnected}
-      verification={memberVerification}
       chainId={chain?.id}
       openConnector={open}
       switchNetwork={switchNetwork}
@@ -44,17 +42,19 @@ export const MembershipStatus = () => {
  */
 export const MembershipStatusView = ({
   isConnected,
-  verification,
   chainId,
   openConnector,
   switchNetwork,
 }: {
   isConnected: boolean;
-  verification: Verification;
   chainId?: number;
   openConnector: (options?: any | undefined) => Promise<void>;
   switchNetwork?: (chainId_?: number) => void;
 }) => {
+  const { stamps, isVerified } = useVerification({
+    useDummyData: true,
+  });
+
   // If user has not connected a wallet:
   // An informative banner, with button to connect wallet
   if (!isConnected)
@@ -97,7 +97,7 @@ export const MembershipStatusView = ({
 
   // If user has connected wallet but is not member:
   // An informative banner on how to become member, with button
-  const isNotMember = verification === null || verification.length === 0;
+  const isNotMember = !stamps || stamps.length === 0;
   if (isNotMember)
     return (
       <MembershipCard message="You are not yet a member of this DAO!">
@@ -109,10 +109,13 @@ export const MembershipStatusView = ({
 
   // Set boolean values needed for futher code
   let now = new Date();
-  let expired = verification.some((stamp) => stamp.expiration >= now);
+  let expired = stamps.some((stamp) => isVerified(stamp).expired);
   let almostExpired =
     !expired &&
-    verification.some((stamp) => addDays(stamp.expiration, 30) >= now);
+    stamps.some((stamp) => {
+      const { timeLeftUntilExpiration } = isVerified(stamp);
+      addDays(new Date(timeLeftUntilExpiration ?? 0), 30) >= now;
+    });
 
   // If user has connected wallet but verification is about to expire:
   // A warning banner, with button to re-verify
