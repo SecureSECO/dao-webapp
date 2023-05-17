@@ -69,6 +69,8 @@ export type ProposalFormActionData =
   | ProposalFormMintData
   | ProposalFormMergeData
   | ProposalFormChangeParamData;
+// Add data type for form data of new proposal actions here:
+//| ...
 
 type Actions = {
   mint_tokens: ActionData<ProposalMintAction, ProposalFormMintData>;
@@ -78,6 +80,8 @@ type Actions = {
     ProposalChangeParamAction,
     ProposalFormChangeParamData
   >;
+  // Add new proposal actions here
+  // ...
 };
 
 /**
@@ -191,6 +195,8 @@ export const ACTIONS: Actions = {
       };
     },
   },
+  // Add new proposal actions here:
+  // ...
 };
 
 export type ActionName = keyof typeof ACTIONS;
