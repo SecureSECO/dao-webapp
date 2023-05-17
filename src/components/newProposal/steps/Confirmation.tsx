@@ -35,7 +35,7 @@ import { Action } from '@plopmenz/diamond-governance-sdk';
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
  * @param actions List of actions in their input form
- * @returns A list of corresponding IProposalAction objects
+ * @returns A list of corresponding Action objects
  */
 const parseActionInputs = async (
   actions: ProposalFormActionData[],
@@ -43,7 +43,9 @@ const parseActionInputs = async (
 ): Promise<Action[]> => {
   const res: Action[] = [];
   const parsed = await Promise.all(
-    actions.map((action) => ACTIONS[action.name].parseInput(action, provider))
+    actions.map((action) =>
+      ACTIONS[action.name].parseInput(action as any, provider)
+    )
   );
   parsed.forEach((action) => action && res.push(action));
 
@@ -89,13 +91,13 @@ const parseEndDate = (settings: ProposalFormVotingSettings): Date => {
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
-  const [actions, setActions] = useState<IProposalAction[]>([]);
+  const [actions, setActions] = useState<Action[]>([]);
   const { client } = useDiamondSDKContext();
   const { toast } = useToast();
   const navigate = useNavigate();
   const provider = useProvider();
 
-  // Maps the action form iputs to IProposalAction interface
+  // Maps the action form iputs to Action interface
   useEffect(() => {
     if (dataStep3)
       parseActionInputs(dataStep3.actions, provider).then((res) =>

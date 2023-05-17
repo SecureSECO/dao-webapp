@@ -29,7 +29,6 @@ import {
 } from '../steps/Actions';
 
 export interface ProposalFormMintData extends ProposalFormAction {
-  name: 'mint_tokens';
   wallets: ProposalFormMintWallet[];
 }
 

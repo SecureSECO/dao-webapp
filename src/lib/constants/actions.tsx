@@ -260,7 +260,7 @@ Object.entries(ACTIONS).forEach(([name, action]) => {
 
 /**
  * Function to get a more readable name for a proposal action.
- * @param action Instance of IProposalAction to get a more readable name for
+ * @param action Instance of Action to get a more readable name for
  * @returns Name of the action as the ActionName type
  * @example
  * const action = {

@@ -34,7 +34,6 @@ import {
 import { ProposalFormAction } from '@/src/lib/constants/actions';
 
 export interface ProposalFormChangeParamData extends ProposalFormAction {
-  name: 'change_param';
   plugin: string;
   parameter: string;
   value: string;

@@ -35,7 +35,6 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 
 export interface ProposalFormWithdrawData extends ProposalFormAction {
-  name: 'withdraw_assets';
   recipient: string;
   tokenAddress: string | 'custom';
   tokenAddressCustom?: string;

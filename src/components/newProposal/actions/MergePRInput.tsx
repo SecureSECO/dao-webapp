@@ -24,7 +24,6 @@ import {
 import { ProposalFormAction } from '@/src/lib/constants/actions';
 
 export interface ProposalFormMergeData extends ProposalFormAction {
-  name: 'merge_pr';
   url: string;
 }
 
