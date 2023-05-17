@@ -92,7 +92,7 @@ export const Actions = () => {
                     const { input: ActionInput } = ACTIONS[action.name];
 
                     return (
-                      <ActionFormContext.Provider value={context}>
+                      <ActionFormContext.Provider value={context} key={index}>
                         <ActionInput />
                       </ActionFormContext.Provider>
                     );
@@ -132,13 +132,15 @@ export const AddActionButton = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          {Object.entries(ACTIONS).map(([name, action]) => (
+          {Object.entries(ACTIONS).map(([name, action], i) => (
             <DropdownMenuItem
+              key={i}
               onClick={() => append(action.emptyInputData)}
               className="gap-x-2 hover:cursor-pointer"
               disabled={
                 action.maxPerProposal !== undefined &&
                 actions &&
+                actions.actions &&
                 actions.actions.filter((x) => x.name === name).length >=
                   action.maxPerProposal
               }
