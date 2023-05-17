@@ -120,7 +120,6 @@ const Navitemcollection = ({
   className?: string;
 }) => {
   const location = useLocation();
-  console.log(location);
   const isActive = item.pages.some((x) => x.url === location.pathname);
   return (
     <DropdownMenu>
