@@ -84,6 +84,7 @@ const Verification = () => {
     reverifyThreshold,
     thresholdHistory,
     loading,
+    claimReward,
     verificationHistory,
     stamps,
     reward,
@@ -289,7 +290,13 @@ const Verification = () => {
         </MainCard>
 
         <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
-          {isConnected && reward > 0 && <OneTimeRewardCard reward={reward} />}
+          {isConnected && reward > 0 && (
+            <OneTimeRewardCard
+              reward={reward}
+              claimReward={claimReward}
+              refetch={refetch}
+            />
+          )}
           <MainCard
             loading={false}
             icon={HiOutlineClock}

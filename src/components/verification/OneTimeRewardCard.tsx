@@ -9,31 +9,24 @@
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { Button } from '@/src/components/ui/Button';
+import { useState } from 'react';
+import { useToast } from '@/src/hooks/useToast';
 // import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 
 /**
  * @returns A card that allows the users to claim their reward for verifying
  */
-const OneTimeRewardCard = ({ reward }: { reward: number }) => {
-  // const fetchData = async () => {
-  // }
-
-  const claimReward = async () => {
-    // if (typeof window.ethereum === 'undefined')
-    //   throw new Error('No ethereum provider found');
-    // const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // await provider.send('eth_requestAccounts', []);
-    // const signer = provider.getSigner();
-    // try {
-    //   const client = new DiamondGovernanceClient(DGaddress, signer);
-    //   const claimer = await client.pure.IERC20OneTimeVerificationRewardFacet();
-    //   const transaction = await claimer.claimVerificationRewardAll();
-    //   await transaction.wait();
-    //   fetchData();
-    // } catch (err) {
-    //   setError(err.message);
-    // }
-  };
+const OneTimeRewardCard = ({
+  reward,
+  claimReward,
+  refetch,
+}: {
+  reward: number;
+  claimReward: () => Promise<void>;
+  refetch: () => void;
+}) => {
+  const [isClaiming, setIsClaiming] = useState(false);
+  const { promise: promiseToast } = useToast();
 
   return (
     <Card variant="light" className="flex flex-col gap-y-2 font-normal">
@@ -45,7 +38,30 @@ const OneTimeRewardCard = ({ reward }: { reward: number }) => {
       <p>
         Claimable tokens: <strong>{reward}</strong>
       </p>
-      <Button onClick={claimReward}>Claim reward</Button>
+      <Button
+        onClick={() => {
+          if (isClaiming) return;
+
+          setIsClaiming(true);
+          const promise = claimReward();
+
+          promiseToast(promise, {
+            loading: 'Claiming reward...',
+            success: 'Successfully claimed reward!',
+            error: (err) => ({
+              title: 'Failed to claim reward',
+              description: err.message,
+            }),
+          });
+
+          promise.finally(() => {
+            setIsClaiming(false);
+            refetch();
+          });
+        }}
+      >
+        Claim reward
+      </Button>
     </Card>
   );
 };

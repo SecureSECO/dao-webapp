@@ -55,6 +55,14 @@ export const useVerification = ({ useDummyData = false }) => {
   const { client } = useDiamondSDKContext();
   const { address } = useAccount();
 
+  /**
+   * Verifies the user
+   * @param addressToVerify The address to verify
+   * @param userHash Hash data of some unique user data
+   * @param timestamp Timestamp of the verification
+   * @param providerId The id of the provider to verify with
+   * @param proofSignature The proof that was provided by the server
+   */
   const verify = async (
     addressToVerify: string,
     userHash: string,
@@ -77,6 +85,15 @@ export const useVerification = ({ useDummyData = false }) => {
       setError(e.message);
       throw e;
     }
+  };
+
+  /**
+   * Unverifies the user
+   * @param providerId The id of the provider to unverify with
+   */
+  const unverify = async (providerId: string) => {
+    if (!client) return;
+    return client.verification.Unverify(providerId);
   };
 
   /**
@@ -136,6 +153,16 @@ export const useVerification = ({ useDummyData = false }) => {
     });
 
     return threshold ? threshold[1] : BigNumber.from(0);
+  };
+
+  /**
+   * Claims all the pending rewards for verifying
+   */
+  const claimReward = async () => {
+    if (!client) return;
+    const oneTimeVerificationRewardFacet =
+      await client.pure.IERC20OneTimeVerificationRewardFacet();
+    await oneTimeVerificationRewardFacet.claimVerificationRewardAll();
   };
 
   /**
@@ -201,6 +228,9 @@ export const useVerification = ({ useDummyData = false }) => {
       const verificationContract =
         await client.verification.GetVerificationContract();
       const _reverifyThreshold = await verificationContract.reverifyThreshold();
+      const a = await verificationContract.getAllMembers();
+      console.log('fenksonjfda', a);
+
       setReverifyThreshold(_reverifyThreshold.toNumber());
     } catch (e: any) {
       console.error(e);
@@ -225,6 +255,29 @@ export const useVerification = ({ useDummyData = false }) => {
       setError(e.message);
       setLoading(false);
     }
+  };
+
+  /**
+   * Fetches all verification data from the blockchain
+   */
+  const refetch = async () => {
+    if (!client) return;
+
+    setLoading(true);
+
+    const promises = [fetchThresholdHistory(), fetchReverificationThreshold()];
+
+    // Prevent data being loaded from zero address
+    if (
+      (await client.pure.signer.getAddress()) !== ethers.constants.AddressZero
+    ) {
+      promises.push(fetchStamps());
+      promises.push(fetchReward());
+    }
+
+    Promise.allSettled(promises).then(() => {
+      setLoading(false);
+    });
   };
 
   const setDummyData = () => {
@@ -267,36 +320,8 @@ export const useVerification = ({ useDummyData = false }) => {
   };
 
   /**
-   * Fetches all verification data from the blockchain
+   * Refetches data upon a change in the client
    */
-  const refetch = async () => {
-    if (!client) return;
-
-    setLoading(true);
-
-    const promises = [fetchThresholdHistory(), fetchReverificationThreshold()];
-
-    // Prevent data being loaded from zero address
-    if (
-      (await client.pure.signer.getAddress()) !== ethers.constants.AddressZero
-    ) {
-      promises.push(fetchStamps());
-      promises.push(fetchReward());
-    }
-
-    Promise.allSettled(promises).then(() => {
-      setLoading(false);
-    });
-  };
-
-  /**
-   * Unverifies the user, given a providerId
-   */
-  const unverify = async (providerId: string) => {
-    if (!client) return;
-    return client.verification.Unverify(providerId);
-  };
-
   useEffect(() => {
     if (useDummyData) return setDummyData();
     refetch();
@@ -309,6 +334,7 @@ export const useVerification = ({ useDummyData = false }) => {
     unverify,
     refetch,
     isVerified,
+    claimReward,
     thresholdHistory,
     reverifyThreshold,
     verificationHistory,
