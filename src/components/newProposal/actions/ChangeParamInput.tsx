@@ -40,7 +40,7 @@ export interface ProposalFormChangeParamData extends ProposalFormAction {
   value: string;
 }
 
-export const emptyChangeParameter: ProposalFormChangeParamData = {
+export const emptyChangeParamData: ProposalFormChangeParamData = {
   name: 'change_param',
   plugin: '',
   parameter: '',

@@ -9,16 +9,22 @@
 import {
   ChangeParamInput,
   ProposalFormChangeParamData,
+  emptyChangeParamData,
 } from '@/src/components/newProposal/actions/ChangeParamInput';
 import {
   MergePRInput,
   ProposalFormMergeData,
+  emptyMergeData,
 } from '@/src/components/newProposal/actions/MergePRInput';
-import { ProposalFormMintData } from '@/src/components/newProposal/actions/MintTokensInput';
+import {
+  ProposalFormMintData,
+  emptyMintData,
+} from '@/src/components/newProposal/actions/MintTokensInput';
 import { MintTokensInput } from '@/src/components/newProposal/actions/MintTokensInput';
 import {
   ProposalFormWithdrawData,
   WithdrawAssetsInput,
+  emptyWithdrawData,
 } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
 import MergeAction, {
@@ -55,6 +61,15 @@ import { Provider } from '@wagmi/core';
  * as the starting point to add new proposal actions.
  */
 
+/**
+ * Type for different proposal form action data.
+ */
+export type ProposalFormActionData =
+  | ProposalFormWithdrawData
+  | ProposalFormMintData
+  | ProposalFormMergeData
+  | ProposalFormChangeParamData;
+
 type Actions = {
   mint_tokens: ActionData<ProposalMintAction, ProposalFormMintData>;
   merge_pr: ActionData<ProposalMergeAction, ProposalFormMergeData>;
@@ -74,9 +89,12 @@ export const ACTIONS: Actions = {
     method: 'multimint(address[],uint256[])',
     interface: 'IERC20MultiMinterFacet',
     label: 'Mint tokens',
+    longLabel: 'Mint tokens',
     icon: HiOutlineCircleStack,
     view: MintAction,
     input: MintTokensInput,
+    emptyInputData: emptyMintData,
+    maxPerProposal: 1,
     parseInput: async (input) => ({
       method: ACTIONS.mint_tokens.method,
       interface: ACTIONS.mint_tokens.interface,
@@ -92,9 +110,11 @@ export const ACTIONS: Actions = {
     method: 'mergePullRequest(string,string,string)',
     interface: 'IGithubPullRequestFacet',
     label: 'Merge PR',
+    longLabel: 'Merge pull request',
     icon: FaGithub,
     view: MergeAction,
     input: MergePRInput,
+    emptyInputData: emptyMergeData,
     parseInput: async (input) => {
       const url = new URL(input.url);
       const owner = url.pathname.split('/')[1];
@@ -115,9 +135,11 @@ export const ACTIONS: Actions = {
     method: 'withdraw(string,uint256)', // FIXME: not the correct method yet
     interface: 'IWithdraw', // FIXME: not the correct interface yet
     label: 'Withdraw assets',
+    longLabel: 'Withdraw assets',
     icon: HiBanknotes,
     view: WithdrawAction,
     input: WithdrawAssetsInput,
+    emptyInputData: emptyWithdrawData,
     parseInput: async (input, provider) => {
       // Fetch token info of the token to withdraw to access its decimals
       const tokenAddress =
@@ -151,9 +173,12 @@ export const ACTIONS: Actions = {
     method: 'changeParameter(string,uint256)',
     interface: 'IChangeParameter',
     label: 'Change param',
+    longLabel: 'Change plugin parameters',
     icon: HiOutlineCog,
     view: ChangeParamAction,
     input: ChangeParamInput,
+    emptyInputData: emptyChangeParamData,
+    maxPerProposal: 1,
     parseInput: async (input) => {
       return {
         method: ACTIONS.change_param.method,
@@ -166,23 +191,18 @@ export const ACTIONS: Actions = {
       };
     },
   },
-  // unknown: {
-  //   method: '',
-  //   interface: '',
-  //   label: 'Unknown',
-  //   icon: HiOutlineQuestionMarkCircle,
-  //   view: DefaultAction,
-  //   form: () => <></>,
-  //   parseInput: async () => ({
-  //     method: '',
-  //     interface: '',
-  //     params: {},
-  //   }),
-  // },
 };
 
 export type ActionName = keyof typeof ACTIONS;
 
+/**
+ * Interface for ProposalFormActionData, to ensure the name of actions is always a valid name.
+ * This should be used in the type defined for the data of a proposal form action.
+ * @example
+ * interface ProposalFormMintData extends ProposalFormActoin {
+ *  ...
+ * }
+ */
 export interface ProposalFormAction {
   name: ActionName;
 }
@@ -195,13 +215,29 @@ type ActionData<TAction, TFormData> = {
   // Method and interface to call on the smart contract
   method: string;
   interface: string;
-  // Used on proposal tags
+  // Short label used on proposal tags
   label: string;
+  // Long label used in the new-proposal form
+  longLabel: string;
   icon: IconType;
-  // Component to view the action in the UI
+  /**
+   * @param props Props to be passed to the component (with at least the right action)
+   * @returns Component to be used to view the action in the UI
+   */
   view: (props: ViewActionProps<TAction>) => JSX.Element;
-  // Component to be used inside a form to input data for the action
+  /**
+   * @returns Component to be used inside a form to input data for the action
+   */
   input: () => JSX.Element;
+  /**
+   * Data to be used as initial values for the input form for this action.
+   */
+  emptyInputData: TFormData;
+  /**
+   * Maximum number of this action that can be added to a single proposal in the new-proposal form
+   * @default undefined // No limit
+   */
+  maxPerProposal?: number;
   /**
    * Parses the data from the input form for this action to a format expected by the SDK.
    * @param input Data from the input form for this action

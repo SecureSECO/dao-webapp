@@ -29,8 +29,7 @@ import { useNavigate } from 'react-router';
 import { Provider } from '@wagmi/core';
 import { useProvider } from 'wagmi';
 import { useEffect, useState } from 'react';
-import { ACTIONS } from '@/src/lib/constants/actions';
-import { ProposalFormActionData } from '@/src/components/newProposal/steps/Actions';
+import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 
 /**
