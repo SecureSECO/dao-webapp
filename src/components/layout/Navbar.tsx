@@ -18,6 +18,7 @@ import {
 } from '@/src/components/ui/Dropdown';
 import Header from '@/src/components/ui/Header';
 import { Sheet, SheetContent, SheetTrigger } from '@/src/components/ui/Sheet';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { cn } from '@/src/lib/utils';
 import { IconType } from 'react-icons';
 import { FaDiscord } from 'react-icons/fa';
@@ -71,13 +72,13 @@ const navItems: NavItem[] = [
         label: 'Query',
         url: '/query',
         icon: HiOutlineDocumentMagnifyingGlass,
-        description: 'Query the SearchSECO database using your $SECOINS',
+        description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.}`,
       },
       {
         label: 'Mining',
         url: '/mining',
         icon: HiOutlineTerminal,
-        description: 'Claim your mining rewards in $SECOINS or $SECOREP',
+        description: `Claim your mining rewards in ${TOKENS.secoin.symbol} or ${TOKENS.rep.symbol}`,
       },
     ],
     alternativeLinks: [
