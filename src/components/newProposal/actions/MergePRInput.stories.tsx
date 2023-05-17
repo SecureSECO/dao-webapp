@@ -25,9 +25,7 @@ export const Primary: Story = {
       actions: [
         {
           name: 'merge_pr',
-          inputs: {
-            url: 'https://github.com/pull/1',
-          },
+          url: 'https://github.com/pull/1',
         },
       ],
     },

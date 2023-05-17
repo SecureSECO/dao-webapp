@@ -248,6 +248,23 @@ type ActionData<TAction, TFormData> = {
 };
 
 /**
+ * Get the identifier for an action. An identifier is a string that uniquely identifies an action, consisting of the interface and method name
+ * of the smart contract function that will eventually be called for this action.
+ * @param action Action to get the identifier for
+ * @returns A unique identifier for an action, based on its interface and method name
+ * @example
+ * const action = {
+ *  interface: "IERC20MultiMinterFacet",
+ *  method: "multimint(address[],uint256[])",
+ *  params: { ... }
+ * }
+ * const identifier = getIdentifier(action);
+ * console.log(identifier); // "IERC20MultiMinterFacet.multimint(address[],uint256[])"
+ */
+const getIdentifier = (action: Action | ActionData<any, any>) =>
+  `${action.interface}.${action.method}`;
+
+/**
  * Object that maps an action identifier to a more readable name as defined in the ACTIONS object.
  * @example
  * const actionName = actionNames['IERC20MultiMinterFacet.multimint(address[],uint256[])']
@@ -275,20 +292,3 @@ export const actionToName = (action: Action): ActionName | undefined => {
   const identifier = getIdentifier(action);
   return actionNames[identifier];
 };
-
-/**
- * Get the identifier for an action. An identifier is a string that uniquely identifies an action, consisting of the interface and method name
- * of the smart contract function that will eventually be called for this action.
- * @param action Action to get the identifier for
- * @returns A unique identifier for an action, based on its interface and method name
- * @example
- * const action = {
- *  interface: "IERC20MultiMinterFacet",
- *  method: "multimint(address[],uint256[])",
- *  params: { ... }
- * }
- * const identifier = getIdentifier(action);
- * console.log(identifier); // "IERC20MultiMinterFacet.multimint(address[],uint256[])"
- */
-const getIdentifier = (action: Action | ActionData<any, any>) =>
-  `${action.interface}.${action.method}`;
