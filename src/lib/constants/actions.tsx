@@ -6,6 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @fileoverview This file contains logic to generalize proposal actions.
+ * It contains a list of all actions that can be performed on a proposal and serves
+ * as the starting point to add new proposal actions.
+ */
+
 import {
   ChangeParamInput,
   ProposalFormChangeParamData,
@@ -26,7 +32,6 @@ import {
   WithdrawAssetsInput,
   emptyWithdrawData,
 } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
-import UnknownAction from '@/src/components/proposal/actions/UnknownAction';
 import MergeAction, {
   ProposalMergeAction,
 } from '@/src/components/proposal/actions/MergeAction';
@@ -54,12 +59,6 @@ import {
 import { getTokenInfo } from '@/src/lib/token-utils';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { Provider } from '@wagmi/core';
-
-/**
- * @fileoverview This file contains logic to generalize proposal actions.
- * It contains a list of all actions that can be performed on a proposal and serves
- * as the starting point to add new proposal actions.
- */
 
 /**
  * Type for different proposal form action data.
