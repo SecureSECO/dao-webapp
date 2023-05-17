@@ -9,14 +9,14 @@
 import { withProposalAction } from '@/src/lib/decorators/proposalActionDecorator';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ChangeParametersInput } from './ChangeParametersInput';
+import { ChangeParamInput } from './ChangeParametersInput';
 
-const meta: Meta<typeof ChangeParametersInput> = {
-  component: ChangeParametersInput,
+const meta: Meta<typeof ChangeParamInput> = {
+  component: ChangeParamInput,
 };
 
 export default meta;
-type Story = StoryObj<typeof ChangeParametersInput>;
+type Story = StoryObj<typeof ChangeParamInput>;
 
 export const Primary: Story = {
   decorators: [withProposalAction],

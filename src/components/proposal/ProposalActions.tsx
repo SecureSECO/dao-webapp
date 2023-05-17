@@ -18,19 +18,14 @@ import {
   MainCardProps,
 } from '@/src/components/ui/MainCard';
 import {
-  actions as actionMap,
+  ACTIONS as actionMap,
   actionToName,
 } from '@/src/lib/constants/actions';
-
-export interface IProposalAction {
-  interface: string;
-  method: string;
-  params: { [name: string]: any };
-}
+import { Action } from '@plopmenz/diamond-governance-sdk';
 
 export interface ProposalActionsProps
   extends Omit<MainCardProps, 'icon' | 'header'> {
-  actions: IProposalAction[] | undefined;
+  actions: Action[] | undefined;
   loading?: boolean;
 }
 

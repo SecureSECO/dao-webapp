@@ -21,26 +21,16 @@ import {
   ActionFormError,
   ProposalFormActions,
 } from '../steps/Actions';
+import { ProposalFormAction } from '@/src/lib/constants/actions';
 
-export type ProposalFormMergeData = {
+export interface ProposalFormMergeData extends ProposalFormAction {
   name: 'merge_pr';
-  inputs: {
-    url: string;
-  };
-};
-
-export const emptyMergeAction: ProposalFormMergeData = {
-  name: 'merge_pr',
-  inputs: {
-    url: '',
-  },
-};
+  url: string;
+}
 
 export const emptyMergeData: ProposalFormMergeData = {
   name: 'merge_pr',
-  inputs: {
-    url: '',
-  },
+  url: '',
 };
 
 /**
@@ -50,7 +40,6 @@ export const MergePRInput = () => {
   const {
     register,
     formState: { errors: formErrors },
-    control,
   } = useFormContext<ProposalFormActions>();
 
   const { prefix, index, onRemove } = useContext(ActionFormContext);
@@ -77,12 +66,9 @@ export const MergePRInput = () => {
         <Label tooltip="Link to the pull request on GitHub">
           Pull request URL
         </Label>
-        <ErrorWrapper
-          name="Pull request URL"
-          error={errors?.inputs?.url ?? undefined}
-        >
+        <ErrorWrapper name="Pull request URL" error={errors?.url ?? undefined}>
           <Input
-            {...register(`${prefix}.inputs.url`, {
+            {...register(`${prefix}.url`, {
               required: true,
               pattern: {
                 value: GithubPullRequestPattern,
@@ -91,7 +77,7 @@ export const MergePRInput = () => {
             })}
             type="url"
             id="url"
-            error={errors?.inputs?.url ?? undefined}
+            error={errors?.url ?? undefined}
             title="Link to the pull request on GitHub"
             placeholder="https://github.com/..."
             className="w-full basis-2/3"

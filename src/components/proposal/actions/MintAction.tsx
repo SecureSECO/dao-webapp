@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper, {
   ActionContentSeparator,
 } from '@/src/components/proposal/actions/ActionWrapper';
@@ -19,6 +18,7 @@ import { useMembers } from '@/src/hooks/useMembers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { getTokenInfo } from '@/src/lib/token-utils';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -30,7 +30,7 @@ import { useProvider } from 'wagmi';
  * @note The tokenId is only used if governance is done through NFT's, which is not currently the case
  * @note By default, it is assumed that this action will mint the reputation (governance) token
  */
-export interface ProposalMintAction extends IProposalAction {
+export interface ProposalMintAction extends Action {
   params: {
     _addresses: string[];
     _amounts: BigNumber[];

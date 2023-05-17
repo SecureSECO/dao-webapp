@@ -27,25 +27,20 @@ import {
   SelectValue,
 } from '@/src/components/ui/Select';
 import TokenAmount from '@/src/components/ui/TokenAmount';
-import { ActionName, ProposalFormAction } from '@/src/lib/constants/actions';
+import { ProposalFormAction } from '@/src/lib/constants/actions';
 import { useDaoBalance } from '@/src/hooks/useDaoBalance';
 import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
 import { anyNullOrUndefined, cn } from '@/src/lib/utils';
-import {
-  Control,
-  Controller,
-  UseFormRegister,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 
-export type ProposalFormWithdrawData = ProposalFormAction & {
+export interface ProposalFormWithdrawData extends ProposalFormAction {
+  name: 'withdraw_assets';
   recipient: string;
   tokenAddress: string | 'custom';
   tokenAddressCustom?: string;
   amount: string | number;
-};
+}
 
 export const emptyWithdrawData: ProposalFormWithdrawData = {
   name: 'withdraw_assets',

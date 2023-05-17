@@ -6,20 +6,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { FaGithub } from 'react-icons/fa';
 import { Card } from '@/src/components/ui/Card';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 
-export type ProposalMergeAction = IProposalAction & {
+export interface ProposalMergeAction extends Action {
   params: {
     _owner: string;
     _repo: string;
     _pull_number: string;
   };
-};
+}
 
 interface MergeActionProps extends AccordionItemProps {
   action: ProposalMergeAction;

@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { actionToName, actions } from '@/src/lib/constants/actions';
+import { actionToName, ACTIONS } from '@/src/lib/constants/actions';
 import { countdownText } from '@/src/lib/date-utils';
 import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
 import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
@@ -137,9 +137,9 @@ export const getProposalTags = (
 
   unqiueActions.forEach((key) =>
     res.push({
-      children: actions[key].label,
+      children: ACTIONS[key].label,
       variant: 'action',
-      icon: actions[key].icon,
+      icon: ACTIONS[key].icon,
     })
   );
 

@@ -36,9 +36,10 @@ import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { useProvider } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { ACTIONS, actionToName } from '@/src/lib/constants/actions';
 
 /**
- * Converts actions in their input form to IProposalAction objects, to be used to view proposals and sending proposal to SDK.
+ * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
  * @param actions List of actions in their input form
  * @returns A list of corresponding IProposalAction objects
  */
@@ -48,83 +49,9 @@ const parseActionInputs = async (
 ): Promise<IProposalAction[]> => {
   const res: IProposalAction[] = [];
   await Promise.all(
-    actions.map(async (action) => {
-      switch (action.name) {
-        case 'withdraw_assets': {
-          // Fetch token info of the token to withdraw to access its decimals
-          try {
-            const tokenInfo = await getTokenInfo(
-              action.tokenAddress,
-              provider,
-              PREFERRED_NETWORK_METADATA.nativeCurrency
-            );
-
-            res.push({
-              method: 'withdraw', // FIXME: This is not the correct method
-              interface: 'IWithdraw', // FIXME: This is not the correct interface
-              params: {
-                _to: action.recipient,
-                // Convert to correct number of tokens using the fetched decimals
-                _amount: parseUnits(
-                  action.amount.toString(),
-                  tokenInfo.decimals
-                ),
-                _tokenAddress:
-                  action.tokenAddress === 'custom'
-                    ? action.tokenAddressCustom
-                    : action.tokenAddress,
-              },
-            });
-          } catch (e) {
-            console.error(e);
-          }
-          break;
-        }
-        case 'mint_tokens':
-          res.push({
-            method: 'multimint(address[],uint256[])',
-            interface: 'IERC20MultiMinterFacet',
-            params: {
-              _addresses: action.wallets.map((wallet) => wallet.address),
-              _amounts: action.wallets.map((wallet) => {
-                return parseUnits(
-                  wallet.amount.toString(),
-                  TOKENS.rep.decimals
-                );
-              }),
-            },
-          });
-          break;
-        // Refer to useProposal.ts for the correct method and interface
-        case 'merge_pr': {
-          const url = new URL(action.inputs.url);
-          const owner = url.pathname.split('/')[1];
-          const repo = url.pathname.split('/')[2];
-          const pullNumber = url.pathname.split('/')[4];
-          if (!owner || !repo || !pullNumber) break;
-          res.push({
-            method: 'merge(string,string,string)',
-            interface: 'IGithubPullRequestFacet',
-            params: {
-              _owner: owner,
-              _repo: repo,
-              _pull_number: pullNumber,
-            },
-          });
-          break;
-        }
-        case 'change_parameter':
-          res.push({
-            method: 'change', // FIXME: This is not the correct method
-            interface: 'IChange', //FIXME: This is not the correct interface
-            params: {
-              _plugin: action.plugin,
-              _param: action.parameter,
-              _value: action.value,
-            },
-          });
-      }
-    })
+    actions.map((action) =>
+      ACTIONS[actionToName(action)].parseInput(action, provider)
+    )
   );
 
   return res;

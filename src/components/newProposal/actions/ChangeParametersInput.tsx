@@ -19,13 +19,7 @@ import {
 } from '@/src/components/ui/Select';
 import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
 import { isNullOrUndefined } from '@/src/lib/utils';
-import {
-  Control,
-  Controller,
-  UseFormRegister,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiCog, HiXMark } from 'react-icons/hi2';
 
 import { Button } from '../../ui/Button';
@@ -37,16 +31,17 @@ import {
   ActionFormError,
   ProposalFormActions,
 } from '../steps/Actions';
+import { ProposalFormAction } from '@/src/lib/constants/actions';
 
-export type ProposalFormChangeParameter = {
-  name: 'change_parameter';
+export interface ProposalFormChangeParamData extends ProposalFormAction {
+  name: 'change_param';
   plugin: string;
   parameter: string;
   value: string;
-};
+}
 
-export const emptyChangeParameter: ProposalFormChangeParameter = {
-  name: 'change_parameter',
+export const emptyChangeParameter: ProposalFormChangeParamData = {
+  name: 'change_param',
   plugin: '',
   parameter: '',
   value: '',
@@ -137,7 +132,7 @@ const PluginParameterOptions: { plugins: Plugin[] } = {
   ],
 };
 
-export const ChangeParametersInput = () => {
+export const ChangeParamInput = () => {
   const {
     register,
     formState: { errors: formErrors },
@@ -146,7 +141,7 @@ export const ChangeParametersInput = () => {
 
   const { prefix, index, onRemove } = useContext(ActionFormContext);
 
-  const errors: ActionFormError<ProposalFormChangeParameter> =
+  const errors: ActionFormError<ProposalFormChangeParamData> =
     formErrors.actions ? formErrors.actions[index] : undefined;
 
   // react-hook-form input names

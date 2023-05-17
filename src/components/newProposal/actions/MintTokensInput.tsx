@@ -13,9 +13,7 @@ import { ProposalFormAction } from '@/src/lib/constants/actions';
 import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
 import { someUntil } from '@/src/lib/utils';
 import {
-  Control,
   UseFormGetValues,
-  UseFormRegister,
   useFieldArray,
   useFormContext,
 } from 'react-hook-form';
@@ -30,27 +28,10 @@ import {
   ProposalFormActions,
 } from '../steps/Actions';
 
-export interface ProposalFormMint extends ProposalFormAction {
-  name: 'mint_tokens';
-  inputs: {
-    mintTokensToWallets: {
-      address: string;
-      amount: string | number;
-    }[];
-  };
-}
-
-export const emptyMintAction: ProposalFormMint = {
-  name: 'mint_tokens',
-  inputs: {
-    mintTokensToWallets: [{ address: '', amount: 0 }],
-  },
-};
-
-export type ProposalFormMintData = ProposalFormAction & {
+export interface ProposalFormMintData extends ProposalFormAction {
   name: 'mint_tokens';
   wallets: ProposalFormMintWallet[];
-};
+}
 
 export type ProposalFormMintWallet = {
   address: string;

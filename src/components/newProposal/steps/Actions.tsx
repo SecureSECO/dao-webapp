@@ -31,7 +31,7 @@ import {
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
 import { Label } from '@/src/components/ui/Label';
-import { ProposalFormAction, actions } from '@/src/lib/constants/actions';
+import { ProposalFormAction, ACTIONS } from '@/src/lib/constants/actions';
 import {
   StepNavigator,
   useNewProposalFormContext,
@@ -49,13 +49,17 @@ import { FaGithub } from 'react-icons/fa';
 import { HiBanknotes, HiCircleStack, HiCog, HiPlus } from 'react-icons/hi2';
 
 import {
-  ChangeParametersInput,
+  ChangeParamInput,
+  ProposalFormChangeParamData,
   emptyChangeParameter,
 } from '../actions/ChangeParametersInput';
-import {
-  ProposalFormActionData,
-  actions as actionMap,
-} from '@/src/lib/constants/actions';
+import { ACTIONS as actionMap } from '@/src/lib/constants/actions';
+
+export type ProposalFormActionData =
+  | ProposalFormWithdrawData
+  | ProposalFormMintData
+  | ProposalFormMergeData
+  | ProposalFormChangeParamData;
 
 export type ActionFormContextData = {
   index: number;
@@ -142,7 +146,7 @@ const SelectActionInput = (action: ProposalFormActionData) => {
     case 'merge_pr':
       return <MergePRInput />;
     case 'change_param':
-      return <ChangeParametersInput />;
+      return <ChangeParamInput />;
   }
 };
 
