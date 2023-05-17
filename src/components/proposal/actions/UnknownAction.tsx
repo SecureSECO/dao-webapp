@@ -19,7 +19,7 @@ interface DefaultActionProps extends AccordionItemProps {
  * Default action component, for when it has not yet been supported specifically
  * @returns Accordion showing a general action with its params
  */
-const DefaultAction = ({ action, ...props }: DefaultActionProps) => {
+const UnknownAction = ({ action, ...props }: DefaultActionProps) => {
   return (
     <ActionWrapper
       icon={HiQuestionMarkCircle}
@@ -30,4 +30,4 @@ const DefaultAction = ({ action, ...props }: DefaultActionProps) => {
   );
 };
 
-export default DefaultAction;
+export default UnknownAction;

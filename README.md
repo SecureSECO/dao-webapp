@@ -281,6 +281,8 @@ Additionally, the following files should be updated:
 - [utils.ts](/src/lib/utils.ts) - a case should be added for the new action to map it to a readable name, which is used in the `getPropsalTags` function inside of the `ProposalTag.tsx` file (this is only necessary if you wish to add a tag for this action to the proposal cards)
 - [ProposalTag.tsx](/src/components/governance/ProposalTag.tsx) - an icon should be added to the `proposalTagIcon` object and the name of the action to the props interface `ProposalTagProps.icon`. Additionally, the new action should be added to the switch statement in the `getProposalTags` function
 
+Always a good idea to add stories for both the components that you add, as well as new stories for ProposalTag.
+
 ## Dependencies
 
 ### Web3 packages

@@ -11,7 +11,7 @@
  */
 
 import CheckList from '@/src/components/icons/CheckList';
-import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
+import UnknownAction from '@/src/components/proposal/actions/UnknownAction';
 import { Accordion } from '@/src/components/ui/Accordion';
 import {
   DefaultMainCardHeader,
@@ -58,7 +58,7 @@ const ProposalActions = ({
             const actionName = actionToName(action);
             if (!actionName)
               return (
-                <DefaultAction key={i} value={i.toString()} action={action} />
+                <UnknownAction key={i} value={i.toString()} action={action} />
               );
             const { view: ViewAction } = ACTIONS[actionName];
             return (

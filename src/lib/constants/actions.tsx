@@ -26,7 +26,7 @@ import {
   WithdrawAssetsInput,
   emptyWithdrawData,
 } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
-import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
+import UnknownAction from '@/src/components/proposal/actions/UnknownAction';
 import MergeAction, {
   ProposalMergeAction,
 } from '@/src/components/proposal/actions/MergeAction';
