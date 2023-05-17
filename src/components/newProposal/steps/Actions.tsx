@@ -52,7 +52,7 @@ import {
   ChangeParamInput,
   ProposalFormChangeParamData,
   emptyChangeParameter,
-} from '../actions/ChangeParametersInput';
+} from '../actions/ChangeParamInput';
 import { ACTIONS as actionMap } from '@/src/lib/constants/actions';
 
 export type ProposalFormActionData =

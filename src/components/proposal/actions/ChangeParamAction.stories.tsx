@@ -9,7 +9,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Accordion } from '../../ui/Accordion';
 
-import { ChangeParamAction } from './ChangeParameterAction';
+import { ChangeParamAction } from './ChangeParamAction';
 import { dummyChangeParamsAction } from '@/src/hooks/useProposal';
 
 const meta: Meta<typeof ChangeParamAction> = {

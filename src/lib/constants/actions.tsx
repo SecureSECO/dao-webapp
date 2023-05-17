@@ -9,7 +9,7 @@
 import {
   ChangeParamInput,
   ProposalFormChangeParamData,
-} from '@/src/components/newProposal/actions/ChangeParametersInput';
+} from '@/src/components/newProposal/actions/ChangeParamInput';
 import {
   MergePRInput,
   ProposalFormMergeData,
@@ -44,7 +44,7 @@ import {
 import {
   ChangeParamAction,
   ProposalChangeParamAction,
-} from '@/src/components/proposal/actions/ChangeParameterAction';
+} from '@/src/components/proposal/actions/ChangeParamAction';
 import { getTokenInfo } from '@/src/lib/token-utils';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { Provider } from '@wagmi/core';
@@ -66,7 +66,7 @@ type Actions = {
 };
 
 /**
- * Data for a proposal action, consisting of components to render the action, its method, interface, label, icon and input,
+ * Data for specific proposal actions, consisting of components to render the action, its method, interface, label, icon and input,
  * and a function to parse the form input for that action into a proposal action.
  */
 export const ACTIONS: Actions = {
@@ -122,7 +122,7 @@ export const ACTIONS: Actions = {
       // Fetch token info of the token to withdraw to access its decimals
       const tokenAddress =
         input.tokenAddress === 'custom'
-          ? input.tokenAddressCustom
+          ? (input.tokenAddressCustom as string)
           : input.tokenAddress;
       try {
         const tokenInfo = await getTokenInfo(
@@ -143,6 +143,7 @@ export const ACTIONS: Actions = {
         };
       } catch (e) {
         console.error(e);
+        return null;
       }
     },
   },
@@ -207,7 +208,7 @@ type ActionData<TAction, TFormData> = {
    * @param provider Provider to use to optionally fetch data from the blockchain
    * @returns Instance of Action as expected by the SDK
    */
-  parseInput: (input: TFormData, provider: Provider) => Promise<TAction>;
+  parseInput: (input: TFormData, provider: Provider) => Promise<TAction | null>;
 };
 
 /**
@@ -234,9 +235,9 @@ Object.entries(ACTIONS).forEach(([name, action]) => {
  * const name = actionToName(action);
  * console.log(name); // "mint_tokens"
  */
-export const actionToName = (action: Action): ActionName => {
+export const actionToName = (action: Action): ActionName | undefined => {
   const identifier = getIdentifier(action);
-  return actionNames[identifier] ?? 'unknown';
+  return actionNames[identifier];
 };
 
 /**

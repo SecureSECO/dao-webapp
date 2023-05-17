@@ -132,15 +132,18 @@ export const getProposalTags = (
 
   // Add tag for each type of action that is attached to the proposal
   const unqiueActions = new Set(
-    proposal.actions.map(actionToName).filter((name) => name !== 'unknown')
+    proposal.actions.map(actionToName).filter((name) => !!name)
   );
 
-  unqiueActions.forEach((key) =>
-    res.push({
-      children: ACTIONS[key].label,
-      variant: 'action',
-      icon: ACTIONS[key].icon,
-    })
+  unqiueActions.forEach(
+    (key) =>
+      // If key is undefined, this means the action is not supported by the web-app, so don't show tag for it
+      key &&
+      res.push({
+        children: ACTIONS[key].label,
+        variant: 'action',
+        icon: ACTIONS[key].icon,
+      })
   );
 
   return res;

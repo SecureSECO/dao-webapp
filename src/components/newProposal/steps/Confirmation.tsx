@@ -6,11 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { ProposalFormAction } from '@/src/components/newProposal/steps/Actions';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
-import ProposalActions, {
-  IProposalAction,
-} from '@/src/components/proposal/ProposalActions';
+import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
@@ -29,14 +26,12 @@ import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import CategoryList from '@/src/components/ui/CategoryList';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useNavigate } from 'react-router';
-import { parseUnits } from 'ethers/lib/utils.js';
-import { getTokenInfo } from '@/src/lib/token-utils';
 import { Provider } from '@wagmi/core';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { useProvider } from 'wagmi';
 import { useEffect, useState } from 'react';
-import { TOKENS } from '@/src/lib/constants/tokens';
-import { ACTIONS, actionToName } from '@/src/lib/constants/actions';
+import { ACTIONS } from '@/src/lib/constants/actions';
+import { ProposalFormActionData } from '@/src/components/newProposal/steps/Actions';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
@@ -44,15 +39,14 @@ import { ACTIONS, actionToName } from '@/src/lib/constants/actions';
  * @returns A list of corresponding IProposalAction objects
  */
 const parseActionInputs = async (
-  actions: ProposalFormAction[],
+  actions: ProposalFormActionData[],
   provider: Provider
-): Promise<IProposalAction[]> => {
-  const res: IProposalAction[] = [];
-  await Promise.all(
-    actions.map((action) =>
-      ACTIONS[actionToName(action)].parseInput(action, provider)
-    )
+): Promise<Action[]> => {
+  const res: Action[] = [];
+  const parsed = await Promise.all(
+    actions.map((action) => ACTIONS[action.name].parseInput(action, provider))
   );
+  parsed.forEach((action) => action && res.push(action));
 
   return res;
 };

@@ -11,16 +11,14 @@
  */
 
 import CheckList from '@/src/components/icons/CheckList';
+import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
 import { Accordion } from '@/src/components/ui/Accordion';
 import {
   DefaultMainCardHeader,
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
-import {
-  ACTIONS as actionMap,
-  actionToName,
-} from '@/src/lib/constants/actions';
+import { ACTIONS, actionToName } from '@/src/lib/constants/actions';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 
 export interface ProposalActionsProps
@@ -57,8 +55,15 @@ const ProposalActions = ({
       ) : (
         <Accordion type="single" collapsible className="space-y-2">
           {actions.map((action, i) => {
-            const { view: View } = actionMap[actionToName(action)];
-            return <View key={i} value={i.toString()} action={action} />;
+            const actionName = actionToName(action);
+            if (!actionName)
+              return (
+                <DefaultAction key={i} value={i.toString()} action={action} />
+              );
+            const { view: ViewAction } = ACTIONS[actionName];
+            return (
+              <ViewAction key={i} value={i.toString()} action={action as any} />
+            );
           })}
         </Accordion>
       )}

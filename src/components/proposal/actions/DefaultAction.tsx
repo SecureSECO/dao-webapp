@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 interface DefaultActionProps extends AccordionItemProps {
-  action: IProposalAction;
+  action: Action;
 }
 
 /**

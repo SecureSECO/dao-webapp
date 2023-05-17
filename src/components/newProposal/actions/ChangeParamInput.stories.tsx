@@ -9,7 +9,7 @@
 import { withProposalAction } from '@/src/lib/decorators/proposalActionDecorator';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ChangeParamInput } from './ChangeParametersInput';
+import { ChangeParamInput } from './ChangeParamInput';
 
 const meta: Meta<typeof ChangeParamInput> = {
   component: ChangeParamInput,
