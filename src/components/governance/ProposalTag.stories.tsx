@@ -9,7 +9,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { addDays } from 'date-fns';
 import ProposalTag from '@/src/components/governance/ProposalTag';
-import { countdownText } from '@/src/lib/date-utils';
+import { countdownText } from '@/src/lib/utils/date';
 import { ACTIONS } from '@/src/lib/constants/actions';
 
 const meta = {

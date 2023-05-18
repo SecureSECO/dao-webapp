@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { bigIntToFloat, toAbbreviatedTokenAmount } from '@/src/lib/token-utils';
+import { bigIntToFloat, toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 
 test('bigIntToFloat correct on 12345678n, decimal 4', () => {
   expect(bigIntToFloat(12345678n, 4)).toBe(1234.5678);

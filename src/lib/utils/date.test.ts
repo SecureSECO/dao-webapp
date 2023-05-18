@@ -14,7 +14,7 @@ import {
   isGapEnough,
   timezoneOffsetDifference,
   timezoneStringFormat,
-} from '@/src/lib/date-utils';
+} from '@/src/lib/utils/date';
 import { addDays, addHours, addMinutes, addSeconds } from 'date-fns';
 
 test("'2022-12-15' + 1 day (=86400 secs) to be 2022-12-16", () => {

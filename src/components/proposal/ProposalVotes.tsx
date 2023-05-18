@@ -26,7 +26,7 @@ import {
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { CanVote } from '@/src/hooks/useProposal';
 import { TOKENS } from '@/src/lib/constants/tokens';
-import { toAbbreviatedTokenAmount } from '@/src/lib/token-utils';
+import { toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
 import { AddressVotes, Proposal } from '@plopmenz/diamond-governance-sdk';
 import { format } from 'date-fns';

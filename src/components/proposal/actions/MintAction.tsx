@@ -17,7 +17,7 @@ import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useMembers } from '@/src/hooks/useMembers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { TOKENS } from '@/src/lib/constants/tokens';
-import { getTokenInfo, toAbbreviatedTokenAmount } from '@/src/lib/token-utils';
+import { getTokenInfo, toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';

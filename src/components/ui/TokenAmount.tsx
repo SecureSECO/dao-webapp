@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { toAbbreviatedTokenAmount } from '@/src/lib/token-utils';
+import { toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
 import React from 'react';
 

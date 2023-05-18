@@ -14,7 +14,7 @@ import {
   TokenInfo,
   getTokenInfo,
   toAbbreviatedTokenAmount,
-} from '@/src/lib/token-utils';
+} from '@/src/lib/utils/token';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';
