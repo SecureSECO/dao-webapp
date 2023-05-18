@@ -1,14 +1,4 @@
-/**
- * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
- * © Copyright Utrecht University (Department of Information and Computing Sciences)
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-import { bigIntToFloat } from '.';
-
-// These are very simplistic tests, mostly meant as example tests.
+import { bigIntToFloat } from '@/src/lib/token-utils';
 
 test('bigIntToFloat correct on 12345678n, decimal 4', () => {
   expect(bigIntToFloat(12345678n, 4)).toBe(1234.5678);
