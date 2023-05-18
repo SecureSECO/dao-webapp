@@ -10,6 +10,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { addDays } from 'date-fns';
 import ProposalTag from '@/src/components/governance/ProposalTag';
 import { countdownText } from '@/src/lib/date-utils';
+import { ACTIONS } from '@/src/lib/constants/actions';
 
 const meta = {
   component: ProposalTag,
@@ -44,31 +45,31 @@ export const NoVotes: Story = {
 export const MintActionTag: Story = {
   args: {
     variant: 'action',
-    children: 'Mint tokens',
-    icon: 'mint',
+    children: ACTIONS.mint_tokens.label,
+    icon: ACTIONS.mint_tokens.icon,
   },
 };
 
 export const WithdrawActionTag: Story = {
   args: {
     variant: 'action',
-    children: 'Withdraw assets',
-    icon: 'withdraw',
+    children: ACTIONS.withdraw_assets.label,
+    icon: ACTIONS.withdraw_assets.icon,
   },
 };
 
 export const MergeActionTag: Story = {
   args: {
     variant: 'action',
-    children: 'Merge PR',
-    icon: 'merge',
+    children: ACTIONS.merge_pr.label,
+    icon: ACTIONS.merge_pr.icon,
   },
 };
 
 export const ChangeParamsActionTag: Story = {
   args: {
     variant: 'action',
-    children: 'Change params',
-    icon: 'change',
+    children: ACTIONS.change_param.label,
+    icon: ACTIONS.change_param.icon,
   },
 };

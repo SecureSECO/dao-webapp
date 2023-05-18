@@ -6,12 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
+import UnknownAction from '@/src/components/proposal/actions/UnknownAction';
 import { Accordion } from '@/src/components/ui/Accordion';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  component: DefaultAction,
+  component: UnknownAction,
   argTypes: {
     action: {
       table: {
@@ -29,7 +29,7 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof DefaultAction>;
+} satisfies Meta<typeof UnknownAction>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

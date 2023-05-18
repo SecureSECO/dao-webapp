@@ -6,26 +6,26 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { TokenInfo, getTokenInfo } from '@/src/lib/token-utils';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { HiArrowRight, HiBanknotes } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';
 
-export type ProposalWithdrawAction = IProposalAction & {
+export interface ProposalWithdrawAction extends Action {
   params: {
     _amount: BigNumber;
     _tokenAddress: string;
     _to: string;
   };
-};
+}
 
 interface WithdrawActionProps extends AccordionItemProps {
   action: ProposalWithdrawAction;

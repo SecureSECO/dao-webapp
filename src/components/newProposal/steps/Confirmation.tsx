@@ -6,11 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { ProposalFormAction } from '@/src/components/newProposal/steps/Actions';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
-import ProposalActions, {
-  IProposalAction,
-} from '@/src/components/proposal/ProposalActions';
+import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
@@ -29,103 +26,28 @@ import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import CategoryList from '@/src/components/ui/CategoryList';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useNavigate } from 'react-router';
-import { parseUnits } from 'ethers/lib/utils.js';
-import { getTokenInfo } from '@/src/lib/token-utils';
 import { Provider } from '@wagmi/core';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { useProvider } from 'wagmi';
 import { useEffect, useState } from 'react';
-import { TOKENS } from '@/src/lib/constants/tokens';
+import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 
 /**
- * Converts actions in their input form to IProposalAction objects, to be used to view proposals and sending proposal to SDK.
+ * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
  * @param actions List of actions in their input form
- * @returns A list of corresponding IProposalAction objects
+ * @returns A list of corresponding Action objects
  */
 const parseActionInputs = async (
-  actions: ProposalFormAction[],
+  actions: ProposalFormActionData[],
   provider: Provider
-): Promise<IProposalAction[]> => {
-  const res: IProposalAction[] = [];
-  await Promise.all(
-    actions.map(async (action) => {
-      switch (action.name) {
-        case 'withdraw_assets': {
-          // Fetch token info of the token to withdraw to access its decimals
-          try {
-            const tokenInfo = await getTokenInfo(
-              action.tokenAddress,
-              provider,
-              PREFERRED_NETWORK_METADATA.nativeCurrency
-            );
-
-            res.push({
-              method: 'withdraw', // FIXME: This is not the correct method
-              interface: 'IWithdraw', // FIXME: This is not the correct interface
-              params: {
-                _to: action.recipient,
-                // Convert to correct number of tokens using the fetched decimals
-                _amount: parseUnits(
-                  action.amount.toString(),
-                  tokenInfo.decimals
-                ),
-                _tokenAddress:
-                  action.tokenAddress === 'custom'
-                    ? action.tokenAddressCustom
-                    : action.tokenAddress,
-              },
-            });
-          } catch (e) {
-            console.error(e);
-          }
-          break;
-        }
-        case 'mint_tokens':
-          res.push({
-            method: 'multimint(address[],uint256[])',
-            interface: 'IERC20MultiMinterFacet',
-            params: {
-              _addresses: action.wallets.map((wallet) => wallet.address),
-              _amounts: action.wallets.map((wallet) => {
-                return parseUnits(
-                  wallet.amount.toString(),
-                  TOKENS.rep.decimals
-                );
-              }),
-            },
-          });
-          break;
-        // Refer to useProposal.ts for the correct method and interface
-        case 'merge_pr': {
-          const url = new URL(action.inputs.url);
-          const owner = url.pathname.split('/')[1];
-          const repo = url.pathname.split('/')[2];
-          const pullNumber = url.pathname.split('/')[4];
-          if (!owner || !repo || !pullNumber) break;
-          res.push({
-            method: 'merge(string,string,string)',
-            interface: 'IGithubPullRequestFacet',
-            params: {
-              _owner: owner,
-              _repo: repo,
-              _pull_number: pullNumber,
-            },
-          });
-          break;
-        }
-        case 'change_parameter':
-          res.push({
-            method: 'change', // FIXME: This is not the correct method
-            interface: 'IChange', //FIXME: This is not the correct interface
-            params: {
-              _plugin: action.plugin,
-              _param: action.parameter,
-              _value: action.value,
-            },
-          });
-      }
-    })
+): Promise<Action[]> => {
+  const res: Action[] = [];
+  const parsed = await Promise.all(
+    actions.map((action) =>
+      ACTIONS[action.name].parseInput(action as any, provider)
+    )
   );
+  parsed.forEach((action) => action && res.push(action));
 
   return res;
 };
@@ -169,13 +91,13 @@ const parseEndDate = (settings: ProposalFormVotingSettings): Date => {
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
-  const [actions, setActions] = useState<IProposalAction[]>([]);
+  const [actions, setActions] = useState<Action[]>([]);
   const { client } = useDiamondSDKContext();
   const { toast } = useToast();
   const navigate = useNavigate();
   const provider = useProvider();
 
-  // Maps the action form iputs to IProposalAction interface
+  // Maps the action form iputs to Action interface
   useEffect(() => {
     if (dataStep3)
       parseActionInputs(dataStep3.actions, provider).then((res) =>

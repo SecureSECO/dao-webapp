@@ -1,4 +1,9 @@
-import { AddressPattern, NumberPattern, UrlPattern } from './patterns';
+import {
+  AddressPattern,
+  GithubPullRequestPattern,
+  NumberPattern,
+  UrlPattern,
+} from './constants/patterns';
 
 describe('Success cases for Number Pattern', () => {
   const successes = [
@@ -76,6 +81,30 @@ describe('Failures cases for Url Pattern', () => {
     'www.example.com/😎', // invalid url character 😎
   ];
   testFailures(UrlPattern, failures);
+});
+
+describe('Succes cases for Github pull request Pattern', () => {
+  const successes = [
+    'https://github.com/orgname/reponame/pull/2609',
+    'https://github.com/orgname/reponame/pull/1',
+    'https://github.com/SecureSECODAO/dao-webapp/pull/72',
+  ];
+  testSuccesses(GithubPullRequestPattern, successes);
+});
+
+describe('Failures cases for Github pull request Pattern', () => {
+  const failures = [
+    '', // empty string
+    ' ', //Only space
+    ' https://github.com/orgname/reponame/pull/123', // space at start
+    'https://github.com /orgname/reponame/pull/123', // space at middle
+    'https://github.com/orgname/reponame/pull/123 ', // space at end
+    'https://github.com/orgname/pull/123 ', // missing repo name
+    'https://github.com/orgname/reponame/123 ', // missing pull
+    'https://github.com/orgname/reponame/pull', // missing pull request number
+    'https://github.com/orgname/reponame/pull/123/', // '/' at end
+  ];
+  testFailures(GithubPullRequestPattern, failures);
 });
 
 function testSuccesses(pattern: RegExp, successes: string[]) {

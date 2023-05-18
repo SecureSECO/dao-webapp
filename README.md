@@ -268,18 +268,18 @@ Some specific examples of how to use the color classes:
 
 ### Adding proposal actions
 
-Proposal actions are essentially smart contract calls that can be executed upon a proposal being passed by the DAO. To add support for a new proposal, assuming it has already been added to the SDK, you should add the following files (when adding an action called `example`):
+Proposal actions are essentially smart contract calls that can be executed upon a proposal being passed by the DAO. To add support for a new proposal, assuming it has already been added to the DAO in smart contracts, you should add the following files (when adding an action called `example`):
 
-- `ExampleAction.tsx` to the [components/proposal/actions](/src/components/proposal/actions) folder. This should be a component to view the action on the view-proposal-page, and the final step of the new proposal flow. You can refer to the other components for the existing actions for examples of the expected style. Don't forget to write a story for this component. This file should also include a type `ProposalExampleAction` that extends the `IProposalAction` interface (as defined in [ProposalActions.tsx](/src/components/proposal/ProposalActions.tsx)).
-- `ExampleInput.tsx` to the [components/newProposal/actions](/src/components/newProposal/actions) folder. This should be a component that can be used as part of a form to add an action in the new proposal flow. Again, refer to the files already in the folder for examples.
+- `ExampleAction.tsx` to the [components/proposal/actions](/src/components/proposal/actions) folder. This should be a component to view the action on the view-proposal-page, and the final step of the new proposal flow. You can refer to the other components for the existing actions for examples of the expected style. Don't forget to write a story for this component. This file should also include an interface `ProposalExampleAction` that extends the `Action` interface, which is defined in the diamond governance SDK npm package.
+- `ExampleInput.tsx` to the [components/newProposal/actions](/src/components/newProposal/actions) folder. This should be a component that can be used as part of a form to add an action in the new proposal flow. Again, refer to the files already in the folder for examples. This file should also include an interface `ProposalFormExampleData` that extends the `ProposalFormAction` interface, which is defined in the diamond governance SDK npm package.
 
-Additionally, the following files should be updated:
+Additionally, you should update the file [actions.tsx](/src/lib/constants/actions.tsx) should be updated in the following places (all located at the top of the file):
 
-- [ProposalActionFilter.tsx](/src/components/proposal/actions/ProposalActionFilter.tsx) - a case should be added for the action, which should return the `<ExampleAction />` component newly defined in `ExampleAction.tsx`
-- [Actions.tsx](/src/components/newProposal/steps/Actions.tsx) - a case should be added for the new action in the switch statement of the component in this file, which should return the `<ExampleInput />` component newly defined in `ExampleInput.tsx`
-- [Confirmation.tsx](/src/components/newProposal/steps/Confirmation.tsx) - a case should be added to the function `parseActionInputs` for the new action to map the form data as defined in `ExampleInput.tsx` to the format expected by the `IProposalAction` interface (as defined in [ProposalActions.tsx](/src/components/proposal/ProposalActions.tsx))
-- [utils.ts](/src/lib/utils.ts) - a case should be added for the new action to map it to a readable name, which is used in the `getPropsalTags` function inside of the `ProposalTag.tsx` file (this is only necessary if you wish to add a tag for this action to the proposal cards)
-- [ProposalTag.tsx](/src/components/governance/ProposalTag.tsx) - an icon should be added to the `proposalTagIcon` object and the name of the action to the props interface `ProposalTagProps.icon`. Additionally, the new action should be added to the switch statement in the `getProposalTags` function
+- Add the type `ProposalFormExampleData` that you added in your new file to the `ProposalFormActionData` type, similar to those that are already there
+- Add a property to the type `Actions`, with the key `example` with the following type: `ActionData<ProposalExampleAction, ProposalFormExampleData>`, again similar to those that are already there
+- Add an entry to the `ACTIONS` object with they key `example`, with all the required data (an explanation of each property can be found in that same file at the type definition for `ActionData`)
+
+It is also worth mentioning that it is highly encouraged to write stories for the new components that you add, and to add a dummy object for the action to the [useProposal.ts](/src/hooks/useProposal.ts) file, which can then be used in stories for other components ([ProposalActions](/src/components/proposal/ProposalActions.stories.tsx) and [ProposalCard](/src/components/governance/ProposalCard.stories.tsx)). The existing actions also have a story in [ProposalTag.stories.tsx](/src/components/governance/ProposalTag.stories.tsx) each, so be sure to also a story for the new action there.
 
 ## Dependencies
 
