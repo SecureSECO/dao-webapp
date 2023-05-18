@@ -99,7 +99,8 @@ export function abbreviateTokenAmount(
   if (!amount) return 'N/A';
 
   // Make sure displayDecimals is in the range required by toFixed()
-  if (displayDecimals < 0 || displayDecimals > 20) displayDecimals = 2;
+  if (displayDecimals > 20) displayDecimals = 20;
+  else if (displayDecimals < 0) displayDecimals = 0;
 
   const TOKEN_AMOUNT_REGEX =
     /(?<integers>[\d*]*)[.]*(?<decimals>[\d]*)\s*(?<symbol>[A-Za-z]*)/;
@@ -133,10 +134,7 @@ export function abbreviateTokenAmount(
     const intNumber = Number.parseInt(integers);
     const totalNumber = intNumber + fractionNumber;
 
-    if (totalNumber === 0) {
-      return `0.00${symbol && ' ' + symbol}`;
-    }
-    if (totalNumber < 0.01) {
+    if (totalNumber < 0.01 && totalNumber > 0) {
       return ` < 0.01${symbol && ' ' + symbol}`;
     }
 

@@ -152,7 +152,7 @@ export const WithdrawAssetsInput = () => {
                           <TokenAmount
                             amount={token.balance}
                             tokenDecimals={token.decimals}
-                            symbol={token.symbol}
+                            symbol={token.symbol ?? undefined}
                           />
                         </div>
                       </SelectItem>

@@ -14,9 +14,7 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Link } from '@/src/components/ui/Link';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { Skeleton } from '@/src/components/ui/Skeleton';
-import TokenAmount, {
-  transfertypeToSign,
-} from '@/src/components/ui/TokenAmount';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
 import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { TransferType } from '@aragon/sdk-client';
@@ -26,6 +24,17 @@ import {
   HiArrowsRightLeft,
   HiCircleStack,
 } from 'react-icons/hi2';
+
+/**
+ * Convert a TransferType to a sign (+ or -)
+ * @param tt TransferType, as defined in @aragon/sdk-client
+ * @returns Either '+' or '-'
+ * @example
+ * transfertypeToSign(TransferType.DEPOSIT) // '+'
+ * transfertypeToSign(TransferType.WITHDRAW) // '-'
+ */
+export const transfertypeToSign = (tt: TransferType) =>
+  tt === TransferType.WITHDRAW ? '-' : '+';
 
 type DaoTokenListProps = {
   loading: boolean;
@@ -84,7 +93,7 @@ const DaoTokensList = ({
             <TokenAmount
               amount={balance.balance}
               tokenDecimals={balance.decimals}
-              symbol={balance.symbol}
+              symbol={balance.symbol ?? undefined}
             />
             <span className="px-2">•</span>
             <span className="text-popover-foreground/80">
@@ -154,7 +163,7 @@ export const DaoTransfersList = ({
                 className="font-bold"
                 amount={transfer.amount}
                 tokenDecimals={transfer.decimals}
-                symbol={transfer.tokenSymbol}
+                symbol={transfer.tokenSymbol ?? undefined}
                 sign={transfertypeToSign(transfer.type)}
               />
               <div className="text-popover-foreground/80">

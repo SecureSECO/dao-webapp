@@ -7,13 +7,12 @@
  */
 
 import { toAbbreviatedTokenAmount } from '@/src/lib/token-utils';
-import { TransferType } from '@aragon/sdk-client';
 import { BigNumber } from 'ethers';
 import React from 'react';
 
 interface TokenAmountProps extends React.HTMLAttributes<HTMLSpanElement> {
-  amount: BigInt | BigNumber | null;
-  tokenDecimals: number | null;
+  amount?: BigInt | BigNumber | null;
+  tokenDecimals?: number | null;
   amountFloat?: number;
   symbol?: string;
   sign?: string;
@@ -54,8 +53,5 @@ const TokenAmount = ({
     </span>
   );
 };
-
-export const transfertypeToSign = (tt: TransferType) =>
-  tt === TransferType.WITHDRAW ? '-' : '+';
 
 export default TokenAmount;
