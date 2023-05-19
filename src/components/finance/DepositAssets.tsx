@@ -6,18 +6,23 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { NumberPattern } from '@/src/lib/patterns';
-import { parseEther } from 'ethers/lib/utils.js';
+import { contractTransaction, useToast } from '@/src/hooks/useToast';
+import { NumberPattern } from '@/src/lib/constants/patterns';
+import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiInboxArrowDown } from 'react-icons/hi2';
 import {
+  erc20ABI,
   useAccount,
-  usePrepareSendTransaction,
+  useContractWrite,
+  usePrepareContractWrite,
   useProvider,
-  useSendTransaction,
+  useWaitForTransaction,
 } from 'wagmi';
 
+import Loading from '../icons/Loading';
 import { Address, AddressLength } from '../ui/Address';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -43,11 +48,12 @@ type DepositAssetsData = {
   amount?: string;
 };
 
-type SendData = Record<Token, string>;
+type AddressString = `0x${string}`;
+type SendData = Record<Token, AddressString | undefined>;
 
-const senders: SendData = {
-  Matic: '',
-  SECOIN: '',
+const tokenAddresses: SendData = {
+  Matic: '0x0000000000000000000000000000000000001010',
+  SECOIN: '0x...',
   Other: undefined,
 };
 
@@ -57,26 +63,99 @@ export const DepositAssets = ({}) => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<DepositAssetsData>({});
   const { daoAddress } = useDiamondSDKContext();
-  const { isConnected } = useAccount();
+  const { isConnected, address: senderAddress } = useAccount();
   const provider = useProvider();
 
   const watchToken = useWatch({ control: control, name: 'token' });
+  const tokenAddress = tokenAddresses[watchToken];
   const isKnownToken = watchToken !== undefined && watchToken !== 'Other';
 
+  const watchAmount = useWatch({ control: control, name: 'amount' });
+  const amount = tryParseBignumber(watchAmount);
+
+  const debouncedTokenId = useDebounce(amount, 500);
+
+  const { config, error } = usePrepareContractWrite({
+    address: tokenAddress,
+    abi: erc20ABI,
+    functionName: 'transferFrom',
+    args: [
+      senderAddress as AddressString,
+      daoAddress as AddressString,
+      amount as BigNumber,
+    ],
+    enabled: Boolean(debouncedTokenId),
+  });
+
+  const { data: writeData, writeAsync } = useContractWrite(config);
+
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: writeData?.hash,
+  });
+
   const onSubmit = (data: DepositAssetsData) => {
-  
     //Can only send known tokens
-    if (!isKnownToken || data.amount === undefined) return;
-    const recipient = senders[data.token];
+    if (!isKnownToken || data.amount === undefined) {
+      setError('root.deposit', {
+        type: 'custom',
+        message: 'Error: can only deposit known token types',
+      });
+      return;
+    }
     //Should not happen
-    if (recipient === undefined) return;
+    if (tokenAddress === undefined) {
+      setError('root.deposit', {
+        type: 'custom',
+        message: 'Error: can not deposit this type of token',
+      });
+      return;
+    }
 
-  const {data: sendData, isLoading, isSuccess, sendTransaction} = useSendTransaction({to: recipient
-      value: parseEther(data.amount)
-    });
+    if (senderAddress === undefined) {
+      setError('root.deposit', {
+        type: 'custom',
+        message: "Error: can not determine sender's address",
+      });
+      return;
+    }
 
+    if (daoAddress === undefined) {
+      setError('root.deposit', {
+        type: 'custom',
+        message: "Error: can not determine DAO's address",
+      });
+      return;
+    }
+
+    if (!BigNumber.isBigNumber(amount)) {
+      setError('root.deposit', {
+        type: 'custom',
+        message: 'Error: the amount is not in the correct format',
+      });
+      return;
+    }
+
+    if (error !== null) {
+      setError('root.deposit', {
+        type: 'custom',
+        message: 'Error: can not create transaction',
+      });
+      console.log(error);
+      return;
+    }
+
+    if (!writeAsync) {
+      setError('root.deposit', {
+        type: 'custom',
+        message: 'Error: can not create transaction',
+      });
+      return;
+    }
+
+    writeAsync();
 
     console.log(data);
   };
@@ -118,7 +197,7 @@ export const DepositAssets = ({}) => {
               />
             </ErrorWrapper>
           </div>
-          {isKnownToken ? (
+          {isKnownToken && (
             <LabelledInput
               {...register('amount', {
                 validate: (v) => {
@@ -142,10 +221,8 @@ export const DepositAssets = ({}) => {
               label="Amount"
               error={errors.amount}
             />
-          ) : (
-            <></>
           )}
-          {watchToken === 'Other' ? (
+          {watchToken === 'Other' && (
             <div>
               <Label tooltip="Copy the ENS or address below and use your wallet's send feature to send money to your DAO's treasury.">
                 Manual transfer
@@ -169,23 +246,46 @@ export const DepositAssets = ({}) => {
                 </Card>
               </div>
             </div>
-          ) : (
-            <></>
           )}
-          {isKnownToken ? (
-            <div className="flex gap-x-2 flex-row">
-              <Button label="Deposit assets" disabled={!isConnected} />
-              {isConnected ? (
-                <></>
-              ) : (
-                <ConnectWalletWarning action="to deposit" />
-              )}
-            </div>
-          ) : (
-            <></>
+          {isKnownToken && (
+            <ErrorWrapper name="deposit" error={errors?.root?.deposit as any}>
+              <div className="flex gap-x-2 flex-row">
+                <Button
+                  label="Deposit assets"
+                  disabled={!isConnected || isLoading}
+                  icon={isLoading ? Loading : null}
+                />
+                {isConnected || <ConnectWalletWarning action="to deposit" />}
+              </div>
+            </ErrorWrapper>
           )}
+          {}
         </div>
       </form>
     </MainCard>
   );
 };
+
+function useDebounce<T>(value: T, delay?: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay || 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+function tryParseBignumber(input: string | undefined): BigNumber | null {
+  let num: BigNumber | null;
+  try {
+    num = BigNumber.from(input);
+  } catch {
+    num = null;
+  }
+  return num;
+}
