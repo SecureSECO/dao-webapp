@@ -7,11 +7,6 @@
  */
 
 import { ClassValue, clsx } from 'clsx';
-import {
-  differenceInHours,
-  differenceInMinutes,
-  formatDistanceToNow,
-} from 'date-fns';
 import { BigNumber } from 'ethers';
 import { twMerge } from 'tailwind-merge';
 

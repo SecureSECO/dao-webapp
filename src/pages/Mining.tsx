@@ -21,7 +21,7 @@ export type ClaimRewardData = {
   distribution: number;
 };
 
-export const Mining = ({}) => {
+export const Mining = () => {
   //TODO: implement with SDK
   const claimableRep = 123;
   const repToMonetaryFactor = 0.3;
@@ -74,7 +74,7 @@ export const ClaimReward = ({
         </Label>
         <Card
           variant="outline"
-          className="grid w-full grid-cols-8 gap-x-4 gap-y-4 text-center md:flex md:flex-row"
+          className="grid w-full grid-cols-8 gap-4 text-center md:flex md:flex-row"
         >
           <div className="col-span-4 flex flex-col">
             {TOKENS.rep.symbol}
@@ -100,7 +100,7 @@ export const ClaimReward = ({
             />
           </div>
         </Card>
-        <div className="mt-1 flex w-full flex-col gap-x-2 gap-y-2 md:flex-row">
+        <div className="mt-1 flex w-full flex-col gap-2 md:flex-row">
           <Card variant="outline">
             <TokenAmount amountFloat={reputation} symbol={TOKENS.rep.symbol} />
           </Card>

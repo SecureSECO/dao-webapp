@@ -12,7 +12,7 @@ import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { contractTransaction, useToast } from '@/src/hooks/useToast';
-import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/date-utils';
+import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import {
   StepNavigator,

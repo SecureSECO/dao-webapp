@@ -56,7 +56,7 @@ import {
   ChangeParamAction,
   ProposalChangeParamAction,
 } from '@/src/components/proposal/actions/ChangeParamAction';
-import { getTokenInfo } from '@/src/lib/token-utils';
+import { getTokenInfo } from '@/src/lib/utils/token';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { Provider } from '@wagmi/core';
 

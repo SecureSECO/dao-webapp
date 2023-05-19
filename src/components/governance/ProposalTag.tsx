@@ -7,7 +7,7 @@
  */
 
 import { actionToName, ACTIONS } from '@/src/lib/constants/actions';
-import { countdownText } from '@/src/lib/date-utils';
+import { countdownText } from '@/src/lib/utils/date';
 import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
 import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import { cva, VariantProps } from 'class-variance-authority';
