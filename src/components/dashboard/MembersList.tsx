@@ -11,7 +11,7 @@ import { Card } from '@/src/components/ui/Card';
 import { Member } from '@/src/hooks/useMembers';
 
 import { Skeleton } from '../ui/Skeleton';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 import { TOKENS } from '@/src/lib/constants/tokens';
 
 /**
@@ -31,14 +31,12 @@ const MemberCard = ({ member }: { member: Member }) => {
         jazziconSize="md"
       />
       {member.bal !== null && (
-        <p className="whitespace-nowrap">
-          {toAbbreviatedTokenAmount(
-            member.bal.toBigInt(),
-            TOKENS.rep.decimals,
-            true
-          )}{' '}
-          {TOKENS.rep.symbol}
-        </p>
+        <TokenAmount
+          amount={member.bal}
+          tokenDecimals={TOKENS.rep.decimals}
+          displayDecimals={0}
+          symbol={TOKENS.rep.symbol}
+        />
       )}
     </Card>
   );

@@ -32,6 +32,15 @@ export const Primary: Story = {
   },
 };
 
+export const MoreDecimals: Story = {
+  args: {
+    amount: 1234556789n,
+    tokenDecimals: 6,
+    displayDecimals: 8,
+    symbol: 'TEST',
+  },
+};
+
 export const LowAmount: Story = {
   args: {
     amount: 1234556789n,
@@ -60,6 +69,6 @@ export const NftAmount: Story = {
   args: {
     amount: 1n,
     tokenDecimals: 0,
-    symbol: 'The NFT',
+    symbol: 'BRAINED',
   },
 };

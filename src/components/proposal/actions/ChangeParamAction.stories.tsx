@@ -9,11 +9,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Accordion } from '../../ui/Accordion';
 
-import { ChangeParameterAction } from './ChangeParameterAction';
+import { ChangeParamAction } from './ChangeParamAction';
 import { dummyChangeParamsAction } from '@/src/hooks/useProposal';
 
-const meta: Meta<typeof ChangeParameterAction> = {
-  component: ChangeParameterAction,
+const meta: Meta<typeof ChangeParamAction> = {
+  component: ChangeParamAction,
   argTypes: {
     action: {
       table: {
@@ -34,7 +34,7 @@ const meta: Meta<typeof ChangeParameterAction> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ChangeParameterAction>;
+type Story = StoryObj<typeof ChangeParamAction>;
 
 export const Primary: Story = {
   args: {
