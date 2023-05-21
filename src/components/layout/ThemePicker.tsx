@@ -43,7 +43,11 @@ const themes: ThemeOption[] = [
   },
 ];
 
-const ThemePicker = () => {
+const ThemePicker = ({
+  mobileFlippedDropdown = true,
+}: {
+  mobileFlippedDropdown?: boolean;
+}) => {
   const [currentTheme, setCurrentTheme] = useState('system');
 
   // If theme is set in localStorage, use that
@@ -78,7 +82,12 @@ const ThemePicker = () => {
           <HiSun className="h-5 w-5 dark:hidden" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="absolute -right-5 origin-top">
+      <DropdownMenuContent
+        className={cn(
+          mobileFlippedDropdown ? '-left-5 lg:-right-5' : '-right-5',
+          'absolute  origin-top '
+        )}
+      >
         <DropdownMenuRadioGroup
           value={currentTheme}
           onValueChange={setCurrentTheme}

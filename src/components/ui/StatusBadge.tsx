@@ -59,19 +59,20 @@ export interface StatusBadgeProps
  * @returns A div showing the passed text with predefined color and size
  */
 export const StatusBadge = ({
-  icon,
   size,
   variant,
   text,
   className,
   ...props
 }: StatusBadgeProps) => {
+  const { icon, ...divProps } = props;
+
   return (
     <div
       className={cn(statusVariants({ size, variant }), className)}
-      {...props}
+      {...divProps}
     >
-      {createElement(icon, { className: cn(iconVariants({ size })) })}
+      <props.icon className={cn(iconVariants({ size }))} />
       <p>{text}</p>
     </div>
   );
