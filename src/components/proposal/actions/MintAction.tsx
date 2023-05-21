@@ -96,7 +96,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
   const { memberCount, isMember } = useMembers({ includeBalances: false });
 
   const provider = useProvider({
-    chainId: +CONFIG.PREFERRED_NETWORK_ID,
+    chainId: CONFIG.PREFERRED_NETWORK_ID,
   });
 
   useEffect(() => {
