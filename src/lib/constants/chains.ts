@@ -10,9 +10,8 @@
 
 /* SUPPORTED NETWORK TYPES ================================================== */
 
-// -1 for undeployed tokens, such as REP
 export const SUPPORTED_CHAIN_ID = [
-  1, 5, 137, 80001, 42161, 421613, -1, 1337,
+  1, 5, 137, 80001, 42161, 421613, 1337,
 ] as const;
 export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 
@@ -29,7 +28,6 @@ const SUPPORTED_NETWORKS = [
   'mumbai',
   'arbitrum',
   'arbitrum-test',
-  'rep',
 ] as const;
 export type SupportedNetworks =
   | (typeof SUPPORTED_NETWORKS)[number]
@@ -198,20 +196,6 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
-  },
-  rep: {
-    id: -1,
-    name: 'REP',
-    domain: 'L1 Blockchain',
-    logo: '',
-    explorer: '',
-    testnet: false,
-    nativeCurrency: {
-      name: 'REP',
-      symbol: 'REP',
-      decimals: 18,
-    },
-    etherscanApi: '',
   },
   unsupported: {
     id: 1,

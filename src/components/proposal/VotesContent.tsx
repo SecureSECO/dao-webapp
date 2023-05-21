@@ -23,7 +23,6 @@ import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { calcBigNumberPercentage } from '@/src/lib/utils';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { contractTransaction, toast } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import {
@@ -38,6 +37,7 @@ import { useAccount } from 'wagmi';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
 import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 
 type VoteFormData = {
   vote_option: string;
@@ -253,14 +253,13 @@ const VotesContentOption = ({
               {voteValueString}
             </p>
             <div className="flex flex-row items-center gap-x-4 text-right">
-              <p className="text-popover-foreground/80">
-                {toAbbreviatedTokenAmount(
-                  voteTally.toBigInt(),
-                  TOKENS.rep.decimals,
-                  true
-                )}{' '}
-                {TOKENS.rep.symbol}
-              </p>
+              <TokenAmount
+                className="text-popover-foreground/80"
+                amount={voteTally}
+                tokenDecimals={TOKENS.rep.decimals}
+                symbol={TOKENS.rep.symbol}
+                displayDecimals={0}
+              />
               <p className="w-12 text-right text-primary">{percentage}%</p>
             </div>
           </div>
@@ -281,17 +280,16 @@ const VotesContentOption = ({
                   replaceYou={false}
                 />
                 <div className="grid grid-cols-4 text-right opacity-80">
-                  <p className="col-span-3">
-                    {/* The vote.votes is an array of how much was voted for each option, because the underlying 
-                        smart contract implements partial voting, but this is not supported in the web-app
-                        meaning realistically, the vote.votes array will only ever have 1 entry */}
-                    {toAbbreviatedTokenAmount(
-                      vote.votes[0].amount.toBigInt(),
-                      TOKENS.rep.decimals,
-                      true
-                    )}{' '}
-                    {TOKENS.rep.symbol}
-                  </p>
+                  {/* The vote.votes is an array of how much was voted for each option, because the underlying 
+                      smart contract implements partial voting, but this is not supported in the web-app
+                      meaning realistically, the vote.votes array will only ever have 1 entry */}
+                  <TokenAmount
+                    className="col-span-3"
+                    amount={vote.votes[0].amount}
+                    tokenDecimals={TOKENS.rep.decimals}
+                    symbol={TOKENS.rep.symbol}
+                    displayDecimals={0}
+                  />
                   <p>
                     {calcBigNumberPercentage(
                       vote.votes[0].amount,

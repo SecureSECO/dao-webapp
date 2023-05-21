@@ -40,7 +40,7 @@ import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
 import { promise, useToast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
-import { UrlPattern } from '@/src/lib/patterns';
+import { UrlPattern } from '@/src/lib/constants/patterns';
 import { saveAs } from 'file-saver';
 import { useForm } from 'react-hook-form';
 import {

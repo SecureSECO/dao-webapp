@@ -25,7 +25,7 @@ import {
   inputToDate,
   isGapEnough,
   timezoneOffsetDifference,
-} from '@/src/lib/date-utils';
+} from '@/src/lib/utils/date';
 import { cn } from '@/src/lib/utils';
 import {
   StepNavigator,
