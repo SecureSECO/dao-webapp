@@ -263,7 +263,7 @@ export const DropdownContent = ({
 
 export default Navbar;
 
-function MobileNav() {
+const MobileNav = () => {
   return (
     <nav className="relative flex items-center gap-x-2 lg:hidden">
       <ThemePicker />
@@ -299,4 +299,4 @@ function MobileNav() {
       </Sheet>
     </nav>
   );
-}
+};
