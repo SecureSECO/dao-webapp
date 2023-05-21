@@ -291,7 +291,7 @@ const MobileNav = () => {
 
             <div className="grid w-full grid-cols-1 place-items-center gap-4 pb-6 md:grid-cols-2">
               {navItems.map((item) => (
-                <NavItem item={item} className="text-center" />
+                <NavItem key={item.label} item={item} className="text-center" />
               ))}
             </div>
           </div>
