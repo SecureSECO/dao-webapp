@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { siteConfig } from "@/src/lib/constants/config";
+import { siteConfig } from '@/src/lib/constants/config';
 
 // This file is mostly taken from the Aragon App source code
 
