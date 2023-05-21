@@ -25,7 +25,7 @@ import {
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
-import { UrlPattern } from '@/src/lib/patterns';
+import { UrlPattern } from '@/src/lib/constants/patterns';
 
 export interface ProposalFormMetadata {
   title: string;

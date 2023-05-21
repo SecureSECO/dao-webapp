@@ -8,6 +8,7 @@
 
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
+import { ACTIONS } from '@/src/lib/constants/actions';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
   VoteOption,
@@ -46,8 +47,8 @@ export type UseProposalProps = {
  * Dummy mint tokens action
  */
 export const dummyMintAction = {
-  method: 'mintVotingPower(address,uint256,uint256)',
-  interface: 'IMintableGovernanceStructure',
+  method: ACTIONS.mint_tokens.method,
+  interface: ACTIONS.mint_tokens.interface,
   params: {
     _addresses: [
       '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
@@ -65,8 +66,8 @@ export const dummyMintAction = {
  * @note Not yet correct
  */
 export const dummyWithdrawAction = {
-  method: 'withdraw',
-  interface: 'IWithdraw',
+  method: ACTIONS.withdraw_assets.method,
+  interface: ACTIONS.withdraw_assets.interface,
   params: {
     _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
     _amount: BigNumber.from('0x4563918244F40000'),
@@ -78,8 +79,8 @@ export const dummyWithdrawAction = {
  * Dummy merge pull request action
  */
 export const dummyMergeAction = {
-  method: 'mergePullRequest(string,string,string)',
-  interface: 'IGithubPullRequestFacet',
+  method: ACTIONS.merge_pr.method,
+  interface: ACTIONS.merge_pr.interface,
   params: {
     _owner: 'githubtraining',
     _repo: 'hellogitworld',
@@ -92,8 +93,8 @@ export const dummyMergeAction = {
  * @note Not yet correct
  */
 export const dummyChangeParamsAction = {
-  method: 'change',
-  interface: 'IChange',
+  method: ACTIONS.change_param.method,
+  interface: ACTIONS.change_param.interface,
   params: {
     _plugin: 'TokenVoting',
     _param: 'supportThreshold',

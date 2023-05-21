@@ -24,9 +24,9 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { CanVote } from '@/src/hooks/useProposal';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
 import { AddressVotes, Proposal } from '@plopmenz/diamond-governance-sdk';
 import { format } from 'date-fns';
@@ -76,11 +76,11 @@ const getCategories = (
         },
         {
           label: 'Minimum participation',
-          value: `${toAbbreviatedTokenAmount(
-            proposal.data.parameters.minParticipationThresholdPower.toBigInt(),
-            TOKENS.rep.decimals,
-            true
-          )} 
+          value: `${toAbbreviatedTokenAmount({
+            value: proposal.data.parameters.minParticipationThresholdPower,
+            tokenDecimals: TOKENS.rep.decimals,
+            displayDecimals: 0,
+          })} 
           ${TOKENS.rep.symbol}`,
         },
       ],

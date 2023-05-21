@@ -11,23 +11,19 @@
  */
 
 import CheckList from '@/src/components/icons/CheckList';
+import UnknownAction from '@/src/components/proposal/actions/UnknownAction';
 import { Accordion } from '@/src/components/ui/Accordion';
 import {
   DefaultMainCardHeader,
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
-import ProposalActionFilter from '@/src/components/proposal/actions/ProposalActionFilter';
-
-export interface IProposalAction {
-  interface: string;
-  method: string;
-  params: { [name: string]: any };
-}
+import { ACTIONS, actionToName } from '@/src/lib/constants/actions';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 
 export interface ProposalActionsProps
   extends Omit<MainCardProps, 'icon' | 'header'> {
-  actions: IProposalAction[] | undefined;
+  actions: Action[] | undefined;
   loading?: boolean;
 }
 
@@ -58,13 +54,17 @@ const ProposalActions = ({
         </div>
       ) : (
         <Accordion type="single" collapsible className="space-y-2">
-          {actions.map((action, i) => (
-            <ProposalActionFilter
-              key={i}
-              value={i.toString()}
-              action={action}
-            />
-          ))}
+          {actions.map((action, i) => {
+            const actionName = actionToName(action);
+            if (!actionName)
+              return (
+                <UnknownAction key={i} value={i.toString()} action={action} />
+              );
+            const { view: ViewAction } = ACTIONS[actionName];
+            return (
+              <ViewAction key={i} value={i.toString()} action={action as any} />
+            );
+          })}
         </Accordion>
       )}
       {children}
