@@ -34,7 +34,7 @@ import {
   HiUserGroup,
 } from 'react-icons/hi2';
 import { MembershipStatus } from '../components/dashboard/MembershipStatus';
-import { siteConfig } from '@/src/lib/constants/config';
+import { CONFIG } from '@/src/lib/constants/config';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao();
@@ -215,7 +215,7 @@ const Dashboard = () => {
             className="flex flex-row items-center gap-x-2"
             target="_blank"
             rel="noreferrer"
-            to={`${etherscanURL}/token/tokenholderchart/${siteConfig.DIAMOND_ADDRESS}`}
+            to={`${etherscanURL}/token/tokenholderchart/${CONFIG.DIAMOND_ADDRESS}`}
           >
             <p>View all members</p>
             <HiArrowRight className="h-5 w-5 shrink-0" />

@@ -17,7 +17,7 @@ import { useNetwork, useSigner, useSwitchNetwork } from 'wagmi';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { Contract, ethers } from 'ethers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { siteConfig } from '@/src/lib/constants/config';
+import { CONFIG } from '@/src/lib/constants/config';
 
 type SDKContext = {
   client?: DiamondGovernanceClient;
@@ -25,7 +25,7 @@ type SDKContext = {
 };
 
 const DiamondSDKContext = createContext<SDKContext>({});
-const diamondAddress = siteConfig.DIAMOND_ADDRESS;
+const diamondAddress = CONFIG.DIAMOND_ADDRESS;
 
 export function DiamondSDKWrapper({ children }: any): JSX.Element {
   const [client, setClient] = useState<DiamondGovernanceClient | undefined>(

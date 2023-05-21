@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-export const siteConfig = {
+export const CONFIG = {
   VERIFICATION_API_URL: 'http://localhost:43210/api',
   SEARCHSECO_API_URL: 'http://localhost:25566/api',
   DIAMOND_ADDRESS: '0xD3C63852E9EF1Dbd7dDc7C2F8587F5133B769814',
