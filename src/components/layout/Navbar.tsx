@@ -31,20 +31,20 @@ import {
 } from 'react-icons/hi2';
 import { NavLink, useLocation } from 'react-router-dom';
 
-type NavItemPage = { label: string; url: string };
-type NavItemPageWithIcon = NavItemPage & {
+type NavItemPageData = { label: string; url: string };
+type NavItemPageWithIcon = NavItemPageData & {
   icon: IconType;
   description?: string;
 };
-type NavItemCollection = {
+type NavItemCollectionData = {
   label: string;
   pages: NavItemPageWithIcon[];
   alternativeLinks?: NavItemPageWithIcon[];
 };
 
-type NavItem = NavItemPage | NavItemCollection;
+type NavItemData = NavItemPageData | NavItemCollectionData;
 
-const navItems: NavItem[] = [
+const navItems: NavItemData[] = [
   {
     label: 'Dashboard',
     url: '/',
@@ -78,7 +78,7 @@ const navItems: NavItem[] = [
         label: 'Mining',
         url: '/mining',
         icon: HiOutlineTerminal,
-        description: `Claim your mining rewards in ${TOKENS.secoin.symbol} or ${TOKENS.rep.symbol}`,
+        description: `Claim your mining rewards in ${TOKENS.secoin.symbol} or ${TOKENS.rep.symbol}.`,
       },
     ],
     alternativeLinks: [
@@ -88,11 +88,11 @@ const navItems: NavItem[] = [
   },
 ];
 
-const Navitempage = ({
+const NavItemPage = ({
   item,
   className,
 }: {
-  item: NavItemPage;
+  item: NavItemPageData;
   className?: string;
 }) => {
   return (
@@ -113,11 +113,11 @@ const Navitempage = ({
   );
 };
 
-const Navitemcollection = ({
+const NavItemCollection = ({
   item,
   className,
 }: {
-  item: NavItemCollection;
+  item: NavItemCollectionData;
   className?: string;
 }) => {
   const location = useLocation();
@@ -143,26 +143,26 @@ const Navitemcollection = ({
   );
 };
 
-const Navitem = ({
+const NavItem = ({
   item,
   className,
 }: {
-  item: NavItem;
+  item: NavItemData;
   className?: string;
 }) => {
   if ((item as any).url)
-    return <Navitempage item={item as NavItemPage} className={className} />;
+    return <NavItemPage item={item as NavItemPageData} className={className} />;
   if ((item as any).pages)
     return (
       <>
-        <Navitemcollection
-          item={item as NavItemCollection}
+        <NavItemCollection
+          item={item as NavItemCollectionData}
           className={className + ' hidden lg:flex'}
         />
         <div className="w-full rounded-3xl border border-border text-sm leading-5 shadow-lg md:col-span-2 lg:hidden">
           <DropdownContent
-            title={'SearchSECO'}
-            item={item as NavItemCollection}
+            title={item.label}
+            item={item as NavItemCollectionData}
           />
         </div>
       </>
@@ -181,7 +181,7 @@ const Navbar = () => {
       {/* Desktop nav */}
       <nav className="hidden px-4 py-6 lg:flex lg:flex-row lg:gap-x-2">
         {navItems.map((item) => (
-          <Navitem key={item.label} item={item} />
+          <NavItem key={item.label} item={item} />
         ))}
       </nav>
 
@@ -200,7 +200,7 @@ export const DropdownContent = ({
   item,
   className,
 }: {
-  item: NavItemCollection;
+  item: NavItemCollectionData;
   title?: string;
   className?: string;
 }) => {
@@ -291,7 +291,7 @@ const MobileNav = () => {
 
             <div className="grid w-full grid-cols-1 place-items-center gap-4 pb-6 md:grid-cols-2">
               {navItems.map((item) => (
-                <Navitem item={item} className="text-center" />
+                <NavItem item={item} className="text-center" />
               ))}
             </div>
           </div>

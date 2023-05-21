@@ -13,8 +13,6 @@
  * inspired by https://ui.shadcn.com/docs/primitives/sheet
  */
 
-'use client';
-
 import * as React from 'react';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { VariantProps, cva } from 'class-variance-authority';
