@@ -217,7 +217,6 @@ export const CHAIN_METADATA: ChainList = {
 };
 
 export const PREFERRED_NETWORK: SupportedNetworks =
-  getSupportedNetworkByChainId(CONFIG.PREFERRED_NETWORK_ID) ??
-  'unsupported';
+  getSupportedNetworkByChainId(CONFIG.PREFERRED_NETWORK_ID) ?? 'unsupported';
 
 export const PREFERRED_NETWORK_METADATA = CHAIN_METADATA[PREFERRED_NETWORK];
