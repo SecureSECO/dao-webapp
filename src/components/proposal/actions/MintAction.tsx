@@ -16,6 +16,7 @@ import { Category } from '@/src/components/ui/CategoryList';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useMembers } from '@/src/hooks/useMembers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { CONFIG } from '@/src/lib/constants/config';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { getTokenInfo, toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 import { Action } from '@plopmenz/diamond-governance-sdk';
@@ -95,13 +96,13 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
   const { memberCount, isMember } = useMembers({ includeBalances: false });
 
   const provider = useProvider({
-    chainId: +import.meta.env.VITE_PREFERRED_NETWORK_ID,
+    chainId: CONFIG.PREFERRED_NETWORK_ID,
   });
 
   useEffect(() => {
     async function fetchSummary() {
       const tokenInfo = await getTokenInfo(
-        import.meta.env.VITE_DIAMOND_ADDRESS,
+        CONFIG.DIAMOND_ADDRESS,
         provider,
         PREFERRED_NETWORK_METADATA.nativeCurrency
       );
