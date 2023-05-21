@@ -9,6 +9,7 @@
 import { getErrorMessage } from '@/src/lib/utils';
 import { useEffect, useState } from 'react';
 import { useLocalStorage } from './useLocalStorage';
+import { siteConfig } from '@/src/lib/constants/config';
 
 type QueryResponse = any;
 type CheckResponse = any;
@@ -189,7 +190,7 @@ export const useSearchSECO = (
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [doPoll, setDoPoll] = useState<boolean>(true);
 
-  const API_URL = import.meta.env.VITE_SEARCHSECO_API_URL;
+  const API_URL = siteConfig.VITE_SEARCHSECO_API_URL;
 
   // Continuously poll for session data
   useEffect(() => {

@@ -6,6 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { siteConfig } from "@/src/lib/constants/config";
+
 // This file is mostly taken from the Aragon App source code
 
 /* SUPPORTED NETWORK TYPES ================================================== */
@@ -215,7 +217,7 @@ export const CHAIN_METADATA: ChainList = {
 };
 
 export const PREFERRED_NETWORK: SupportedNetworks =
-  getSupportedNetworkByChainId(+import.meta.env.VITE_PREFERRED_NETWORK_ID) ??
+  getSupportedNetworkByChainId(+siteConfig.VITE_PREFERRED_NETWORK_ID) ??
   'unsupported';
 
 export const PREFERRED_NETWORK_METADATA = CHAIN_METADATA[PREFERRED_NETWORK];
