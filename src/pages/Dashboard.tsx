@@ -215,7 +215,7 @@ const Dashboard = () => {
             className="flex flex-row items-center gap-x-2"
             target="_blank"
             rel="noreferrer"
-            to={`${etherscanURL}/token/tokenholderchart/${siteConfig.VITE_DIAMOND_ADDRESS}`}
+            to={`${etherscanURL}/token/tokenholderchart/${siteConfig.DIAMOND_ADDRESS}`}
           >
             <p>View all members</p>
             <HiArrowRight className="h-5 w-5 shrink-0" />

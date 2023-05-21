@@ -44,7 +44,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>();
 
   const provider = useProvider({
-    chainId: +siteConfig.VITE_PREFERRED_NETWORK_ID,
+    chainId: +siteConfig.PREFERRED_NETWORK_ID,
   });
 
   useEffect(() => {

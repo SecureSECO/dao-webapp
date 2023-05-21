@@ -213,7 +213,7 @@ const Verification = () => {
       try {
         // Send the signature to the API
         const response = await fetch(
-          `${siteConfig.VITE_VERIFICATION_API_URL}/verify`,
+          `${siteConfig.VERIFICATION_API_URL}/verify`,
           {
             method: 'POST',
             headers: {

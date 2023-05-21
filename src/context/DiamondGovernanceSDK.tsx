@@ -25,7 +25,7 @@ type SDKContext = {
 };
 
 const DiamondSDKContext = createContext<SDKContext>({});
-const diamondAddress = siteConfig.VITE_DIAMOND_ADDRESS;
+const diamondAddress = siteConfig.DIAMOND_ADDRESS;
 
 export function DiamondSDKWrapper({ children }: any): JSX.Element {
   const [client, setClient] = useState<DiamondGovernanceClient | undefined>(

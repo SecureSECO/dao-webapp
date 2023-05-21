@@ -96,13 +96,13 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
   const { memberCount, isMember } = useMembers({ includeBalances: false });
 
   const provider = useProvider({
-    chainId: +siteConfig.VITE_PREFERRED_NETWORK_ID,
+    chainId: +siteConfig.PREFERRED_NETWORK_ID,
   });
 
   useEffect(() => {
     async function fetchSummary() {
       const tokenInfo = await getTokenInfo(
-        siteConfig.VITE_DIAMOND_ADDRESS,
+        siteConfig.DIAMOND_ADDRESS,
         provider,
         PREFERRED_NETWORK_METADATA.nativeCurrency
       );

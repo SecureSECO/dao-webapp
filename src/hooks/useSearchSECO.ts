@@ -190,7 +190,7 @@ export const useSearchSECO = (
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [doPoll, setDoPoll] = useState<boolean>(true);
 
-  const API_URL = siteConfig.VITE_SEARCHSECO_API_URL;
+  const API_URL = siteConfig.SEARCHSECO_API_URL;
 
   // Continuously poll for session data
   useEffect(() => {
