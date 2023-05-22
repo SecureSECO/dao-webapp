@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { contractTransaction, useToast } from '@/src/hooks/useToast';
 import { NumberPattern } from '@/src/lib/constants/patterns';
+import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiInboxArrowDown } from 'react-icons/hi2';
@@ -26,7 +27,10 @@ import Loading from '../icons/Loading';
 import { Address, AddressLength } from '../ui/Address';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
-import ConnectWalletWarning from '../ui/ConnectWalletWarning';
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+} from '../ui/ConditionalButton';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
 import { LabelledInput } from '../ui/Input';
 import { Label } from '../ui/Label';
@@ -73,7 +77,7 @@ export const DepositAssets = ({}) => {
   const isKnownToken = watchToken !== undefined && watchToken !== 'Other';
 
   const watchAmount = useWatch({ control: control, name: 'amount' });
-  const amount = tryParseBignumber(watchAmount);
+  const amount = parseTokenAmount(watchAmount, 18);
 
   const debouncedTokenId = useDebounce(amount, 500);
 
@@ -152,69 +156,74 @@ export const DepositAssets = ({}) => {
     <MainCard header="Deposit assets" variant="light" icon={HiInboxArrowDown}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col">
-            <Label tooltip="Asset to deposit" htmlFor="token">
-              Token
-            </Label>
-            <ErrorWrapper name="token" error={errors?.token}>
-              <Controller
-                control={control}
-                name="token"
-                rules={{ required: true }}
-                render={({ field: { onChange, name, value } }) => (
-                  <Select
-                    defaultValue={value}
-                    onValueChange={onChange}
-                    name={name}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Token" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Tokens</SelectLabel>
-                        {Tokens.map((token) => (
-                          <SelectItem key={token} value={token}>
-                            {token}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </ErrorWrapper>
+          <div className="flex flex-col md:flex-row gap-x-2">
+            <div className="flex md:w-1/2 flex-col">
+              <Label tooltip="Asset to deposit" htmlFor="token">
+                Token
+              </Label>
+              <ErrorWrapper name="token" error={errors?.token}>
+                <Controller
+                  control={control}
+                  name="token"
+                  rules={{ required: true }}
+                  render={({ field: { onChange, name, value } }) => (
+                    <Select
+                      defaultValue={value}
+                      onValueChange={onChange}
+                      name={name}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Token" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Tokens</SelectLabel>
+                          {Tokens.map((token) => (
+                            <SelectItem key={token} value={token}>
+                              {token}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </ErrorWrapper>
+            </div>
+            {isKnownToken && (
+              <div className="md:w-1/2">
+                <LabelledInput
+                  {...register('amount', {
+                    validate: (v) => {
+                      // only Validate if this is active
+                      if (!isKnownToken) return true;
+
+                      // Required
+                      if (v === undefined || v === '')
+                        return 'Please enter an amount';
+
+                      // Number Pattern
+                      if (!NumberPattern.test(v))
+                        return 'Please enter a number, e.g. 3.141';
+
+                      // Otherwise this is valid
+                      return true;
+                    },
+                  })}
+                  id="amount"
+                  tooltip={`Amount of ${watchToken} to deposit`}
+                  label="Amount"
+                  error={errors.amount}
+                />
+              </div>
+            )}
           </div>
-          {isKnownToken && (
-            <LabelledInput
-              {...register('amount', {
-                validate: (v) => {
-                  // only Validate if this is active
-                  if (!isKnownToken) return true;
-
-                  // Required
-                  if (v === undefined || v === '')
-                    return 'Please enter an amount';
-
-                  // Number Pattern
-                  if (!NumberPattern.test(v))
-                    return 'Please enter a number, e.g. 3.141';
-
-                  // Otherwise this is valid
-                  return true;
-                },
-              })}
-              id="amount"
-              tooltip={`Amount of ${watchToken} to deposit`}
-              label="Amount"
-              error={errors.amount}
-            />
-          )}
           {watchToken === 'Other' && (
             <div>
-              <Label tooltip="Copy the ENS or address below and use your wallet's send feature to send money to your DAO's treasury.">
-                Manual transfer
-              </Label>
+              <p className="">
+                Copy the address or ENS below and use your wallet's send feature
+                to send money to the DAO's treasury.
+              </p>
               <div className="flex flex-col md:flex-row gap-2">
                 <Card variant="outline">
                   <Address
@@ -229,7 +238,7 @@ export const DepositAssets = ({}) => {
                     showCopy={true}
                     hasLink={false}
                     maxLength={AddressLength.Full}
-                    address={'TODO: Add ENS'}
+                    address={'ENS not yet supported'}
                   />
                 </Card>
               </div>
@@ -238,12 +247,17 @@ export const DepositAssets = ({}) => {
           {isKnownToken && (
             <ErrorWrapper name="deposit" error={errors?.root?.deposit as any}>
               <div className="flex gap-x-2 flex-row">
-                <Button
+                <ConditionalButton
                   label="Deposit assets"
-                  disabled={!isConnected || isLoading}
                   icon={isLoading ? Loading : null}
+                  disabled={isLoading}
+                  conditions={[
+                    {
+                      enabled: !isConnected,
+                      content: <ConnectWalletWarning action="to deposit" />,
+                    },
+                  ]}
                 />
-                {isConnected || <ConnectWalletWarning action="to deposit" />}
               </div>
             </ErrorWrapper>
           )}
@@ -266,14 +280,4 @@ function useDebounce<T>(value: T, delay?: number): T {
   }, [value, delay]);
 
   return debouncedValue;
-}
-
-function tryParseBignumber(input: string | undefined): BigNumber | null {
-  let num: BigNumber | null;
-  try {
-    num = BigNumber.from(input).mul(BigNumber.from(10).pow(10));
-  } catch {
-    num = null;
-  }
-  return num;
 }

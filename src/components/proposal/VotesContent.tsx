@@ -24,7 +24,6 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { calcBigNumberPercentage } from '@/src/lib/utils';
 import { contractTransaction, toast } from '@/src/hooks/useToast';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import {
   ProposalStatus,
   VoteOption,
@@ -38,6 +37,7 @@ import { useVotingPower } from '@/src/hooks/useVotingPower';
 import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import TokenAmount from '@/src/components/ui/TokenAmount';
+import { ConditionalButton, ConnectWalletWarning } from '../ui/ConditionalButton';
 
 type VoteFormData = {
   vote_option: string;
@@ -199,7 +199,12 @@ const VotesContentActive = ({
 
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
       <div className="ml-6 flex flex-row items-center gap-x-4">
-        <Button disabled={!userCanVote || !isConnected} type="submit">
+        <ConditionalButton disabled={!userCanVote}
+          conditions={[
+            {enabled: !isConnected, content: <ConnectWalletWarning action="to vote" />},
+            {enabled: votingPower.lte(0), content: <InsufficientRepWarning action="to vote" />},
+          ]}
+          type="submit">
           {!userCanVote && isConnected && votingPower.gt(0) ? (
             'Vote submitted'
           ) : (
@@ -207,12 +212,7 @@ const VotesContentActive = ({
               {'Vote ' + (voteOption ?? 'yes')}
             </span>
           )}
-        </Button>
-        {!isConnected ? (
-          <ConnectWalletWarning action="to vote" />
-        ) : (
-          votingPower.lte(0) && <InsufficientRepWarning action="to vote" />
-        )}
+        </ConditionalButton>
       </div>
     </form>
   );
