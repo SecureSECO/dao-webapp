@@ -6,13 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// import React, { Fragment, useEffect, useState } from 'react';
 import { HiExclamationCircle, HiOutlineLogout } from 'react-icons/hi';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-//import type { ethers } from 'ethers';
-// import { cn } from '@/src/lib/utils';
 import { useWeb3Modal } from '@web3modal/react';
-import { useAccount, useNetwork, useDisconnect } from 'wagmi';
+import { useAccount, useNetwork, useDisconnect, useSwitchNetwork } from 'wagmi';
 import { FaWallet } from 'react-icons/fa';
 
 import {
@@ -33,12 +30,41 @@ import {
 import { Button } from '@/src/components/ui/Button';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { cn } from '@/src/lib/utils';
+import { useEffect, useState } from 'react';
 
 const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();
   const { address } = useAccount();
   const { chain } = useNetwork();
+
+  // Make sure the user is on the correct network
+  const [attemptedSwitch, setAttemptedSwitch] = useState(false);
+  const { switchNetworkAsync, isLoading } = useSwitchNetwork({
+    chainId: PREFERRED_NETWORK_METADATA.id,
+  });
+
+  useEffect(() => {
+    const handleSwitchNetwork = async () => {
+      if (
+        !attemptedSwitch &&
+        !isLoading &&
+        chain &&
+        chain?.id !== PREFERRED_NETWORK_METADATA.id &&
+        switchNetworkAsync
+      ) {
+        try {
+          await switchNetworkAsync();
+        } catch (e) {
+          // Unable to switch network (possibly because it's already in progress since another render)
+          console.error(e);
+          setAttemptedSwitch(true);
+        }
+      }
+    };
+
+    handleSwitchNetwork();
+  }, [chain, switchNetworkAsync, isLoading]);
 
   let jazznumber = address ? jsNumberForAddress(address!) : 0;
 

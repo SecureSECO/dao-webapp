@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { MembershipStatus } from '@/src/components/dashboard/MembershipStatus';
 import Navbar from '@/src/components/layout/Navbar';
 import { Outlet } from 'react-router';
 
@@ -17,7 +18,8 @@ const Layout = () => {
           <Navbar />
         </div>
 
-        <main>
+        <main className="space-y-6">
+          <MembershipStatus />
           <Outlet />
         </main>
       </div>

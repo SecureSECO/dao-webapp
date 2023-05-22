@@ -85,6 +85,7 @@
     "@vitejs/plugin-react-swc": "^3.3.0",
     "autoprefixer": "^10.4.14",
     "chromatic": "^6.17.3",
+    "esbuild": "^0.17.19",
     "eslint": "^8.39.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-storybook": "^0.6.12",
