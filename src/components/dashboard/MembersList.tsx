@@ -9,7 +9,10 @@
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { Member } from '@/src/hooks/useMembers';
-import { CHAIN_METADATA } from '@/src/lib/constants/chains';
+
+import { Skeleton } from '../ui/Skeleton';
+import TokenAmount from '@/src/components/ui/TokenAmount';
+import { TOKENS } from '@/src/lib/constants/tokens';
 
 /**
  * @returns A card containg showing a DAO member's address, jazzicon and REP balance (the latter only if available)
@@ -28,9 +31,12 @@ const MemberCard = ({ member }: { member: Member }) => {
         jazziconSize="md"
       />
       {member.bal !== null && (
-        <p className="whitespace-nowrap">
-          {member.bal} {CHAIN_METADATA.rep.nativeCurrency.symbol}
-        </p>
+        <TokenAmount
+          amount={member.bal}
+          tokenDecimals={TOKENS.rep.decimals}
+          displayDecimals={0}
+          symbol={TOKENS.rep.symbol}
+        />
       )}
     </Card>
   );
@@ -48,8 +54,30 @@ const MembersList = ({
   loading: boolean;
   error: string | null;
 }) => {
-  // Note: will not be rendered if loading is set to true
-  // We may use the loading and error state differently in the future
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-y-2">
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+      </div>
+    );
+  }
+
+  if (error)
+    return (
+      <p className="font-normal italic text-highlight-foreground/80">
+        An error was encountered
+      </p>
+    );
+  if (members === null || members.length === 0)
+    return (
+      <p className="font-normal italic text-highlight-foreground/80">
+        No members found
+      </p>
+    );
+
   return (
     <div className="flex flex-col gap-y-2">
       {members.map((member) => (

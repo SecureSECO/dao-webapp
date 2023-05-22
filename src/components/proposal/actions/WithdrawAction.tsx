@@ -6,25 +6,30 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { TokenInfo, getTokenInfo } from '@/src/lib/token-utils';
+import { CONFIG } from '@/src/lib/constants/config';
+import {
+  TokenInfo,
+  getTokenInfo,
+  toAbbreviatedTokenAmount,
+} from '@/src/lib/utils/token';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { HiArrowRight, HiBanknotes } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';
 
-export type ProposalWithdrawAction = IProposalAction & {
+export interface ProposalWithdrawAction extends Action {
   params: {
-    amount: bigint;
-    tokenAddress: string;
-    to: string;
+    _amount: BigNumber;
+    _tokenAddress: string;
+    _to: string;
   };
-};
+}
 
 interface WithdrawActionProps extends AccordionItemProps {
   action: ProposalWithdrawAction;
@@ -39,13 +44,13 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>();
 
   const provider = useProvider({
-    chainId: +import.meta.env.VITE_PREFERRED_NETWORK_ID,
+    chainId: CONFIG.PREFERRED_NETWORK_ID,
   });
 
   useEffect(() => {
     async function fetchTokenInfo() {
       const fetchedTokenInfo = await getTokenInfo(
-        action.params.tokenAddress,
+        action.params._tokenAddress,
         provider,
         PREFERRED_NETWORK_METADATA.nativeCurrency
       );
@@ -75,10 +80,10 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
           </p>
           <p className="text-base text-popover-foreground/80">
             {tokenInfo?.decimals
-              ? toAbbreviatedTokenAmount(
-                  action.params.amount,
-                  tokenInfo?.decimals ?? 0
-                )
+              ? toAbbreviatedTokenAmount({
+                  value: action.params._amount,
+                  tokenDecimals: tokenInfo.decimals,
+                })
               : '?'}{' '}
             {tokenInfo?.symbol}
           </p>
@@ -92,7 +97,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
           <Card variant="outline" size="sm" className="font-medium">
             <p className="text-xs font-normal text-popover-foreground/80">To</p>
             <Address
-              address={action.params.to}
+              address={action.params._to}
               maxLength={AddressLength.Medium}
               hasLink={false}
               showCopy={false}

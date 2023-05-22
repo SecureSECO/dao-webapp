@@ -9,18 +9,17 @@
 import { Card } from '@/src/components/ui/Card';
 import { Address, AddressLength } from '@/src/components/ui//Address';
 import Header from '@/src/components/ui/Header';
-import { ProposalStatus } from '@aragon/sdk-client';
-import { Proposal } from '@/src/hooks/useProposals';
 import ProposalTag, {
-  ProposalTagProps,
+  getProposalTags,
 } from '@/src/components/governance/ProposalTag';
-import { calcBigintPercentage, countdownText } from '@/src/lib/utils';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { Link } from 'react-router-dom';
 import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import Activity from '@/src/components/icons/Activity';
 import Check from '@/src/components/icons/Check';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
+import { ProposalStatus, Proposal } from '@plopmenz/diamond-governance-sdk';
+import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 
 type StatusBadgePropsMap = {
   Pending: StatusBadgeProps;
@@ -59,7 +58,7 @@ const statusBadgeProps: StatusBadgePropsMap = {
 };
 
 // Different types of statuses, as a string rather than an enum
-type ProposalStatusVariant =
+export type ProposalStatusString =
   | 'Pending'
   | 'Active'
   | 'Succeeded'
@@ -68,7 +67,7 @@ type ProposalStatusVariant =
 
 interface ProposalStatusBadgeProps
   extends React.BaseHTMLAttributes<HTMLDivElement> {
-  status: ProposalStatus | ProposalStatusVariant;
+  status: ProposalStatusString;
   size?: 'sm' | 'md';
 }
 
@@ -82,7 +81,7 @@ export const ProposalStatusBadge = ({
   className,
   ...props
 }: ProposalStatusBadgeProps) => {
-  const statusString = status.toString() as ProposalStatusVariant;
+  const statusString = status.toString() as ProposalStatusString;
   const statusProps = statusBadgeProps[statusString];
 
   return (
@@ -95,67 +94,23 @@ export const ProposalStatusBadge = ({
   );
 };
 
-/**
- * Find the data for tags of a specific proposal
- * @example A pending proposal will have two countdown tags, one for when it starts and another for when it ends
- * @param proposal Proposal to extract the tags for
- * @returns A list of props for the ProposalTag component
- */
-const getProposalTags = (proposal: Proposal) => {
-  const res: ProposalTagProps[] = [];
-
-  if (proposal.status === ProposalStatus.PENDING)
-    res.push(
-      {
-        children: 'Starts in ' + countdownText(proposal.startDate),
-        variant: 'countdown',
-      },
-      {
-        children: 'Ends in ' + countdownText(proposal.endDate),
-        variant: 'countdown',
-      }
-    );
-  else {
-    const yesPercentage = calcBigintPercentage(
-      proposal.result.yes,
-      proposal.totalVotingWeight
-    );
-    const noPercentage = calcBigintPercentage(
-      proposal.result.no,
-      proposal.totalVotingWeight
-    );
-    res.push(
-      {
-        children: yesPercentage.toString() + '%',
-        variant: 'yes',
-      },
-      {
-        children: noPercentage.toString() + '%',
-        variant: 'no',
-      }
-    );
-  }
-
-  if (proposal.status === ProposalStatus.ACTIVE) {
-    res.push({
-      children: 'Ends in ' + countdownText(proposal.endDate),
-      variant: 'countdown',
-    });
-  }
-  return res;
-};
-
 const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
   const {
-    metadata: { title, summary },
+    metadata: { title, description },
     status,
-    creatorAddress,
+    data: { creator },
   } = proposal;
+  const { totalVotingWeight } = useTotalVotingWeight({
+    blockNumber: proposal.data.parameters.snapshotBlock,
+  });
 
   return (
     <Card variant="light" className="space-y-2 font-normal">
       <div className="flex flex-col gap-y-2">
-        <ProposalStatusBadge status={status} className="xs:hidden" />
+        <ProposalStatusBadge
+          status={ProposalStatus[status] as ProposalStatusString}
+          className="xs:hidden"
+        />
         <div className="flex flex-row justify-between">
           <Link
             to={`/governance/proposals/${proposal.id}`}
@@ -164,19 +119,22 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
             <Header level={2}>{title}</Header>
             <HiChevronRight className="h-5 w-5" />
           </Link>
-          <ProposalStatusBadge status={status} className="hidden xs:flex" />
+          <ProposalStatusBadge
+            status={ProposalStatus[status] as ProposalStatusString}
+            className="hidden xs:flex"
+          />
         </div>
-        <p className="leading-5 text-popover-foreground/80">{summary}</p>
+        <p className="leading-5 text-popover-foreground/80">{description}</p>
       </div>
       <div className="flex flex-wrap gap-1">
-        {getProposalTags(proposal).map((tagProps, i) => (
+        {getProposalTags(proposal, totalVotingWeight).map((tagProps, i) => (
           <ProposalTag key={i} {...tagProps} />
         ))}
       </div>
       <div className="flex items-center gap-x-1 text-xs text-popover-foreground/60">
         <span>Published by</span>
         <Address
-          address={creatorAddress}
+          address={creator}
           maxLength={AddressLength.Medium}
           hasLink={true}
           showCopy={true}

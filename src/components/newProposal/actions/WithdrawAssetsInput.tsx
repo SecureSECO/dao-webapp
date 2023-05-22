@@ -6,18 +6,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Input } from '@/src/components/ui/Input';
-import { Label } from '@/src/components/ui/Label';
-import { HiBanknotes, HiXMark } from 'react-icons/hi2';
-import { Button } from '@/src/components/ui/Button';
-import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
-import { Control, Controller, UseFormRegister } from 'react-hook-form';
-import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
-import { MainCard } from '@/src/components/ui/MainCard';
+import { useContext } from 'react';
 import {
+  ActionFormContext,
   ActionFormError,
   ProposalFormActions,
 } from '@/src/components/newProposal/steps/Actions';
+import { Button } from '@/src/components/ui/Button';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { Input } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
+import { MainCard } from '@/src/components/ui/MainCard';
 import {
   Select,
   SelectContent,
@@ -27,70 +26,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/Select';
-import { useDaoBalance } from '@/src/hooks/useDaoBalance';
-import { anyNullOrUndefined } from '@/src/lib/utils';
 import TokenAmount from '@/src/components/ui/TokenAmount';
+import { ProposalFormAction } from '@/src/lib/constants/actions';
+import { useDaoBalance } from '@/src/hooks/useDaoBalance';
+import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { anyNullOrUndefined, cn } from '@/src/lib/utils';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 
-export type ProposalFormWithdrawData = {
-  name: 'withdraw_assets';
+export interface ProposalFormWithdrawData extends ProposalFormAction {
   recipient: string;
-  tokenAddress: string;
-  amount: string;
-};
-
-export type ProposalFormWithdraw = {
-  amount: number;
-  name: 'withdraw_assets';
-  to: string;
-  tokenAddress: string;
-  tokenBalance: number;
-  tokenDecimals: number;
-  tokenImgUrl: string;
-  tokenName: string;
-  tokenSymbol: string;
-  isCustomToken: boolean;
-};
+  tokenAddress: string | 'custom';
+  tokenAddressCustom?: string;
+  amount: string | number;
+}
 
 export const emptyWithdrawData: ProposalFormWithdrawData = {
   name: 'withdraw_assets',
   recipient: '',
   tokenAddress: '',
-  amount: '',
-};
-
-export const emptyWithdraw: ProposalFormWithdraw = {
   amount: 0,
-  name: 'withdraw_assets',
-  to: '',
-  tokenAddress: '',
-  tokenBalance: 0,
-  tokenDecimals: 0,
-  tokenImgUrl: '',
-  tokenName: '',
-  tokenSymbol: '',
-  isCustomToken: true,
 };
 
 /**
  * @returns Component to be used within a form to describe the action of withdrawing assets.
  */
-export const WithdrawAssetsInput = ({
-  register,
-  prefix,
-  errors,
-  onRemove,
-  control,
-}: {
-  register: UseFormRegister<ProposalFormActions>;
-  prefix: `actions.${number}`;
-  errors: ActionFormError<ProposalFormWithdrawData>;
-  onRemove: any;
-  control: Control<ProposalFormActions, any>;
-}) => {
-  // if (daoBalanceData.error) return <span> {daoBalanceData.error} </span>;
-  const { daoBalances, error, loading } = useDaoBalance({});
+export const WithdrawAssetsInput = () => {
+  const {
+    register,
+    formState: { errors: formErrors },
+    control,
+  } = useFormContext<ProposalFormActions>();
+
+  const { prefix, index, onRemove } = useContext(ActionFormContext);
+
+  const errors: ActionFormError<ProposalFormWithdrawData> = formErrors.actions
+    ? formErrors.actions[index]
+    : undefined;
+
+  const { daoBalances, error, loading } = useDaoBalance();
   const filteredDaoBalances =
-    error || loading
+    error || loading || !daoBalances
       ? []
       : daoBalances.filter(
           (token) =>
@@ -101,6 +77,8 @@ export const WithdrawAssetsInput = ({
               token.balance
             )
         );
+
+  const address = useWatch({ control, name: `${prefix}.tokenAddress` });
 
   return (
     <MainCard
@@ -146,44 +124,68 @@ export const WithdrawAssetsInput = ({
           <Label tooltip="Token to withdraw" htmlFor="tokenAddress">
             Token
           </Label>
-          <ErrorWrapper name="Token" error={errors?.tokenAddress}>
-            <Controller
-              control={control}
-              name={`${prefix}.tokenAddress`}
-              render={({ field: { onChange, name, value } }) => (
-                <Select
-                  defaultValue={value}
-                  onValueChange={onChange}
-                  name={name}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Token" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Token</SelectLabel>
-                      {filteredDaoBalances.map((token, i) => (
-                        <SelectItem key={i} value={token.address ?? ''}>
-                          <div className="flex flex-row items-center gap-x-1">
-                            <p>
-                              {!token.name || token.name === ''
-                                ? 'Unknown'
-                                : token.name}{' '}
-                              -{' '}
-                            </p>
-                            <TokenAmount
-                              amount={token.balance}
-                              tokenDecimals={token.decimals}
-                              symbol={token.symbol}
-                            />
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              )}
+          <Controller
+            control={control}
+            name={`${prefix}.tokenAddress`}
+            render={({ field: { onChange, name, value } }) => (
+              <Select
+                onValueChange={onChange}
+                defaultValue={value}
+                name={name}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Token" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>DAO treasury</SelectLabel>
+                    {filteredDaoBalances.map((token, i) => (
+                      <SelectItem key={i} value={token.address ?? ''}>
+                        <div className="flex flex-row items-center gap-x-1">
+                          <p>
+                            {!token.name || token.name === ''
+                              ? 'Unknown'
+                              : token.name}{' '}
+                            -{' '}
+                          </p>
+                          <TokenAmount
+                            amount={token.balance}
+                            tokenDecimals={token.decimals}
+                            symbol={token.symbol ?? undefined}
+                          />
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Custom</SelectLabel>
+                    <SelectItem key={-1} value={'custom'}>
+                      Custom Token Address
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          />
+
+          <ErrorWrapper name="Token" error={errors?.tokenAddressCustom}>
+            <Input
+              error={errors?.tokenAddressCustom}
+              className={cn(!(address === 'custom') && 'hidden')}
+              placeholder="0x..."
+              {...register(`${prefix}.tokenAddressCustom`, {
+                validate: (v) => {
+                  if (address == 'custom') {
+                    const valid =
+                      v === undefined ? false : AddressPattern.test(v);
+                    return (
+                      valid ||
+                      'Please enter an address starting with 0x, followed by 40 address characters'
+                    );
+                  }
+                },
+              })}
             />
           </ErrorWrapper>
         </div>
@@ -200,9 +202,10 @@ export const WithdrawAssetsInput = ({
                   message: 'Please enter a number, e.g. 3.141',
                 },
               })}
-              type="text"
+              type="string"
               id="amount"
               placeholder="0"
+              min="0"
               error={errors?.amount}
             />
           </ErrorWrapper>

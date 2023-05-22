@@ -6,132 +6,186 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { useVotingPower } from '@/src/hooks/useVotingPower';
+import { ACTIONS } from '@/src/lib/constants/actions';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
+  VoteOption,
+  Proposal,
+  IPartialVotingProposalFacet,
   ProposalStatus,
-  TokenType,
-  VoteValues,
-  TokenVotingProposal,
-  ExecuteProposalStepValue,
-} from '@aragon/sdk-client';
+  AddressVotes,
+  IPartialVotingFacet,
+} from '@plopmenz/diamond-governance-sdk';
+import { BigNumber, ContractTransaction, constants } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useSigner } from 'wagmi';
 
-export type DetailedProposal = TokenVotingProposal;
-export type ProposalResource = {
-  name: string;
-  url: string;
+export type CanVote = {
+  Yes: boolean;
+  No: boolean;
+  Abstain: boolean;
 };
 
 export type UseProposalData = {
   loading: boolean;
   error: string | null;
-  proposal: DetailedProposal | null;
-  refetch: () => void;
+  proposal: Proposal | null;
   canExecute: boolean;
-  execute: () => AsyncGenerator<ExecuteProposalStepValue, any, unknown>;
+  canVote: CanVote;
+  votes: AddressVotes[] | null;
+  refetch: () => void;
 };
 
 export type UseProposalProps = {
   id: string | undefined;
+  address: string | undefined;
   useDummyData?: boolean;
 };
 
-export const dummyProposal: DetailedProposal = {
-  id: '0x1234567890123456789012345678901234567890_0x0',
-  dao: {
-    address: import.meta.env.VITE_DAO_ADDRESS,
-    name: 'SecureSECO dummy DAO',
-  },
-  creatorAddress: '0x1234567890123456789012345678901234567890',
-  metadata: {
-    title: 'Test Proposal',
-    summary: 'test proposal summary',
-    description: 'this is a long description',
-    resources: [
-      {
-        url: 'https://dicord.com/...',
-        name: 'Discord',
-      },
-      {
-        url: 'https://docs.com/...',
-        name: 'Document',
-      },
+/**
+ * Dummy mint tokens action
+ */
+export const dummyMintAction = {
+  method: ACTIONS.mint_tokens.method,
+  interface: ACTIONS.mint_tokens.interface,
+  params: {
+    _addresses: [
+      '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      '0x23868C8ed12EAD37ef76457e7B6443192e231442',
     ],
-    media: {
-      header: 'https://.../image.jpeg',
-      logo: 'https://.../image.jpeg',
-    },
+    _amounts: [
+      BigNumber.from('0x4563918244F40000'),
+      BigNumber.from('0x4563918244F40000'),
+    ],
   },
-  startDate: new Date('2023-03-16T00:10:00.000Z'),
-  endDate: new Date('2023-03-23T00:00:00.000Z'),
-  creationDate: new Date('2023-03-16T00:00:00.000Z'),
-  creationBlockNumber: 812345,
-  executionDate: new Date('2023-03-25T00:00:00.000Z'),
-  executionBlockNumber: 812345,
-  actions: [
-    {
-      to: '0xD6E6C74C6054AD232C7A9833E89714EA39734A0F',
-      value: 0n,
-      data: new Uint8Array([
-        64, 193, 15, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 134, 140, 142,
-        209, 46, 173, 55, 239, 118, 69, 126, 123, 100, 67, 25, 46, 35, 20, 66,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        13, 224, 182, 179, 167, 100, 0, 0,
-      ]),
-    },
-  ],
-  result: {
-    yes: 700000n,
-    no: 300000n,
-    abstain: 0n,
-  },
-  settings: {
-    minParticipation: 0.5,
-    supportThreshold: 0.25,
-    duration: 7200,
-  },
-  token: {
-    address: '0x1234567890123456789012345678901234567890',
-    name: 'The Token',
-    symbol: 'TOK',
-    decimals: 18,
-    type: TokenType.ERC20,
-  },
-  usedVotingWeight: 2000000000000000000n,
-  totalVotingWeight: 7000000000000000000n,
-  executionTxHash: null,
-  votes: [
-    {
-      address: '0x123456789123456789123456789123456789',
-      vote: VoteValues.YES,
-      voteReplaced: false,
-      weight: 1000000000000000000n,
-    },
-    {
-      address: '0x234567891234567891234567891234567890',
-      vote: VoteValues.NO,
-      voteReplaced: false,
-      weight: 1000000000000000000n,
-    },
-  ],
-  status: ProposalStatus.ACTIVE,
 };
+
+/**
+ * Dummy withdraw assets action
+ * @note Not yet correct
+ */
+export const dummyWithdrawAction = {
+  method: ACTIONS.withdraw_assets.method,
+  interface: ACTIONS.withdraw_assets.interface,
+  params: {
+    _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+    _amount: BigNumber.from('0x4563918244F40000'),
+    _tokenAddress: constants.AddressZero,
+  },
+};
+
+/**
+ * Dummy merge pull request action
+ */
+export const dummyMergeAction = {
+  method: ACTIONS.merge_pr.method,
+  interface: ACTIONS.merge_pr.interface,
+  params: {
+    _owner: 'githubtraining',
+    _repo: 'hellogitworld',
+    _pull_number: '174',
+  },
+};
+
+/**
+ * Dummy mint tokens action
+ * @note Not yet correct
+ */
+export const dummyChangeParamsAction = {
+  method: ACTIONS.change_param.method,
+  interface: ACTIONS.change_param.interface,
+  params: {
+    _plugin: 'TokenVoting',
+    _param: 'supportThreshold',
+    _value: '1',
+  },
+};
+
+/**
+ * Dummy proposal data, representing what is returned by the SDK.
+ * @note The Proposal type returned by the SDK is auto-generated, and therefore contains a lot of unnecessary fields, which are ignored here by casting to the right types.
+ */
+export const dummyProposal: Proposal = {
+  id: 0,
+  fromHexString: undefined,
+  getStatus: () => ProposalStatus.Active,
+  CanVote: () => Promise.resolve(true),
+  Vote: () => Promise.resolve({} as ContractTransaction),
+  Execute: () => Promise.resolve({} as ContractTransaction),
+  CanExecute: () => Promise.resolve(true),
+  Refresh: () => Promise.resolve(),
+  data: {
+    allowFailureMap: BigNumber.from('0x00'),
+    actions: [],
+    executed: false,
+    open: true,
+    metadata:
+      '0x697066733a2f2f516d51766d38383964544231315452516e37664b4a356545586e624d76376b5437574a4a62677a686472377a3166',
+    parameters: {
+      earlyExecution: true,
+      endDate: BigNumber.from('0x645be01d'),
+      startDate: BigNumber.from('0x64593d1d'),
+      maxSingleWalletPower: BigNumber.from('0x14'),
+      minParticipationThresholdPower: BigNumber.from('0x01'),
+      snapshotBlock: BigNumber.from('0x021b5d8c'),
+      supportThreshold: 1,
+      votingMode: 1,
+    } as IPartialVotingProposalFacet.ProposalParametersStructOutput,
+    creator: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+    executor: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+    voterList: ['0x2B868C8ed12EAD37ef76457e7B6443192e231442'],
+    tally: {
+      yes: BigNumber.from('0x4563918244F40000'),
+      no: BigNumber.from('0x00'),
+      abstain: BigNumber.from('0x00'),
+    } as IPartialVotingProposalFacet.TallyStructOutput,
+  },
+  metadata: {
+    title: 'Title',
+    description: 'Description',
+    resources: [],
+    body: '<p>This is the body</p>',
+  },
+  status: ProposalStatus.Active,
+  actions: [],
+  startDate: new Date('2023-05-08T18:19:09.000Z'),
+  endDate: new Date('2023-05-10T18:19:09.000Z'),
+  creationDate: new Date('2023-05-08T18:09:09.000Z'),
+} as unknown as Proposal;
+
+export const dummyVotes: AddressVotes[] = [
+  {
+    address: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+    votes: [
+      {
+        option: VoteOption.Yes,
+        amount: BigNumber.from('0x4563918244F40000'),
+      } as unknown as IPartialVotingFacet.PartialVoteStructOutput,
+    ],
+  },
+];
 
 export const useProposal = ({
   id,
+  address,
   useDummyData = false,
 }: UseProposalProps): UseProposalData => {
-  const [proposal, setProposal] = useState<DetailedProposal | null>(null);
+  const [proposal, setProposal] = useState<Proposal | null>(null);
   const [canExecute, setCanExecute] = useState<boolean>(false);
+  const [canVote, setCanVote] = useState<CanVote>({
+    Yes: false,
+    No: false,
+    Abstain: false,
+  });
+  const [votes, setVotes] = useState<AddressVotes[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { votingClient } = useAragonSDKContext();
-  const { data: signer } = useSigner();
+  const { client } = useDiamondSDKContext();
+  const { votingPower } = useVotingPower({ address });
 
   const fetchProposal = async () => {
-    if (!votingClient) return;
+    if (!client) return;
     if (!id) {
       setError('Proposal not found');
       setLoading(false);
@@ -139,21 +193,17 @@ export const useProposal = ({
     }
 
     try {
-      const daoProposal: DetailedProposal =
-        (await votingClient.methods.getProposal(id)) as DetailedProposal;
+      const daoProposal: Proposal = await client.sugar.GetProposal(+id);
 
       if (daoProposal) {
-        // Check if the proposal is from the correct DAO
-        if (daoProposal.dao.address !== import.meta.env.VITE_DAO_ADDRESS) {
-          setError('That proposal does not exist in this DAO');
-        } else {
-          setProposal(daoProposal);
-          setError(null);
-        }
+        setProposal(daoProposal);
+        setError(null);
         setLoading(false);
+        fetchVotes(daoProposal);
       } else {
         setError('Proposal not found');
         setLoading(false);
+        setVotes(null);
       }
     } catch (e) {
       console.error(e);
@@ -162,10 +212,14 @@ export const useProposal = ({
     }
   };
 
-  const execute = () => {
-    if (!votingClient || !proposal || !id)
-      throw new Error('Cannot execute proposal');
-    return votingClient.methods.executeProposal(id);
+  const fetchVotes = async (proposal: Proposal) => {
+    if (!client || !proposal) return;
+    try {
+      const votes = await proposal.GetVotes();
+      setVotes(votes);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   //** Set dummy data for development without querying Aragon API */
@@ -173,38 +227,57 @@ export const useProposal = ({
     setLoading(false);
     setError(null);
     setProposal(dummyProposal);
+    setVotes(dummyVotes);
   };
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (votingClient) setLoading(true);
+    if (client) setLoading(true);
     fetchProposal();
-  }, [votingClient, id]);
+  }, [client, id]);
 
   useEffect(() => {
     const checkCanExecute = async () => {
-      if (!votingClient || !proposal || !id) return;
+      if (!proposal) return;
       // Fetch if the current proposal can be executed
       try {
-        // Will fail if no signer is available, so check for signer existence first
-        if (signer) {
-          const canExecuteProposal = await votingClient.methods.canExecute(id);
-          if (canExecuteProposal) setCanExecute(true);
-          else setCanExecute(false);
-        }
+        const canExecuteData = await proposal.CanExecute();
+        setCanExecute(canExecuteData);
       } catch (e) {
         console.error('Error fetching canExecute', e);
       }
     };
+
+    const checkCanVote = async () => {
+      if (!proposal || !address || !client) return;
+      try {
+        const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
+        const canVoteData = await Promise.all(
+          values.map((vote) => {
+            return proposal.CanVote(vote, votingPower);
+          })
+        );
+        setCanVote({
+          Yes: canVoteData[1],
+          No: canVoteData[2],
+          Abstain: canVoteData[0],
+        });
+      } catch (e) {
+        console.error('Error fetching canVote', e);
+      }
+    };
+
     checkCanExecute();
-  }, [signer, proposal]);
+    checkCanVote();
+  }, [proposal]);
 
   return {
     loading,
     error,
     proposal,
     canExecute,
-    execute,
+    canVote,
+    votes,
     // Only allow refetching if not using dummy data
     refetch: () => (!useDummyData ? fetchProposal() : void 0),
   };

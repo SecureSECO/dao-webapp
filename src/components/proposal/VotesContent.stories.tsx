@@ -7,9 +7,10 @@
  */
 
 import VotesContent from '@/src/components/proposal/VotesContent';
-import { dummyProposal } from '@/src/hooks/useProposal';
-import { ProposalStatus } from '@aragon/sdk-client';
+import { dummyProposal, dummyVotes } from '@/src/hooks/useProposal';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
+import { BigNumber } from 'ethers';
 
 const meta = {
   component: VotesContent,
@@ -35,7 +36,33 @@ BigInt.prototype.toJSON = function () {
 
 export const Active: Story = {
   args: {
-    proposal: dummyProposal,
+    proposal: {
+      ...dummyProposal,
+      status: ProposalStatus.Active,
+    } as Proposal,
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
+    },
+  },
+};
+
+export const ActiveCannotVote: Story = {
+  args: {
+    proposal: {
+      ...dummyProposal,
+      status: ProposalStatus.Active,
+    } as Proposal,
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
+    canVote: {
+      Yes: false,
+      No: false,
+      Abstain: false,
+    },
   },
 };
 
@@ -43,7 +70,14 @@ export const Pending: Story = {
   args: {
     proposal: {
       ...dummyProposal,
-      status: ProposalStatus.PENDING,
+      status: ProposalStatus.Pending,
+    } as Proposal,
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
     },
   },
 };
@@ -52,7 +86,14 @@ export const Succeeded: Story = {
   args: {
     proposal: {
       ...dummyProposal,
-      status: ProposalStatus.SUCCEEDED,
+      status: ProposalStatus.Succeeded,
+    } as Proposal,
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
     },
   },
 };
@@ -61,7 +102,14 @@ export const Executed: Story = {
   args: {
     proposal: {
       ...dummyProposal,
-      status: ProposalStatus.EXECUTED,
+      status: ProposalStatus.Executed,
+    } as Proposal,
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
     },
   },
 };
@@ -70,7 +118,14 @@ export const Defeated: Story = {
   args: {
     proposal: {
       ...dummyProposal,
-      status: ProposalStatus.DEFEATED,
+      status: ProposalStatus.Defeated,
+    } as Proposal,
+    votes: dummyVotes,
+    totalVotingWeight: BigNumber.from('0x4563918244F40000'),
+    canVote: {
+      Yes: true,
+      No: true,
+      Abstain: true,
     },
   },
 };

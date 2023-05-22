@@ -6,89 +6,68 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { createContext } from 'react';
+import { Button } from '@/src/components/ui/Button';
 import {
-  useForm,
-  useFieldArray,
-  FieldError,
-  FieldErrors,
-  FieldValues,
-  Merge,
-} from 'react-hook-form';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/src/components/ui/Dropdown';
+import { Label } from '@/src/components/ui/Label';
 import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 import {
-  ProposalFormWithdrawData,
-  WithdrawAssetsInput,
-  emptyWithdrawData,
-} from '@/src/components/newProposal/actions/WithdrawAssetsInput';
-import {
-  MintTokensInput,
-  ProposalFormMintData,
-  emptyMintData,
-} from '@/src/components/newProposal/actions/MintTokensInput';
-import {
-  MergePRInput,
-  ProposalFormMergeData,
-  emptyMergeData,
-} from '@/src/components/newProposal/actions/MergePRInput';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-} from '@/src/components/ui/Dropdown';
-import { Button } from '@/src/components/ui/Button';
-import { HiBanknotes, HiCircleStack, HiCog, HiPlus } from 'react-icons/hi2';
-import { Label } from '@/src/components/ui/Label';
-import { FaGithub } from 'react-icons/fa';
-import {
-  ChangeParametersInput,
-  emptyChangeParameter,
-  ProposalFormChangeParameter,
-} from '../actions/ChangeParametersInput';
+  FieldError,
+  FieldErrors,
+  FieldValues,
+  FormProvider,
+  Merge,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form';
+import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
+import { HiPlus } from 'react-icons/hi2';
+
+export type ActionFormContextData = {
+  index: number;
+  prefix: `actions.${number}`;
+  onRemove: () => void;
+};
+export const ActionFormContext = createContext<ActionFormContextData>(null!);
 
 export interface ProposalFormActions {
-  actions: ProposalFormAction[];
+  actions: ProposalFormActionData[];
 }
-
-export type ProposalFormAction =
-  | ProposalFormWithdrawData
-  | ProposalFormMintData
-  | ProposalFormMergeData
-  | ProposalFormChangeParameter;
 
 export const Actions = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    getValues,
-    control,
-  } = useForm<ProposalFormActions>({ defaultValues: dataStep3 });
+  const methods = useForm<ProposalFormActions>({ defaultValues: dataStep3 });
 
   const { fields, append, remove } = useFieldArray<ProposalFormActions>({
     name: 'actions',
-    control: control,
+    control: methods.control,
   });
 
   const onSubmit = (data: ProposalFormActions) => {
-    console.log(data);
     setDataStep3(data);
     setStep(4);
   };
 
   const handleBack = () => {
-    const data = getValues();
+    const data = methods.getValues();
     setDataStep3(data);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={methods.handleSubmit(onSubmit)}
+      className="flex flex-col gap-4"
+    >
       <div className="space-y-2">
         <div className="flex flex-col gap-y-1">
           <Label tooltip="These actions can be executed after a vote successfully passes">
@@ -99,68 +78,31 @@ export const Actions = () => {
           ) : (
             <>
               {/* List of proposal actions */}
-              <div className="flex flex-col gap-6">
-                {fields.map((field: Record<'id', string>, index: number) => {
-                  const prefix: `actions.${number}` = `actions.${index}`;
-                  const action: ProposalFormAction = getValues(prefix);
+              <FormProvider {...methods}>
+                <div className="flex flex-col gap-6">
+                  {fields.map((field: Record<'id', string>, index: number) => {
+                    const prefix: `actions.${number}` = `actions.${index}`;
+                    const context: ActionFormContextData = {
+                      prefix: prefix,
+                      index: index,
+                      onRemove: () => remove(index),
+                    };
+                    const action: ProposalFormActionData =
+                      methods.getValues(prefix);
+                    const { input: ActionInput } = ACTIONS[action.name];
 
-                  switch (action.name) {
-                    case 'withdraw_assets':
-                      return (
-                        <WithdrawAssetsInput
-                          register={register}
-                          prefix={prefix}
-                          key={field.id}
-                          errors={
-                            errors.actions ? errors.actions[index] : undefined
-                          }
-                          onRemove={() => remove(index)}
-                          control={control}
-                        />
-                      );
-                    case 'mint_tokens':
-                      return (
-                        <MintTokensInput
-                          register={register}
-                          control={control}
-                          prefix={prefix}
-                          key={field.id}
-                          errors={
-                            errors.actions ? errors.actions[index] : undefined
-                          }
-                          onRemove={() => remove(index)}
-                          getValues={getValues}
-                        />
-                      );
-                    case 'merge_pr':
-                      return (
-                        <MergePRInput
-                          register={register}
-                          prefix={prefix}
-                          key={field.id}
-                          errors={
-                            errors.actions ? errors.actions[index] : undefined
-                          }
-                          onRemove={() => remove(index)}
-                        />
-                      );
-                    case 'change_parameter':
-                      return (
-                        <ChangeParametersInput
-                          control={control}
-                          register={register}
-                          errors={errors?.actions?.[index]}
-                          prefix={prefix}
-                          onRemove={() => remove(index)}
-                        />
-                      );
-                  }
-                })}
-              </div>
+                    return (
+                      <ActionFormContext.Provider value={context} key={index}>
+                        <ActionInput />
+                      </ActionFormContext.Provider>
+                    );
+                  })}
+                </div>
+              </FormProvider>
             </>
           )}
         </div>
-        <AddActionButton append={append} actions={getValues()} />
+        <AddActionButton append={append} actions={methods.getValues()} />
       </div>
       <StepNavigator onBack={handleBack} />
     </form>
@@ -180,7 +122,7 @@ export const AddActionButton = ({
   actions,
 }: {
   // eslint-disable-next-line no-unused-vars
-  append: (fn: ProposalFormAction) => void;
+  append: (fn: ProposalFormActionData) => void;
   actions: ProposalFormActions;
 }) => {
   return (
@@ -190,37 +132,23 @@ export const AddActionButton = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => append(emptyWithdrawData)}
-            className="gap-x-2 hover:cursor-pointer"
-          >
-            <HiBanknotes className="h-5 w-5 shrink-0" />
-            <span>Withdraw assets</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => append(emptyMintData)}
-            className="gap-x-2 hover:cursor-pointer"
-            disabled={
-              actions?.actions?.some((x) => x.name == 'mint_tokens') ?? false
-            }
-          >
-            <HiCircleStack className="h-5 w-5 shrink-0" />
-            <span>Mint tokens</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => append(emptyMergeData)}
-            className="gap-x-2 hover:cursor-pointer"
-          >
-            <FaGithub className="h-5 w-5 shrink-0" />
-            <span>Merge pull request</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => append(emptyChangeParameter)}
-            className="gap-x-2 hover:cursor-pointer"
-          >
-            <HiCog className="h-5 w-5 shrink-0" />
-            <span>Change plugin parameter</span>
-          </DropdownMenuItem>
+          {Object.entries(ACTIONS).map(([name, action], i) => (
+            <DropdownMenuItem
+              key={i}
+              onClick={() => append(action.emptyInputData)}
+              className="gap-x-2 hover:cursor-pointer"
+              disabled={
+                action.maxPerProposal !== undefined &&
+                actions &&
+                actions.actions &&
+                actions.actions.filter((x) => x.name === name).length >=
+                  action.maxPerProposal
+              }
+            >
+              <action.icon className="h-5 w-5 shrink-0" />
+              <span>{action.longLabel}</span>
+            </DropdownMenuItem>
+          ))}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

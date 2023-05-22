@@ -6,10 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import ErrorPage from '@/src/pages/ErrorPage';
-import Governance from '@/src/pages/Governance';
-import Dashboard from '@/src/pages/Dashboard';
-import Layout from '@/src/components/layout/Layout';
+import ErrorPage from './pages/ErrorPage';
+import Governance from './pages/Governance';
+import Query from './pages/Query';
+import Dashboard from './pages/Dashboard';
+import Layout from './components/layout/Layout';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -22,7 +23,7 @@ import {
 } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { goerli, polygon } from 'wagmi/chains';
+import { polygon, polygonMumbai } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import Finance from '@/src/pages/Finance';
 import Settings from '@/src/pages/Settings';
@@ -31,7 +32,8 @@ import NewProposal from '@/src/pages/NewProposal';
 import Verification from '@/src/pages/Verification';
 import { Toaster } from '@/src/components/ui/Toaster';
 import ViewProposal from '@/src/pages/ViewProposal';
-import { ganache } from '@/src/lib/constants/GanacheChain';
+import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
+import { Mining } from './pages/Mining';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -40,7 +42,7 @@ if (!import.meta.env.VITE_APP_PROJECT_ID) {
 const projectId = import.meta.env.VITE_APP_PROJECT_ID;
 
 // 2. Configure wagmi client
-const chains = [goerli, polygon, ganache];
+const chains = [polygonMumbai, polygon];
 
 const { provider } = configureChains(chains, [
   import.meta.env.PROD || import.meta.env.VITE_USE_GANACHE !== 'true'
@@ -99,6 +101,14 @@ const router = createBrowserRouter([
         element: <Verification />,
       },
       {
+        path: '/mining',
+        element: <Mining />,
+      },
+      {
+        path: '/query',
+        element: <Query />,
+      },
+      {
         path: '/settings',
         element: <Settings />,
       },
@@ -111,7 +121,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <Toaster />
     <WagmiConfig client={wagmiClient}>
       <AragonSDKWrapper>
-        <RouterProvider router={router} />
+        <DiamondSDKWrapper>
+          <RouterProvider router={router} />
+        </DiamondSDKWrapper>
       </AragonSDKWrapper>
     </WagmiConfig>
 

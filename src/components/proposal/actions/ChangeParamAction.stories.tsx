@@ -9,27 +9,37 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Accordion } from '../../ui/Accordion';
 
-import { ChangeParameterAction } from './ChangeParameterAction';
+import { ChangeParamAction } from './ChangeParamAction';
+import { dummyChangeParamsAction } from '@/src/hooks/useProposal';
 
-const meta: Meta<typeof ChangeParameterAction> = {
-  component: ChangeParameterAction,
+const meta: Meta<typeof ChangeParamAction> = {
+  component: ChangeParamAction,
+  argTypes: {
+    action: {
+      table: {
+        disable: true,
+      },
+    },
+    asChild: {
+      table: {
+        disable: true,
+      },
+    },
+    value: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 };
 
 export default meta;
-type Story = StoryObj<typeof ChangeParameterAction>;
+type Story = StoryObj<typeof ChangeParamAction>;
 
 export const Primary: Story = {
   args: {
     value: 'first',
-    action: {
-      method: 'changeParam',
-      interface: 'IChangeParam',
-      params: {
-        plugin: 'A plugin',
-        parameter: 'parameter 1',
-        value: '3.14159',
-      },
-    },
+    action: dummyChangeParamsAction,
   },
   decorators: [
     (Story) => (

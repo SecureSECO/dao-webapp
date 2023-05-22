@@ -7,7 +7,6 @@
  */
 
 import { useWeb3Modal } from '@web3modal/react';
-import React from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 
 /**

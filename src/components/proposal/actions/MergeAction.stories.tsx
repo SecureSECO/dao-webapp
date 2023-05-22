@@ -9,11 +9,27 @@
 import { Accordion } from '@/src/components/ui/Accordion';
 import type { Meta, StoryObj } from '@storybook/react';
 import MergeAction from './MergeAction';
+import { dummyMergeAction } from '@/src/hooks/useProposal';
 
 const meta = {
   component: MergeAction,
-  tags: ['autodocs'],
-  argTypes: {},
+  argTypes: {
+    action: {
+      table: {
+        disable: true,
+      },
+    },
+    asChild: {
+      table: {
+        disable: true,
+      },
+    },
+    value: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 } satisfies Meta<typeof MergeAction>;
 
 export default meta;
@@ -29,13 +45,7 @@ BigInt.prototype.toJSON = function () {
 export const Default: Story = {
   args: {
     value: 'first',
-    action: {
-      method: 'merge',
-      interface: 'IMerge',
-      params: {
-        url: 'https://github.com/SecureSECODAO/dao-webapp/pull/43',
-      },
-    },
+    action: dummyMergeAction,
   },
   decorators: [
     (Story) => (

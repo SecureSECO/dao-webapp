@@ -17,8 +17,8 @@ import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { useMembers } from '@/src/hooks/useMembers';
 import { useProposals } from '@/src/hooks/useProposals';
 import {
-  getChainDataByChainId,
-  getSupportedNetworkByChainId,
+  PREFERRED_NETWORK,
+  PREFERRED_NETWORK_METADATA,
 } from '@/src/lib/constants/chains';
 import { DaoTransfersList } from '@/src/pages/Finance';
 import { ProposalCardList } from '@/src/pages/Governance';
@@ -33,25 +33,23 @@ import {
   HiInboxStack,
   HiUserGroup,
 } from 'react-icons/hi2';
-import { useAccount } from 'wagmi';
 import { MembershipStatus } from '../components/dashboard/MembershipStatus';
-import { useVerification } from '../hooks/useVerification';
+import { CONFIG } from '@/src/lib/constants/config';
 
 const Dashboard = () => {
-  const { dao, loading: daoLoading, error: daoError } = useDao({});
-  const { proposals: allProposals, loading: allProposalsLoading } =
-    useProposals({});
+  const { dao, loading: daoLoading, error: daoError } = useDao();
   const {
     proposals,
+    proposalCount,
     loading: proposalsLoading,
     error: proposalsError,
   } = useProposals({ limit: 5 });
+
   const {
     daoTransfers,
     loading: daoTransfersLoading,
     error: daoTransfersError,
-  } = useDaoTransfers({});
-
+  } = useDaoTransfers();
   const {
     members,
     loading: membersLoading,
@@ -59,26 +57,27 @@ const Dashboard = () => {
     memberCount,
   } = useMembers({ limit: 5 });
 
-  const { isConnected } = useAccount();
-  const { memberVerification } = useVerification({ useDummyData: true });
-
   if (daoError) {
-    console.log(daoError);
-
-    return <p>error: {daoError}</p>;
+    console.error(daoError);
+    return (
+      <Card size="lg" className="w-full">
+        <div className="space-y-2">
+          <Header>An error occurred</Header>
+          <p className="text-base font-normal text-highlight-foreground/80">
+            DAO data could not be loaded
+          </p>
+        </div>
+      </Card>
+    );
   }
 
-  const chainId = import.meta.env.VITE_PREFERRED_NETWORK_ID;
-  const currentNetwork = getSupportedNetworkByChainId(+chainId);
-  const etherscanURL = getChainDataByChainId(+chainId)?.explorer;
+  const currentNetwork = PREFERRED_NETWORK;
+  const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
 
   return (
     <div className="grid grid-cols-7 gap-6">
       {/* Banner on top showing optional information about membership status */}
-      <MembershipStatus
-        isConnected={isConnected}
-        verification={memberVerification}
-      />
+      <MembershipStatus />
 
       {/* Card showing metadata about the DAO */}
       <Card
@@ -105,7 +104,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex flex-row items-center gap-x-1">
                   <HiCube className="h-5 w-5 shrink-0 text-primary" />
-                  <p>{import.meta.env.DEV ? 'Goerli' : 'Polygon'}</p>
+                  <p>{import.meta.env.DEV ? 'Mumbai' : 'Polygon'}</p>
                 </div>
                 <div className="flex flex-row items-center gap-x-1">
                   <HiHome className="h-5 w-5 shrink-0 text-primary" />
@@ -136,11 +135,11 @@ const Dashboard = () => {
       {/* Proposal Card */}
       <MainCard
         className="col-span-full lg:col-span-4"
-        loading={allProposalsLoading}
+        loading={proposalsLoading}
         icon={HiInboxStack}
         header={
           <DefaultMainCardHeader
-            value={allProposals.length}
+            value={proposalCount}
             label="proposals created"
           />
         }
@@ -156,7 +155,6 @@ const Dashboard = () => {
           variant="outline"
           className="flex flex-row items-center gap-x-2"
           to="/governance"
-          onClick={() => console.log('View all proposals click!')}
         >
           <p>View all proposals</p>
           <HiArrowRight className="h-5 w-5" />
@@ -203,7 +201,6 @@ const Dashboard = () => {
 
         {/* Card containing DAO members */}
         <MainCard
-          loading={membersLoading}
           icon={HiUserGroup}
           header={<DefaultMainCardHeader value={memberCount} label="members" />}
           aside={<Link label="Add members" to="/governance/new-proposal" />}
@@ -218,9 +215,7 @@ const Dashboard = () => {
             className="flex flex-row items-center gap-x-2"
             target="_blank"
             rel="noreferrer"
-            to={`${etherscanURL}/token/tokenholderchart/${
-              import.meta.env.VITE_REP_CONTRACT
-            }`}
+            to={`${etherscanURL}/token/tokenholderchart/${CONFIG.DIAMOND_ADDRESS}`}
           >
             <p>View all members</p>
             <HiArrowRight className="h-5 w-5 shrink-0" />

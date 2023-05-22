@@ -72,7 +72,7 @@
 
     --primary: 213 50% 48%; /* hsl(213, 50%, 48%) */
     --primary-foreground: 210 40% 98%; /* hsl(210, 40%, 98%) */
-    --primary-highlight: 213 52% 60%; /* hsl(213, 52%, 60%) */
+    --primary-highlight: 213 61% 64%; /* hsl(213, 61%, 64%) */
 
     --secondary: 215 19% 35%; /* hsl(215, 19%, 35%) */
     --secondary-foreground: 213 27% 84%; /* hsl(213, 27%, 84%) */
@@ -137,19 +137,10 @@
 }
 
 .styled-editor-content a {
-  color: #003bf5;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.styled-editor-content a:hover {
-  color: #0031ad;
+  @apply cursor-pointer rounded-sm font-bold text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80;
 }
 
 .styled-editor-content .ProseMirror p.is-editor-empty:first-child::before {
-  color: #adb5bd;
+  @apply pointer-events-none float-left h-0 text-highlight-foreground/50;
   content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
 }

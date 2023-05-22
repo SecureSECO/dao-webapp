@@ -13,12 +13,12 @@ const meta = {
   component: SortSelector,
   tags: ['autodocs'],
   argTypes: {
-    setSortBy: {
+    setOrder: {
       table: {
         disable: true,
       },
     },
-    setDirection: {
+    setSorting: {
       table: {
         disable: true,
       },
@@ -31,8 +31,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    setSortBy: () => {},
-    setDirection: () => {},
+    setSorting: () => {},
+    setOrder: () => {},
   },
   decorators: [
     (Story) => (

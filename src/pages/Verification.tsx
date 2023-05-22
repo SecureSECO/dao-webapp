@@ -14,7 +14,7 @@ import StampCard from '@/src/components/verification/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import {
   HiArrowSmallRight,
-  HiCheckBadge,
+  HiOutlineCheckBadge,
   HiOutlineClock,
   HiUserCircle,
 } from 'react-icons/hi2';
@@ -36,6 +36,8 @@ import History from '@/src/components/icons/History';
 import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import PendingVerificationCard from '../components/verification/PendingVerificationCard';
+import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
+import { CONFIG } from '@/src/lib/constants/config';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -165,7 +167,7 @@ const Verification = () => {
     PendingVerification[]
   >('pendingVerifications', []);
 
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { toast } = useToast();
 
   // Gets all the stamps for the current address
@@ -210,7 +212,7 @@ const Verification = () => {
     async onSuccess(data) {
       try {
         // Send the signature to the API
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/verify`, {
+        const response = await fetch(`${CONFIG.VERIFICATION_API_URL}/verify`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -408,8 +410,8 @@ const Verification = () => {
       <div className="grid grid-cols-7 gap-6">
         <MainCard
           className="col-span-full lg:col-span-4"
+          icon={HiOutlineCheckBadge}
           loading={stampsLoading || reverifyLoading}
-          icon={HiCheckBadge}
           header={
             <DefaultMainCardHeader
               value={amountOfVerifiedStamps}
@@ -436,6 +438,7 @@ const Verification = () => {
         </MainCard>
 
         <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
+          {isConnected && <OneTimeRewardCard />}
           <MainCard
             loading={false}
             icon={HiOutlineClock}

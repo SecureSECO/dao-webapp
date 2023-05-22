@@ -6,24 +6,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { withReactHookForm } from '@/src/lib/decorators/reactHookFormDecorator';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ChangeParametersInput } from './ChangeParametersInput';
+import { ClaimReward } from './Mining';
 
-const meta: Meta<typeof ChangeParametersInput> = {
-  component: ChangeParametersInput,
+const meta: Meta<typeof ClaimReward> = {
+  component: ClaimReward,
 };
 
 export default meta;
-type Story = StoryObj<typeof ChangeParametersInput>;
+type Story = StoryObj<typeof ClaimReward>;
 
 export const Primary: Story = {
   args: {
-    register: (() => {}) as any,
-    errors: undefined,
-    onRemove: (() => {}) as any,
-    prefix: 'actions.0',
+    repToMonetaryFactor: 0.3,
+    claimableRep: 123,
   },
-  decorators: [withReactHookForm],
 };

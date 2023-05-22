@@ -6,15 +6,30 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import DefaultAction from '@/src/components/proposal/actions/DefaultAction';
+import UnknownAction from '@/src/components/proposal/actions/UnknownAction';
 import { Accordion } from '@/src/components/ui/Accordion';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  component: DefaultAction,
-  tags: ['autodocs'],
-  argTypes: {},
-} satisfies Meta<typeof DefaultAction>;
+  component: UnknownAction,
+  argTypes: {
+    action: {
+      table: {
+        disable: true,
+      },
+    },
+    asChild: {
+      table: {
+        disable: true,
+      },
+    },
+    value: {
+      table: {
+        disable: true,
+      },
+    },
+  },
+} satisfies Meta<typeof UnknownAction>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

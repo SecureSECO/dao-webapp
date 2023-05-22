@@ -11,35 +11,39 @@ import { useProposal } from '@/src/hooks/useProposal';
 import { useParams } from 'react-router';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import {
-  ExecuteProposalStep,
-  ExecuteProposalStepValue,
-  ProposalStatus,
-} from '@aragon/sdk-client';
-import { ProposalStatusBadge } from '@/src/components/governance/ProposalCard';
+  ProposalStatusBadge,
+  ProposalStatusString,
+} from '@/src/components/governance/ProposalCard';
 import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
 import { Link } from '@/src/components/ui/Link';
-import { countdownText } from '@/src/lib/utils';
+import { countdownText } from '@/src/lib/utils/date';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import ProposalActions from '@/src/components/proposal/ProposalActions';
-import { contractInteraction } from '@/src/hooks/useToast';
+import { contractTransaction, toast } from '@/src/hooks/useToast';
 import { useAccount } from 'wagmi';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import { Button } from '@/src/components/ui/Button';
+import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
+import DOMPurify from 'dompurify';
 
 const ViewProposal = () => {
   const { id } = useParams();
-  const { address } = useAccount();
-  const { proposal, loading, error, refetch, canExecute, execute } =
-    useProposal({ id });
+  const { address, isConnected } = useAccount();
+  const { proposal, votes, loading, error, refetch, canExecute, canVote } =
+    useProposal({ id, address });
+  const { totalVotingWeight } = useTotalVotingWeight({
+    blockNumber: proposal?.data.parameters.snapshotBlock,
+  });
 
   const statusText = (status: ProposalStatus) => {
     if (!proposal) return '';
     switch (status) {
-      case ProposalStatus.PENDING:
+      case ProposalStatus.Pending:
         return 'Starts in ' + countdownText(proposal.startDate);
-      case ProposalStatus.ACTIVE:
+      case ProposalStatus.Active:
         return 'Ends in ' + countdownText(proposal.endDate);
       default:
         return 'Ended ' + countdownText(proposal.endDate) + ' ago';
@@ -50,23 +54,22 @@ const ViewProposal = () => {
    * Execute current proposal's actions
    */
   const executeProposal = async () => {
-    if (!execute) return;
-    contractInteraction<ExecuteProposalStep, ExecuteProposalStepValue>(
-      execute,
-      {
-        steps: {
-          confirmed: ExecuteProposalStep.DONE,
-          signed: ExecuteProposalStep.EXECUTING,
-        },
-        messages: {
-          error: 'Error executing proposal',
-          success: 'Execution successful!',
-        },
-        onFinish: () => {
-          refetch();
-        },
-      }
-    );
+    if (!proposal)
+      return toast({
+        title: 'No proposal found',
+        description: 'Please try again later',
+        variant: 'error',
+      });
+
+    contractTransaction(() => proposal.Execute(), {
+      messages: {
+        error: 'Error executing proposal',
+        success: 'Execution successful!',
+      },
+      onSuccess: () => {
+        refetch();
+      },
+    });
   };
 
   return (
@@ -91,11 +94,15 @@ const ViewProposal = () => {
                 <div className="flex flex-row-reverse items-center justify-between gap-y-4 sm:flex-col sm:items-end">
                   <ProposalStatusBadge
                     size="md"
-                    status={proposal?.status ?? ProposalStatus.PENDING}
+                    status={
+                      ProposalStatus[
+                        proposal?.status ?? ProposalStatus.Pending
+                      ] as ProposalStatusString
+                    }
                   />
                   <div className="flex flex-row items-center gap-x-2 text-highlight-foreground/60">
                     <HiOutlineClock className="h-5 w-5 shrink-0" />
-                    {statusText(proposal?.status ?? ProposalStatus.PENDING)}
+                    {statusText(proposal?.status ?? ProposalStatus.Pending)}
                   </div>
                 </div>
               }
@@ -103,18 +110,43 @@ const ViewProposal = () => {
               {proposal && (
                 <div className="flex flex-col gap-y-3">
                   <p className="text-lg font-medium leading-5 text-highlight-foreground/80">
-                    {proposal.metadata.summary}
+                    {proposal.metadata.description}
                   </p>
-                  <div className="flex items-center gap-x-1 text-sm">
-                    <span className="text-highlight-foreground/60">
-                      Published by
-                    </span>
-                    <Address
-                      address={proposal.creatorAddress}
-                      maxLength={AddressLength.Medium}
-                      hasLink={true}
-                      showCopy={false}
-                    />
+                  {/* Note that since our HTML is sanitized, this dangerous action is safe */}
+                  {proposal.metadata.body &&
+                    proposal.metadata.body !== '<p></p>' && (
+                      <div
+                        className="styled-editor-content"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(proposal.metadata.body),
+                        }}
+                      />
+                    )}
+                  <div>
+                    <div className="flex items-center gap-x-1 text-sm">
+                      <span className="text-highlight-foreground/60">
+                        Published by
+                      </span>
+                      <Address
+                        address={proposal.data.creator}
+                        maxLength={AddressLength.Medium}
+                        hasLink={true}
+                        showCopy={false}
+                      />
+                    </div>
+                    {proposal.status === ProposalStatus.Executed && (
+                      <div className="flex items-center gap-x-1 text-sm">
+                        <span className="text-highlight-foreground/60">
+                          Executed by
+                        </span>
+                        <Address
+                          address={proposal.data.executor}
+                          maxLength={AddressLength.Medium}
+                          hasLink={true}
+                          showCopy={false}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -125,19 +157,16 @@ const ViewProposal = () => {
                 <ProposalVotes
                   loading={loading}
                   proposal={proposal}
+                  votes={votes}
                   refetch={refetch}
+                  canVote={canVote}
+                  totalVotingWeight={totalVotingWeight}
                 />
 
                 <ProposalActions
                   loading={loading}
                   // Will be replaced with proper actions when switching to custom SDK
-                  actions={proposal?.actions.map(() => {
-                    return {
-                      method: '',
-                      interface: '',
-                      params: {},
-                    };
-                  })}
+                  actions={proposal?.actions}
                 >
                   {/* Execute button */}
                   {canExecute &&
@@ -150,7 +179,7 @@ const ViewProposal = () => {
                           label="Execute"
                           onClick={() => executeProposal()}
                         />
-                        {!address && (
+                        {!isConnected && (
                           <ConnectWalletWarning action="to execute this proposal" />
                         )}
                       </div>

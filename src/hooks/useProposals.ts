@@ -6,201 +6,128 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { dummyProposal } from '@/src/hooks/useProposal';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
-  TokenVotingClient,
+  DiamondGovernanceClient,
+  ProposalSorting,
   ProposalStatus,
-  TokenType,
-  ProposalSortBy,
-  SortDirection,
-} from '@aragon/sdk-client';
+  SortingOrder,
+  Proposal,
+} from '@plopmenz/diamond-governance-sdk';
 import { useEffect, useState } from 'react';
-
-type DAO = {
-  address: string;
-  name: string;
-};
-
-type Metadata = {
-  title: string;
-  summary: string;
-};
-
-type Token = {
-  address: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  type: TokenType;
-};
-
-type Result = {
-  yes: bigint;
-  no: bigint;
-  abstain: bigint;
-};
-
-type Settings = {
-  supportThreshold: number;
-  duration: number;
-  minParticipation: number;
-};
-
-export type Proposal = {
-  id: string;
-  dao: DAO;
-  creatorAddress: string;
-  metadata: Metadata;
-  startDate: Date;
-  endDate: Date;
-  status: ProposalStatus;
-  token: Token;
-  result: Result;
-  settings: Settings;
-  totalVotingWeight: bigint;
-};
 
 export type UseProposalsData = {
   loading: boolean;
   error: string | null;
   proposals: Proposal[];
+  proposalCount: number;
 };
+
 export type UseProposalsProps = {
   useDummyData?: boolean;
   status?: ProposalStatus | undefined;
-  sortBy?: ProposalSortBy | undefined;
-  direction?: SortDirection | undefined;
+  sorting?: ProposalSorting | undefined;
+  order?: SortingOrder | undefined;
   limit?: number | undefined;
 };
 
+const defaultProps: UseProposalsProps = {
+  useDummyData: false,
+  status: undefined,
+  sorting: ProposalSorting.Creation,
+  order: SortingOrder.Desc,
+  limit: undefined,
+};
+
 const dummyProposals: Proposal[] = [
+  dummyProposal,
   {
-    id: '0x22345',
-    dao: {
-      address: '0x1234567890123456789012345678901234567890',
-      name: 'Cool DAO',
-    },
-    creatorAddress: '0x1234567890123456789012345678901234567890',
-    metadata: {
-      title: 'Test Proposal',
-      summary: 'Test Proposal Summary',
-    },
-    startDate: new Date('2023-03-16T00:00:00.000Z'),
-    endDate: new Date('2023-03-23T00:00:00.000Z'),
-    status: ProposalStatus.ACTIVE,
-    token: {
-      address: '0x1234567890123456789012345678901234567890',
-      name: 'The Token',
-      symbol: 'TOK',
-      decimals: 18,
-      type: TokenType.ERC20,
-    },
-    result: {
-      yes: 100000n,
-      no: 77777n,
-      abstain: 0n,
-    },
-    settings: {
-      supportThreshold: 0.5,
-      duration: 87000,
-      minParticipation: 0.15,
-    },
-    totalVotingWeight: 1000000000000000000n,
-  },
-  {
-    id: '0x12345',
-    dao: {
-      address: '0x123456789012345678901234567890123456789',
-      name: 'Cool DAO',
-    },
-    creatorAddress: '0x1234567890123456789012345678901234567890',
-    metadata: {
-      title: 'Test Proposal 2',
-      summary: 'Test Proposal Summary 2',
-    },
-    startDate: new Date('2023-03-16T00:00:00.000Z'),
-    endDate: new Date('2023-03-23T00:00:00.000Z'),
-    status: ProposalStatus.PENDING,
-    token: {
-      address: '0x1234567890123456789012345678901234567890',
-      name: 'The Token',
-      symbol: 'TOK',
-      decimals: 18,
-      type: TokenType.ERC20,
-    },
-    result: {
-      yes: 100000n,
-      no: 77777n,
-      abstain: 0n,
-    },
-    settings: {
-      supportThreshold: 0.5,
-      duration: 87000,
-      minParticipation: 0.15,
-    },
-    totalVotingWeight: 1000000000000000000n,
-  },
+    ...dummyProposal,
+    id: 1,
+    status: ProposalStatus.Executed,
+    data: { ...dummyProposal.data, executed: true },
+  } as unknown as Proposal,
 ];
 
-export const useProposals = ({
-  useDummyData = false,
-  status = undefined,
-  sortBy = ProposalSortBy.CREATED_AT,
-  direction = SortDirection.DESC,
-  limit = undefined,
-}: UseProposalsProps): UseProposalsData => {
+export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
+  const { useDummyData, status, sorting, order, limit } = Object.assign(
+    defaultProps,
+    props
+  );
+
   const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [proposalCount, setProposalCount] = useState<number>(0);
+  const [proposalsLoading, setProposalsLoading] = useState<boolean>(true);
+  const [countLoading, setCountLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { votingPluginAddress, votingClient } = useAragonSDKContext();
+  const { client } = useDiamondSDKContext();
 
-  const fetchProposals = async (client: TokenVotingClient) => {
-    if (!votingPluginAddress) {
-      setLoading(false);
-      setError('Voting plugin address not set');
-      return;
-    }
-
+  const fetchProposalCount = async (client: DiamondGovernanceClient) => {
     try {
-      const daoProposals: Proposal[] | null =
-        (await client.methods.getProposals({
-          daoAddressOrEns: import.meta.env.VITE_DAO_ADDRESS,
-          status,
-          sortBy,
-          direction: direction ?? SortDirection.DESC,
-          limit,
-        })) as Proposal[];
+      const proposalCount = await client.sugar.GetProposalCount();
+      setProposalCount(proposalCount);
+      setCountLoading(false);
+    } catch (e) {
+      console.error(e);
+      setProposalCount(0);
+      setCountLoading(false);
+    }
+  };
+
+  const fetchProposals = async (client: DiamondGovernanceClient) => {
+    try {
+      const daoProposals: Proposal[] | null = await client.sugar.GetProposals(
+        status ? [status] : undefined,
+        sorting,
+        order ?? SortingOrder.Desc
+      );
 
       if (daoProposals) {
         setProposals(daoProposals);
-        setLoading(false);
+        setProposalsLoading(false);
         setError(null);
       }
     } catch (e) {
       console.error(e);
-      setLoading(false);
+      setProposalsLoading(false);
       setError(getErrorMessage(e));
     }
   };
 
   //** Set dummy data for development without querying Aragon API */
   const setDummyData = () => {
-    setLoading(false);
+    setProposalsLoading(false);
+    setCountLoading(false);
     setError(null);
-    setProposals(dummyProposals);
+    setProposalCount(dummyProposals.length);
+    setProposals(
+      dummyProposals.filter(
+        (p, i) =>
+          (limit ? i < limit : true) && (status ? p.status === status : true)
+      )
+    );
   };
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!votingClient) return;
-    setLoading(true);
-    fetchProposals(votingClient);
-  }, [votingClient, status, sortBy, direction]);
+    if (!client) return;
+    setProposalsLoading(true);
+    fetchProposals(client);
+  }, [client, status, sorting, order]);
+
+  // Only refetch proposal count if the client changes
+  useEffect(() => {
+    if (useDummyData || !client) return;
+    setCountLoading(true);
+    fetchProposalCount(client);
+  }, [client]);
 
   return {
-    loading,
+    loading: proposalsLoading || countLoading,
     error,
     proposals,
+    proposalCount,
   };
 };

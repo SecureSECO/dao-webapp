@@ -6,17 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { ProposalFormAction } from '@/src/components/newProposal/steps/Actions';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
-import ProposalActions, {
-  IProposalAction,
-} from '@/src/components/proposal/ProposalActions';
+import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
-import { useToast } from '@/src/hooks/useToast';
-import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/date-utils';
+import { contractTransaction, useToast } from '@/src/hooks/useToast';
+import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import {
   StepNavigator,
@@ -28,12 +24,86 @@ import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import CategoryList from '@/src/components/ui/CategoryList';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { useNavigate } from 'react-router';
+import { Provider } from '@wagmi/core';
+import { useProvider } from 'wagmi';
+import { useEffect, useState } from 'react';
+import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
+import { Action } from '@plopmenz/diamond-governance-sdk';
+
+/**
+ * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
+ * @param actions List of actions in their input form
+ * @returns A list of corresponding Action objects
+ */
+const parseActionInputs = async (
+  actions: ProposalFormActionData[],
+  provider: Provider
+): Promise<Action[]> => {
+  const res: Action[] = [];
+  const parsed = await Promise.all(
+    actions.map((action) =>
+      ACTIONS[action.name].parseInput(action as any, provider)
+    )
+  );
+  parsed.forEach((action) => action && res.push(action));
+
+  return res;
+};
+
+/**
+ * Convert the proposal voting settings form input to a start date.
+ * @param settings Proposal voting settings form input
+ * @returns The start date of the proposal as a Date object
+ */
+const parseStartDate = (settings: ProposalFormVotingSettings): Date => {
+  if (settings.start_time_type === 'now') {
+    const res = new Date();
+    res.setTime(0);
+    return res;
+  } else
+    return inputToDate(
+      settings!.custom_start_date!,
+      settings!.custom_start_time!,
+      settings!.custom_start_timezone!
+    );
+};
+
+/**
+ * Convert the proposal voting settings form input to a end date.
+ * @param settings Proposal voting settings form input
+ * @returns The end of the proposal as a Date object
+ */
+const parseEndDate = (settings: ProposalFormVotingSettings): Date => {
+  return settings.end_time_type === 'end-custom'
+    ? inputToDate(
+        settings!.custom_end_date!,
+        settings!.custom_end_time!,
+        settings!.custom_end_timezone!
+      )
+    : add(new Date(), {
+        minutes: settings!.duration_minutes!,
+        hours: settings!.duration_hours!,
+        days: settings!.duration_days!,
+      });
+};
 
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
-
-  const { votingClient, votingPluginAddress } = useAragonSDKContext();
+  const [actions, setActions] = useState<Action[]>([]);
+  const { client } = useDiamondSDKContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const provider = useProvider();
+
+  // Maps the action form iputs to Action interface
+  useEffect(() => {
+    if (dataStep3)
+      parseActionInputs(dataStep3.actions, provider).then((res) =>
+        setActions(res)
+      );
+  }, [dataStep3]);
 
   const {
     handleSubmit,
@@ -48,35 +118,48 @@ export const Confirmation = () => {
     },
   });
 
-  const onSubmitSend = async (data: any) => {
-    console.log(data);
-
-    if (!votingClient || !votingPluginAddress)
+  const onSubmitSend = async () => {
+    if (!client)
       return toast({
         title: 'Error submitting proposal',
-        description: 'Voting client not found',
+        description: 'SDK client not found',
         variant: 'error',
       });
-    // contractInteraction<ProposalCreationSteps, ProposalCreationStepValue>(
-    //   () =>
-    //     votingClient.methods.createProposal({
-    //       pluginAddress: votingPluginAddress,
-    //       actions: dataStep3?.actions ?? [],
-    //     }),
-    //   {
-    //     steps: {
-    //       confirmed: ProposalCreationSteps.DONE,
-    //       signed: ProposalCreationSteps.CREATING,
-    //     },
-    //     messages: {
-    //       error: 'Error creating proposal',
-    //       success: 'Proposal created!',
-    //     },
-    //     onFinish: () => {
-    //       // Send user to proposal page
-    //     },
-    //   }
-    // );
+
+    if (!dataStep1 || !dataStep2 || !dataStep3)
+      return toast({
+        title: 'Error submitting proposal',
+        description: 'Some data appears to be missing',
+        variant: 'error',
+      });
+
+    const parsedActions = await parseActionInputs(dataStep3.actions, provider);
+
+    contractTransaction(
+      () =>
+        client.sugar.CreateProposal(
+          {
+            ...dataStep1,
+            resources: dataStep1.resources.filter((res) => res.url !== ''),
+          },
+          parsedActions,
+          parseStartDate(dataStep2),
+          parseEndDate(dataStep2)
+        ),
+      {
+        messages: {
+          error: 'Error creating proposal',
+          success: 'Proposal created!',
+        },
+        onSuccess: () => {
+          // Send user to proposals page
+          navigate('/governance');
+        },
+        onError: (e) => {
+          console.error(e);
+        },
+      }
+    );
   };
 
   /**
@@ -114,74 +197,15 @@ export const Confirmation = () => {
     return true;
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async () => {
     const valid = onSubmitValidate();
     if (isValid && valid) {
-      onSubmitSend(data);
+      onSubmitSend();
     }
   };
 
-  // Map the actions to the IProposalAction interface
-  const actions: IProposalAction[] = dataStep3
-    ? dataStep3?.actions.map((action: ProposalFormAction) => {
-        switch (action.name) {
-          case 'withdraw_assets':
-            return {
-              method: 'withdraw',
-              interface: 'IWithdraw',
-              params: {
-                to: action.recipient,
-                amount: action.amount,
-                tokenAddress: action.tokenAddress,
-              },
-            };
-          case 'mint_tokens':
-            return {
-              method: 'mint',
-              interface: 'IMint',
-              params: {
-                to: action.wallets.map((wallet) => {
-                  return {
-                    to: wallet.address,
-                    amount: wallet.amount,
-                    tokenId: 0,
-                  };
-                }),
-              },
-            };
-          case 'merge_pr':
-            return {
-              method: 'merge',
-              interface: 'IMerge', // FIXME: This is not the correct interface
-              params: {
-                url: action.inputs.url,
-              },
-            };
-          case 'change_parameter':
-            return{
-            method: 'change',
-            interface: 'IChange', //FIXME: This is not the correct interface
-            params: {
-              plugin: action.plugin,
-              parameter: action.parameter,
-              value: action.value,
-            }
-
-          }
-          default:
-            return {
-              method: '',
-              interface: '',
-              params: {},
-            };
-        }
-      })
-    : [];
-
   // Sanitize the HTML of the body
-  const htmlClean = DOMPurify.sanitize(
-    dataStep1?.description ?? '<p>Proposal has no body</p>'
-  );
+  const cleanedBody = DOMPurify.sanitize(dataStep1?.body ?? '<p></p>');
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -193,13 +217,13 @@ export const Confirmation = () => {
           className="md:col-span-2"
         >
           <p className="text-lg font-medium leading-5 text-highlight-foreground/80">
-            {dataStep1?.summary ?? 'No summary'}{' '}
+            {dataStep1?.description ?? 'No description'}{' '}
           </p>
           {/* Note that since our HTML is sanitized, this dangerous action is safe */}
-          {dataStep1?.description !== '<p></p>' && (
+          {dataStep1?.body !== '<p></p>' && (
             <div
               className="styled-editor-content"
-              dangerouslySetInnerHTML={{ __html: htmlClean }}
+              dangerouslySetInnerHTML={{ __html: cleanedBody }}
             />
           )}
         </HeaderCard>
@@ -207,7 +231,9 @@ export const Confirmation = () => {
         <div className="flex flex-col gap-y-4">
           <ProposalResources
             variant="outline"
-            resources={dataStep1?.resources ?? []}
+            resources={
+              dataStep1?.resources.filter((res) => res.url !== '') ?? []
+            }
           />
 
           {/* View actions */}

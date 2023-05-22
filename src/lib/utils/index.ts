@@ -7,11 +7,7 @@
  */
 
 import { ClassValue, clsx } from 'clsx';
-import {
-  differenceInHours,
-  differenceInMinutes,
-  formatDistanceToNow,
-} from 'date-fns';
+import { BigNumber } from 'ethers';
 import { twMerge } from 'tailwind-merge';
 
 /**
@@ -52,26 +48,6 @@ export function anyNullOrUndefined(...values: any[]): boolean {
 }
 
 /**
- * Utility function to create count down text for dates
- * @param date The date
- * @returns
- */
-export const countdownText = (date: Date) => {
-  const now = new Date();
-  const hourDif = Math.abs(differenceInHours(date, now));
-  const minuteDif = Math.abs(differenceInMinutes(date, now));
-  if (hourDif > 24) {
-    return formatDistanceToNow(date);
-  } else if (minuteDif > 60) {
-    return `${hourDif} hours`;
-  } else if (minuteDif > 1) {
-    return `${minuteDif} minutes`;
-  } else {
-    return 'less than a minute';
-  }
-};
-
-/**
  * Calculate the percentage of part of a whole of two bigints
  * @param numerator Numerator of the division
  * @param denominator Denominator of the division
@@ -81,7 +57,22 @@ export const calcBigintPercentage = (
   numerator: bigint,
   denominator: bigint
 ): number => {
+  if (denominator === 0n) return 0;
   return Number((numerator * 10000n) / denominator) / 100;
+};
+
+/**
+ * Calculate the percentage of part of a whole of two BigNumbers (from ethers)
+ * @param numerator Numerator of the division
+ * @param denominator Denominator of the division
+ * @returns The percentage of the division as a number
+ * @note This function is a wrapper around calcBigintPercentage
+ */
+export const calcBigNumberPercentage = (
+  numerator: BigNumber,
+  denominator: BigNumber
+): number => {
+  return calcBigintPercentage(numerator.toBigInt(), denominator.toBigInt());
 };
 
 /**

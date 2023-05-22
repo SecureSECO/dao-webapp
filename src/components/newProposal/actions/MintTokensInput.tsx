@@ -6,58 +6,31 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { AddressPattern, NumberPattern } from '@/src/lib/patterns';
+import { useContext } from 'react';
 import { Input } from '@/src/components/ui/Input';
-import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
-import { Button } from '../../ui/Button';
+import { Label } from '@/src/components/ui/Label';
+import { ProposalFormAction } from '@/src/lib/constants/actions';
+import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { someUntil } from '@/src/lib/utils';
 import {
-  Control,
-  UseFormRegister,
-  useFieldArray,
   UseFormGetValues,
+  useFieldArray,
+  useFormContext,
 } from 'react-hook-form';
+import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
+
+import { Button } from '../../ui/Button';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { MainCard } from '../../ui/MainCard';
-import { ActionFormError, ProposalFormActions } from '../steps/Actions';
-import { Label } from '@/src/components/ui/Label';
-import { someUntil } from '@/src/lib/utils';
+import {
+  ActionFormContext,
+  ActionFormError,
+  ProposalFormActions,
+} from '../steps/Actions';
 
-export type ProposalFormMint = {
-  name: 'mint_tokens';
-  inputs: {
-    mintTokensToWallets: {
-      address: string;
-      amount: string | number;
-    }[];
-  };
-  summary: {
-    newTokens: number;
-    tokenSupply: number;
-    newHoldersCount: number;
-    daoTokenSymbol: string;
-    daoTokenAddress: string;
-    totalMembers?: number;
-  };
-};
-
-export const emptyMintAction: ProposalFormMint = {
-  name: 'mint_tokens',
-  inputs: {
-    mintTokensToWallets: [{ address: '', amount: 0 }],
-  },
-  summary: {
-    newTokens: 0,
-    tokenSupply: 0,
-    newHoldersCount: 0,
-    daoTokenSymbol: '',
-    daoTokenAddress: '',
-  },
-};
-
-export type ProposalFormMintData = {
-  name: 'mint_tokens';
+export interface ProposalFormMintData extends ProposalFormAction {
   wallets: ProposalFormMintWallet[];
-};
+}
 
 export type ProposalFormMintWallet = {
   address: string;
@@ -77,21 +50,20 @@ export const emptyMintData: ProposalFormMintData = {
 /**
  * @returns Component to be used within a form to describe the action of minting tokens.
  */
-export const MintTokensInput = ({
-  register,
-  control,
-  prefix,
-  errors,
-  onRemove,
-  getValues,
-}: {
-  register: UseFormRegister<ProposalFormActions>;
-  control: Control<ProposalFormActions>;
-  prefix: `actions.${number}`;
-  errors: ActionFormError<ProposalFormMintData>;
-  onRemove: () => void;
-  getValues: UseFormGetValues<ProposalFormActions>;
-}) => {
+export const MintTokensInput = () => {
+  const {
+    register,
+    formState: { errors: formErrors },
+    control,
+    getValues,
+  } = useFormContext<ProposalFormActions>();
+
+  const { prefix, index, onRemove } = useContext(ActionFormContext);
+
+  const errors: ActionFormError<ProposalFormMintData> = formErrors.actions
+    ? formErrors.actions[index]
+    : undefined;
+
   const { fields, append, remove } = useFieldArray({
     name: `${prefix}.wallets`,
     control: control,
@@ -202,6 +174,7 @@ const MintListItem = ({
             error={errors?.amount}
             className="w-full basis-2/3"
             min="0"
+            step="1" // Only allow integers
             required
           />
         </ErrorWrapper>

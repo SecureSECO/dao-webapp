@@ -9,13 +9,6 @@ on:
 
 env:
   NODE_VERSION: 18.x
-  VITE_DAO_ADDRESS: '0xa23ff5fc643b1a8d5866f5b392dc5924b746c6fd'
-  VITE_VOTING_PLUGIN: '0xfc9ef7e0ea890e86864137e49282b21a0a1f6e5e'
-  VITE_REP_CONTRACT: '0xdAC85cFabEF4da96D426185Ea050d9A947bE1C5f'
-  VITE_PREFERRED_NETWORK_ID: 5
-  VITE_API_URL: 'http://localhost:43210/api'
-  VITE_VERIFY_CONTRACT: '0x...'
-  VITE_USE_GANACHE: 'false'
 
 jobs:
   install-dependencies:
@@ -53,6 +46,26 @@ jobs:
         run: npm ci
       - name: run tests
         run: npm run test
+
+  format-and-lint-check:
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        id: restore-node_modules
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: steps.restore-node_modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: run formatting check
+        run: npx prettier --check ./src
+      - name: run ESlint check
+        run: npx eslint ./src
 
   build-storybook:
     runs-on: ubuntu-latest

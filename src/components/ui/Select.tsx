@@ -9,7 +9,7 @@
 /**
  * @fileoverview This file contains the Select component, which is a wrapper around the Radix UI Select component.
  * Displays a list of options for the user to pick from—triggered by a button.
- * @see https://www.radix-ui.com/docs/primitives/components/select - Radix UI Radio Group Primitive
+ * @see https://www.radix-ui.com/docs/primitives/components/select - Radix UI Select Primitive
  * inspired by https://ui.shadcn.com/docs/primitives/select
  */
 

@@ -11,7 +11,15 @@
  * mainly used for step 2 of the new proposal form.
  */
 
-import { add, format, isBefore, parse } from 'date-fns';
+import {
+  add,
+  differenceInHours,
+  differenceInMinutes,
+  format,
+  formatDistanceToNow,
+  isBefore,
+  parse,
+} from 'date-fns';
 
 //Today's date in yyyy-MM-dd format for the default value and minimum valuable in the forms later.
 export function getTodayDateString() {
@@ -162,3 +170,29 @@ export function getUserTimezone(): string {
 
   return timezoneString;
 }
+
+export const getDurationInSeconds = (
+  days: number,
+  hours: number,
+  minutes: number
+): number => ((days * 24 + hours) * 60 + minutes) * 60;
+
+/**
+ * Utility function to create count down text for dates
+ * @param date The date
+ * @returns
+ */
+export const countdownText = (date: Date) => {
+  const now = new Date();
+  const hourDif = Math.abs(differenceInHours(date, now));
+  const minuteDif = Math.abs(differenceInMinutes(date, now));
+  if (hourDif > 24) {
+    return formatDistanceToNow(date);
+  } else if (minuteDif > 60) {
+    return `${hourDif} hours`;
+  } else if (minuteDif > 1) {
+    return `${minuteDif} minutes`;
+  } else {
+    return 'less than a minute';
+  }
+};

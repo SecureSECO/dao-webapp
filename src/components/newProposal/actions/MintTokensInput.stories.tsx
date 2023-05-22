@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { withReactHookForm } from '@/src/lib/decorators/reactHookFormDecorator';
+import { withProposalAction } from '@/src/lib/decorators/proposalActionDecorator';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { MintTokensInput } from './MintTokensInput';
@@ -19,13 +19,6 @@ export default meta;
 type Story = StoryObj<typeof MintTokensInput>;
 
 export const Primary: Story = {
-  args: {
-    register: (() => {}) as any,
-    prefix: 'actions.0',
-    errors: undefined,
-    onRemove: (() => {}) as any,
-    getValues: (() => {}) as any,
-  },
   parameters: {
     defaultValues: {
       actions: [
@@ -38,5 +31,5 @@ export const Primary: Story = {
       ],
     },
   },
-  decorators: [withReactHookForm],
+  decorators: [withProposalAction],
 };
