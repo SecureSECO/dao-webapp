@@ -19,5 +19,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    reward: 100,
+    claimReward() {
+      return Promise.resolve();
+    },
+    refetch() {
+      return Promise.resolve();
+    },
+  },
 };

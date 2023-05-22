@@ -7,8 +7,8 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { PendingVerification } from '@/src/pages/Verification';
 import PendingVerificationCard from './PendingVerificationCard';
+import { PendingVerification } from '@/src/hooks/useVerification';
 
 const meta = {
   component: PendingVerificationCard,

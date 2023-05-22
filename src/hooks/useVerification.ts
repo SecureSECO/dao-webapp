@@ -14,8 +14,6 @@ import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
 import { useAccount } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
 
-export type Verification = null | Stamp[];
-
 export type StampInfo = {
   id: string;
   displayName: string;

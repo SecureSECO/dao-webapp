@@ -8,8 +8,7 @@
 
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
-import { useAccount, useContractRead, useSignMessage } from 'wagmi';
-import { verificationAbi } from '@/src/assets/verificationAbi';
+import { useAccount, useSignMessage } from 'wagmi';
 import StampCard from '@/src/components/verification/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import {
@@ -18,7 +17,6 @@ import {
   HiOutlineClock,
   HiUserCircle,
 } from 'react-icons/hi2';
-import { BigNumber } from 'ethers';
 import { FaGithub } from 'react-icons/fa';
 import { useToast } from '@/src/hooks/useToast';
 import {
@@ -37,11 +35,9 @@ import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import PendingVerificationCard from '@/src/components/verification/PendingVerificationCard';
 import OneTimeRewardCard from '@/src/components/verification/OneTimeRewardCard';
-import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
 import {
   StampInfo,
   PendingVerification,
-  VerificationHistory,
   useVerification,
 } from '@/src/hooks/useVerification';
 

@@ -15,12 +15,6 @@ import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
-import {
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
-import { verificationAbi } from '@/src/assets/verificationAbi';
 import { useState } from 'react';
 import { useToast } from '@/src/hooks/useToast';
 import {

@@ -10,6 +10,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { addDays } from 'date-fns';
 
 import { MembershipStatusView } from './MembershipStatus';
+import { Stamp } from '@plopmenz/diamond-governance-sdk';
+import { BigNumber } from 'ethers';
 
 const meta: Meta<typeof MembershipStatusView> = {
   component: MembershipStatusView,
@@ -19,8 +21,28 @@ const meta: Meta<typeof MembershipStatusView> = {
 export default meta;
 type Story = StoryObj<typeof MembershipStatusView>;
 
+const now = new Date();
+
+const expiredStamp: Stamp = [
+  'github',
+  '0x000000',
+  [BigNumber.from(addDays(now, 15).getTime())],
+];
+
+const almostExpiredStamp: Stamp = [
+  'github',
+  '0x000000',
+  [BigNumber.from(addDays(now, -15).getTime())],
+];
+
+const goodStamp: Stamp = [
+  'github',
+  '0x000000',
+  [BigNumber.from(addDays(now, -60).getTime())],
+];
+
 export const NotConnected: Story = {
-  args: { isConnected: false, verification: null },
+  args: { isConnected: false },
 };
 
 export const IncorrectNetworkCanNotSwitch: Story = {
@@ -38,27 +60,27 @@ export const IncorrectNetworkCanSwitch: Story = {
 };
 
 export const NotMember: Story = {
-  args: { isConnected: true, verification: null },
+  args: { isConnected: true },
 };
 
 export const AlmostExpired: Story = {
   args: {
     isConnected: true,
-    verification: [{ expiration: addDays(new Date(), -10) }],
+    stamps: [almostExpiredStamp],
   },
 };
 
 export const Expired: Story = {
   args: {
     isConnected: true,
-    verification: [{ expiration: addDays(new Date(), 10) }],
+    stamps: [expiredStamp],
   },
 };
 
 export const AllOk: Story = {
   args: {
     isConnected: true,
-    verification: [{ expiration: addDays(new Date(), -100) }],
+    stamps: [goodStamp],
   },
   decorators: [
     (Story) => (

@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Verification, useVerification } from '@/src/hooks/useVerification';
+import { useVerification } from '@/src/hooks/useVerification';
 import { useWeb3Modal } from '@web3modal/react';
 import { addDays } from 'date-fns';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
@@ -17,6 +17,7 @@ import { Button } from '@/src/components/ui/Button';
 import { cn } from '@/src/lib/utils';
 import { toast } from '@/src/hooks/useToast';
 import { Link } from '@/src/components/ui/Link';
+import { Stamp } from '@plopmenz/diamond-governance-sdk';
 
 export const MembershipStatus = () => {
   const { open } = useWeb3Modal();
@@ -25,6 +26,9 @@ export const MembershipStatus = () => {
   const { switchNetwork } = useSwitchNetwork({
     chainId: PREFERRED_NETWORK_METADATA.id,
   });
+  const { stamps, isVerified } = useVerification({
+    useDummyData: true,
+  });
 
   return (
     <MembershipStatusView
@@ -32,6 +36,8 @@ export const MembershipStatus = () => {
       chainId={chain?.id}
       openConnector={open}
       switchNetwork={switchNetwork}
+      stamps={stamps}
+      isVerified={isVerified}
     />
   );
 };
@@ -45,16 +51,21 @@ export const MembershipStatusView = ({
   chainId,
   openConnector,
   switchNetwork,
+  stamps,
+  isVerified,
 }: {
   isConnected: boolean;
   chainId?: number;
   openConnector: (options?: any | undefined) => Promise<void>;
   switchNetwork?: (chainId_?: number) => void;
+  stamps?: Stamp[];
+  isVerified: (stamp: Stamp | null) => {
+    verified: boolean;
+    expired: boolean;
+    preCondition: boolean;
+    timeLeftUntilExpiration: number | null;
+  };
 }) => {
-  const { stamps, isVerified } = useVerification({
-    useDummyData: true,
-  });
-
   // If user has not connected a wallet:
   // An informative banner, with button to connect wallet
   if (!isConnected)
