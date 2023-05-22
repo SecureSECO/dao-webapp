@@ -195,7 +195,7 @@ const Query = () => {
                 disabled={!isQuerying}
                 conditions={[
                   {
-                    enabled: !isConnected,
+                    when: !isConnected,
                     content: (
                       <ConnectWalletWarning action="to query the database" />
                     ),

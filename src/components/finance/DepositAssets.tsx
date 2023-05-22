@@ -253,13 +253,13 @@ export const DepositAssets = ({}) => {
                   disabled={isLoading}
                   conditions={[
                     {
-                      enabled: !isConnected,
+                      when: !isConnected,
                       content: <ConnectWalletWarning action="to deposit" />,
                     },
                     {
-                      enabled: chain?.id !== PREFERRED_NETWORK_METADATA.id,
+                      when: chain?.id !== PREFERRED_NETWORK_METADATA.id,
                       content: (
-                        <Warning message="Switch network to deposit assets" />
+                        <Warning> Switch network to deposit assets </Warning>
                       ),
                     },
                   ]}

@@ -206,11 +206,11 @@ const VotesContentActive = ({
           disabled={!userCanVote}
           conditions={[
             {
-              enabled: !isConnected,
+              when: !isConnected,
               content: <ConnectWalletWarning action="to vote" />,
             },
             {
-              enabled: votingPower.lte(0),
+              when: votingPower.lte(0),
               content: <InsufficientRepWarning action="to vote" />,
             },
           ]}

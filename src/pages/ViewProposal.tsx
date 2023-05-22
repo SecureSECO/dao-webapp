@@ -184,7 +184,7 @@ const ViewProposal = () => {
                           onClick={() => executeProposal()}
                           conditions={[
                             {
-                              enabled: !isConnected,
+                              when: !isConnected,
                               content: (
                                 <ConnectWalletWarning action="to execute this proposal" />
                               ),

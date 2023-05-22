@@ -258,7 +258,7 @@ const StampCard = ({
             disabled={isError}
             conditions={[
               {
-                enabled: !isConnected,
+                when: !isConnected,
                 content: <ConnectWalletWarning action="to verify" />,
               },
             ]}

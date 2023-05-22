@@ -33,7 +33,7 @@ export const ConnectWalletWarningStory: Story = {
   args: {
     label: 'Perform action',
     conditions: [
-      { enabled: true, content: <ConnectWalletWarning action="to vote" /> },
+      { when: true, content: <ConnectWalletWarning action="to vote" /> },
     ],
   },
 };
@@ -42,7 +42,7 @@ export const InsufficientRepWarningStory: Story = {
   args: {
     label: 'Perform action',
     conditions: [
-      { enabled: true, content: <InsufficientRepWarning action="to vote" /> },
+      { when: true, content: <InsufficientRepWarning action="to vote" /> },
     ],
   },
 };
