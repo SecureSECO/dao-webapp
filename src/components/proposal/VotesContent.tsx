@@ -17,27 +17,30 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
-import { Progress } from '@/src/components/ui/Progress';
-import { Button } from '@/src/components/ui/Button';
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { calcBigNumberPercentage } from '@/src/lib/utils';
+import { Progress } from '@/src/components/ui/Progress';
+import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
+import TokenAmount from '@/src/components/ui/TokenAmount';
+import { CanVote } from '@/src/hooks/useProposal';
 import { contractTransaction, toast } from '@/src/hooks/useToast';
+import { useVotingPower } from '@/src/hooks/useVotingPower';
+import { TOKENS } from '@/src/lib/constants/tokens';
+import { calcBigNumberPercentage } from '@/src/lib/utils';
 import {
+  AddressVotes,
+  Proposal,
   ProposalStatus,
   VoteOption,
-  Proposal,
-  AddressVotes,
 } from '@plopmenz/diamond-governance-sdk';
-import { CanVote } from '@/src/hooks/useProposal';
 import { BigNumber } from 'ethers';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-import { useVotingPower } from '@/src/hooks/useVotingPower';
-import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
-import { TOKENS } from '@/src/lib/constants/tokens';
-import TokenAmount from '@/src/components/ui/TokenAmount';
-import { ConditionalButton, ConnectWalletWarning } from '../ui/ConditionalButton';
+
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+  InsufficientRepWarning,
+} from '../ui/ConditionalButton';
 
 type VoteFormData = {
   vote_option: string;
@@ -199,12 +202,20 @@ const VotesContentActive = ({
 
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
       <div className="ml-6 flex flex-row items-center gap-x-4">
-        <ConditionalButton disabled={!userCanVote}
+        <ConditionalButton
+          disabled={!userCanVote}
           conditions={[
-            {enabled: !isConnected, content: <ConnectWalletWarning action="to vote" />},
-            {enabled: votingPower.lte(0), content: <InsufficientRepWarning action="to vote" />},
+            {
+              enabled: !isConnected,
+              content: <ConnectWalletWarning action="to vote" />,
+            },
+            {
+              enabled: votingPower.lte(0),
+              content: <InsufficientRepWarning action="to vote" />,
+            },
           ]}
-          type="submit">
+          type="submit"
+        >
           {!userCanVote && isConnected && votingPower.gt(0) ? (
             'Vote submitted'
           ) : (

@@ -88,15 +88,24 @@ export const ConnectWalletWarning = ({ action }: { action: string }) => {
 };
 
 /**
+ * Shows a warning with a warning icon and the provided warning text
+ * @param props.message A string that represents the warning
+ * @returns A div with a warning message
+ */
+export const Warning = ({ message }: { message: string }) => {
+  return (
+    <div className="flex flex-row items-center gap-x-1 opacity-80">
+      <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
+      <p className="leading-4">{message}</p>
+    </div>
+  );
+};
+
+/**
  * Shows a warning that the user does not own enough REP (voting power) to perform the action specified
  * @param props.action A string that represents the action the user is trying to perform (e.g. "to vote")
  * @returns A div with a warning message
  */
-export const InsufficientRepWarning = ({ action }: { action: string }) => {
-  return (
-    <div className="flex flex-row items-center gap-x-1 opacity-80">
-      <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
-      <p className="leading-4">Insufficient voting power {action}</p>
-    </div>
-  );
-};
+export const InsufficientRepWarning = ({ action }: { action: string }) => (
+  <Warning message={`Insufficient voting power ${action}`} />
+);

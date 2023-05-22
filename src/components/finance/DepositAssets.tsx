@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { contractTransaction, useToast } from '@/src/hooks/useToast';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { NumberPattern } from '@/src/lib/constants/patterns';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
@@ -18,18 +18,18 @@ import {
   erc20ABI,
   useAccount,
   useContractWrite,
+  useNetwork,
   usePrepareContractWrite,
-  useProvider,
   useWaitForTransaction,
 } from 'wagmi';
 
 import Loading from '../icons/Loading';
 import { Address, AddressLength } from '../ui/Address';
-import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import {
   ConditionalButton,
   ConnectWalletWarning,
+  Warning,
 } from '../ui/ConditionalButton';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
 import { LabelledInput } from '../ui/Input';
@@ -70,7 +70,7 @@ export const DepositAssets = ({}) => {
   } = useForm<DepositAssetsData>({});
   const { daoAddress } = useDiamondSDKContext();
   const { isConnected } = useAccount();
-  const provider = useProvider();
+  const { chain } = useNetwork();
 
   const watchToken = useWatch({ control: control, name: 'token' });
   const tokenAddress = tokenAddresses[watchToken];
@@ -255,6 +255,12 @@ export const DepositAssets = ({}) => {
                     {
                       enabled: !isConnected,
                       content: <ConnectWalletWarning action="to deposit" />,
+                    },
+                    {
+                      enabled: chain?.id !== PREFERRED_NETWORK_METADATA.id,
+                      content: (
+                        <Warning message="Switch network to deposit assets" />
+                      ),
                     },
                   ]}
                 />
