@@ -13,7 +13,6 @@
  */
 
 import { useState } from 'react';
-import { verificationAbi } from '@/src/assets/verificationAbi';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import {
   AlertDialog,
@@ -31,6 +30,7 @@ import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { useToast } from '@/src/hooks/useToast';
+import { verificationAbi } from '@/src/lib/constants/verificationAbi';
 import {
   Stamp,
   StampInfo,

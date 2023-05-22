@@ -11,24 +11,9 @@
  * Contains a button to verify, and additional information about the verification
  */
 
-import { Card } from '@/src/components/ui/Card';
-import Header from '@/src/components/ui/Header';
-import {
-  PendingVerification,
-  StampInfo,
-  availableStamps,
-  verificationAddress,
-} from '@/src/pages/Verification';
-import { HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
-import { Button } from '../ui/Button';
-import {
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
-import { verificationAbi } from '@/src/assets/verificationAbi';
 import { useState } from 'react';
-import { useToast } from '@/src/hooks/useToast';
+import { Card } from '@/src/components/ui/Card';
+import CategoryList, { Category } from '@/src/components/ui/CategoryList';
 import {
   Dialog,
   DialogClose,
@@ -38,8 +23,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
-import CategoryList, { Category } from '@/src/components/ui/CategoryList';
+import Header from '@/src/components/ui/Header';
+import { useToast } from '@/src/hooks/useToast';
+import { verificationAbi } from '@/src/lib/constants/verificationAbi';
 import { truncateMiddle } from '@/src/lib/utils';
+import {
+  PendingVerification,
+  StampInfo,
+  availableStamps,
+  verificationAddress,
+} from '@/src/pages/Verification';
+import { HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi';
+
+import { Button } from '../ui/Button';
 
 /**
  * @returns A Card element containing information about a previous verification
