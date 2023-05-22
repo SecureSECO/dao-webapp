@@ -156,8 +156,8 @@ export const DepositAssets = ({}) => {
     <MainCard header="Deposit assets" variant="light" icon={HiInboxArrowDown}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col md:flex-row gap-x-2">
-            <div className="flex md:w-1/2 flex-col">
+          <div className="flex flex-col gap-x-2 md:flex-row">
+            <div className="flex flex-col md:w-1/2">
               <Label tooltip="Asset to deposit" htmlFor="token">
                 Token
               </Label>
@@ -224,7 +224,7 @@ export const DepositAssets = ({}) => {
                 Copy the address or ENS below and use your wallet's send feature
                 to send money to the DAO's treasury.
               </p>
-              <div className="flex flex-col md:flex-row gap-2">
+              <div className="flex flex-col gap-2 md:flex-row">
                 <Card variant="outline">
                   <Address
                     showCopy={true}
@@ -246,7 +246,7 @@ export const DepositAssets = ({}) => {
           )}
           {isKnownToken && (
             <ErrorWrapper name="deposit" error={errors?.root?.deposit as any}>
-              <div className="flex gap-x-2 flex-row">
+              <div className="flex flex-row gap-x-2">
                 <ConditionalButton
                   label="Deposit assets"
                   icon={isLoading ? Loading : null}
