@@ -101,9 +101,10 @@ export const useVerification = ({ useDummyData = false }) => {
    */
   const isVerified = (stamp: Stamp | null) => {
     const threshold = getThresholdForTimestamp(Date.now() / 1000);
-    const lastVerifiedAt = stamp
-      ? stamp[2][stamp[2].length - 1]
-      : BigNumber.from(0);
+    const lastVerifiedAt =
+      stamp && stamp[2].length > 0
+        ? stamp[2][stamp[2].length - 1]
+        : BigNumber.from(0);
 
     const preCondition: boolean =
       stamp != null &&
