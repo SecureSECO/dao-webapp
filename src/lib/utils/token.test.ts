@@ -6,7 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { bigIntToFloat, toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
+import {
+  bigIntToFloat,
+  parseTokenAmount,
+  toAbbreviatedTokenAmount,
+} from '@/src/lib/utils/token';
+import { BigNumber } from 'ethers';
 
 test('bigIntToFloat correct on 12345678n, decimal 4', () => {
   expect(bigIntToFloat(12345678n, 4)).toBe(1234.5678);
@@ -55,4 +60,32 @@ test('toAbbreviatedTokenAmount to correctly handle displayDecimals < 0 and round
       displayDecimals: -1,
     })
   ).toBe('1235');
+});
+
+test('parseTokenAmount to correctly parse 123456789 and its variations', () => {
+  expect(parseTokenAmount('123456789', 0)).toEqual(BigNumber.from('123456789'));
+  expect(parseTokenAmount('123456789', 5)).toEqual(
+    BigNumber.from('12345678900000')
+  );
+  expect(parseTokenAmount('0000123456789', 0)).toEqual(
+    BigNumber.from('123456789')
+  );
+  expect(parseTokenAmount('123456789.0000', 0)).toEqual(
+    BigNumber.from('123456789')
+  );
+  expect(parseTokenAmount('1234.56789', 5)).toEqual(
+    BigNumber.from('123456789')
+  );
+  expect(parseTokenAmount('1234.56789', 2)).toEqual(BigNumber.from('123456'));
+  expect(parseTokenAmount('1234567.89', 4)).toEqual(
+    BigNumber.from('12345678900')
+  );
+});
+
+test('parseTokenAmount to not parse various variations', () => {
+  expect(parseTokenAmount(null!, 0)).toBe(null);
+  expect(parseTokenAmount('', 0)).toBe(null);
+  expect(parseTokenAmount(undefined!, 0)).toBe(null);
+  expect(parseTokenAmount(' ', 0)).toBe(null);
+  expect(parseTokenAmount('a', 0)).toBe(null);
 });
