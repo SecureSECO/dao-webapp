@@ -1,3 +1,11 @@
+/**
+ * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.
+ * © Copyright Utrecht University (Department of Information and Computing Sciences)
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import {
   countdownText,
   getDurationDateAhead,
@@ -6,7 +14,7 @@ import {
   isGapEnough,
   timezoneOffsetDifference,
   timezoneStringFormat,
-} from '@/src/lib/date-utils';
+} from '@/src/lib/utils/date';
 import { addDays, addHours, addMinutes, addSeconds } from 'date-fns';
 
 test("'2022-12-15' + 1 day (=86400 secs) to be 2022-12-16", () => {

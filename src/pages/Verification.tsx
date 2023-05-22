@@ -40,6 +40,7 @@ import {
   PendingVerification,
   useVerification,
 } from '@/src/hooks/useVerification';
+import { CONFIG } from '@/src/lib/constants/config';
 
 export const availableStamps: StampInfo[] = [
   {
@@ -99,21 +100,18 @@ const Verification = () => {
     async onSuccess(data) {
       try {
         // Send the signature to the API
-        const response = await fetch(
-          `${import.meta.env.VITE_VERIFICATION_API_URL}/verify`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              address,
-              signature: data,
-              nonce: nonce.toString(),
-              providerId,
-            }),
-          }
-        );
+        const response = await fetch(`${CONFIG.VERIFICATION_API_URL}/verify`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            address,
+            signature: data,
+            nonce: nonce.toString(),
+            providerId,
+          }),
+        });
 
         if (!response.ok) {
           throw new Error('Verification failed');

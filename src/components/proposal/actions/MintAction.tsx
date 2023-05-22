@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { IProposalAction } from '@/src/components/proposal/ProposalActions';
 import ActionWrapper, {
   ActionContentSeparator,
 } from '@/src/components/proposal/actions/ActionWrapper';
@@ -14,11 +13,13 @@ import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import CategoryList from '@/src/components/ui/CategoryList';
 import { Category } from '@/src/components/ui/CategoryList';
-import { toAbbreviatedTokenAmount } from '@/src/components/ui/TokenAmount';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useMembers } from '@/src/hooks/useMembers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { CONFIG } from '@/src/lib/constants/config';
 import { TOKENS } from '@/src/lib/constants/tokens';
-import { getTokenInfo } from '@/src/lib/token-utils';
+import { getTokenInfo, toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -30,12 +31,12 @@ import { useProvider } from 'wagmi';
  * @note The tokenId is only used if governance is done through NFT's, which is not currently the case
  * @note By default, it is assumed that this action will mint the reputation (governance) token
  */
-export type ProposalMintAction = IProposalAction & {
+export interface ProposalMintAction extends Action {
   params: {
     _addresses: string[];
     _amounts: BigNumber[];
   };
-};
+}
 
 interface MintActionProps extends AccordionItemProps {
   action: ProposalMintAction;
@@ -59,11 +60,11 @@ const getCategory = (summary: MintActionSummary): Category[] => [
     items: [
       {
         label: 'New tokens',
-        value: `+ ${toAbbreviatedTokenAmount(
-          summary.newTokens.toBigInt(),
-          TOKENS.rep.decimals,
-          true
-        )} ${TOKENS.rep.symbol}`,
+        value: `+ ${toAbbreviatedTokenAmount({
+          value: summary.newTokens,
+          tokenDecimals: TOKENS.rep.decimals,
+          displayDecimals: 0,
+        })} ${TOKENS.rep.symbol}`,
       },
       {
         label: 'New holders',
@@ -71,11 +72,11 @@ const getCategory = (summary: MintActionSummary): Category[] => [
       },
       {
         label: 'Total tokens',
-        value: `${toAbbreviatedTokenAmount(
-          summary.totalTokens.toBigInt(),
-          TOKENS.rep.decimals,
-          true
-        )} ${TOKENS.rep.symbol}`,
+        value: `${toAbbreviatedTokenAmount({
+          value: summary.totalTokens,
+          tokenDecimals: TOKENS.rep.decimals,
+          displayDecimals: 0,
+        })} ${TOKENS.rep.symbol}`,
       },
       {
         label: 'Total holders',
@@ -95,13 +96,13 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
   const { memberCount, isMember } = useMembers({ includeBalances: false });
 
   const provider = useProvider({
-    chainId: +import.meta.env.VITE_PREFERRED_NETWORK_ID,
+    chainId: CONFIG.PREFERRED_NETWORK_ID,
   });
 
   useEffect(() => {
     async function fetchSummary() {
       const tokenInfo = await getTokenInfo(
-        import.meta.env.VITE_DIAMOND_ADDRESS,
+        CONFIG.DIAMOND_ADDRESS,
         provider,
         PREFERRED_NETWORK_METADATA.nativeCurrency
       );
@@ -149,15 +150,14 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
               replaceYou={false}
               jazziconSize="md"
             />
-            <p className="text-popover-foreground/80">
-              +{' '}
-              {toAbbreviatedTokenAmount(
-                action.params._amounts[index].toBigInt(),
-                TOKENS.rep.decimals,
-                true
-              )}{' '}
-              {TOKENS.rep.symbol}
-            </p>
+            <TokenAmount
+              className="text-popover-foreground/80"
+              amount={action.params._amounts[index]}
+              tokenDecimals={TOKENS.rep.decimals}
+              symbol={TOKENS.rep.symbol}
+              displayDecimals={0}
+              sign="+"
+            />
           </Card>
         ))}
       </div>
