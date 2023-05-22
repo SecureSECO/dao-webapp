@@ -119,12 +119,12 @@ const VotesContentActive = ({
 }) => {
   const { handleSubmit, watch, control } = useForm<VoteFormData>();
   const { isConnected, address } = useAccount();
-  const { getVotingPower, votingPower } = useVotingPower({ address });
+  const { getProposalVotingPower, votingPower } = useVotingPower({ address });
 
   const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
     try {
       // Fetch most recent voting power, to vote with all available rep
-      const votingPower = await getVotingPower();
+      const votingPower = await getProposalVotingPower(proposal);
       if (votingPower.lte(0)) {
         return toast({
           variant: 'error',

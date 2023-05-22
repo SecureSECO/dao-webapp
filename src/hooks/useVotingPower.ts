@@ -8,6 +8,7 @@
 
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
+import { Proposal } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 
@@ -19,6 +20,7 @@ export type UseVotingPowerData = {
   // Minimum voting power required to create a proposal
   minProposalVotingPower: BigNumber;
   getVotingPower: () => Promise<BigNumber>;
+  getProposalVotingPower: (proposal: Proposal) => Promise<BigNumber>;
   refetch: () => void;
 };
 
@@ -53,6 +55,29 @@ export const useVotingPower = ({
     const governance = await client.pure.IERC20();
     const repBalance = await governance.balanceOf(address);
     return repBalance;
+  };
+
+  /**
+   * Fetches the voting power of an address at the time of proposal creation through the Diamond Governance SDK.
+   * Keeps into account the maximum voting power per wallet for the given proposal.
+   * @param proposal Proposal to fetch the voting power of
+   * @returns Voting power of the given wallet address at the time of proposal creation
+   */
+  const getProposalVotingPower = async (
+    proposal: Proposal
+  ): Promise<BigNumber> => {
+    if (!client || !address) throw new Error('Client or address not set');
+
+    const maxVotingPower = proposal.data.parameters.maxSingleWalletPower;
+
+    const governance = await client.pure.IGovernanceStructure();
+    const walletVotingPower = await governance.walletVotingPower(
+      address,
+      proposal.data.parameters.snapshotBlock
+    );
+    return maxVotingPower.gt(walletVotingPower)
+      ? walletVotingPower
+      : maxVotingPower;
   };
 
   // Update state variable for voting power
@@ -104,6 +129,7 @@ export const useVotingPower = ({
     votingPower,
     minProposalVotingPower,
     getVotingPower,
+    getProposalVotingPower,
     // Only allow refetching if not using dummy data
     refetch: () => (!useDummyData ? updateVotingPower() : void 0),
   };
