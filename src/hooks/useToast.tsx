@@ -236,7 +236,6 @@ function promise(promise: Promise<any>, props: PromiseToast) {
   });
   promise.catch((e) => {
     const updateProps = props.error(e);
-    console.log(updateProps);
 
     updateToast(
       {
