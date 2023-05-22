@@ -67,8 +67,6 @@ export const availableStamps: StampInfo[] = [
   // },
 ];
 
-export const verificationAddress = import.meta.env.VITE_VERIFY_CONTRACT;
-
 const Verification = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [pendingVerifications, setPendingVerifications] = useLocalStorage<
