@@ -10,6 +10,7 @@ import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { CONFIG } from '@/src/lib/constants/config';
 import {
   TokenInfo,
   getTokenInfo,
@@ -43,7 +44,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>();
 
   const provider = useProvider({
-    chainId: +import.meta.env.VITE_PREFERRED_NETWORK_ID,
+    chainId: CONFIG.PREFERRED_NETWORK_ID,
   });
 
   useEffect(() => {

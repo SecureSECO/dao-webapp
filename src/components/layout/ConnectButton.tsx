@@ -32,8 +32,9 @@ import {
 } from '@/src/components/ui/Tooltip';
 import { Button } from '@/src/components/ui/Button';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { cn } from '@/src/lib/utils';
 
-const ConnectButton = () => {
+const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();
   const { address } = useAccount();
@@ -99,7 +100,7 @@ const ConnectButton = () => {
       onClick={() => open()}
       variant="outline"
       size="sm"
-      className="gap-x-2"
+      className={cn('gap-x-2', buttonClassName)}
       icon={FaWallet}
       label="Connect Wallet"
     />
@@ -107,6 +108,8 @@ const ConnectButton = () => {
 };
 
 export default ConnectButton;
+
+//The following can later be used to display the balance of the connected wallet in $SECOREP and $SECOIN
 
 // type BalanceIconProps = {
 //   name: string

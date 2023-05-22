@@ -6,19 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-/*
- * Contains the metadata about DAO tokens.
- * Similair to chains.ts.
- * */
-export const TOKENS = {
-  rep: {
-    name: 'SecureSECO Reputation',
-    symbol: 'SECOREP',
-    decimals: 18,
-  },
-  secoin: {
-    name: 'SecureSECO Coin',
-    symbol: 'SECOIN',
-    decimals: 18,
-  },
+export const CONFIG = {
+  VERIFICATION_API_URL: 'http://localhost:43210/api',
+  SEARCHSECO_API_URL: 'http://localhost:25566/api',
+  DIAMOND_ADDRESS: '0xD3C63852E9EF1Dbd7dDc7C2F8587F5133B769814',
+  PREFERRED_NETWORK_ID: 80001,
 } as const;
