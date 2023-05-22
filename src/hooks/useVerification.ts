@@ -228,8 +228,6 @@ export const useVerification = ({ useDummyData = false }) => {
       const verificationContract =
         await client.verification.GetVerificationContract();
       const _reverifyThreshold = await verificationContract.reverifyThreshold();
-      const a = await verificationContract.getAllMembers();
-      console.log('fenksonjfda', a);
 
       setReverifyThreshold(_reverifyThreshold.toNumber());
     } catch (e: any) {
