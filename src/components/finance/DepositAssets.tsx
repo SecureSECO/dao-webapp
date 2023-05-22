@@ -41,16 +41,15 @@ import {
   SelectValue,
 } from '../ui/Select';
 
-const Tokens = ['Matic', 'SECOIN', 'Other'] as const;
 type Token = (typeof Tokens)[number];
 type DepositAssetsData = {
   token: Token;
   amount?: string;
 };
-
 type AddressString = `0x${string}`;
 type SendData = Record<Token, AddressString | undefined>;
 
+const Tokens = ['Matic', 'SECOIN', 'Other'] as const;
 const tokenAddresses: SendData = {
   Matic: '0x0000000000000000000000000000000000001010',
   SECOIN: '0x...',
@@ -66,7 +65,7 @@ export const DepositAssets = ({}) => {
     setError,
   } = useForm<DepositAssetsData>({});
   const { daoAddress } = useDiamondSDKContext();
-  const { isConnected, address: senderAddress } = useAccount();
+  const { isConnected } = useAccount();
   const provider = useProvider();
 
   const watchToken = useWatch({ control: control, name: 'token' });
@@ -81,12 +80,8 @@ export const DepositAssets = ({}) => {
   const { config, error } = usePrepareContractWrite({
     address: tokenAddress,
     abi: erc20ABI,
-    functionName: 'transferFrom',
-    args: [
-      senderAddress as AddressString,
-      daoAddress as AddressString,
-      amount as BigNumber,
-    ],
+    functionName: 'transfer',
+    args: [daoAddress as AddressString, amount as BigNumber],
     enabled: Boolean(debouncedTokenId),
   });
 
@@ -114,14 +109,6 @@ export const DepositAssets = ({}) => {
       return;
     }
 
-    if (senderAddress === undefined) {
-      setError('root.deposit', {
-        type: 'custom',
-        message: "Error: can not determine sender's address",
-      });
-      return;
-    }
-
     if (daoAddress === undefined) {
       setError('root.deposit', {
         type: 'custom',
@@ -144,6 +131,7 @@ export const DepositAssets = ({}) => {
         message: 'Error: can not create transaction',
       });
       console.log(error);
+      console.log(config);
       return;
     }
 
@@ -283,7 +271,7 @@ function useDebounce<T>(value: T, delay?: number): T {
 function tryParseBignumber(input: string | undefined): BigNumber | null {
   let num: BigNumber | null;
   try {
-    num = BigNumber.from(input);
+    num = BigNumber.from(input).mul(BigNumber.from(10).pow(10));
   } catch {
     num = null;
   }
