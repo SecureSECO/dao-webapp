@@ -27,7 +27,7 @@ export const MembershipStatus = () => {
     chainId: PREFERRED_NETWORK_METADATA.id,
   });
   const { stamps, isVerified } = useVerification({
-    useDummyData: true,
+    useDummyData: false,
   });
 
   return (
