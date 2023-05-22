@@ -36,7 +36,6 @@ export type PendingVerification = {
   sig: string;
 };
 
-//NOTE: This is a just a dummy implementation!
 export const useVerification = ({ useDummyData = false }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -126,6 +125,7 @@ export const useVerification = ({ useDummyData = false }) => {
       stamp != null &&
       Date.now() / 1000 > lastEligibleDate.toNumber();
 
+    // Time left until expiration in seconds
     let timeLeftUntilExpiration = null;
     if (verified) {
       timeLeftUntilExpiration = lastEligibleDate.toNumber() - Date.now() / 1000;
@@ -329,6 +329,7 @@ export const useVerification = ({ useDummyData = false }) => {
     verify,
     unverify,
     refetch,
+    getThresholdForTimestamp,
     isVerified,
     claimReward,
     thresholdHistory,

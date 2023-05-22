@@ -26,7 +26,7 @@ export const MembershipStatus = () => {
   const { switchNetwork } = useSwitchNetwork({
     chainId: PREFERRED_NETWORK_METADATA.id,
   });
-  const { stamps, isVerified } = useVerification({
+  const { stamps } = useVerification({
     useDummyData: false,
   });
 
@@ -37,7 +37,6 @@ export const MembershipStatus = () => {
       openConnector={open}
       switchNetwork={switchNetwork}
       stamps={stamps}
-      isVerified={isVerified}
     />
   );
 };
@@ -52,20 +51,18 @@ export const MembershipStatusView = ({
   openConnector,
   switchNetwork,
   stamps,
-  isVerified,
 }: {
   isConnected: boolean;
   chainId?: number;
   openConnector: (options?: any | undefined) => Promise<void>;
   switchNetwork?: (chainId_?: number) => void;
   stamps?: Stamp[];
-  isVerified: (stamp: Stamp | null) => {
-    verified: boolean;
-    expired: boolean;
-    preCondition: boolean;
-    timeLeftUntilExpiration: number | null;
-  };
 }) => {
+  const { isVerified, getThresholdForTimestamp, thresholdHistory } =
+    useVerification({
+      useDummyData: false,
+    });
+
   // If user has not connected a wallet:
   // An informative banner, with button to connect wallet
   if (!isConnected)
@@ -119,13 +116,26 @@ export const MembershipStatusView = ({
     );
 
   // Set boolean values needed for futher code
-  let now = new Date();
   let expired = stamps.some((stamp) => isVerified(stamp).expired);
   let almostExpired =
     !expired &&
     stamps.some((stamp) => {
-      const { timeLeftUntilExpiration } = isVerified(stamp);
-      addDays(new Date(timeLeftUntilExpiration ?? 0), 30) >= now;
+      const { timeLeftUntilExpiration, verified } = isVerified(stamp);
+
+      // Retrieve threshold for timestamp
+      let threshold = getThresholdForTimestamp(
+        stamp[2].reverse()[0].toNumber()
+      ).toNumber();
+
+      console.log(timeLeftUntilExpiration);
+
+      threshold = threshold > 0 ? threshold / 2 : 30;
+
+      return (
+        verified &&
+        timeLeftUntilExpiration != null &&
+        timeLeftUntilExpiration < threshold * 86400
+      );
     });
 
   // If user has connected wallet but verification is about to expire:

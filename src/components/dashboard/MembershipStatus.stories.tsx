@@ -26,19 +26,19 @@ const now = new Date();
 const expiredStamp: Stamp = [
   'github',
   '0x000000',
-  [BigNumber.from(addDays(now, 15).getTime())],
+  [BigNumber.from(Math.round(addDays(now, -1000).getTime() / 1000))],
 ];
 
 const almostExpiredStamp: Stamp = [
   'github',
   '0x000000',
-  [BigNumber.from(addDays(now, -15).getTime())],
+  [BigNumber.from(Math.round(addDays(now, -50).getTime() / 1000))],
 ];
 
 const goodStamp: Stamp = [
   'github',
   '0x000000',
-  [BigNumber.from(addDays(now, -60).getTime())],
+  [BigNumber.from(Math.round(addDays(now, -1).getTime() / 1000))],
 ];
 
 export const NotConnected: Story = {
