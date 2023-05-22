@@ -31,9 +31,7 @@ export const IncorrectNetworkCanSwitch: Story = {
   args: {
     isConnected: true,
     chainId: 0.01,
-    switchNetwork: (n) => {
-      console.log(n);
-    },
+    switchNetwork: undefined,
   },
 };
 

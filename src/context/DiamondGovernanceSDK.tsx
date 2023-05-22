@@ -13,7 +13,7 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useNetwork, useSigner, useSwitchNetwork } from 'wagmi';
+import { useSigner } from 'wagmi';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { Contract, ethers } from 'ethers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
@@ -33,19 +33,6 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
   );
 
   const signer = useSigner().data || undefined;
-
-  // Make sure the user is on the correct network
-  const network = useSwitchNetwork({
-    chainId: PREFERRED_NETWORK_METADATA.id,
-  });
-  const { chain } = useNetwork();
-  if (
-    chain?.id !== PREFERRED_NETWORK_METADATA.id &&
-    network.switchNetwork &&
-    !network.isLoading
-  ) {
-    network.switchNetwork();
-  }
 
   useEffect(() => {
     // If no signer is available, use a dummy signer

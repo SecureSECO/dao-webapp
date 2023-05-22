@@ -11,21 +11,26 @@ import { useWeb3Modal } from '@web3modal/react';
 import { addDays } from 'date-fns';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 import { Card, CardProps } from '@/src/components/ui/Card';
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { Chain, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { Button } from '@/src/components/ui/Button';
 import { cn } from '@/src/lib/utils';
 import { toast } from '@/src/hooks/useToast';
 import { Link } from '@/src/components/ui/Link';
+import { useEffect } from 'react';
 
 export const MembershipStatus = () => {
   const { open } = useWeb3Modal();
   const { isConnected } = useAccount();
   const { memberVerification } = useVerification({ useDummyData: true });
   const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork({
+  const { switchNetworkAsync, isLoading } = useSwitchNetwork({
     chainId: PREFERRED_NETWORK_METADATA.id,
   });
+
+  useEffect(() => {
+    console.log(status);
+  }, [status]);
 
   return (
     <MembershipStatusView
@@ -33,7 +38,8 @@ export const MembershipStatus = () => {
       verification={memberVerification}
       chainId={chain?.id}
       openConnector={open}
-      switchNetwork={switchNetwork}
+      switchNetwork={switchNetworkAsync}
+      switchInProgress={isLoading}
     />
   );
 };
@@ -48,12 +54,16 @@ export const MembershipStatusView = ({
   chainId,
   openConnector,
   switchNetwork,
+  switchInProgress,
 }: {
   isConnected: boolean;
   verification: Verification;
   chainId?: number;
   openConnector: (options?: any | undefined) => Promise<void>;
-  switchNetwork?: (chainId_?: number) => void;
+  switchNetwork?:
+    | ((chainId_?: number | undefined) => Promise<Chain>)
+    | undefined;
+  switchInProgress: boolean;
 }) => {
   // If user has not connected a wallet:
   // An informative banner, with button to connect wallet
@@ -72,9 +82,23 @@ export const MembershipStatusView = ({
    * Handles a click on the switch network button.
    * If the switchNetwork function is not defined (provider does not support this function), an error toast is shown.
    */
-  const switchNetworkClick = () => {
-    if (switchNetwork) switchNetwork();
-    else
+  const switchNetworkClick = async () => {
+    if (switchInProgress)
+      return toast({
+        title: 'Switch network already in progress',
+        description: 'Complete the current request in your wallet provider',
+      });
+    if (switchNetwork) {
+      try {
+        await switchNetwork();
+      } catch (e: any) {
+        toast({
+          title: 'Could not switch network',
+          description: 'Error switching chain',
+          variant: 'error',
+        });
+      }
+    } else
       toast({
         title: 'Could not switch network',
         description: 'Please switch network manually',
@@ -86,7 +110,7 @@ export const MembershipStatusView = ({
   // An informative banner, showing a button to change network.
   if (chainId !== undefined && chainId !== PREFERRED_NETWORK_METADATA.id)
     return (
-      <MembershipCard message="You are not on the correct network!">
+      <MembershipCard message="You are on the incorrect network!">
         <Button
           variant="subtle"
           onClick={switchNetworkClick}
