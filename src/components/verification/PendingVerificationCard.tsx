@@ -24,9 +24,9 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
 import Header from '@/src/components/ui/Header';
-import { useToast } from '@/src/hooks/useToast';
 import { verificationAbi } from '@/src/lib/constants/verificationAbi';
 import { truncateMiddle } from '@/src/lib/utils';
+import { toast } from '@/src/hooks/useToast';
 import {
   PendingVerification,
   StampInfo,
@@ -94,7 +94,6 @@ const PendingVerificationCard = ({
   });
 
   const [isBusy, setIsBusy] = useState(false);
-  const { promise: promiseToast } = useToast();
 
   // We calculate how much time is left for the verification to expire
   const timeLeft = Math.max(
@@ -212,12 +211,11 @@ const PendingVerificationCard = ({
       <div className="flex items-center gap-x-2">
         <Button
           onClick={() => {
-            promiseToast(verify(), {
+            toast.promise(verify(), {
               loading: 'Verifying, please wait...',
               success: 'Successfully verified!',
               error: (e) => ({
                 title: 'Verification failed',
-                description: e.message,
               }),
             });
           }}

@@ -10,16 +10,15 @@ import {
   ProposalStatusBadge,
   ProposalStatusString,
 } from '@/src/components/governance/ProposalCard';
-import ProposalActions from '@/src/components/proposal/ProposalActions';
-import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
+import ProposalHistory from '@/src/components/proposal/ProposalHistory';
+import ProposalActions from '@/src/components/proposal/ProposalActions';
+import { toast } from '@/src/hooks/useToast';
 import { Address, AddressLength } from '@/src/components/ui/Address';
-import { Button } from '@/src/components/ui/Button';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Link } from '@/src/components/ui/Link';
 import { useProposal } from '@/src/hooks/useProposal';
-import { contractTransaction, toast } from '@/src/hooks/useToast';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 import { countdownText } from '@/src/lib/utils/date';
 import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
@@ -59,17 +58,14 @@ const ViewProposal = () => {
    */
   const executeProposal = async () => {
     if (!proposal)
-      return toast({
+      return toast.error({
         title: 'No proposal found',
         description: 'Please try again later',
-        variant: 'error',
       });
 
-    contractTransaction(() => proposal.Execute(), {
-      messages: {
-        error: 'Error executing proposal',
-        success: 'Execution successful!',
-      },
+    toast.contractTransaction(() => proposal.Execute(), {
+      error: 'Error executing proposal',
+      success: 'Execution successful!',
       onSuccess: () => {
         refetch();
       },

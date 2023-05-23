@@ -92,17 +92,15 @@ export const MembershipStatusView = ({
       try {
         await switchNetwork();
       } catch (e: any) {
-        toast({
+        toast.error({
           title: 'Could not switch network',
           description: 'Error switching chain',
-          variant: 'error',
         });
       }
     } else
-      toast({
+      toast.error({
         title: 'Could not switch network',
         description: 'Please switch network manually',
-        variant: 'error',
       });
   };
 

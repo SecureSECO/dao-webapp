@@ -11,7 +11,6 @@ import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { contractTransaction, useToast } from '@/src/hooks/useToast';
 import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import {
@@ -31,6 +30,7 @@ import { useProvider } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import { Action } from '@plopmenz/diamond-governance-sdk';
+import { toast } from '@/src/hooks/useToast';
 
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
@@ -93,7 +93,6 @@ export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
   const [actions, setActions] = useState<Action[]>([]);
   const { client } = useDiamondSDKContext();
-  const { toast } = useToast();
   const navigate = useNavigate();
   const provider = useProvider();
 
@@ -120,22 +119,21 @@ export const Confirmation = () => {
 
   const onSubmitSend = async () => {
     if (!client)
-      return toast({
+      return toast.error({
         title: 'Error submitting proposal',
         description: 'SDK client not found',
-        variant: 'error',
       });
 
     if (!dataStep1 || !dataStep2 || !dataStep3)
-      return toast({
+      return toast.error({
         title: 'Error submitting proposal',
         description: 'Some data appears to be missing',
-        variant: 'error',
       });
 
     const parsedActions = await parseActionInputs(dataStep3.actions, provider);
 
-    contractTransaction(
+    // Send proposal to SDK
+    toast.contractTransaction(
       () =>
         client.sugar.CreateProposal(
           {
@@ -147,16 +145,11 @@ export const Confirmation = () => {
           parseEndDate(dataStep2)
         ),
       {
-        messages: {
-          error: 'Error creating proposal',
-          success: 'Proposal created!',
-        },
+        error: 'Error creating proposal',
+        success: 'Proposal created!',
         onSuccess: () => {
           // Send user to proposals page
           navigate('/governance');
-        },
-        onError: (e) => {
-          console.error(e);
         },
       }
     );

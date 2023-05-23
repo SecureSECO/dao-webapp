@@ -12,8 +12,6 @@
  * If the stamp is verified, a checkmark icon will be displayed next to the providerId.
  */
 
-import { useState } from 'react';
-import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,11 +23,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
-import { Button } from '@/src/components/ui/Button';
+import { useState } from 'react';
+import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
-import { useToast } from '@/src/hooks/useToast';
 import { verificationAbi } from '@/src/lib/constants/verificationAbi';
 import {
   Stamp,
@@ -38,6 +36,7 @@ import {
   isVerified,
 } from '@/src/pages/Verification';
 import { format } from 'date-fns';
+import { toast } from '@/src/hooks/useToast';
 import {
   HiCalendar,
   HiChartBar,
@@ -52,6 +51,7 @@ import {
   ConditionalButton,
   ConnectWalletWarning,
 } from '../ui/ConditionalButton';
+import { Button } from '@/src/components/ui/Button';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -115,7 +115,6 @@ const StampCard = ({
     expired: boolean;
     timeLeftUntilExpiration: number | null;
   } = isVerified(thresholdHistory, stamp);
-  const { promise: promiseToast } = useToast();
   const { isConnected } = useAccount();
 
   const providerId = stampInfo.id;
@@ -295,18 +294,14 @@ const StampCard = ({
                   disabled={isBusy}
                   onClick={() => {
                     const promise = unverify();
-                    promiseToast(promise, {
+                    toast.promise(promise, {
                       loading: 'Removing verification...',
                       success: 'Verification removed',
-                      error: (err) => ({
-                        title: 'Failed to remove verification: ',
-                        description: err,
-                      }),
-                    });
-
-                    promise.finally(() => {
-                      setIsBusy(false);
-                      refetch();
+                      error: 'Failed to remove verification: ',
+                      onSuccess() {
+                        setIsBusy(false);
+                        refetch();
+                      },
                     });
                   }}
                 >
