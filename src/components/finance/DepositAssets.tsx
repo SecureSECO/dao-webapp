@@ -13,7 +13,7 @@ import { NumberPattern } from '@/src/lib/constants/patterns';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-import { HiInboxArrowDown } from 'react-icons/hi2';
+import { HiChevronLeft, HiInboxArrowDown } from 'react-icons/hi2';
 import {
   erc20ABI,
   useAccount,
@@ -32,8 +32,11 @@ import {
   Warning,
 } from '../ui/ConditionalButton';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
+import Header from '../ui/Header';
+import { HeaderCard } from '../ui/HeaderCard';
 import { LabelledInput } from '../ui/Input';
 import { Label } from '../ui/Label';
+import { Link } from '../ui/Link';
 import { MainCard } from '../ui/MainCard';
 import {
   Select,
@@ -153,124 +156,134 @@ export const DepositAssets = ({}) => {
   };
 
   return (
-    <MainCard header="Deposit assets" variant="light" icon={HiInboxArrowDown}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-x-2 md:flex-row">
-            <div className="flex flex-col md:w-1/2">
-              <Label tooltip="Asset to deposit" htmlFor="token">
-                Token
-              </Label>
-              <ErrorWrapper name="token" error={errors?.token}>
-                <Controller
-                  control={control}
-                  name="token"
-                  rules={{ required: true }}
-                  render={({ field: { onChange, name, value } }) => (
-                    <Select
-                      defaultValue={value}
-                      onValueChange={onChange}
-                      name={name}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Token" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Tokens</SelectLabel>
-                          {Tokens.map((token) => (
-                            <SelectItem key={token} value={token}>
-                              {token}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </ErrorWrapper>
+    <div className="space-y-2">
+      {/* Back button */}
+      <Link
+        to="/finance"
+        icon={HiChevronLeft}
+        variant="outline"
+        label="All transfers"
+        className="text-lg"
+      />
+      <Card>
+        <Header className="my-4">Depost assets</Header>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-y-2">
+              <div className="flex flex-col">
+                <Label tooltip="Asset to deposit" htmlFor="token">
+                  Token
+                </Label>
+                <ErrorWrapper name="token" error={errors?.token}>
+                  <Controller
+                    control={control}
+                    name="token"
+                    rules={{ required: true }}
+                    render={({ field: { onChange, name, value } }) => (
+                      <Select
+                        defaultValue={value}
+                        onValueChange={onChange}
+                        name={name}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Token" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Tokens</SelectLabel>
+                            {Tokens.map((token) => (
+                              <SelectItem key={token} value={token}>
+                                {token}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </ErrorWrapper>
+              </div>
+              {isKnownToken && (
+                <div>
+                  <LabelledInput
+                    {...register('amount', {
+                      validate: (v) => {
+                        // only Validate if this is active
+                        if (!isKnownToken) return true;
+
+                        // Required
+                        if (v === undefined || v === '')
+                          return 'Please enter an amount';
+
+                        // Number Pattern
+                        if (!NumberPattern.test(v))
+                          return 'Please enter a number, e.g. 3.141';
+
+                        // Otherwise this is valid
+                        return true;
+                      },
+                    })}
+                    id="amount"
+                    tooltip={`Amount of ${watchToken} to deposit`}
+                    label="Amount"
+                    error={errors.amount}
+                  />
+                </div>
+              )}
             </div>
-            {isKnownToken && (
-              <div className="md:w-1/2">
-                <LabelledInput
-                  {...register('amount', {
-                    validate: (v) => {
-                      // only Validate if this is active
-                      if (!isKnownToken) return true;
-
-                      // Required
-                      if (v === undefined || v === '')
-                        return 'Please enter an amount';
-
-                      // Number Pattern
-                      if (!NumberPattern.test(v))
-                        return 'Please enter a number, e.g. 3.141';
-
-                      // Otherwise this is valid
-                      return true;
-                    },
-                  })}
-                  id="amount"
-                  tooltip={`Amount of ${watchToken} to deposit`}
-                  label="Amount"
-                  error={errors.amount}
-                />
+            {watchToken === 'Other' && (
+              <div>
+                <p className="">
+                  Copy the address or ENS below and use your wallet's send
+                  feature to send money to the DAO's treasury.
+                </p>
+                <div className="flex flex-col gap-2 md:flex-row">
+                  <Card variant="outline">
+                    <Address
+                      showCopy={true}
+                      hasLink={true}
+                      maxLength={AddressLength.Medium}
+                      address={daoAddress ?? ''}
+                    />
+                  </Card>
+                  <Card variant="outline">
+                    <Address
+                      showCopy={true}
+                      hasLink={false}
+                      maxLength={AddressLength.Full}
+                      address={'ENS not yet supported'}
+                    />
+                  </Card>
+                </div>
               </div>
             )}
+            {isKnownToken && (
+              <ErrorWrapper name="deposit" error={errors?.root?.deposit as any}>
+                <div className="flex flex-row gap-x-2">
+                  <ConditionalButton
+                    label="Deposit assets"
+                    icon={isLoading ? Loading : null}
+                    disabled={isLoading}
+                    conditions={[
+                      {
+                        when: !isConnected,
+                        content: <ConnectWalletWarning action="to deposit" />,
+                      },
+                      {
+                        when: chain?.id !== PREFERRED_NETWORK_METADATA.id,
+                        content: (
+                          <Warning> Switch network to deposit assets </Warning>
+                        ),
+                      },
+                    ]}
+                  />
+                </div>
+              </ErrorWrapper>
+            )}
           </div>
-          {watchToken === 'Other' && (
-            <div>
-              <p className="">
-                Copy the address or ENS below and use your wallet's send feature
-                to send money to the DAO's treasury.
-              </p>
-              <div className="flex flex-col gap-2 md:flex-row">
-                <Card variant="outline">
-                  <Address
-                    showCopy={true}
-                    hasLink={true}
-                    maxLength={AddressLength.Medium}
-                    address={daoAddress ?? ''}
-                  />
-                </Card>
-                <Card variant="outline">
-                  <Address
-                    showCopy={true}
-                    hasLink={false}
-                    maxLength={AddressLength.Full}
-                    address={'ENS not yet supported'}
-                  />
-                </Card>
-              </div>
-            </div>
-          )}
-          {isKnownToken && (
-            <ErrorWrapper name="deposit" error={errors?.root?.deposit as any}>
-              <div className="flex flex-row gap-x-2">
-                <ConditionalButton
-                  label="Deposit assets"
-                  icon={isLoading ? Loading : null}
-                  disabled={isLoading}
-                  conditions={[
-                    {
-                      when: !isConnected,
-                      content: <ConnectWalletWarning action="to deposit" />,
-                    },
-                    {
-                      when: chain?.id !== PREFERRED_NETWORK_METADATA.id,
-                      content: (
-                        <Warning> Switch network to deposit assets </Warning>
-                      ),
-                    },
-                  ]}
-                />
-              </div>
-            </ErrorWrapper>
-          )}
-          {}
-        </div>
-      </form>
-    </MainCard>
+        </form>
+      </Card>
+    </div>
   );
 };
 
