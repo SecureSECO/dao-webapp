@@ -13,7 +13,7 @@ import { NumberPattern } from '@/src/lib/constants/patterns';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-import { HiChevronLeft, HiInboxArrowDown } from 'react-icons/hi2';
+import { HiChevronLeft } from 'react-icons/hi2';
 import {
   erc20ABI,
   useAccount,
@@ -33,11 +33,9 @@ import {
 } from '../ui/ConditionalButton';
 import { ErrorWrapper } from '../ui/ErrorWrapper';
 import Header from '../ui/Header';
-import { HeaderCard } from '../ui/HeaderCard';
 import { LabelledInput } from '../ui/Input';
 import { Label } from '../ui/Label';
 import { Link } from '../ui/Link';
-import { MainCard } from '../ui/MainCard';
 import {
   Select,
   SelectContent,
@@ -63,7 +61,7 @@ const tokenAddresses: SendData = {
   Other: undefined,
 };
 
-export const DepositAssets = ({}) => {
+export const DepositAssets = () => {
   const {
     control,
     register,
@@ -94,7 +92,7 @@ export const DepositAssets = ({}) => {
 
   const { data: writeData, writeAsync } = useContractWrite(config);
 
-  const { isLoading, isSuccess } = useWaitForTransaction({
+  const { isLoading } = useWaitForTransaction({
     hash: writeData?.hash,
   });
 
@@ -165,8 +163,8 @@ export const DepositAssets = ({}) => {
         label="All transfers"
         className="text-lg"
       />
-      <Card>
-        <Header className="my-4">Depost assets</Header>
+      <Card className="space-y-4">
+        <Header className="">Depost assets</Header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-y-2">
@@ -234,8 +232,8 @@ export const DepositAssets = ({}) => {
             {watchToken === 'Other' && (
               <div>
                 <p className="">
-                  Copy the address or ENS below and use your wallet's send
-                  feature to send money to the DAO's treasury.
+                  Copy the address or ENS below and use your wallet&apos;s send
+                  feature to send money to the DAO&apos;s treasury.
                 </p>
                 <div className="flex flex-col gap-2 md:flex-row">
                   <Card variant="outline">

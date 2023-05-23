@@ -170,7 +170,7 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
 export const ProgressCard = ({ children }: { children?: React.ReactNode }) => {
   const { step } = useNewProposalFormContext();
   return (
-    <Card className="flex flex-col gap-1 px-1 sm:px-6">
+    <Card className="flex flex-col gap-1">
       <div className="flex w-full items-center justify-between">
         <p className="text-primary">New proposal</p>
         <p className="text-sm text-highlight-foreground/80">
