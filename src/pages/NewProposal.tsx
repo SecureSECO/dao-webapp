@@ -7,29 +7,32 @@
  */
 
 import React, { createContext, useContext, useState } from 'react';
-import Header from '@/src/components/ui/Header';
-import { Progress } from '@/src/components/ui/Progress';
-import { Button } from '@/src/components/ui/Button';
-import { Card } from '@/src/components/ui/Card';
-import {
-  ProposalFormVotingSettings,
-  Voting,
-} from '@/src/components/newProposal/steps/Voting';
 import {
   Actions,
   ProposalFormActions,
 } from '@/src/components/newProposal/steps/Actions';
+import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import {
   Metadata,
   ProposalFormMetadata,
 } from '@/src/components/newProposal/steps/Metadata';
-import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
+import {
+  ProposalFormVotingSettings,
+  Voting,
+} from '@/src/components/newProposal/steps/Voting';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import Header from '@/src/components/ui/Header';
 import { Link } from '@/src/components/ui/Link';
-import { HiChevronLeft } from 'react-icons/hi2';
+import { Progress } from '@/src/components/ui/Progress';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
+import { HiChevronLeft } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
-import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
+
+import {
+  ConnectWalletWarning,
+  InsufficientRepWarning,
+} from '../components/ui/ConditionalButton';
 
 const totalSteps = 4;
 

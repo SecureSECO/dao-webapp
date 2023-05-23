@@ -212,7 +212,7 @@ const Finance = () => {
     <div className="space-y-6">
       <HeaderCard
         title="Finance"
-        aside={<Link to="/governance/new-proposal" label="New transfer" />}
+        aside={<Link to="/finance/new-deposit" label="New deposit" />}
       />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <MainCard

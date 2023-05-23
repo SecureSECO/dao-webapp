@@ -6,28 +6,31 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { HeaderCard } from '@/src/components/ui/HeaderCard';
-import { useProposal } from '@/src/hooks/useProposal';
-import { useParams } from 'react-router';
-import { Address, AddressLength } from '@/src/components/ui/Address';
 import {
   ProposalStatusBadge,
   ProposalStatusString,
 } from '@/src/components/governance/ProposalCard';
-import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
-import { Link } from '@/src/components/ui/Link';
-import { countdownText } from '@/src/lib/utils/date';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { toast } from '@/src/hooks/useToast';
-import { useAccount } from 'wagmi';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
-import { Button } from '@/src/components/ui/Button';
-import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { Address, AddressLength } from '@/src/components/ui/Address';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { Link } from '@/src/components/ui/Link';
+import { useProposal } from '@/src/hooks/useProposal';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
+import { countdownText } from '@/src/lib/utils/date';
+import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import DOMPurify from 'dompurify';
+import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
+import { useParams } from 'react-router';
+import { useAccount } from 'wagmi';
+
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+} from '../components/ui/ConditionalButton';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -170,15 +173,20 @@ const ViewProposal = () => {
                     proposal?.actions &&
                     proposal.actions.length > 0 && (
                       <div className="flex flex-row items-center gap-x-4">
-                        <Button
+                        <ConditionalButton
                           disabled={!canExecute || !address}
                           type="submit"
                           label="Execute"
                           onClick={() => executeProposal()}
+                          conditions={[
+                            {
+                              when: !isConnected,
+                              content: (
+                                <ConnectWalletWarning action="to execute this proposal" />
+                              ),
+                            },
+                          ]}
                         />
-                        {!isConnected && (
-                          <ConnectWalletWarning action="to execute this proposal" />
-                        )}
                       </div>
                     )}
                 </ProposalActions>

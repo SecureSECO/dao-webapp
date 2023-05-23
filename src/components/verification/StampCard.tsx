@@ -13,21 +13,6 @@
  */
 
 import {
-  Stamp,
-  StampInfo,
-  VerificationThreshold,
-  isVerified,
-} from '@/src/pages/Verification';
-import { Button } from '@/src/components/ui/Button';
-import { Card } from '@/src/components/ui/Card';
-import {
-  HiCalendar,
-  HiChartBar,
-  HiLink,
-  HiOutlineExclamationCircle,
-} from 'react-icons/hi2';
-import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -38,15 +23,35 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { verificationAbi } from '@/src/assets/verificationAbi';
 import { useState } from 'react';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
-import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
+import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
+import { verificationAbi } from '@/src/lib/constants/verificationAbi';
+import {
+  Stamp,
+  StampInfo,
+  VerificationThreshold,
+  isVerified,
+} from '@/src/pages/Verification';
 import { format } from 'date-fns';
 import { toast } from '@/src/hooks/useToast';
+import {
+  HiCalendar,
+  HiChartBar,
+  HiLink,
+  HiOutlineClock,
+  HiOutlineExclamationCircle,
+  HiXMark,
+} from 'react-icons/hi2';
+import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
+
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+} from '../ui/ConditionalButton';
+import { Button } from '@/src/components/ui/Button';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -248,13 +253,18 @@ const StampCard = ({
 
       <div className="flex items-center gap-2">
         <div className="flex flex-row items-center gap-x-4">
-          <Button
-            disabled={!isConnected || isError}
+          <ConditionalButton
+            disabled={isError}
+            conditions={[
+              {
+                when: !isConnected,
+                content: <ConnectWalletWarning action="to verify" />,
+              },
+            ]}
             onClick={() => verify(providerId)}
           >
             {verified ? 'Reverify' : 'Verify'}
-          </Button>
-          {!isConnected && <ConnectWalletWarning action="to verify" />}
+          </ConditionalButton>
           {isError && isConnected && (
             <div className="flex flex-row items-center gap-x-1 text-destructive opacity-80">
               <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />

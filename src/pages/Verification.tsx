@@ -6,10 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
 import { useAccount, useContractRead, useSignMessage } from 'wagmi';
-import { verificationAbi } from '@/src/assets/verificationAbi';
 import StampCard from '@/src/components/verification/StampCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import {
@@ -20,6 +18,8 @@ import {
 } from 'react-icons/hi2';
 import { BigNumber } from 'ethers';
 import { FaGithub } from 'react-icons/fa';
+import History from '@/src/components/icons/History';
+import { Button } from '@/src/components/ui/Button';
 import {
   Dialog,
   DialogClose,
@@ -29,15 +29,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
-import { Button } from '@/src/components/ui/Button';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
-import History from '@/src/components/icons/History';
-import { useSearchParams } from 'react-router-dom';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import PendingVerificationCard from '../components/verification/PendingVerificationCard';
-import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
 import { CONFIG } from '@/src/lib/constants/config';
 import { toast } from '@/src/hooks/useToast';
+
+import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
+import PendingVerificationCard from '../components/verification/PendingVerificationCard';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useSearchParams } from 'react-router-dom';
+import { verificationAbi } from '@/src/lib/constants/verificationAbi';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
