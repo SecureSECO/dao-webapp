@@ -13,15 +13,6 @@
  */
 
 import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
-import { Button } from '@/src/components/ui/Button';
-import { Card } from '@/src/components/ui/Card';
-import {
-  HiCalendar,
-  HiChartBar,
-  HiLink,
-  HiOutlineExclamationCircle,
-} from 'react-icons/hi2';
-import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,14 +24,28 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
-import { useAccount } from 'wagmi';
 import { useState } from 'react';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
-import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
-import { useToast } from '@/src/hooks/useToast';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
+import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { format } from 'date-fns';
+import { toast } from '@/src/hooks/useToast';
+import {
+  HiCalendar,
+  HiChartBar,
+  HiLink,
+  HiOutlineClock,
+  HiOutlineExclamationCircle,
+  HiXMark,
+} from 'react-icons/hi2';
+import { useAccount } from 'wagmi';
+
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+} from '../ui/ConditionalButton';
+import { Button } from '@/src/components/ui/Button';
 import { StampInfo, useVerification } from '@/src/hooks/useVerification';
 
 /**
@@ -105,7 +110,6 @@ const StampCard = ({
     expired: boolean;
     timeLeftUntilExpiration: number | null;
   } = isVerified(stamp);
-  const { promise: promiseToast } = useToast();
   const { isConnected } = useAccount();
 
   const providerId = stampInfo.id;
@@ -206,13 +210,18 @@ const StampCard = ({
 
       <div className="flex items-center gap-2">
         <div className="flex flex-row items-center gap-x-4">
-          <Button
-            disabled={!isConnected || isError}
+          <ConditionalButton
+            disabled={isError}
+            conditions={[
+              {
+                when: !isConnected,
+                content: <ConnectWalletWarning action="to verify" />,
+              },
+            ]}
             onClick={() => verify(providerId)}
           >
             {verified ? 'Reverify' : 'Verify'}
-          </Button>
-          {!isConnected && <ConnectWalletWarning action="to verify" />}
+          </ConditionalButton>
           {isError && isConnected && (
             <div className="flex flex-row items-center gap-x-1 text-destructive opacity-80">
               <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
@@ -241,19 +250,14 @@ const StampCard = ({
                 <AlertDialogAction
                   disabled={isBusy}
                   onClick={() => {
-                    const promise = unverify();
-                    promiseToast(promise, {
+                    toast.promise(unverify(), {
                       loading: 'Removing verification...',
                       success: 'Verification removed',
-                      error: (err) => ({
-                        title: 'Failed to remove verification',
-                        description: err.message ?? err.toString(),
-                      }),
-                    });
-
-                    promise.finally(() => {
-                      setIsBusy(false);
-                      refetch();
+                      error: 'Failed to remove verification: ',
+                      onFinish() {
+                        setIsBusy(false);
+                        refetch();
+                      },
                     });
                   }}
                 >

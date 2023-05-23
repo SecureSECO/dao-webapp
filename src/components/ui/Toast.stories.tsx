@@ -80,7 +80,7 @@ export const WithDescription: Story = {
 
 export const Error: Story = {
   args: {
-    variant: 'error',
+    variant: 'destructive',
     duration: Infinity,
     children: (
       <>

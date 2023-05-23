@@ -23,15 +23,19 @@ import {
   emptyMergeData,
 } from '@/src/components/newProposal/actions/MergePRInput';
 import {
+  MintTokensInput,
   ProposalFormMintData,
   emptyMintData,
 } from '@/src/components/newProposal/actions/MintTokensInput';
-import { MintTokensInput } from '@/src/components/newProposal/actions/MintTokensInput';
 import {
   ProposalFormWithdrawData,
   WithdrawAssetsInput,
   emptyWithdrawData,
 } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
+import {
+  ChangeParamAction,
+  ProposalChangeParamAction,
+} from '@/src/components/proposal/actions/ChangeParamAction';
 import MergeAction, {
   ProposalMergeAction,
 } from '@/src/components/proposal/actions/MergeAction';
@@ -41,24 +45,22 @@ import MintAction, {
 import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { getTokenInfo, parseTokenAmount } from '@/src/lib/utils/token';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
-import { parseUnits } from 'ethers/lib/utils.js';
+import { Provider } from '@wagmi/core';
+import { BigNumber } from 'ethers';
 import { IconType } from 'react-icons';
 import { FaGithub } from 'react-icons/fa';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 import {
   HiBanknotes,
   HiOutlineCircleStack,
   HiOutlineCog,
 } from 'react-icons/hi2';
-import {
-  ChangeParamAction,
-  ProposalChangeParamAction,
-} from '@/src/components/proposal/actions/ChangeParamAction';
-import { getTokenInfo } from '@/src/lib/utils/token';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { Provider } from '@wagmi/core';
+
+import { throwIfNullOrUndefined } from '../utils';
 
 /**
  * Type for different proposal form action data.
@@ -98,16 +100,24 @@ export const ACTIONS: Actions = {
     input: MintTokensInput,
     emptyInputData: emptyMintData,
     maxPerProposal: 1,
-    parseInput: async (input) => ({
-      method: ACTIONS.mint_tokens.method,
-      interface: ACTIONS.mint_tokens.interface,
-      params: {
-        _addresses: input.wallets.map((wallet) => wallet.address),
-        _amounts: input.wallets.map((wallet) => {
-          return parseUnits(wallet.amount.toString(), TOKENS.rep.decimals);
-        }),
-      },
-    }),
+    parseInput: async (input) => {
+      const amounts = input.wallets.map((wallet) =>
+        parseTokenAmount(wallet.amount.toString(), TOKENS.rep.decimals)
+      );
+
+      if (amounts.some((x) => x === null)) {
+        return null;
+      }
+
+      return {
+        method: ACTIONS.mint_tokens.method,
+        interface: ACTIONS.mint_tokens.interface,
+        params: {
+          _addresses: input.wallets.map((wallet) => wallet.address),
+          _amounts: amounts as BigNumber[], // Guaranteed by null check above.
+        },
+      };
+    },
   },
   merge_pr: {
     method: 'mergePullRequest(string,string,string)',
@@ -162,7 +172,9 @@ export const ACTIONS: Actions = {
           params: {
             _to: input.recipient,
             // Convert to correct number of tokens using the fetched decimals
-            _amount: parseUnits(input.amount.toString(), tokenInfo.decimals),
+            _amount: throwIfNullOrUndefined(
+              parseTokenAmount(input.amount.toString(), tokenInfo.decimals)
+            ),
             _tokenAddress: tokenAddress,
           },
         };

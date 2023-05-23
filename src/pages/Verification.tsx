@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
 import { useAccount, useSignMessage } from 'wagmi';
 import StampCard from '@/src/components/verification/StampCard';
@@ -18,7 +17,7 @@ import {
   HiUserCircle,
 } from 'react-icons/hi2';
 import { FaGithub } from 'react-icons/fa';
-import { useToast } from '@/src/hooks/useToast';
+import { Button } from '@/src/components/ui/Button';
 import {
   Dialog,
   DialogClose,
@@ -28,19 +27,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
-import { Button } from '@/src/components/ui/Button';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
 import History from '@/src/components/icons/History';
-import { useSearchParams } from 'react-router-dom';
-import { useLocalStorage } from '@/src/hooks/useLocalStorage';
-import PendingVerificationCard from '@/src/components/verification/PendingVerificationCard';
-import OneTimeRewardCard from '@/src/components/verification/OneTimeRewardCard';
 import {
   StampInfo,
   PendingVerification,
   useVerification,
 } from '@/src/hooks/useVerification';
 import { CONFIG } from '@/src/lib/constants/config';
+import { toast } from '@/src/hooks/useToast';
+
+import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
+import PendingVerificationCard from '../components/verification/PendingVerificationCard';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useSearchParams } from 'react-router-dom';
 
 export const availableStamps: StampInfo[] = [
   {
@@ -71,7 +72,8 @@ const Verification = () => {
   >('pendingVerifications', []);
 
   const { address, isConnected } = useAccount();
-  const { toast } = useToast();
+
+  // Gets all the stamps for the current address
   const {
     refetch,
     error,
@@ -88,11 +90,8 @@ const Verification = () => {
   // Sign our message to verify our address
   const { signMessage } = useSignMessage({
     onError() {
-      toast({
-        title: `Wait at least ${Math.round(
-          reverifyThreshold
-        )} days after previous verification to verify again`,
-        variant: 'error',
+      toast.error({
+        title: `Failed to sign message, please try again`,
       });
     },
     async onSuccess(data) {
@@ -124,9 +123,8 @@ const Verification = () => {
           throw new Error('Verification failed: ' + message);
         }
       } catch (error: any) {
-        toast({
+        toast.error({
           title: error.message.substring(0, 100),
-          variant: 'error',
         });
       }
     },
@@ -239,9 +237,8 @@ const Verification = () => {
       });
     } catch (error: any) {
       console.log(error);
-      toast({
+      toast.error({
         title: error.message.substring(0, 100),
-        variant: 'error',
       });
     }
   };

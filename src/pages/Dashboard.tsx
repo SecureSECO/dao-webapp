@@ -76,9 +76,6 @@ const Dashboard = () => {
 
   return (
     <div className="grid grid-cols-7 gap-6">
-      {/* Banner on top showing optional information about membership status */}
-      <MembershipStatus />
-
       {/* Card showing metadata about the DAO */}
       <Card
         loading={daoLoading}

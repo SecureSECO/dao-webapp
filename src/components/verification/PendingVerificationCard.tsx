@@ -11,12 +11,11 @@
  * Contains a button to verify, and additional information about the verification
  */
 
-import { Card } from '@/src/components/ui/Card';
-import Header from '@/src/components/ui/Header';
 import { HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
 import { useState } from 'react';
-import { useToast } from '@/src/hooks/useToast';
+import { Card } from '@/src/components/ui/Card';
+import CategoryList, { Category } from '@/src/components/ui/CategoryList';
 import {
   Dialog,
   DialogClose,
@@ -26,13 +25,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
-import CategoryList, { Category } from '@/src/components/ui/CategoryList';
+import Header from '@/src/components/ui/Header';
 import { truncateMiddle } from '@/src/lib/utils';
 import {
   PendingVerification,
   StampInfo,
   useVerification,
 } from '@/src/hooks/useVerification';
+import { toast, useToast } from '@/src/hooks/useToast';
 import { availableStamps } from '@/src/pages/Verification';
 
 /**
@@ -69,7 +69,6 @@ const PendingVerificationCard = ({
 
   const [isBusy, setIsBusy] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const { promise: promiseToast } = useToast();
   const { verify: sdkVerify } = useVerification();
 
   // We calculate how much time is left for the verification to expire
@@ -158,16 +157,16 @@ const PendingVerificationCard = ({
       <div className="flex items-center gap-x-2">
         <Button
           onClick={() => {
-            const promise = verify();
-            promiseToast(promise, {
+            toast.promise(verify(), {
               loading: 'Verifying, please wait...',
               success: 'Successfully verified!',
               error: (e) => ({
                 title: 'Verification failed',
-                description: e.message,
               }),
+              onFinish() {
+                setIsBusy(false);
+              },
             });
-            promise.finally(() => setIsBusy(false));
           }}
           disabled={isBusy}
           label={isBusy ? 'Verifying...' : isSuccess ? 'Success' : 'Finish'}

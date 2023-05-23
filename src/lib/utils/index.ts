@@ -118,3 +118,10 @@ export const truncateMiddle = (address: string, maxLength: number) => {
 export const copyToClipboard = (address: string) => {
   navigator.clipboard.writeText(address);
 };
+
+export function throwIfNullOrUndefined<T>(value: T | null | undefined): T {
+  if (value === null || value === undefined) {
+    throw new Error('Value is null or undefined');
+  }
+  return value;
+}

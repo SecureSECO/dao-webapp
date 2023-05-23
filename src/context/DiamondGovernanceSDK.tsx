@@ -13,7 +13,7 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useNetwork, useSigner, useSwitchNetwork } from 'wagmi';
+import { useSigner } from 'wagmi';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { Contract, ethers } from 'ethers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
@@ -21,7 +21,7 @@ import { CONFIG } from '@/src/lib/constants/config';
 
 type SDKContext = {
   client?: DiamondGovernanceClient;
-  repTokenContract?: Contract;
+  daoAddress?: string;
 };
 
 const DiamondSDKContext = createContext<SDKContext>({});
@@ -31,21 +31,9 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
   const [client, setClient] = useState<DiamondGovernanceClient | undefined>(
     undefined
   );
+  const [daoAddress, setDaoAddress] = useState<string | undefined>(undefined);
 
   const signer = useSigner().data || undefined;
-
-  // Make sure the user is on the correct network
-  const network = useSwitchNetwork({
-    chainId: PREFERRED_NETWORK_METADATA.id,
-  });
-  const { chain } = useNetwork();
-  if (
-    chain?.id !== PREFERRED_NETWORK_METADATA.id &&
-    network.switchNetwork &&
-    !network.isLoading
-  ) {
-    network.switchNetwork();
-  }
 
   useEffect(() => {
     // If no signer is available, use a dummy signer
@@ -67,10 +55,22 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     setClient(new DiamondGovernanceClient(diamondAddress, signer));
   }, [signer]);
 
+  useEffect(() => {
+    const getDaoAddress = async () => {
+      if (!client) return;
+      const daoRef = await client.pure.IDAOReferenceFacet();
+      const daoAddressData = await daoRef.dao();
+      setDaoAddress(daoAddressData);
+    };
+
+    getDaoAddress();
+  }, [client]);
+
   return (
     <DiamondSDKContext.Provider
       value={{
         client,
+        daoAddress,
       }}
     >
       {children}

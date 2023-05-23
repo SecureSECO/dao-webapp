@@ -17,27 +17,30 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
-import { Progress } from '@/src/components/ui/Progress';
-import { Button } from '@/src/components/ui/Button';
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Progress } from '@/src/components/ui/Progress';
+import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
+import TokenAmount from '@/src/components/ui/TokenAmount';
+import { CanVote } from '@/src/hooks/useProposal';
+import { toast } from '@/src/hooks/useToast';
+import { useVotingPower } from '@/src/hooks/useVotingPower';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { calcBigNumberPercentage } from '@/src/lib/utils';
-import { contractTransaction, toast } from '@/src/hooks/useToast';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import {
+  AddressVotes,
+  Proposal,
   ProposalStatus,
   VoteOption,
-  Proposal,
-  AddressVotes,
 } from '@plopmenz/diamond-governance-sdk';
-import { CanVote } from '@/src/hooks/useProposal';
 import { BigNumber } from 'ethers';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-import { useVotingPower } from '@/src/hooks/useVotingPower';
-import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
-import { TOKENS } from '@/src/lib/constants/tokens';
-import TokenAmount from '@/src/components/ui/TokenAmount';
+
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+  InsufficientRepWarning,
+} from '../ui/ConditionalButton';
 
 type VoteFormData = {
   vote_option: string;
@@ -126,22 +129,19 @@ const VotesContentActive = ({
       // Fetch most recent voting power, to vote with all available rep
       const votingPower = await getProposalVotingPower(proposal);
       if (votingPower.lte(0)) {
-        return toast({
-          variant: 'error',
+        return toast.error({
           title: 'You do not have any voting power',
         });
       }
-      contractTransaction(
+      toast.contractTransaction(
         () =>
           proposal.Vote(
             VoteOption[data.vote_option as VoteOptionString],
             votingPower
           ),
         {
-          messages: {
-            error: 'Error submitting vote',
-            success: 'Vote submitted!',
-          },
+          error: 'Error submitting vote',
+          success: 'Vote submitted!',
           onSuccess: () => {
             refetch();
           },
@@ -149,8 +149,7 @@ const VotesContentActive = ({
       );
     } catch (e) {
       console.error(e);
-      toast({
-        variant: 'error',
+      toast.error({
         title: 'Error submitting vote',
         description: 'Unable to get voting power',
       });
@@ -199,7 +198,20 @@ const VotesContentActive = ({
 
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
       <div className="ml-6 flex flex-row items-center gap-x-4">
-        <Button disabled={!userCanVote || !isConnected} type="submit">
+        <ConditionalButton
+          disabled={!userCanVote}
+          conditions={[
+            {
+              when: !isConnected,
+              content: <ConnectWalletWarning action="to vote" />,
+            },
+            {
+              when: votingPower.lte(0),
+              content: <InsufficientRepWarning action="to vote" />,
+            },
+          ]}
+          type="submit"
+        >
           {!userCanVote && isConnected && votingPower.gt(0) ? (
             'Vote submitted'
           ) : (
@@ -207,12 +219,7 @@ const VotesContentActive = ({
               {'Vote ' + (voteOption ?? 'yes')}
             </span>
           )}
-        </Button>
-        {!isConnected ? (
-          <ConnectWalletWarning action="to vote" />
-        ) : (
-          votingPower.lte(0) && <InsufficientRepWarning action="to vote" />
-        )}
+        </ConditionalButton>
       </div>
     </form>
   );
