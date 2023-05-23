@@ -6,21 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { useEffect, useState } from 'react';
-import { useAccount, useContractRead, useSignMessage } from 'wagmi';
-import { verificationAbi } from '@/src/assets/verificationAbi';
-import StampCard from '@/src/components/verification/StampCard';
-import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import {
-  HiArrowSmallRight,
-  HiOutlineCheckBadge,
-  HiOutlineClock,
-  HiUserCircle,
-} from 'react-icons/hi2';
-import { BigNumber } from 'ethers';
-import { FaGithub } from 'react-icons/fa';
-import { useToast } from '@/src/hooks/useToast';
+import History from '@/src/components/icons/History';
+import { Button } from '@/src/components/ui/Button';
 import {
   Dialog,
   DialogClose,
@@ -30,14 +18,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
-import { Button } from '@/src/components/ui/Button';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
-import History from '@/src/components/icons/History';
-import { useSearchParams } from 'react-router-dom';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import PendingVerificationCard from '../components/verification/PendingVerificationCard';
-import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
+import StampCard from '@/src/components/verification/StampCard';
+import { useToast } from '@/src/hooks/useToast';
 import { CONFIG } from '@/src/lib/constants/config';
+import { verificationAbi } from '@/src/lib/constants/verificationAbi';
+import { BigNumber } from 'ethers';
+import { FaGithub } from 'react-icons/fa';
+import {
+  HiArrowSmallRight,
+  HiOutlineCheckBadge,
+  HiOutlineClock,
+  HiUserCircle,
+} from 'react-icons/hi2';
+import { useSearchParams } from 'react-router-dom';
+import { useAccount, useContractRead, useSignMessage } from 'wagmi';
+
+import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
+import PendingVerificationCard from '../components/verification/PendingVerificationCard';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {

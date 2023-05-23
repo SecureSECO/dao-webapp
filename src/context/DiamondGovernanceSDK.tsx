@@ -21,7 +21,7 @@ import { CONFIG } from '@/src/lib/constants/config';
 
 type SDKContext = {
   client?: DiamondGovernanceClient;
-  repTokenContract?: Contract;
+  daoAddress?: string;
 };
 
 const DiamondSDKContext = createContext<SDKContext>({});
@@ -31,6 +31,7 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
   const [client, setClient] = useState<DiamondGovernanceClient | undefined>(
     undefined
   );
+  const [daoAddress, setDaoAddress] = useState<string | undefined>(undefined);
 
   const signer = useSigner().data || undefined;
 
@@ -54,10 +55,22 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     setClient(new DiamondGovernanceClient(diamondAddress, signer));
   }, [signer]);
 
+  useEffect(() => {
+    const getDaoAddress = async () => {
+      if (!client) return;
+      const daoRef = await client.pure.IDAOReferenceFacet();
+      const daoAddressData = await daoRef.dao();
+      setDaoAddress(daoAddressData);
+    };
+
+    getDaoAddress();
+  }, [client]);
+
   return (
     <DiamondSDKContext.Provider
       value={{
         client,
+        daoAddress,
       }}
     >
       {children}

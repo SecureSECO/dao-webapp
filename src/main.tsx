@@ -6,33 +6,35 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+
+import Layout from './components/layout/Layout';
+import Dashboard from './pages/Dashboard';
 import ErrorPage from './pages/ErrorPage';
 import Governance from './pages/Governance';
 import Query from './pages/Query';
-import Dashboard from './pages/Dashboard';
-import Layout from './components/layout/Layout';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import '@/src/index.css';
-
+import { Toaster } from '@/src/components/ui/Toaster';
+import { AragonSDKWrapper } from '@/src/context/AragonSDK';
+import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
+import Finance from '@/src/pages/Finance';
+import NewProposal from '@/src/pages/NewProposal';
+import Settings from '@/src/pages/Settings';
+import Verification from '@/src/pages/Verification';
+import ViewProposal from '@/src/pages/ViewProposal';
 import {
   EthereumClient,
   w3mConnectors,
   w3mProvider,
 } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { WagmiConfig, configureChains, createClient } from 'wagmi';
 import { polygon, polygonMumbai } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import Finance from '@/src/pages/Finance';
-import Settings from '@/src/pages/Settings';
-import { AragonSDKWrapper } from '@/src/context/AragonSDK';
-import NewProposal from '@/src/pages/NewProposal';
-import Verification from '@/src/pages/Verification';
-import { Toaster } from '@/src/components/ui/Toaster';
-import ViewProposal from '@/src/pages/ViewProposal';
-import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
+
+import { DepositAssets } from './components/finance/DepositAssets';
 import { Mining } from './pages/Mining';
 
 // 1. Get projectID at https://cloud.walletconnect.com
@@ -94,7 +96,16 @@ const router = createBrowserRouter([
       },
       {
         path: '/finance',
-        element: <Finance />,
+        children: [
+          {
+            path: '',
+            element: <Finance />,
+          },
+          {
+            path: '/finance/new-deposit',
+            element: <DepositAssets />,
+          },
+        ],
       },
       {
         path: '/verification',

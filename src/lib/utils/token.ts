@@ -7,9 +7,12 @@
  */
 
 import { NativeTokenData } from '@/src/lib/constants/chains';
-import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
-import { Contract, providers, constants, BigNumber } from 'ethers';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
+import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
+import { BigNumber, Contract, constants, providers } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils.js';
+
+import { NumberPattern } from '../constants/patterns';
 
 export type TokenInfo = {
   decimals?: number;
@@ -184,4 +187,42 @@ export const toAbbreviatedTokenAmount = ({
   // Theoretically 'bigIntToFloat' never returns NaN, guaranteed by its type's preconditions. In practice, this might still happen.
   if (isNaN(valueAsFloat!)) return 'N/A';
   return abbreviateTokenAmount(valueAsFloat!.toFixed(20), displayDecimals);
+};
+
+/**
+ * Parses a given token amount (string) to a BigNumer token amount, correctly handling decimal places.
+ * Prefered over ethers.utils.parseUnits because this return null on errors (instead of an exception).
+ * Furthermore it cuts off inputs with too many numbers after the decimal point (instead of throwing an exception).
+ * Note: If any input is null or undefined it can not parse the value thus null will be returned.
+ * @param value Token amount as string (e.g. "123.456")
+ * @param tokenDecimals Number of decimals of the token
+ */
+export const parseTokenAmount = (
+  value: string | null | undefined,
+  tokenDecimals: number | null | undefined
+): BigNumber | null => {
+  if (
+    value === null ||
+    value === undefined ||
+    tokenDecimals === null ||
+    tokenDecimals === undefined
+  ) {
+    return null;
+  }
+
+  let num;
+  try {
+    // If the amount of decimals in the value is larger than decimals, it is cut off.
+    if (value.includes('.')) {
+      const values = value.split('.');
+      if (values[1].length > tokenDecimals) {
+        value = `${values[0]}.${values[1].slice(0, tokenDecimals)}`;
+      }
+    }
+
+    num = parseUnits(value, tokenDecimals);
+  } catch {
+    num = null;
+  }
+  return num;
 };

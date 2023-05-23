@@ -20,7 +20,6 @@ import {
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
 import { Button } from '@/src/components/ui/Button';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import {
   Dialog,
   DialogClose,
@@ -39,8 +38,8 @@ import { Table } from '@/src/components/ui/Table';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
 import { promise, useToast } from '@/src/hooks/useToast';
-import { TOKENS } from '@/src/lib/constants/tokens';
 import { UrlPattern } from '@/src/lib/constants/patterns';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { saveAs } from 'file-saver';
 import { useForm } from 'react-hook-form';
 import {
@@ -49,6 +48,11 @@ import {
   HiOutlineDocumentMagnifyingGlass,
 } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
+
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+} from '../components/ui/ConditionalButton';
 
 interface QueryFormData {
   searchUrl: string;
@@ -186,16 +190,21 @@ const Query = () => {
               </ErrorWrapper>
             </div>
             <div className="flex flex-row items-center gap-x-4">
-              <Button
+              <ConditionalButton
                 type="submit"
-                disabled={!isConnected || !isQuerying}
+                disabled={!isQuerying}
+                conditions={[
+                  {
+                    when: !isConnected,
+                    content: (
+                      <ConnectWalletWarning action="to query the database" />
+                    ),
+                  },
+                ]}
                 icon={isQuerying ? null : Loading}
               >
                 Submit
-              </Button>
-              {!isConnected && (
-                <ConnectWalletWarning action="to query the database" />
-              )}
+              </ConditionalButton>
             </div>
           </form>
         </MainCard>
