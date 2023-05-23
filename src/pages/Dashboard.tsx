@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import MembersList from '@/src/components/dashboard/MembersList';
 import Logo from '@/src/components/Logo';
+import MembersList from '@/src/components/dashboard/MembersList';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { Link } from '@/src/components/ui/Link';
@@ -20,7 +20,8 @@ import {
   PREFERRED_NETWORK,
   PREFERRED_NETWORK_METADATA,
 } from '@/src/lib/constants/chains';
-import { DaoTransfersList } from '@/src/pages/Finance';
+import { CONFIG } from '@/src/lib/constants/config';
+import { DaoTransfersList, NewTransferDropdown } from '@/src/pages/Finance';
 import { ProposalCardList } from '@/src/pages/Governance';
 import { format } from 'date-fns';
 import {
@@ -33,8 +34,6 @@ import {
   HiInboxStack,
   HiUserGroup,
 } from 'react-icons/hi2';
-import { MembershipStatus } from '../components/dashboard/MembershipStatus';
-import { CONFIG } from '@/src/lib/constants/config';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao();
@@ -171,14 +170,7 @@ const Dashboard = () => {
               truncateMobile
             />
           }
-          aside={
-            <Link
-              label="New transfer"
-              target="_blank"
-              rel="noreferrer"
-              to={`https://app.aragon.org/#/daos/${currentNetwork}/${dao?.address}/finance/new-deposit`}
-            />
-          }
+          aside={<NewTransferDropdown />}
         >
           <DaoTransfersList
             daoTransfers={daoTransfers}

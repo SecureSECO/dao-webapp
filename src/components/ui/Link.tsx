@@ -12,13 +12,12 @@
  */
 
 import * as React from 'react';
-import { VariantProps } from 'class-variance-authority';
-import { Link as RouterLink } from 'react-router-dom';
-
-import { cn } from '@/src/lib/utils';
-import { IconType } from 'react-icons/lib';
 import { ReactNode } from 'react';
 import { buttonVariants, iconVariants } from '@/src/components/ui/Button';
+import { cn } from '@/src/lib/utils';
+import { VariantProps } from 'class-variance-authority';
+import { IconType } from 'react-icons/lib';
+import { Link as RouterLink } from 'react-router-dom';
 
 export interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>,
@@ -50,17 +49,23 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       >
         <span className="sr-only">{label}</span>
         {icon && IconWrapper.icon ? (
-          <div className="flex flex-row items-center gap-x-2">
+          <div className="flex flex-row items-center gap-x-2 leading-4">
             <IconWrapper.icon
               className={cn(iconVariants({ size, className }))}
             />
             {(label || children) && <>{label || children}</>}
           </div>
         ) : (
-          <div className="flex flex-row items-center gap-x-2">
-            {iconNode && <>{iconNode}</>}
-            {label || children}
-          </div>
+          <>
+            {iconNode ? (
+              <div className="flex flex-row items-center gap-x-2 leading-4">
+                {iconNode}
+                {label || children}
+              </div>
+            ) : (
+              <>{label || children}</>
+            )}
+          </>
         )}
       </RouterLink>
     );
