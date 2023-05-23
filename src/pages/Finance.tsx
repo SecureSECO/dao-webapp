@@ -23,6 +23,7 @@ import {
   HiArrowSmallRight,
   HiArrowsRightLeft,
   HiCircleStack,
+  HiInboxArrowDown,
 } from 'react-icons/hi2';
 
 import {
@@ -201,15 +202,16 @@ export const NewTransferDropdown = () => (
       <DropdownMenuGroup>
         <DropdownMenuItem className="p-0">
           <Link
-            className="w-full p-4"
+            className="w-full justify-start px-2 py-1"
             variant="ghost"
             to="/finance/new-deposit"
             label="New deposit"
+            icon={HiInboxArrowDown}
           />
         </DropdownMenuItem>
         <DropdownMenuItem className="p-0">
           <Link
-            className="w-full p-4"
+            className="w-full justify-start px-2 py-1"
             variant="ghost"
             to="/governance/new-proposal"
             label="New withdraw"

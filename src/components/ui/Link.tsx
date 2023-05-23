@@ -35,24 +35,19 @@ export interface LinkProps
  * @returns A Link React element.
  */
 const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
-  (
-    { className, icon, iconNode, variant, size, label, children, ...props },
-    ref
-  ) => {
-    const IconWrapper = { icon };
+  ({ className, iconNode, variant, size, label, children, ...props }, ref) => {
+    const { icon, ...divProps } = props;
 
     return (
       <RouterLink
         className={cn(buttonVariants({ variant, className }))}
         ref={ref}
-        {...props}
+        {...divProps}
       >
         <span className="sr-only">{label}</span>
-        {icon && IconWrapper.icon ? (
+        {props.icon ? (
           <div className="flex flex-row items-center gap-x-2 leading-4">
-            <IconWrapper.icon
-              className={cn(iconVariants({ size, className }))}
-            />
+            <props.icon className={cn(iconVariants({ size }))} />
             {(label || children) && <>{label || children}</>}
           </div>
         ) : (
