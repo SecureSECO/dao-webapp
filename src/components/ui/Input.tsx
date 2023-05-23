@@ -63,7 +63,7 @@ export interface LabelledInputProps extends InputProps {
 const LabelledInput = React.forwardRef<HTMLInputElement, LabelledInputProps>(
   ({ id, label, tooltip, error, className, ...props }, ref) => {
     return (
-      <div className="w-full">
+      <div className="w-full space-y-1">
         <Label htmlFor={id} tooltip={tooltip}>
           {label}
         </Label>
