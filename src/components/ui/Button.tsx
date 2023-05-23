@@ -95,24 +95,19 @@ export interface ButtonProps
  *  @remark - You can pass either a label or children to the button, if you pass both, the label will be used.
  */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { className, icon, iconNode, variant, size, label, children, ...props },
-    ref
-  ) => {
-    const IconWrapper = { icon };
+  ({ className, iconNode, variant, size, label, children, ...props }, ref) => {
+    const { icon, ...divProps } = props;
 
     return (
       <button
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, className }))}
         ref={ref}
-        {...props}
+        {...divProps}
       >
         <span className="sr-only">{label}</span>
-        {icon && IconWrapper.icon ? (
+        {props.icon ? (
           <div className="flex flex-row items-center gap-x-2 leading-4">
-            <IconWrapper.icon
-              className={cn(iconVariants({ size, className }))}
-            />
+            <props.icon className={cn(iconVariants({ size }))} />
             {(label || children) && <>{label || children}</>}
           </div>
         ) : (

@@ -23,7 +23,18 @@ import {
   HiArrowSmallRight,
   HiArrowsRightLeft,
   HiCircleStack,
+  HiInboxArrowDown,
 } from 'react-icons/hi2';
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../components/ui/Dropdown';
+import { ACTIONS } from '../lib/constants/actions';
 
 /**
  * Convert a TransferType to a sign (+ or -)
@@ -182,6 +193,36 @@ export const DaoTransfersList = ({
   );
 };
 
+export const NewTransferDropdown = () => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button label="New transfer" />
+    </DropdownMenuTrigger>
+    <DropdownMenuContent>
+      <DropdownMenuGroup>
+        <DropdownMenuItem className="p-0">
+          <Link
+            className="w-full justify-start px-2 py-1"
+            variant="ghost"
+            to="/finance/new-deposit"
+            label="New deposit"
+            icon={HiInboxArrowDown}
+          />
+        </DropdownMenuItem>
+        <DropdownMenuItem className="p-0">
+          <Link
+            className="w-full justify-start px-2 py-1"
+            variant="ghost"
+            to="/governance/new-proposal"
+            label="New withdraw"
+            icon={ACTIONS.withdraw_assets.icon}
+          />
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
+
 const daoTransferAddress = (transfer: DaoTransfer): string => {
   if (!transfer) return '-';
   if (transfer.type === TransferType.DEPOSIT) {
@@ -210,10 +251,7 @@ const Finance = () => {
 
   return (
     <div className="space-y-6">
-      <HeaderCard
-        title="Finance"
-        aside={<Link to="/finance/new-deposit" label="New deposit" />}
-      />
+      <HeaderCard title="Finance" aside={<NewTransferDropdown />} />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <MainCard
           header={
