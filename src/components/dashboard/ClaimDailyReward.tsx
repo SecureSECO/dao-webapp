@@ -39,7 +39,7 @@ export const ClaimDailyReward = () => {
         Claimable {TOKENS.rep.name}:
         <strong>
           {loading ? (
-            <Loading className="w-5 h-5" />
+            <Loading className="h-5 w-5" />
           ) : (
             <TokenAmount
               amount={amountClaimable}
@@ -55,7 +55,7 @@ export const ClaimDailyReward = () => {
         conditions={[
           {
             when: loading,
-            content: <Loading className="w-5 h-5" />,
+            content: <Loading className="h-5 w-5" />,
           },
           {
             when:
