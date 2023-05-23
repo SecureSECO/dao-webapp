@@ -38,7 +38,6 @@ import { MainCard } from '@/src/components/ui/MainCard';
 import { Table } from '@/src/components/ui/Table';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
-import { promise, useToast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { UrlPattern } from '@/src/lib/constants/patterns';
 import { saveAs } from 'file-saver';
@@ -49,6 +48,7 @@ import {
   HiOutlineDocumentMagnifyingGlass,
 } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
+import { toast } from '@/src/hooks/useToast';
 
 interface QueryFormData {
   searchUrl: string;
@@ -84,7 +84,6 @@ const Query = () => {
   );
 
   const [paymentSent, setPaymentSent] = useState<boolean>(false);
-  const { toast } = useToast();
 
   /**
    * Downloads the results of the query as a JSON file.
@@ -103,7 +102,7 @@ const Query = () => {
 
     setIsQuerying(false);
 
-    promise(
+    toast.promise(
       runQuery(data.searchUrl, data.token)
         .then(() => {
           setStoredToken(data.token);
@@ -114,9 +113,8 @@ const Query = () => {
       {
         loading: 'Querying SearchSECO database...',
         success: 'Query successful!',
-        error: (err) => ({
-          title: err,
-          description: '',
+        error: () => ({
+          title: 'Query failed',
         }),
       }
     );
@@ -227,9 +225,8 @@ const Query = () => {
                     } catch (error: any) {
                       console.log(error);
 
-                      toast({
+                      toast.error({
                         title: error.message.substring(0, 100),
-                        variant: 'error',
                       });
 
                       // Reset session

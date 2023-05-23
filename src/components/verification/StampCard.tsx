@@ -43,10 +43,10 @@ import { verificationAbi } from '@/src/assets/verificationAbi';
 import { useState } from 'react';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
-import { useToast } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import Header from '@/src/components/ui/Header';
 import { format } from 'date-fns';
+import { toast } from '@/src/hooks/useToast';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -110,7 +110,6 @@ const StampCard = ({
     expired: boolean;
     timeLeftUntilExpiration: number | null;
   } = isVerified(thresholdHistory, stamp);
-  const { promise: promiseToast } = useToast();
   const { isConnected } = useAccount();
 
   const providerId = stampInfo.id;
@@ -285,18 +284,14 @@ const StampCard = ({
                   disabled={isBusy}
                   onClick={() => {
                     const promise = unverify();
-                    promiseToast(promise, {
+                    toast.promise(promise, {
                       loading: 'Removing verification...',
                       success: 'Verification removed',
-                      error: (err) => ({
-                        title: 'Failed to remove verification: ',
-                        description: err,
-                      }),
-                    });
-
-                    promise.finally(() => {
-                      setIsBusy(false);
-                      refetch();
+                      error: 'Failed to remove verification: ',
+                      onSuccess() {
+                        setIsBusy(false);
+                        refetch();
+                      },
                     });
                   }}
                 >

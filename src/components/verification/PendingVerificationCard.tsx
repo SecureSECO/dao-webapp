@@ -28,7 +28,6 @@ import {
 } from 'wagmi';
 import { verificationAbi } from '@/src/assets/verificationAbi';
 import { useState } from 'react';
-import { useToast } from '@/src/hooks/useToast';
 import {
   Dialog,
   DialogClose,
@@ -40,6 +39,7 @@ import {
 } from '@/src/components/ui/Dialog';
 import CategoryList, { Category } from '@/src/components/ui/CategoryList';
 import { truncateMiddle } from '@/src/lib/utils';
+import { toast } from '@/src/hooks/useToast';
 
 /**
  * @returns A Card element containing information about a previous verification
@@ -93,7 +93,6 @@ const PendingVerificationCard = ({
   });
 
   const [isBusy, setIsBusy] = useState(false);
-  const { promise: promiseToast } = useToast();
 
   // We calculate how much time is left for the verification to expire
   const timeLeft = Math.max(
@@ -211,12 +210,11 @@ const PendingVerificationCard = ({
       <div className="flex items-center gap-x-2">
         <Button
           onClick={() => {
-            promiseToast(verify(), {
+            toast.promise(verify(), {
               loading: 'Verifying, please wait...',
               success: 'Successfully verified!',
               error: (e) => ({
                 title: 'Verification failed',
-                description: e.message,
               }),
             });
           }}

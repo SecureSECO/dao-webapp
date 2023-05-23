@@ -21,7 +21,7 @@ import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import ProposalActions from '@/src/components/proposal/ProposalActions';
-import { contractTransaction, toast } from '@/src/hooks/useToast';
+import { toast } from '@/src/hooks/useToast';
 import { useAccount } from 'wagmi';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import { Button } from '@/src/components/ui/Button';
@@ -55,17 +55,14 @@ const ViewProposal = () => {
    */
   const executeProposal = async () => {
     if (!proposal)
-      return toast({
+      return toast.error({
         title: 'No proposal found',
         description: 'Please try again later',
-        variant: 'error',
       });
 
-    contractTransaction(() => proposal.Execute(), {
-      messages: {
-        error: 'Error executing proposal',
-        success: 'Execution successful!',
-      },
+    toast.contractTransaction(() => proposal.Execute(), {
+      error: 'Error executing proposal',
+      success: 'Execution successful!',
       onSuccess: () => {
         refetch();
       },

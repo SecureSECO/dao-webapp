@@ -82,9 +82,8 @@ export const Address: React.FC<AddressProps> = ({
     if (showCopy) {
       copyToClipboard(address);
       setStatus('copied');
-      toast({
+      toast.success({
         title: 'Copied to clipboard!',
-        variant: 'success',
       });
       setTimeout(() => setStatus('idle'), 4000);
     }

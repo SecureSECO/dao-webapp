@@ -20,7 +20,6 @@ import {
 } from 'react-icons/hi2';
 import { BigNumber } from 'ethers';
 import { FaGithub } from 'react-icons/fa';
-import { useToast } from '@/src/hooks/useToast';
 import {
   Dialog,
   DialogClose,
@@ -38,6 +37,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import PendingVerificationCard from '../components/verification/PendingVerificationCard';
 import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
 import { CONFIG } from '@/src/lib/constants/config';
+import { toast } from '@/src/hooks/useToast';
 
 export type Stamp = [id: string, _hash: string, verifiedAt: BigNumber[]];
 export type StampInfo = {
@@ -168,7 +168,6 @@ const Verification = () => {
   >('pendingVerifications', []);
 
   const { address, isConnected } = useAccount();
-  const { toast } = useToast();
 
   // Gets all the stamps for the current address
   const {
@@ -202,11 +201,10 @@ const Verification = () => {
   // Sign our message to verify our address
   const { signMessage } = useSignMessage({
     onError() {
-      toast({
+      toast.error({
         title: `Wait at least ${Math.round(
           reverifyThreshold
         )} days after previous verification to verify again`,
-        variant: 'error',
       });
     },
     async onSuccess(data) {
@@ -238,9 +236,8 @@ const Verification = () => {
           throw new Error('Verification failed: ' + message);
         }
       } catch (error: any) {
-        toast({
+        toast.error({
           title: error.message.substring(0, 100),
-          variant: 'error',
         });
       }
     },
@@ -397,9 +394,8 @@ const Verification = () => {
       });
     } catch (error: any) {
       console.log(error);
-      toast({
+      toast.error({
         title: error.message.substring(0, 100),
-        variant: 'error',
       });
     }
   };

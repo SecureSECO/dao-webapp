@@ -23,7 +23,7 @@ import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { calcBigNumberPercentage } from '@/src/lib/utils';
-import { contractTransaction, toast } from '@/src/hooks/useToast';
+import { toast } from '@/src/hooks/useToast';
 import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 import {
   ProposalStatus,
@@ -126,22 +126,19 @@ const VotesContentActive = ({
       // Fetch most recent voting power, to vote with all available rep
       const votingPower = await getProposalVotingPower(proposal);
       if (votingPower.lte(0)) {
-        return toast({
-          variant: 'error',
+        return toast.error({
           title: 'You do not have any voting power',
         });
       }
-      contractTransaction(
+      toast.contractTransaction(
         () =>
           proposal.Vote(
             VoteOption[data.vote_option as VoteOptionString],
             votingPower
           ),
         {
-          messages: {
-            error: 'Error submitting vote',
-            success: 'Vote submitted!',
-          },
+          error: 'Error submitting vote',
+          success: 'Vote submitted!',
           onSuccess: () => {
             refetch();
           },
@@ -149,8 +146,7 @@ const VotesContentActive = ({
       );
     } catch (e) {
       console.error(e);
-      toast({
-        variant: 'error',
+      toast.error({
         title: 'Error submitting vote',
         description: 'Unable to get voting power',
       });
