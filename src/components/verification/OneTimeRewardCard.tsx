@@ -10,7 +10,7 @@ import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { Button } from '@/src/components/ui/Button';
 import { useState } from 'react';
-import { useToast } from '@/src/hooks/useToast';
+import { toast, useToast } from '@/src/hooks/useToast';
 // import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 
 /**
@@ -26,7 +26,6 @@ const OneTimeRewardCard = ({
   refetch: () => void;
 }) => {
   const [isClaiming, setIsClaiming] = useState(false);
-  const { promise: promiseToast } = useToast();
 
   return (
     <Card variant="light" className="flex flex-col gap-y-2 font-normal">
@@ -45,10 +44,10 @@ const OneTimeRewardCard = ({
           setIsClaiming(true);
           const promise = claimReward();
 
-          promiseToast(promise, {
+          toast.promise(promise, {
             loading: 'Claiming reward...',
             success: 'Successfully claimed reward!',
-            error: (err) => ({
+            error: (err: any) => ({
               title: 'Failed to claim reward',
               description: err.message,
             }),
