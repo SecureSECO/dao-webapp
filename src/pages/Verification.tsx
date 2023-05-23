@@ -83,9 +83,7 @@ const Verification = () => {
     verificationHistory,
     stamps,
     reward,
-  } = useVerification({
-    useDummyData: false,
-  });
+  } = useVerification();
 
   // Sign our message to verify our address
   const { signMessage } = useSignMessage({

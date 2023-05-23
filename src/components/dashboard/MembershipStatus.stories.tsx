@@ -12,6 +12,10 @@ import { addDays } from 'date-fns';
 import { MembershipStatusView } from './MembershipStatus';
 import { Stamp } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
+import {
+  VerificationStatus,
+  useVerification,
+} from '@/src/hooks/useVerification';
 
 const meta: Meta<typeof MembershipStatusView> = {
   component: MembershipStatusView,
@@ -67,6 +71,17 @@ export const AlmostExpired: Story = {
   args: {
     isConnected: true,
     stamps: [almostExpiredStamp],
+    isVerified() {
+      return {
+        expired: false,
+        preCondition: true,
+        verified: true,
+        timeLeftUntilExpiration: 1,
+      };
+    },
+    getThresholdForTimestamp() {
+      return BigNumber.from(60);
+    },
   },
 };
 
@@ -74,6 +89,17 @@ export const Expired: Story = {
   args: {
     isConnected: true,
     stamps: [expiredStamp],
+    isVerified() {
+      return {
+        expired: true,
+        preCondition: true,
+        verified: false,
+        timeLeftUntilExpiration: -1,
+      };
+    },
+    getThresholdForTimestamp() {
+      return BigNumber.from(60);
+    },
   },
 };
 
@@ -81,6 +107,17 @@ export const AllOk: Story = {
   args: {
     isConnected: true,
     stamps: [goodStamp],
+    isVerified() {
+      return {
+        expired: false,
+        preCondition: true,
+        verified: true,
+        timeLeftUntilExpiration: 60,
+      };
+    },
+    getThresholdForTimestamp() {
+      return BigNumber.from(60);
+    },
   },
   decorators: [
     (Story) => (

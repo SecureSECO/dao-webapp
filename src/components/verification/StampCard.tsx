@@ -33,8 +33,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { verificationAbi } from '@/src/assets/verificationAbi';
+import { useAccount } from 'wagmi';
 import { useState } from 'react';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
@@ -96,9 +95,7 @@ const StampCard = ({
   refetch: () => void;
   isError: boolean;
 }) => {
-  const { isVerified, unverify: sdkUnverify } = useVerification({
-    useDummyData: false,
-  });
+  const { isVerified, unverify: sdkUnverify } = useVerification();
   const {
     verified,
     expired,

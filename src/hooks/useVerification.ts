@@ -7,13 +7,14 @@
  */
 
 import { useEffect, useState } from 'react';
-import { addDays } from 'date-fns';
-
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
 import { useAccount } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
 
+/**
+ * This type contains info about a certain verification method (GitHub, Twitter, etc.), that is not stored on-chain.
+ */
 export type StampInfo = {
   id: string;
   displayName: string;
@@ -28,6 +29,13 @@ export type VerificationHistory = {
   stamp: Stamp;
 };
 
+export type VerificationStatus = {
+  verified: boolean;
+  expired: boolean;
+  preCondition: boolean;
+  timeLeftUntilExpiration: number | null;
+};
+
 export type PendingVerification = {
   addressToVerify: string;
   hash: string;
@@ -36,7 +44,7 @@ export type PendingVerification = {
   sig: string;
 };
 
-export const useVerification = ({ useDummyData = false }) => {
+export const useVerification = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [stamps, setStamps] = useState<Stamp[]>([]);
@@ -99,7 +107,7 @@ export const useVerification = ({ useDummyData = false }) => {
    * @param stamp The stamp
    * @returns An object containing information about the verification status
    */
-  const isVerified = (stamp: Stamp | null) => {
+  const isVerified = (stamp: Stamp | null): VerificationStatus => {
     const threshold = getThresholdForTimestamp(Date.now() / 1000);
     const lastVerifiedAt =
       stamp && stamp[2].length > 0
@@ -277,50 +285,10 @@ export const useVerification = ({ useDummyData = false }) => {
     });
   };
 
-  const setDummyData = () => {
-    setLoading(false);
-    setError(null);
-    const now = new Date();
-
-    const veryExpiredStamp: Stamp = [
-      'github',
-      '0x000000',
-      [BigNumber.from(addDays(now, 60).getTime())],
-    ];
-
-    const expiredStamp: Stamp = [
-      'github',
-      '0x000000',
-      [BigNumber.from(addDays(now, 15).getTime())],
-    ];
-
-    const almostExpiredStamp: Stamp = [
-      'github',
-      '0x000000',
-      [BigNumber.from(addDays(now, -15).getTime())],
-    ];
-
-    const goodStamp: Stamp = [
-      'github',
-      '0x000000',
-      [BigNumber.from(addDays(now, -60).getTime())],
-    ];
-
-    const _stamps = [
-      veryExpiredStamp,
-      expiredStamp,
-      almostExpiredStamp,
-      goodStamp,
-    ];
-
-    setStamps(_stamps);
-  };
-
   /**
    * Refetches data upon a change in the client
    */
   useEffect(() => {
-    if (useDummyData) return setDummyData();
     refetch();
   }, [client]);
 

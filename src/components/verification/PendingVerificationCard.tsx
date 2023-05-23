@@ -70,9 +70,7 @@ const PendingVerificationCard = ({
   const [isBusy, setIsBusy] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { promise: promiseToast } = useToast();
-  const { verify: sdkVerify } = useVerification({
-    useDummyData: false,
-  });
+  const { verify: sdkVerify } = useVerification();
 
   // We calculate how much time is left for the verification to expire
   const timeLeft = Math.max(

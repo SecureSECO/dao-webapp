@@ -6,7 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useVerification } from '@/src/hooks/useVerification';
+import {
+  VerificationStatus,
+  useVerification,
+} from '@/src/hooks/useVerification';
 import { useWeb3Modal } from '@web3modal/react';
 import { addDays } from 'date-fns';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
@@ -18,6 +21,7 @@ import { cn } from '@/src/lib/utils';
 import { toast } from '@/src/hooks/useToast';
 import { Link } from '@/src/components/ui/Link';
 import { Stamp } from '@plopmenz/diamond-governance-sdk';
+import { BigNumber } from 'ethers';
 
 export const MembershipStatus = () => {
   const { open } = useWeb3Modal();
@@ -26,9 +30,7 @@ export const MembershipStatus = () => {
   const { switchNetwork } = useSwitchNetwork({
     chainId: PREFERRED_NETWORK_METADATA.id,
   });
-  const { stamps } = useVerification({
-    useDummyData: false,
-  });
+  const { stamps, isVerified, getThresholdForTimestamp } = useVerification();
 
   return (
     <MembershipStatusView
@@ -37,6 +39,8 @@ export const MembershipStatus = () => {
       openConnector={open}
       switchNetwork={switchNetwork}
       stamps={stamps}
+      isVerified={isVerified}
+      getThresholdForTimestamp={getThresholdForTimestamp}
     />
   );
 };
@@ -51,18 +55,17 @@ export const MembershipStatusView = ({
   openConnector,
   switchNetwork,
   stamps,
+  isVerified,
+  getThresholdForTimestamp,
 }: {
   isConnected: boolean;
   chainId?: number;
   openConnector: (options?: any | undefined) => Promise<void>;
   switchNetwork?: (chainId_?: number) => void;
   stamps?: Stamp[];
+  isVerified: (stamp: Stamp) => VerificationStatus;
+  getThresholdForTimestamp: (timestamp: number) => BigNumber;
 }) => {
-  const { isVerified, getThresholdForTimestamp, thresholdHistory } =
-    useVerification({
-      useDummyData: false,
-    });
-
   // If user has not connected a wallet:
   // An informative banner, with button to connect wallet
   if (!isConnected)
@@ -127,9 +130,7 @@ export const MembershipStatusView = ({
         stamp[2].reverse()[0].toNumber()
       ).toNumber();
 
-      console.log(timeLeftUntilExpiration);
-
-      threshold = threshold > 0 ? threshold / 2 : 30;
+      threshold = threshold != null && threshold > 0 ? threshold / 2 : 30;
 
       return (
         verified &&
