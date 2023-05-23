@@ -168,7 +168,7 @@ export const DepositAssets = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-y-2">
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-y-1">
                 <Label tooltip="Asset to deposit" htmlFor="token">
                   Token
                 </Label>
@@ -184,7 +184,7 @@ export const DepositAssets = () => {
                         name={name}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Token" />
+                          <SelectValue placeholder="Select a token" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
@@ -201,35 +201,34 @@ export const DepositAssets = () => {
                   />
                 </ErrorWrapper>
               </div>
-              {isKnownToken && (
-                <div>
-                  <LabelledInput
-                    {...register('amount', {
-                      validate: (v) => {
-                        // only Validate if this is active
-                        if (!isKnownToken) return true;
+              {watchToken !== 'Other' && (
+                <LabelledInput
+                  {...register('amount', {
+                    validate: (v) => {
+                      // only Validate if this is active
+                      if (!isKnownToken) return true;
 
-                        // Required
-                        if (v === undefined || v === '')
-                          return 'Please enter an amount';
+                      // Required
+                      if (v === undefined || v === '')
+                        return 'Please enter an amount';
 
-                        // Number Pattern
-                        if (!NumberPattern.test(v))
-                          return 'Please enter a number, e.g. 3.141';
+                      // Number Pattern
+                      if (!NumberPattern.test(v))
+                        return 'Please enter a number, e.g. 3.141';
 
-                        // Otherwise this is valid
-                        return true;
-                      },
-                    })}
-                    id="amount"
-                    tooltip={`Amount of ${watchToken} to deposit`}
-                    label="Amount"
-                    error={errors.amount}
-                  />
-                </div>
+                      // Otherwise this is valid
+                      return true;
+                    },
+                  })}
+                  id="amount"
+                  tooltip={`Amount of ${watchToken} to deposit`}
+                  label="Amount"
+                  error={errors.amount}
+                  disabled={!isKnownToken}
+                />
               )}
             </div>
-            {watchToken === 'Other' && (
+            {watchToken === 'Other' ? (
               <div>
                 <p className="">
                   Copy the address or ENS below and use your wallet&apos;s send
@@ -254,14 +253,13 @@ export const DepositAssets = () => {
                   </Card>
                 </div>
               </div>
-            )}
-            {isKnownToken && (
+            ) : (
               <ErrorWrapper name="deposit" error={errors?.root?.deposit as any}>
                 <div className="flex flex-row gap-x-2">
                   <ConditionalButton
                     label="Deposit assets"
                     icon={isLoading ? Loading : null}
-                    disabled={isLoading}
+                    disabled={isLoading || !isKnownToken}
                     conditions={[
                       {
                         when: !isConnected,
