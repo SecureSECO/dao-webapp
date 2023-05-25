@@ -190,7 +190,7 @@ export const WithdrawAssetsInput = () => {
           the time of withdrawal, this action will fail.
         </p>
       )}
-      <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <div className="space-y-1">
           <Label tooltip="Token to withdraw" htmlFor="tokenAddress">
             Token
@@ -303,6 +303,49 @@ export const WithdrawAssetsInput = () => {
 
         <ErrorWrapper
           className={cn(address === 'custom' || 'hidden')}
+          name="tokenType"
+          error={errors?.tokenType}
+        >
+          <Label
+            tooltip="The contract address type of the token"
+            htmlFor="tokenType"
+          >
+            Token type
+          </Label>
+          <Controller
+            control={control}
+            name={`${prefix}.tokenType`}
+            render={({ field: { onChange, name, value } }) => (
+              <Select
+                onValueChange={(v) => {
+                  onChange(v);
+                  if (v === TokenType.ERC721) {
+                    setValue(`${prefix}.amount`, '1');
+                  }
+                }}
+                defaultValue={value}
+                name={name}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Token type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {tokenTypesInfo.map((token, i) => (
+                      <SelectItem key={i} value={token.type}>
+                        {token.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </ErrorWrapper>
+
+        <ErrorWrapper
+          className={cn(address === 'custom' || 'hidden')}
           name="tokenAddressCustom"
           error={errors?.tokenAddressCustom}
         >
@@ -361,48 +404,6 @@ export const WithdrawAssetsInput = () => {
                 return true;
               },
             })}
-          />
-        </ErrorWrapper>
-        <ErrorWrapper
-          className={cn(address === 'custom' || 'hidden')}
-          name="tokenType"
-          error={errors?.tokenType}
-        >
-          <Label
-            tooltip="The contract address type of the token"
-            htmlFor="tokenType"
-          >
-            Token type
-          </Label>
-          <Controller
-            control={control}
-            name={`${prefix}.tokenType`}
-            render={({ field: { onChange, name, value } }) => (
-              <Select
-                onValueChange={(v) => {
-                  onChange(v);
-                  if (v === TokenType.ERC721) {
-                    setValue(`${prefix}.amount`, '1');
-                  }
-                }}
-                defaultValue={value}
-                name={name}
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Token type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {tokenTypesInfo.map((token, i) => (
-                      <SelectItem key={i} value={token.type}>
-                        {token.displayName}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            )}
           />
         </ErrorWrapper>
       </div>
