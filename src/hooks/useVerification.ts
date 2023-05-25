@@ -78,13 +78,14 @@ export const useVerification = () => {
     if (!client) return;
 
     try {
-      await client.verification.Verify(
+      const tx = await client.verification.Verify(
         addressToVerify,
         userHash,
         timestamp,
         providerId,
         proofSignature
       );
+      await tx.wait();
     } catch (e: any) {
       console.error(e);
       setError(e.message);
@@ -98,7 +99,8 @@ export const useVerification = () => {
    */
   const unverify = async (providerId: string) => {
     if (!client) return;
-    return client.verification.Unverify(providerId);
+    const tx = await client.verification.Unverify(providerId);
+    await tx.wait();
   };
 
   /**
@@ -169,7 +171,9 @@ export const useVerification = () => {
     if (!client) return;
     const oneTimeVerificationRewardFacet =
       await client.pure.IERC20OneTimeVerificationRewardFacet();
-    await oneTimeVerificationRewardFacet.claimVerificationRewardAll();
+    const tx =
+      await oneTimeVerificationRewardFacet.claimVerificationRewardAll();
+    await tx.wait();
   };
 
   /**
@@ -252,7 +256,9 @@ export const useVerification = () => {
 
     try {
       const facet = await client.pure.IERC20OneTimeVerificationRewardFacet();
-      const reward = await facet.tokensClaimableVerificationRewardAll();
+      const reward18 = await facet.tokensClaimableVerificationRewardAll();
+
+      const reward = reward18.div(BigNumber.from(10).pow(18));
 
       setReward(reward.toNumber());
     } catch (e: any) {

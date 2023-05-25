@@ -42,20 +42,17 @@ const OneTimeRewardCard = ({
           if (isClaiming) return;
 
           setIsClaiming(true);
-          const promise = claimReward();
-
-          toast.promise(promise, {
+          toast.promise(claimReward(), {
             loading: 'Claiming reward...',
             success: 'Successfully claimed reward!',
             error: (err: any) => ({
               title: 'Failed to claim reward',
               description: err.message,
             }),
-          });
-
-          promise.finally(() => {
-            setIsClaiming(false);
-            refetch();
+            onFinish() {
+              setIsClaiming(false);
+              refetch();
+            },
           });
         }}
       >
