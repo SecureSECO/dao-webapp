@@ -13,11 +13,8 @@
 
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
-import {
-  StampInfo,
-  VerificationHistory,
-  availableStamps,
-} from '@/src/pages/Verification';
+import { StampInfo, VerificationHistory } from '@/src/hooks/useVerification';
+import { availableStamps } from '@/src/pages/Verification';
 import { HiCalendar, HiQuestionMarkCircle } from 'react-icons/hi2';
 
 /**

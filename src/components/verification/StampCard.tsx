@@ -12,6 +12,7 @@
  * If the stamp is verified, a checkmark icon will be displayed next to the providerId.
  */
 
+import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,13 +29,6 @@ import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
-import { verificationAbi } from '@/src/lib/constants/verificationAbi';
-import {
-  Stamp,
-  StampInfo,
-  VerificationThreshold,
-  isVerified,
-} from '@/src/pages/Verification';
 import { format } from 'date-fns';
 import { toast } from '@/src/hooks/useToast';
 import {
@@ -45,13 +39,14 @@ import {
   HiOutlineExclamationCircle,
   HiXMark,
 } from 'react-icons/hi2';
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import {
   ConditionalButton,
   ConnectWalletWarning,
 } from '../ui/ConditionalButton';
 import { Button } from '@/src/components/ui/Button';
+import { StampInfo, useVerification } from '@/src/hooks/useVerification';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -93,7 +88,6 @@ const getStatusProps = (
 const StampCard = ({
   stampInfo,
   stamp,
-  thresholdHistory,
   verify,
   refetch,
   isError,
@@ -106,6 +100,7 @@ const StampCard = ({
   refetch: () => void;
   isError: boolean;
 }) => {
+  const { isVerified, unverify: sdkUnverify } = useVerification();
   const {
     verified,
     expired,
@@ -114,67 +109,29 @@ const StampCard = ({
     verified: boolean;
     expired: boolean;
     timeLeftUntilExpiration: number | null;
-  } = isVerified(thresholdHistory, stamp);
+  } = isVerified(stamp);
   const { isConnected } = useAccount();
 
   const providerId = stampInfo.id;
 
   const [isBusy, setIsBusy] = useState(false);
 
-  const { config } = usePrepareContractWrite({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
-    abi: verificationAbi,
-    functionName: 'unverify',
-    args: [providerId],
-  });
-
-  const { writeAsync } = useContractWrite(config);
-
   /**
    * Deletes the stamp from this specific provider
    * @returns {Promise<void>} Promise that resolves when the stamp is deleted
    */
   const unverify = async (): Promise<void> => {
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (isBusy) {
-          return reject('Already unverifying');
-        }
-
-        setIsBusy(true);
-
-        if (!writeAsync) {
-          setIsBusy(false);
-          return reject('Contract write not ready');
-        }
-
-        const txResult = await writeAsync();
-
-        console.log('txResult', txResult);
-
-        txResult
-          .wait()
-          .then(() => {
-            console.log('Successfully unverified');
-            resolve();
-          })
-          .catch((error: any) => {
-            console.error(
-              'StampCard ~ unverify ~ txResult.catch ~ Unverification failed',
-              error
-            );
-            reject('Transaction failed');
-          });
-      } catch (error: any) {
-        console.error(
-          'StampCard ~ unverify ~ try/catch ~ Unverification failed',
-          error
-        );
-        setIsBusy(false);
-        reject('Unverification failed');
+    try {
+      if (isBusy) {
+        throw new Error('Already unverifying');
       }
-    });
+
+      setIsBusy(true);
+      await sdkUnverify(providerId);
+    } catch (error) {
+      console.log(error);
+      throw new Error('Something went wrong while unverifying');
+    }
   };
 
   return (
@@ -293,12 +250,11 @@ const StampCard = ({
                 <AlertDialogAction
                   disabled={isBusy}
                   onClick={() => {
-                    const promise = unverify();
-                    toast.promise(promise, {
+                    toast.promise(unverify(), {
                       loading: 'Removing verification...',
                       success: 'Verification removed',
                       error: 'Failed to remove verification: ',
-                      onSuccess() {
+                      onFinish() {
                         setIsBusy(false);
                         refetch();
                       },

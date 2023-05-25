@@ -14,6 +14,10 @@ import { toast } from '@/src/hooks/useToast';
 import { Verification, useVerification } from '@/src/hooks/useVerification';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { cn } from '@/src/lib/utils';
+import {
+  VerificationStatus,
+  useVerification,
+} from '@/src/hooks/useVerification';
 import { useWeb3Modal } from '@web3modal/react';
 import { addDays } from 'date-fns';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
@@ -22,20 +26,24 @@ import { Chain, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 export const MembershipStatus = () => {
   const { open } = useWeb3Modal();
   const { isConnected } = useAccount();
-  const { memberVerification } = useVerification({ useDummyData: true });
   const { chain } = useNetwork();
   const { switchNetworkAsync, isLoading } = useSwitchNetwork({
     chainId: PREFERRED_NETWORK_METADATA.id,
   });
 
+  const { stamps, isVerified, getThresholdForTimestamp } = useVerification();
+
+
   return (
     <MembershipStatusView
       isConnected={isConnected}
-      verification={memberVerification}
       chainId={chain?.id}
       openConnector={open}
       switchNetwork={switchNetworkAsync}
       switchInProgress={isLoading}
+      stamps={stamps}
+      isVerified={isVerified}
+      getThresholdForTimestamp={getThresholdForTimestamp}
     />
   );
 };
@@ -46,16 +54,20 @@ export const MembershipStatus = () => {
  */
 export const MembershipStatusView = ({
   isConnected,
-  verification,
   chainId,
   openConnector,
   switchNetwork,
+  stamps,
+  isVerified,
+  getThresholdForTimestamp,
   switchInProgress,
 }: {
   isConnected: boolean;
-  verification: Verification;
   chainId?: number;
   openConnector: (options?: any | undefined) => Promise<void>;
+  stamps?: Stamp[];
+  isVerified: (stamp: Stamp) => VerificationStatus;
+  getThresholdForTimestamp: (timestamp: number) => BigNumber;
   switchNetwork?:
     | ((chainId_?: number | undefined) => Promise<Chain>)
     | undefined;
@@ -115,7 +127,7 @@ export const MembershipStatusView = ({
 
   // If user has connected wallet but is not member:
   // An informative banner on how to become member, with button
-  const isNotMember = verification === null || verification.length === 0;
+  const isNotMember = !stamps || stamps.length === 0;
   if (isNotMember)
     return (
       <MembershipCard message="You are not yet a member of this DAO!">
@@ -126,11 +138,25 @@ export const MembershipStatusView = ({
     );
 
   // Set boolean values needed for futher code
-  let now = new Date();
-  let expired = verification.some((stamp) => stamp.expiration >= now);
+  let expired = stamps.some((stamp) => isVerified(stamp).expired);
   let almostExpired =
     !expired &&
-    verification.some((stamp) => addDays(stamp.expiration, 30) >= now);
+    stamps.some((stamp) => {
+      const { timeLeftUntilExpiration, verified } = isVerified(stamp);
+
+      // Retrieve threshold for timestamp
+      let threshold = getThresholdForTimestamp(
+        stamp[2].reverse()[0].toNumber()
+      ).toNumber();
+
+      threshold = threshold != null && threshold > 0 ? threshold / 2 : 30;
+
+      return (
+        verified &&
+        timeLeftUntilExpiration != null &&
+        timeLeftUntilExpiration < threshold * 86400
+      );
+    });
 
   // If user has connected wallet but verification is about to expire:
   // A warning banner, with button to re-verify

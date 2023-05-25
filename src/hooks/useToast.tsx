@@ -186,6 +186,7 @@ type PromiseToast<TData> = {
   success: PromiseProp<TData>;
   error: PromiseProp<unknown>;
   onSuccess?: (data: TData) => void;
+  onFinish?: () => void;
 };
 
 /**
@@ -227,6 +228,9 @@ toast.promise = function <TData>(
       toast.error(promisePropToToast(config.error, error), id);
     }
   );
+  promise.finally(() => {
+    config.onFinish && config.onFinish();
+  });
 
   return id;
 };

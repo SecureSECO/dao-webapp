@@ -9,7 +9,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { BigNumber } from 'ethers';
 import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
-import { VerificationHistory } from '@/src/pages/Verification';
+import { VerificationHistory } from '@/src/hooks/useVerification';
 
 const meta = {
   component: RecentVerificationCard,
