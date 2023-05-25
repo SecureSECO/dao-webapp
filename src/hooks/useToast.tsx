@@ -8,8 +8,8 @@
 
 import * as React from 'react';
 import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
-import { ContractReceipt, ContractTransaction } from 'ethers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { ContractReceipt, ContractTransaction } from 'ethers';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
 
 const TOAST_LIMIT = 5;
@@ -266,7 +266,10 @@ interface ContractTransactionPromiseResult {
   wait: (confirmations?: number | undefined) => Promise<ContractReceipt>;
 }
 
-type ContractTransactionToast = Omit<PromiseToast<ContractReceipt>, 'loading'>;
+export type ContractTransactionToast = Omit<
+  PromiseToast<ContractReceipt>,
+  'loading'
+>;
 
 /**
  * Show a toast that will be updated based on interaction with a smart contract, using the provided content.
@@ -317,6 +320,8 @@ toast.contractTransaction = async (
   } catch (e) {
     console.error(e);
     toast.error(promisePropToToast(config.error, e), id);
+  } finally {
+    config.onFinish && config.onFinish();
   }
 
   return id;

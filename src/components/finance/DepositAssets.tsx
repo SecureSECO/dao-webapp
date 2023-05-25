@@ -8,15 +8,12 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { toast } from '@/src/hooks/useToast';
-import {
-  CHAIN_METADATA,
-  PREFERRED_NETWORK_METADATA,
-} from '@/src/lib/constants/chains';
+import { ContractTransactionToast, toast } from '@/src/hooks/useToast';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { NumberPattern } from '@/src/lib/constants/patterns';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { parseTokenAmount } from '@/src/lib/utils/token';
-import { BigNumber, ContractReceipt } from 'ethers';
+import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiChevronLeft } from 'react-icons/hi2';
 import {
@@ -27,7 +24,6 @@ import {
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
-  useWaitForTransaction,
 } from 'wagmi';
 
 import Loading from '../icons/Loading';
@@ -132,6 +128,10 @@ export const DepositAssets = () => {
 
   const { sendTransactionAsync } = useSendTransaction(configNative);
 
+  // State for loading symbol during transaction
+  const [isSendingTransaction, setIsSendingTransaction] =
+    useState<boolean>(false);
+
   // OnSubmit: First validate data, then send the transaction
   const onSubmit = (data: DepositAssetsData) => {
     //Can only send known tokens
@@ -167,10 +167,12 @@ export const DepositAssets = () => {
       return;
     }
 
-    const toasterConfig = {
-      loading: 'Sending deposit',
+    const toasterConfig: ContractTransactionToast = {
       success: 'Succesfully sent deposit!',
       error: 'Deposit could not be sent',
+      onFinish: () => {
+        setIsSendingTransaction(false);
+      },
     };
 
     if (token.isNativeToken) {
@@ -192,6 +194,8 @@ export const DepositAssets = () => {
         return;
       }
 
+      // send transaction (Note that the toast will set the loading state to false)
+      setIsSendingTransaction(true);
       toast.contractTransaction(() => sendTransactionAsync(), toasterConfig);
     } else {
       if (error !== null) {
@@ -211,6 +215,8 @@ export const DepositAssets = () => {
         });
         return;
       }
+      // send transaction (Note that the toast will set the loading state to false)
+      setIsSendingTransaction(true);
       toast.contractTransaction(() => writeAsync(), toasterConfig);
     }
 
@@ -246,6 +252,7 @@ export const DepositAssets = () => {
                         defaultValue={value}
                         onValueChange={onChange}
                         name={name}
+                        disabled={isSendingTransaction}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select a token" />
@@ -288,7 +295,7 @@ export const DepositAssets = () => {
                   tooltip={`Amount of ${watchToken} to deposit`}
                   label="Amount"
                   error={errors.amount}
-                  disabled={!isKnownToken}
+                  disabled={!isKnownToken || isSendingTransaction}
                 />
               )}
             </div>
@@ -322,7 +329,8 @@ export const DepositAssets = () => {
                 <div className="flex flex-row gap-x-2">
                   <ConditionalButton
                     label="Deposit assets"
-                    disabled={!isKnownToken}
+                    disabled={!isKnownToken || isSendingTransaction}
+                    icon={isSendingTransaction ? Loading : null}
                     conditions={[
                       {
                         when: !isConnected,
