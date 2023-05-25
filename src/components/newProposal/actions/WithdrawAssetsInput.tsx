@@ -27,10 +27,17 @@ import {
   SelectValue,
 } from '@/src/components/ui/Select';
 import TokenAmount from '@/src/components/ui/TokenAmount';
-import { ProposalFormAction } from '@/src/lib/constants/actions';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useDaoBalance } from '@/src/hooks/useDaoBalance';
-import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { ProposalFormAction } from '@/src/lib/constants/actions';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import {
+  AddressPattern,
+  IntegerPattern,
+  NumberPattern,
+} from '@/src/lib/constants/patterns';
 import { anyNullOrUndefined, cn } from '@/src/lib/utils';
+import { TokenType } from '@aragon/sdk-client';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 
@@ -38,7 +45,10 @@ export interface ProposalFormWithdrawData extends ProposalFormAction {
   recipient: string;
   tokenAddress: string | 'custom';
   tokenAddressCustom?: string;
+  tokenID?: string;
   amount: string | number;
+  daoAddress: string | undefined;
+  tokenType: TokenType;
 }
 
 export const emptyWithdrawData: ProposalFormWithdrawData = {
@@ -46,7 +56,28 @@ export const emptyWithdrawData: ProposalFormWithdrawData = {
   recipient: '',
   tokenAddress: '',
   amount: 0,
+  daoAddress: '',
+  tokenType: TokenType.NATIVE,
 };
+
+type TokenTypeInfo = {
+  type: TokenType;
+  displayName: string;
+};
+const tokenTypesInfo: TokenTypeInfo[] = [
+  {
+    type: TokenType.NATIVE,
+    displayName: `Native token: ${PREFERRED_NETWORK_METADATA.nativeCurrency.name}`,
+  },
+  {
+    type: TokenType.ERC20,
+    displayName: 'ERC20: Most monetary tokens',
+  },
+  {
+    type: TokenType.ERC721,
+    displayName: 'ERC721: NFTs',
+  },
+];
 
 /**
  * @returns Component to be used within a form to describe the action of withdrawing assets.
@@ -56,6 +87,7 @@ export const WithdrawAssetsInput = () => {
     register,
     formState: { errors: formErrors },
     control,
+    setValue,
   } = useFormContext<ProposalFormActions>();
 
   const { prefix, index, onRemove } = useContext(ActionFormContext);
@@ -78,7 +110,13 @@ export const WithdrawAssetsInput = () => {
             )
         );
 
+  //Shadow register for daoAddress.
+  const { daoAddress } = useDiamondSDKContext();
+  register(`${prefix}.daoAddress`);
+  setValue(`${prefix}.daoAddress`, daoAddress);
+
   const address = useWatch({ control, name: `${prefix}.tokenAddress` });
+  const tokenType = useWatch({ control, name: `${prefix}.tokenType` });
 
   return (
     <MainCard
@@ -118,6 +156,8 @@ export const WithdrawAssetsInput = () => {
             placeholder="0x..."
           />
         </ErrorWrapper>
+        {address === 'custom' &&
+          'Please note that if the requisted assets are not present in the treasury at the time of withdrawal, this action will fail.'}
       </div>
       <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
         <div className="flex flex-col gap-y-1 ">
@@ -129,7 +169,19 @@ export const WithdrawAssetsInput = () => {
             name={`${prefix}.tokenAddress`}
             render={({ field: { onChange, name, value } }) => (
               <Select
-                onValueChange={onChange}
+                onValueChange={(v) => {
+                  console.log(v);
+                  onChange(v);
+                  if (v && v !== 'custom') {
+                    const token = filteredDaoBalances.find(
+                      (x) => x.address === v
+                    );
+                    if (token) {
+                      console.log(token);
+                      setValue(`${prefix}.tokenType`, token.type);
+                    }
+                  }
+                }}
                 defaultValue={value}
                 name={name}
                 required
@@ -169,10 +221,19 @@ export const WithdrawAssetsInput = () => {
             )}
           />
 
-          <ErrorWrapper name="Token" error={errors?.tokenAddressCustom}>
+          <ErrorWrapper
+            className={cn(address === 'custom' || 'hidden')}
+            name="tokenAddressCustom"
+            error={errors?.tokenAddressCustom}
+          >
+            <Label
+              tooltip="The contract address of the token"
+              htmlFor="tokenAddressCustom"
+            >
+              Token address
+            </Label>
             <Input
               error={errors?.tokenAddressCustom}
-              className={cn(!(address === 'custom') && 'hidden')}
               placeholder="0x..."
               {...register(`${prefix}.tokenAddressCustom`, {
                 validate: (v) => {
@@ -184,6 +245,38 @@ export const WithdrawAssetsInput = () => {
                       'Please enter an address starting with 0x, followed by 40 address characters'
                     );
                   }
+                },
+              })}
+            />
+          </ErrorWrapper>
+          <ErrorWrapper
+            //Only show when custom NFT tokens are shown
+            className={cn(tokenType === TokenType.ERC721 || 'hidden')}
+            name="tokenID"
+            error={errors?.tokenID}
+          >
+            <Label
+              tooltip="The token ID of the NFT (ERC721/ERC1155)"
+              htmlFor="tokenID"
+            >
+              Token ID
+            </Label>
+            <Input
+              error={errors?.tokenID}
+              placeholder="123..."
+              {...register(`${prefix}.tokenID`, {
+                validate: (v) => {
+                  if (tokenType === TokenType.ERC721) {
+                    const empty = v === '' || v === undefined || v === null;
+                    const valid = !empty && IntegerPattern.test(v);
+
+                    return (
+                      valid ||
+                      'Please enter a valid token ID, i.e. a number like 123'
+                    );
+                  }
+                  // Not NFT token, thus valid
+                  return true;
                 },
               })}
             />
@@ -205,8 +298,51 @@ export const WithdrawAssetsInput = () => {
               type="string"
               id="amount"
               placeholder="0"
+              disabled={tokenType === TokenType.ERC721}
               min="0"
               error={errors?.amount}
+            />
+          </ErrorWrapper>
+          <ErrorWrapper
+            className={cn(address === 'custom' || 'hidden')}
+            name="tokenType"
+            error={errors?.tokenType}
+          >
+            <Label
+              tooltip="The contract address type of the token"
+              htmlFor="tokenType"
+            >
+              Token type
+            </Label>
+            <Controller
+              control={control}
+              name={`${prefix}.tokenType`}
+              render={({ field: { onChange, name, value } }) => (
+                <Select
+                  onValueChange={(v) => {
+                    onChange(v);
+                    if (v === TokenType.ERC721) {
+                      setValue(`${prefix}.amount`, '1');
+                    }
+                  }}
+                  defaultValue={value}
+                  name={name}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Token type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {tokenTypesInfo.map((token, i) => (
+                        <SelectItem key={i} value={token.type}>
+                          {token.displayName}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
             />
           </ErrorWrapper>
         </div>
