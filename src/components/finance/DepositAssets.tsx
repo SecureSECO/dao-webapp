@@ -16,7 +16,7 @@ import {
 import { NumberPattern } from '@/src/lib/constants/patterns';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { parseTokenAmount } from '@/src/lib/utils/token';
-import { BigNumber } from 'ethers';
+import { BigNumber, ContractReceipt } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiChevronLeft } from 'react-icons/hi2';
 import {
@@ -192,7 +192,7 @@ export const DepositAssets = () => {
         return;
       }
 
-      toast.promise(sendTransactionAsync(), toasterConfig);
+      toast.contractTransaction(() => sendTransactionAsync(), toasterConfig);
     } else {
       if (error !== null) {
         setError('root.deposit', {
@@ -211,7 +211,7 @@ export const DepositAssets = () => {
         });
         return;
       }
-      toast.promise(writeAsync(), toasterConfig);
+      toast.contractTransaction(() => writeAsync(), toasterConfig);
     }
 
     console.log(data);

@@ -8,7 +8,7 @@
 
 import * as React from 'react';
 import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
-import { ContractTransaction } from 'ethers';
+import { ContractReceipt, ContractTransaction } from 'ethers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
 
@@ -261,10 +261,12 @@ toast.success = (props: Toast, id?: string) =>
       })
     : toast({ ...props, variant: 'success' });
 
-type ContractTransactionToast = Omit<
-  PromiseToast<ContractTransaction>,
-  'loading'
->;
+interface ContractTransactionPromiseResult {
+  hash: string;
+  wait: (confirmations?: number | undefined) => Promise<ContractReceipt>;
+}
+
+type ContractTransactionToast = Omit<PromiseToast<ContractReceipt>, 'loading'>;
 
 /**
  * Show a toast that will be updated based on interaction with a smart contract, using the provided content.
@@ -276,7 +278,7 @@ type ContractTransactionToast = Omit<
  * @returns An object containing the id of the toast
  */
 toast.contractTransaction = async (
-  promise: () => Promise<ContractTransaction>,
+  promise: () => Promise<ContractTransactionPromiseResult>,
   config: ContractTransactionToast
 ) => {
   const id = toast.loading({
@@ -287,6 +289,7 @@ toast.contractTransaction = async (
     // Get block explorer url for the currently preferred network
     const explorerURL = PREFERRED_NETWORK_METADATA.explorer;
     const transaction = await promise();
+
     // Show link to transaction on block explorer
     toast.update(id, {
       title: 'Awaiting confirmation...',
@@ -306,11 +309,11 @@ toast.contractTransaction = async (
     });
 
     // Await confirmation of the transaction
-    await transaction.wait();
+    const receipt = await transaction.wait();
 
     // Call the given success callback function
-    toast.success(promisePropToToast(config.success, transaction), id);
-    config.onSuccess && config.onSuccess(transaction);
+    toast.success(promisePropToToast(config.success, receipt), id);
+    config.onSuccess && config.onSuccess(receipt);
   } catch (e) {
     console.error(e);
     toast.error(promisePropToToast(config.error, e), id);
