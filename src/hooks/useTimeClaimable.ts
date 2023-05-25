@@ -29,11 +29,12 @@ export const useTimeClaimable = ({
 }: UseTimeClaimableProps): UseTimeClaimableData => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [facet, setFacet] = useState<IERC20TimeClaimableFacet | null>(null);
   const [amountClaimable, setAmountClaimable] = useState<BigNumber | null>(
     null
   );
   const { client } = useDiamondSDKContext();
+
+  let facet: IERC20TimeClaimableFacet | null = null;
 
   //** Set dummy data for development without querying SDK */
   const setDummyData = () => {
@@ -42,12 +43,13 @@ export const useTimeClaimable = ({
     setAmountClaimable(BigNumber.from(123456));
   };
 
-  const updateFacet = async () => {
+  const initFacet = async () => {
     if (!client) return;
+    if (facet) return;
 
     try {
       const _facet = await client.pure.IERC20TimeClaimableFacet();
-      setFacet(_facet);
+      facet = _facet;
     } catch (e) {
       console.error('Error fetching TimeClaimableFacet', e);
       setError(getErrorMessage(e));
@@ -68,10 +70,10 @@ export const useTimeClaimable = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    updateFacet();
+    initFacet();
     updateAmountClaimable();
     if (facet) setLoading(false);
-  }, [client, facet]);
+  }, [client]);
 
   return {
     loading,

@@ -23,7 +23,7 @@ export const ClaimDailyReward = () => {
 
   const handleClaimReward = async () => {
     toast.contractTransaction(() => claimReward(), {
-      error: 'Error: could not claim reward',
+      error: 'Could not claim reward',
       success: 'Reward claimed!',
     });
   };
@@ -36,7 +36,7 @@ export const ClaimDailyReward = () => {
     >
       <p>Everyday you are eligible to claim a reward.</p>
       <Card variant="outline" className="flex flex-row items-center gap-x-2">
-        Claimable {TOKENS.rep.name}:
+        Claimable amount:
         <strong>
           {loading ? (
             <Loading className="h-5 w-5" />
@@ -64,11 +64,7 @@ export const ClaimDailyReward = () => {
           },
           {
             when: Boolean(error),
-            content: (
-              <Warning>
-                Due to an error, daily rewards can not be claimed right now
-              </Warning>
-            ),
+            content: <Warning>An error occured.</Warning>,
           },
         ]}
       />
