@@ -8,7 +8,11 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { toast } from '@/src/hooks/useToast';
+import {
+  CHAIN_METADATA,
+  PREFERRED_NETWORK_METADATA,
+} from '@/src/lib/constants/chains';
 import { NumberPattern } from '@/src/lib/constants/patterns';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
@@ -20,6 +24,8 @@ import {
   useContractWrite,
   useNetwork,
   usePrepareContractWrite,
+  usePrepareSendTransaction,
+  useSendTransaction,
   useWaitForTransaction,
 } from 'wagmi';
 
@@ -46,16 +52,23 @@ import {
   SelectValue,
 } from '../ui/Select';
 
-type Token = (typeof Tokens)[number];
 type DepositAssetsData = {
   token: Token;
   amount?: string;
 };
 type AddressString = `0x${string}`;
-type SendData = Record<Token, AddressString | undefined>;
+type TokenData = {
+  address: AddressString;
+  isNativeToken: boolean;
+};
 
+type Token = (typeof Tokens)[number];
+// All tokens (including native tokens)
+// NOTE: Currently, only tokens with exactly 18 decimals are supported
 const Tokens = ['Matic', 'SECOIN', 'Other'] as const;
-const tokenAddresses: SendData = {
+// All tokens that are native
+const NativeTokens: Token[] = ['Matic'];
+const tokenAddresses: Record<Token, AddressString | undefined> = {
   Matic: '0x0000000000000000000000000000000000001010',
   SECOIN: '0x...',
   Other: undefined,
@@ -76,25 +89,33 @@ export const DepositAssets = () => {
   const watchToken = useWatch({ control: control, name: 'token' });
   const tokenAddress = tokenAddresses[watchToken];
   const isKnownToken = watchToken !== undefined && watchToken !== 'Other';
+  const isNativeToken = NativeTokens.includes(watchToken);
 
   const watchAmount = useWatch({ control: control, name: 'amount' });
   const amount = parseTokenAmount(watchAmount, 18);
 
-  const debouncedTokenId = useDebounce(amount, 500);
+  const debouncedTokenId = useDebounce([amount, tokenAddress], 500);
 
+  // Hooks for non native tokens
   const { config, error } = usePrepareContractWrite({
     address: tokenAddress,
     abi: erc20ABI,
     functionName: 'transfer',
     args: [daoAddress as AddressString, amount as BigNumber],
-    enabled: Boolean(debouncedTokenId),
+    enabled: Boolean(debouncedTokenId) && !isNativeToken,
   });
 
-  const { data: writeData, writeAsync } = useContractWrite(config);
+  const { writeAsync } = useContractWrite(config);
 
-  const { isLoading } = useWaitForTransaction({
-    hash: writeData?.hash,
-  });
+  // Hooks for native tokens
+  const { config: configNative, error: errorNative } =
+    usePrepareSendTransaction({
+      request: { to: daoAddress as string, value: amount as BigNumber },
+      chainId: PREFERRED_NETWORK_METADATA.id,
+      enabled: Boolean(debouncedTokenId) && isNativeToken,
+    });
+
+  const { sendTransactionAsync } = useSendTransaction(configNative);
 
   const onSubmit = (data: DepositAssetsData) => {
     //Can only send known tokens
@@ -130,25 +151,52 @@ export const DepositAssets = () => {
       return;
     }
 
-    if (error !== null) {
-      setError('root.deposit', {
-        type: 'custom',
-        message: 'Error: can not create transaction',
-      });
-      console.log(error);
-      console.log(config);
-      return;
-    }
+    const toasterConfig = {
+      loading: 'Sending deposit',
+      success: 'Succesfully sent deposit!',
+      error: 'Deposit could not be sent',
+    };
 
-    if (!writeAsync) {
-      setError('root.deposit', {
-        type: 'custom',
-        message: 'Error: can not create transaction',
-      });
-      return;
-    }
+    if (isNativeToken) {
+      if (errorNative !== null) {
+        setError('root.deposit', {
+          type: 'custom',
+          message: 'Error: can not create transaction',
+        });
+        console.log(error);
+        console.log(config);
+        return;
+      }
 
-    writeAsync();
+      if (!sendTransactionAsync) {
+        setError('root.deposit', {
+          type: 'custom',
+          message: 'Error: can not create transaction',
+        });
+        return;
+      }
+
+      toast.promise(sendTransactionAsync(), toasterConfig);
+    } else {
+      if (error !== null) {
+        setError('root.deposit', {
+          type: 'custom',
+          message: 'Error: can not create transaction',
+        });
+        console.log(error);
+        console.log(config);
+        return;
+      }
+
+      if (!writeAsync) {
+        setError('root.deposit', {
+          type: 'custom',
+          message: 'Error: can not create transaction',
+        });
+        return;
+      }
+      toast.promise(writeAsync(), toasterConfig);
+    }
 
     console.log(data);
   };
@@ -258,8 +306,7 @@ export const DepositAssets = () => {
                 <div className="flex flex-row gap-x-2">
                   <ConditionalButton
                     label="Deposit assets"
-                    icon={isLoading ? Loading : null}
-                    disabled={isLoading || !isKnownToken}
+                    disabled={!isKnownToken}
                     conditions={[
                       {
                         when: !isConnected,
