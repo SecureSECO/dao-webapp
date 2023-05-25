@@ -14,6 +14,7 @@ import {
   PREFERRED_NETWORK_METADATA,
 } from '@/src/lib/constants/chains';
 import { NumberPattern } from '@/src/lib/constants/patterns';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -57,22 +58,18 @@ type DepositAssetsData = {
   amount?: string;
 };
 type AddressString = `0x${string}`;
-type TokenData = {
-  address: AddressString;
-  isNativeToken: boolean;
-};
+type TokenData =
+  | {
+      address: AddressString;
+      isNativeToken: boolean;
+      decimals: number;
+    }
+  | undefined;
 
 type Token = (typeof Tokens)[number];
 // All tokens (including native tokens)
 // NOTE: Currently, only tokens with exactly 18 decimals are supported
 const Tokens = ['Matic', 'SECOIN', 'Other'] as const;
-// All tokens that are native
-const NativeTokens: Token[] = ['Matic'];
-const tokenAddresses: Record<Token, AddressString | undefined> = {
-  Matic: '0x0000000000000000000000000000000000001010',
-  SECOIN: '0x...',
-  Other: undefined,
-};
 
 export const DepositAssets = () => {
   const {
@@ -82,27 +79,45 @@ export const DepositAssets = () => {
     formState: { errors },
     setError,
   } = useForm<DepositAssetsData>({});
-  const { daoAddress } = useDiamondSDKContext();
+  // Context
+  const { daoAddress, secoinContractAddress } = useDiamondSDKContext();
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
 
+  // Creating 'tokens', the object displaying known tokens that can be deposited through this component, using ERC20 contract writes or native token transaction.
+  const secoin: TokenData = secoinContractAddress
+    ? {
+        address: secoinContractAddress as AddressString,
+        isNativeToken: false,
+        decimals: TOKENS.secoin.decimals,
+      }
+    : undefined;
+  const tokens: Record<Token, TokenData> = {
+    Matic: {
+      address: '0x0000000000000000000000000000000000001010',
+      isNativeToken: true,
+      decimals: PREFERRED_NETWORK_METADATA.nativeCurrency.decimals,
+    },
+    SECOIN: secoin,
+    Other: undefined,
+  };
+
+  // Adding watches + their derivatives
   const watchToken = useWatch({ control: control, name: 'token' });
-  const tokenAddress = tokenAddresses[watchToken];
+  const token = tokens[watchToken];
   const isKnownToken = watchToken !== undefined && watchToken !== 'Other';
-  const isNativeToken = NativeTokens.includes(watchToken);
 
   const watchAmount = useWatch({ control: control, name: 'amount' });
-  const amount = parseTokenAmount(watchAmount, 18);
-
-  const debouncedTokenId = useDebounce([amount, tokenAddress], 500);
+  const amount = parseTokenAmount(watchAmount, token?.decimals);
 
   // Hooks for non native tokens
+  const debouncedTokenId = useDebounce([amount, token?.address], 500);
   const { config, error } = usePrepareContractWrite({
-    address: tokenAddress,
+    address: token?.address,
     abi: erc20ABI,
     functionName: 'transfer',
     args: [daoAddress as AddressString, amount as BigNumber],
-    enabled: Boolean(debouncedTokenId) && !isNativeToken,
+    enabled: Boolean(debouncedTokenId) && !token?.isNativeToken,
   });
 
   const { writeAsync } = useContractWrite(config);
@@ -112,11 +127,12 @@ export const DepositAssets = () => {
     usePrepareSendTransaction({
       request: { to: daoAddress as string, value: amount as BigNumber },
       chainId: PREFERRED_NETWORK_METADATA.id,
-      enabled: Boolean(debouncedTokenId) && isNativeToken,
+      enabled: Boolean(debouncedTokenId) && token?.isNativeToken,
     });
 
   const { sendTransactionAsync } = useSendTransaction(configNative);
 
+  // OnSubmit: First validate data, then send the transaction
   const onSubmit = (data: DepositAssetsData) => {
     //Can only send known tokens
     if (!isKnownToken || data.amount === undefined) {
@@ -126,8 +142,8 @@ export const DepositAssets = () => {
       });
       return;
     }
-    //Should not happen
-    if (tokenAddress === undefined) {
+    //Should not happen because submitting is not allowed for undefined tokens
+    if (token === undefined) {
       setError('root.deposit', {
         type: 'custom',
         message: 'Error: can not deposit this type of token',
@@ -157,7 +173,7 @@ export const DepositAssets = () => {
       error: 'Deposit could not be sent',
     };
 
-    if (isNativeToken) {
+    if (token.isNativeToken) {
       if (errorNative !== null) {
         setError('root.deposit', {
           type: 'custom',

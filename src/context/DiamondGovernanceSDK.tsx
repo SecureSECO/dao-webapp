@@ -13,15 +13,16 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useSigner } from 'wagmi';
-import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
-import { Contract, ethers } from 'ethers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
+import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
+import { Contract, ethers } from 'ethers';
+import { useSigner } from 'wagmi';
 
 type SDKContext = {
   client?: DiamondGovernanceClient;
   daoAddress?: string;
+  secoinContractAddress?: string;
 };
 
 const DiamondSDKContext = createContext<SDKContext>({});
@@ -32,6 +33,9 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     undefined
   );
   const [daoAddress, setDaoAddress] = useState<string | undefined>(undefined);
+  const [secoinContractAddress, setSecoinContractAddress] = useState<
+    string | undefined
+  >(undefined);
 
   const signer = useSigner().data || undefined;
 
@@ -63,7 +67,15 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
       setDaoAddress(daoAddressData);
     };
 
+    const getSecoinContractAddress = async () => {
+      if (!client) return;
+      // const IChangeableTokenContract = await client.pure.IChangeableTokenContract();
+      // const monetaryTokenContractAddress = await IChangeableTokenContract.getTokenContractAddress();
+      // setSecoinContractAddress(monetaryTokenContractAddress);
+    };
+
     getDaoAddress();
+    getSecoinContractAddress();
   }, [client]);
 
   return (
@@ -71,6 +83,7 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
       value={{
         client,
         daoAddress,
+        secoinContractAddress,
       }}
     >
       {children}
