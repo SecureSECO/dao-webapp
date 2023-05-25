@@ -6,12 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useEffect } from 'react';
 import { Button } from '@/src/components/ui/Button';
 import { Card, CardProps } from '@/src/components/ui/Card';
 import { Link } from '@/src/components/ui/Link';
 import { toast } from '@/src/hooks/useToast';
-import { Verification, useVerification } from '@/src/hooks/useVerification';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { cn } from '@/src/lib/utils';
 import {
@@ -19,9 +17,10 @@ import {
   useVerification,
 } from '@/src/hooks/useVerification';
 import { useWeb3Modal } from '@web3modal/react';
-import { addDays } from 'date-fns';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 import { Chain, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { Stamp } from '@plopmenz/diamond-governance-sdk';
+import { BigNumber } from 'ethers';
 
 export const MembershipStatus = () => {
   const { open } = useWeb3Modal();
@@ -32,7 +31,6 @@ export const MembershipStatus = () => {
   });
 
   const { stamps, isVerified, getThresholdForTimestamp } = useVerification();
-
 
   return (
     <MembershipStatusView
