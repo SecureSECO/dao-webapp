@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import {
   ActionFormContext,
   ActionFormError,
@@ -36,16 +36,19 @@ import {
   IntegerPattern,
   NumberPattern,
 } from '@/src/lib/constants/patterns';
-import { anyNullOrUndefined, cn } from '@/src/lib/utils';
+import { anyNullOrUndefined, assertUnreachable, cn } from '@/src/lib/utils';
+import { getTokenInfo } from '@/src/lib/utils/token';
 import { TokenType } from '@aragon/sdk-client';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
+import { useProvider } from 'wagmi';
 
 export interface ProposalFormWithdrawData extends ProposalFormAction {
   recipient: string;
   tokenAddress: string | 'custom';
   tokenAddressCustom?: string;
   tokenID?: string;
+  tokenDecimals: string;
   amount: string | number;
   daoAddress: string | undefined;
   tokenType: TokenType;
@@ -55,6 +58,7 @@ export const emptyWithdrawData: ProposalFormWithdrawData = {
   name: 'withdraw_assets',
   recipient: '',
   tokenAddress: '',
+  tokenDecimals: '18',
   amount: 0,
   daoAddress: '',
   tokenType: TokenType.NATIVE,
@@ -88,7 +92,10 @@ export const WithdrawAssetsInput = () => {
     formState: { errors: formErrors },
     control,
     setValue,
+    getValues,
   } = useFormContext<ProposalFormActions>();
+
+  const provider = useProvider();
 
   const { prefix, index, onRemove } = useContext(ActionFormContext);
 
@@ -117,6 +124,26 @@ export const WithdrawAssetsInput = () => {
 
   const address = useWatch({ control, name: `${prefix}.tokenAddress` });
   const tokenType = useWatch({ control, name: `${prefix}.tokenType` });
+
+  const [isManualDecimalEntry, setIsManualDecimalEntry] =
+    useState<boolean>(false);
+  const decimalsLoadingText = 'Loading...';
+  const getERC20Decimals = async () => {
+    setIsManualDecimalEntry(false);
+    setValue(`${prefix}.tokenDecimals`, decimalsLoadingText);
+
+    const tokenInfo = await getTokenInfo(
+      getValues(`${prefix}.tokenAddressCustom`),
+      provider,
+      PREFERRED_NETWORK_METADATA.nativeCurrency
+    );
+    if (tokenInfo?.decimals) {
+      setValue(`${prefix}.tokenDecimals`, tokenInfo.decimals.toString());
+    } else {
+      setIsManualDecimalEntry(true);
+      setValue(`${prefix}.tokenDecimals`, 'Please enter decimals');
+    }
+  };
 
   return (
     <MainCard
@@ -172,14 +199,41 @@ export const WithdrawAssetsInput = () => {
                 onValueChange={(v) => {
                   console.log(v);
                   onChange(v);
+                  let token = undefined;
                   if (v && v !== 'custom') {
-                    const token = filteredDaoBalances.find(
-                      (x) => x.address === v
-                    );
+                    token = filteredDaoBalances.find((x) => x.address === v);
                     if (token) {
                       console.log(token);
                       setValue(`${prefix}.tokenType`, token.type);
                     }
+                  }
+
+                  // Set the token decimals
+                  switch (tokenType) {
+                    case TokenType.ERC721:
+                      setIsManualDecimalEntry(false);
+                      setValue(`${prefix}.tokenDecimals`, '1');
+                      break;
+                    case TokenType.NATIVE:
+                      setIsManualDecimalEntry(false);
+                      setValue(
+                        `${prefix}.tokenDecimals`,
+                        PREFERRED_NETWORK_METADATA.nativeCurrency.decimals.toString()
+                      );
+                      break;
+                    case TokenType.ERC20:
+                      if (token?.decimals) {
+                        setIsManualDecimalEntry(false);
+                        setValue(
+                          `${prefix}.tokenDecimals`,
+                          token.decimals.toString()
+                        );
+                      } else {
+                        getERC20Decimals();
+                      }
+                      break;
+                    default:
+                      assertUnreachable(tokenType);
                   }
                 }}
                 defaultValue={value}
@@ -246,6 +300,7 @@ export const WithdrawAssetsInput = () => {
                     );
                   }
                 },
+                onChange: () => getERC20Decimals(),
               })}
             />
           </ErrorWrapper>
@@ -277,6 +332,39 @@ export const WithdrawAssetsInput = () => {
                   }
                   // Not NFT token, thus valid
                   return true;
+                },
+              })}
+            />
+          </ErrorWrapper>
+          <ErrorWrapper
+            //Only show when decimals is Unknown
+            className={cn(
+              (address === 'custom' && tokenType === TokenType.ERC20) ||
+                'hidden'
+            )}
+            name="tokenID"
+            error={errors?.tokenDecimals}
+          >
+            <Label
+              tooltip="The amount of decimals the token has. Automatically retrieved if applicable."
+              htmlFor="tokenDecimals"
+            >
+              Token decimals
+            </Label>
+            <Input
+              error={errors?.tokenID}
+              placeholder={decimalsLoadingText}
+              disabled={!isManualDecimalEntry}
+              {...register(`${prefix}.tokenDecimals`, {
+                validate: (x) => {
+                  if (x === null || x === undefined || x === '') {
+                    return 'Please enter decimals';
+                  }
+                  if (x === decimalsLoadingText) {
+                    return 'Please wait for the decimals to be loaded';
+                  }
+                  const valid = IntegerPattern.test(x);
+                  return valid || 'Please enter decimals';
                 },
               })}
             />

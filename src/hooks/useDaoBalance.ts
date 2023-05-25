@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
-
-import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
+import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
-import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
+import { constants } from 'ethers';
 
 export type UseDaoBalanceData = {
   daoBalances: DaoBalance[] | null;
@@ -146,7 +146,7 @@ function assetBalanceToDaoBalance(
       // eslint-disable-next-line no-case-declarations
       const metadata = PREFERRED_NETWORK_METADATA;
       result.decimals = metadata.nativeCurrency.decimals;
-      result.address = daoAddress;
+      result.address = constants.AddressZero;
       result.name = metadata.nativeCurrency.name;
       result.symbol = metadata.nativeCurrency.symbol;
       break;
