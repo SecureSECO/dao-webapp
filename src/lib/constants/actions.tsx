@@ -45,12 +45,10 @@ import MintAction, {
 import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { TOKENS } from '@/src/lib/constants/tokens';
-import { getTokenInfo, parseTokenAmount } from '@/src/lib/utils/token';
+import { parseTokenAmount } from '@/src/lib/utils/token';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
-import { Provider } from '@wagmi/core';
 import { BigNumber } from 'ethers';
 import { IconType } from 'react-icons';
 import { FaGithub } from 'react-icons/fa';
@@ -153,19 +151,13 @@ export const ACTIONS: Actions = {
     view: WithdrawAction,
     input: WithdrawAssetsInput,
     emptyInputData: emptyWithdrawData,
-    parseInput: async (input, provider) => {
+    parseInput: async (input) => {
       // Fetch token info of the token to withdraw to access its decimals
       const tokenAddress =
         input.tokenAddress === 'custom'
           ? (input.tokenAddressCustom as string)
           : input.tokenAddress;
       try {
-        const tokenInfo = await getTokenInfo(
-          input.tokenAddress,
-          provider,
-          PREFERRED_NETWORK_METADATA.nativeCurrency
-        );
-
         return {
           method: ACTIONS.withdraw_assets.method,
           interface: ACTIONS.withdraw_assets.interface,
@@ -173,7 +165,10 @@ export const ACTIONS: Actions = {
             _to: input.recipient,
             // Convert to correct number of tokens using the fetched decimals
             _amount: throwIfNullOrUndefined(
-              parseTokenAmount(input.amount.toString(), tokenInfo.decimals)
+              parseTokenAmount(
+                input.amount.toString(),
+                parseInt(input.tokenDecimals)
+              )
             ),
             _tokenAddress: tokenAddress,
           },
@@ -261,7 +256,7 @@ type ActionData<TAction, TFormData> = {
    * @param provider Provider to use to optionally fetch data from the blockchain
    * @returns Instance of Action as expected by the SDK
    */
-  parseInput: (input: TFormData, provider: Provider) => Promise<TAction | null>;
+  parseInput: (input: TFormData) => Promise<TAction | null>;
 };
 
 /**

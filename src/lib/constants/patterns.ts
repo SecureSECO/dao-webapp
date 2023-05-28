@@ -12,6 +12,11 @@
 export const NumberPattern = /^\d+\.?\d*$/;
 
 /**
+ * Pattern for positive integers.
+ */
+export const IntegerPattern = /^\d+$/;
+
+/**
  * AddressPattern is a pattern for Addresses, starting with 0x, followed by 20 to 60 hex characters.
  * See the test cases for examples.
  */
