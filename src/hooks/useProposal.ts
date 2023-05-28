@@ -6,6 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { ProposalChangeParamAction } from '@/src/components/proposal/actions/ChangeParamAction';
+import { ProposalMergeAction } from '@/src/components/proposal/actions/MergeAction';
+import { ProposalMintAction } from '@/src/components/proposal/actions/MintAction';
+import { ProposalWithdrawAction } from '@/src/components/proposal/actions/WithdrawAction';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { ACTIONS } from '@/src/lib/constants/actions';
@@ -18,7 +22,7 @@ import {
   AddressVotes,
   IPartialVotingFacet,
 } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber, ContractTransaction, constants } from 'ethers';
+import { BigNumber, ContractTransaction } from 'ethers';
 import { useEffect, useState } from 'react';
 
 export type CanVote = {
@@ -46,7 +50,7 @@ export type UseProposalProps = {
 /**
  * Dummy mint tokens action
  */
-export const dummyMintAction = {
+export const dummyMintAction: ProposalMintAction = {
   method: ACTIONS.mint_tokens.method,
   interface: ACTIONS.mint_tokens.interface,
   params: {
@@ -62,23 +66,55 @@ export const dummyMintAction = {
 };
 
 /**
- * Dummy withdraw assets action
- * @note Not yet correct
+ * Dummy withdraw assets actions.
+ * Includes a variant for each token type.
  */
-export const dummyWithdrawAction = {
-  method: ACTIONS.withdraw_assets.method,
-  interface: ACTIONS.withdraw_assets.interface,
-  params: {
-    _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
-    _amount: BigNumber.from('0x4563918244F40000'),
-    _tokenAddress: constants.AddressZero,
+export const dummyWithdrawActions: ProposalWithdrawAction[] = [
+  {
+    interface: ACTIONS.withdraw_assets.interface,
+    method: ACTIONS.withdraw_assets.method.native,
+    params: {
+      _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      _value: BigNumber.from('0x4563918244F40000'),
+    },
   },
-};
+  {
+    interface: ACTIONS.withdraw_assets.interface,
+    method: ACTIONS.withdraw_assets.method.erc20,
+    params: {
+      _from: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+      _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      _amount: BigNumber.from('0x4563918244F40000'),
+      _contractAddress: '0x514910771AF9Ca656af840dff83E8264EcF986CA', // Chainlink
+    },
+  },
+  {
+    interface: ACTIONS.withdraw_assets.interface,
+    method: ACTIONS.withdraw_assets.method.erc721,
+    params: {
+      _from: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+      _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      _tokenId: BigNumber.from('1'),
+      _contractAddress: '0x9c206ec8A0166E92B32F2B0810665F2b72498B09', // BOZOS nft
+    },
+  },
+  {
+    interface: ACTIONS.withdraw_assets.interface,
+    method: ACTIONS.withdraw_assets.method.erc1155,
+    params: {
+      _from: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+      _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      _tokenId: BigNumber.from('1'),
+      _amount: BigNumber.from('1'),
+      _contractAddress: '0x5066C0934632BCc2902D139D7C875CBD295429f8',
+    },
+  },
+];
 
 /**
  * Dummy merge pull request action
  */
-export const dummyMergeAction = {
+export const dummyMergeAction: ProposalMergeAction = {
   method: ACTIONS.merge_pr.method,
   interface: ACTIONS.merge_pr.interface,
   params: {
@@ -92,7 +128,7 @@ export const dummyMergeAction = {
  * Dummy mint tokens action
  * @note Not yet correct
  */
-export const dummyChangeParamsAction = {
+export const dummyChangeParamsAction: ProposalChangeParamAction = {
   method: ACTIONS.change_param.method,
   interface: ACTIONS.change_param.interface,
   params: {

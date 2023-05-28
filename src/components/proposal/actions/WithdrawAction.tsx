@@ -9,6 +9,7 @@
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address, AddressLength } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
+import { ACTIONS } from '@/src/lib/constants/actions';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
 import {
@@ -23,11 +24,19 @@ import { useEffect, useState } from 'react';
 import { HiArrowRight, HiBanknotes } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';
 
+/**
+ * Interface for a withdraw assets action.
+ * The exact parameters depend on the type of token that is being withdrawn.
+ * See file /src/lib/constants/actions.tsx for the different types of tokens and their parameters.
+ */
 export interface ProposalWithdrawAction extends Action {
   params: {
-    _amount: BigNumber;
-    _tokenAddress: string;
+    _from?: string;
     _to: string;
+    _value?: BigNumber; // In case of NATIVE token
+    _amount?: BigNumber;
+    _contractAddress?: string;
+    _tokenId?: BigNumber; // In case of ERC721 or ERC1155
   };
 }
 
@@ -50,14 +59,14 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
   useEffect(() => {
     async function fetchTokenInfo() {
       const fetchedTokenInfo = await getTokenInfo(
-        action.params._tokenAddress,
+        action.params._contractAddress,
         provider,
         PREFERRED_NETWORK_METADATA.nativeCurrency
       );
       setTokenInfo(fetchedTokenInfo);
     }
 
-    if (provider) {
+    if (provider && action.method !== ACTIONS.withdraw_assets.method.native) {
       fetchTokenInfo();
     }
   }, [action]);

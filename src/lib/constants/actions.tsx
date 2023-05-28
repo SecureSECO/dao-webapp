@@ -57,8 +57,7 @@ import {
   HiOutlineCircleStack,
   HiOutlineCog,
 } from 'react-icons/hi2';
-
-import { throwIfNullOrUndefined } from '../utils';
+import { TokenType } from '@aragon/sdk-client';
 
 /**
  * Type for different proposal form action data.
@@ -74,7 +73,11 @@ export type ProposalFormActionData =
 type Actions = {
   mint_tokens: ActionData<ProposalMintAction, ProposalFormMintData>;
   merge_pr: ActionData<ProposalMergeAction, ProposalFormMergeData>;
-  withdraw_assets: ActionData<ProposalWithdrawAction, ProposalFormWithdrawData>;
+  withdraw_assets: ActionData<
+    ProposalWithdrawAction,
+    ProposalFormWithdrawData,
+    'native' | 'erc20' | 'erc721' | 'erc1155'
+  >;
   change_param: ActionData<
     ProposalChangeParamAction,
     ProposalFormChangeParamData
@@ -98,7 +101,7 @@ export const ACTIONS: Actions = {
     input: MintTokensInput,
     emptyInputData: emptyMintData,
     maxPerProposal: 1,
-    parseInput: async (input) => {
+    parseInput: (input) => {
       const amounts = input.wallets.map((wallet) =>
         parseTokenAmount(wallet.amount.toString(), TOKENS.rep.decimals)
       );
@@ -126,7 +129,7 @@ export const ACTIONS: Actions = {
     view: MergeAction,
     input: MergePRInput,
     emptyInputData: emptyMergeData,
-    parseInput: async (input) => {
+    parseInput: (input) => {
       const url = new URL(input.url);
       const owner = url.pathname.split('/')[1];
       const repo = url.pathname.split('/')[2];
@@ -143,39 +146,84 @@ export const ACTIONS: Actions = {
     },
   },
   withdraw_assets: {
-    method: ['withdraw(string,uint256)', 'withdraw6212'], // FIXME: not the correct method yet
-    interface: 'IWithdraw', // FIXME: not the correct interface yet
+    // NOTE TO SELF: make this object with property 'native' etc.
+    method: {
+      native: 'WithdrawNative',
+      erc20: 'WithdrawERC20',
+      erc721: 'WithdrawERC721',
+      erc1155: 'WithdrawERC1155',
+    },
+    interface: 'DAO',
     label: 'Withdraw assets',
     longLabel: 'Withdraw assets',
     icon: HiBanknotes,
     view: WithdrawAction,
     input: WithdrawAssetsInput,
     emptyInputData: emptyWithdrawData,
-    parseInput: async (input) => {
-      // Fetch token info of the token to withdraw to access its decimals
-      const tokenAddress =
+    parseInput: (input) => {
+      const _amount = parseTokenAmount(
+        input.amount.toString(),
+        parseInt(input.tokenDecimals)
+      );
+      const _from = input.daoAddress;
+      if (
+        _amount === null ||
+        (_from === undefined && input.tokenType !== TokenType.NATIVE)
+      )
+        return null;
+
+      const _contractAddress =
         input.tokenAddress === 'custom'
           ? (input.tokenAddressCustom as string)
           : input.tokenAddress;
-      try {
-        return {
-          method: ACTIONS.withdraw_assets.method[0],
-          interface: ACTIONS.withdraw_assets.interface,
-          params: {
-            _to: input.recipient,
-            // Convert to correct number of tokens using the fetched decimals
-            _amount: throwIfNullOrUndefined(
-              parseTokenAmount(
-                input.amount.toString(),
-                parseInt(input.tokenDecimals)
-              )
-            ),
-            _tokenAddress: tokenAddress,
-          },
-        };
-      } catch (e) {
-        console.error(e);
-        return null;
+
+      switch (input.tokenType) {
+        case TokenType.NATIVE:
+          return {
+            interface: ACTIONS.withdraw_assets.interface,
+            method: ACTIONS.withdraw_assets.method.native,
+            params: {
+              _to: input.recipient,
+              _value: _amount,
+            },
+          };
+        case TokenType.ERC20:
+          return {
+            interface: ACTIONS.withdraw_assets.interface,
+            method: ACTIONS.withdraw_assets.method.erc20,
+            params: {
+              _from,
+              _to: input.recipient,
+              _amount,
+              _contractAddress,
+            },
+          };
+        case TokenType.ERC721:
+          if (input.tokenID === undefined) return null;
+          return {
+            interface: ACTIONS.withdraw_assets.interface,
+            method: ACTIONS.withdraw_assets.method.erc721,
+            params: {
+              _from,
+              _to: input.recipient,
+              _tokenId: BigNumber.from(input.tokenID),
+              _contractAddress,
+            },
+          };
+        // ERC1155 is not supported by Aragon SDK
+        // If it gets support in the future, uncomment this code
+        // case TokenType.ERC1155:
+        //   if (input.tokenID === undefined) return null;
+        //   return {
+        //     interface: ACTIONS.withdraw_assets.interface,
+        //     method: ACTIONS.withdraw_assets.method.erc1155,
+        //     params: {
+        //       _from,
+        //       _to: input.recipient,
+        //       _tokenId: input.tokenID,
+        //       _contractAddress,
+        //     },
+        //   };
       }
     },
   },
@@ -189,7 +237,7 @@ export const ACTIONS: Actions = {
     input: ChangeParamInput,
     emptyInputData: emptyChangeParamData,
     maxPerProposal: 1,
-    parseInput: async (input) => {
+    parseInput: (input) => {
       return {
         method: ACTIONS.change_param.method as string,
         interface: ACTIONS.change_param.interface,
@@ -223,13 +271,40 @@ interface ViewActionProps<TAction> extends AccordionItemProps {
   action: TAction;
 }
 
-type ActionData<TAction, TFormData> = {
-  // Method and interface to call on the smart contract
-  method: string | string[];
+/**
+ * Type for the data of a proposal action.
+ * @param TAction Type of the action as expected by the SDK
+ * @param TFormData Type of the data of the input form for this action
+ * @param TMethod Optional string literals for the method name identifiers for this action (see below)
+ */
+type ActionData<TAction, TFormData, TMethod extends string | void = void> = {
+  /**
+   * Interface containing the smart contract function that will be called for this action.
+   */
   interface: string;
-  // Short label used on proposal tags
+  /**
+   * Method of the smart contract function that will be called for this action.
+   * Can be a string or an object with multiple method names.
+   *
+   * In the case of an object, the key is an identifier for the method to be used to access the method name in the UI code
+   * (e.g. to be able to check which pre-defined version of an action you are dealing with),
+   * and the value is the method name as a string.
+   *
+   * Wondering how these types work? Check this out: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
+   */
+  method: [TMethod] extends [string]
+    ? {
+        [key in TMethod]: string;
+      }
+    : string;
+  /**
+   * Label used in the UI to describe this action.
+   */
   label: string;
-  // Long label used in the new-proposal form
+  /**
+   * Longer label used in the UI to describe this action.
+   * This label is used in the new-proposal form.
+   */
   longLabel: string;
   icon: IconType;
   /**
@@ -256,7 +331,7 @@ type ActionData<TAction, TFormData> = {
    * @param provider Provider to use to optionally fetch data from the blockchain
    * @returns Instance of Action as expected by the SDK
    */
-  parseInput: (input: TFormData) => Promise<TAction | null>;
+  parseInput: (input: TFormData) => TAction | null;
 };
 
 /**
@@ -285,11 +360,14 @@ const getIdentifier = (action: Action | ActionData<any, any>) =>
 const actionNames: { [identifier: string]: ActionName } = {};
 Object.entries(ACTIONS).forEach(([name, action]) => {
   if (typeof action.method === 'string')
-    return (actionNames[getIdentifier(action)] = name as ActionName);
-  action.method.forEach(
-    (method) =>
-      (actionNames[getIdentifier({ ...action, method })] = name as ActionName)
-  );
+    actionNames[getIdentifier({ ...action, method: action.method })] =
+      name as ActionName;
+  // If the action.method is an object, add all methods to the actionNames object
+  else
+    Object.values(action.method).forEach(
+      (method) =>
+        (actionNames[getIdentifier({ ...action, method })] = name as ActionName)
+    );
 });
 
 /**
