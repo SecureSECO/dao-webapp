@@ -146,7 +146,6 @@ export const ACTIONS: Actions = {
     },
   },
   withdraw_assets: {
-    // NOTE TO SELF: make this object with property 'native' etc.
     method: {
       native: 'WithdrawNative',
       erc20: 'WithdrawERC20',

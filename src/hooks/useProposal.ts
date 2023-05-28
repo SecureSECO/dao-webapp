@@ -85,7 +85,7 @@ export const dummyWithdrawActions: ProposalWithdrawAction[] = [
       _from: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
       _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
       _amount: BigNumber.from('0x4563918244F40000'),
-      _contractAddress: '0x514910771AF9Ca656af840dff83E8264EcF986CA', // Chainlink
+      _contractAddress: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa', // Token address of WETH on mumbai
     },
   },
   {
@@ -94,8 +94,8 @@ export const dummyWithdrawActions: ProposalWithdrawAction[] = [
     params: {
       _from: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
       _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
-      _tokenId: BigNumber.from('1'),
-      _contractAddress: '0x9c206ec8A0166E92B32F2B0810665F2b72498B09', // BOZOS nft
+      _tokenId: BigNumber.from(1),
+      _contractAddress: '0x042FF2201D1015730d2414DaBF5d627e3e69e7CA', // Test11 NFT on mumbai
     },
   },
   {
@@ -104,9 +104,9 @@ export const dummyWithdrawActions: ProposalWithdrawAction[] = [
     params: {
       _from: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
       _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
-      _tokenId: BigNumber.from('1'),
-      _amount: BigNumber.from('1'),
-      _contractAddress: '0x5066C0934632BCc2902D139D7C875CBD295429f8',
+      _tokenId: BigNumber.from(1),
+      _amount: BigNumber.from(1),
+      _contractAddress: '0x29Ba2441Cc4a5Da648f9abb284bc99FDF94dc446', // Some ERC1155 on mumbai
     },
   },
 ];
