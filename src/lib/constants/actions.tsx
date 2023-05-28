@@ -110,7 +110,7 @@ export const ACTIONS: Actions = {
       }
 
       return {
-        method: ACTIONS.mint_tokens.method,
+        method: ACTIONS.mint_tokens.method as string,
         interface: ACTIONS.mint_tokens.interface,
         params: {
           _addresses: input.wallets.map((wallet) => wallet.address),
@@ -134,7 +134,7 @@ export const ACTIONS: Actions = {
       const repo = url.pathname.split('/')[2];
       const pullNumber = url.pathname.split('/')[4];
       return {
-        method: ACTIONS.merge_pr.method,
+        method: ACTIONS.merge_pr.method as string,
         interface: ACTIONS.merge_pr.interface,
         params: {
           _owner: owner,
@@ -145,7 +145,7 @@ export const ACTIONS: Actions = {
     },
   },
   withdraw_assets: {
-    method: 'withdraw(string,uint256)', // FIXME: not the correct method yet
+    method: ['withdraw(string,uint256)', 'withdraw6212'], // FIXME: not the correct method yet
     interface: 'IWithdraw', // FIXME: not the correct interface yet
     label: 'Withdraw assets',
     longLabel: 'Withdraw assets',
@@ -167,7 +167,7 @@ export const ACTIONS: Actions = {
         );
 
         return {
-          method: ACTIONS.withdraw_assets.method,
+          method: ACTIONS.withdraw_assets.method[0],
           interface: ACTIONS.withdraw_assets.interface,
           params: {
             _to: input.recipient,
@@ -196,7 +196,7 @@ export const ACTIONS: Actions = {
     maxPerProposal: 1,
     parseInput: async (input) => {
       return {
-        method: ACTIONS.change_param.method,
+        method: ACTIONS.change_param.method as string,
         interface: ACTIONS.change_param.interface,
         params: {
           _plugin: input.plugin,
@@ -230,7 +230,7 @@ interface ViewActionProps<TAction> extends AccordionItemProps {
 
 type ActionData<TAction, TFormData> = {
   // Method and interface to call on the smart contract
-  method: string;
+  method: string | string[];
   interface: string;
   // Short label used on proposal tags
   label: string;
@@ -279,7 +279,7 @@ type ActionData<TAction, TFormData> = {
  * console.log(identifier); // "IERC20MultiMinterFacet.multimint(address[],uint256[])"
  */
 const getIdentifier = (action: Action | ActionData<any, any>) =>
-  `${action.interface}.${action.method}`;
+  `${action.interface}.${typeof action.method}`;
 
 /**
  * Object that maps an action identifier to a more readable name as defined in the ACTIONS object.
@@ -289,7 +289,12 @@ const getIdentifier = (action: Action | ActionData<any, any>) =>
  */
 const actionNames: { [identifier: string]: ActionName } = {};
 Object.entries(ACTIONS).forEach(([name, action]) => {
-  actionNames[getIdentifier(action)] = name as ActionName;
+  if (typeof action.method === 'string')
+    return (actionNames[getIdentifier(action)] = name as ActionName);
+  action.method.forEach(
+    (method) =>
+      (actionNames[getIdentifier({ ...action, method })] = name as ActionName)
+  );
 });
 
 /**
