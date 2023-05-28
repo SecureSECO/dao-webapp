@@ -27,7 +27,7 @@ export const ConditionalButton = React.forwardRef<
   const condition = conditions.find((x) => x.when);
   const someConditional = condition !== undefined;
   return (
-    <div className="flex flex-row gap-x-2">
+    <div className="flex flex-row items-center gap-x-2">
       <Button ref={ref} disabled={disabled || someConditional} {...props} />
       {someConditional && condition.content}
     </div>
