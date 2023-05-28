@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { NewProposalFormProvider } from '@/src/pages/NewProposal';
-import type { Meta, StoryObj } from '@storybook/react';
-
+import { ProposalFormActions } from '@/src/components/newProposal/steps/Actions';
 import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import { ProposalFormMetadata } from '@/src/components/newProposal/steps/Metadata';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
-import { ProposalFormActions } from '@/src/components/newProposal/steps/Actions';
+import { NewProposalFormProvider } from '@/src/pages/NewProposal';
+import { TokenType } from '@aragon/sdk-client';
+import type { Meta, StoryObj } from '@storybook/react';
 import { constants } from 'ethers';
 
 const meta: Meta<typeof Confirmation> = {
@@ -84,6 +84,9 @@ export const Primary: Story = {
             recipient: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
             tokenAddress: constants.AddressZero,
             amount: 3.141,
+            tokenDecimals: '3',
+            tokenType: TokenType.ERC20,
+            daoAddress: '0x123',
           },
         ],
       }
