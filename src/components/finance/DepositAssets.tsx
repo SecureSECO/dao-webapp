@@ -138,7 +138,7 @@ export const DepositAssets = () => {
     if (!isKnownToken || data.amount === undefined) {
       setError('root.deposit', {
         type: 'custom',
-        message: 'Error: can only deposit known token types',
+        message: 'You can only deposit known token types',
       });
       return;
     }
@@ -146,7 +146,7 @@ export const DepositAssets = () => {
     if (token === undefined) {
       setError('root.deposit', {
         type: 'custom',
-        message: 'Error: can not deposit this type of token',
+        message: 'You cannnot deposit this type of token',
       });
       return;
     }
@@ -154,7 +154,7 @@ export const DepositAssets = () => {
     if (daoAddress === undefined) {
       setError('root.deposit', {
         type: 'custom',
-        message: "Error: can not determine DAO's address",
+        message: 'Could not determine DAO address',
       });
       return;
     }
@@ -162,14 +162,14 @@ export const DepositAssets = () => {
     if (!BigNumber.isBigNumber(amount)) {
       setError('root.deposit', {
         type: 'custom',
-        message: 'Error: the amount is not in the correct format',
+        message: 'Incorrect format for amount',
       });
       return;
     }
 
     const toasterConfig: ContractTransactionToast = {
-      success: 'Succesfully sent deposit!',
-      error: 'Deposit could not be sent',
+      success: 'Deposit successful!',
+      error: 'Deposit failed',
       onFinish: () => {
         setIsSendingTransaction(false);
       },
@@ -179,7 +179,7 @@ export const DepositAssets = () => {
       if (errorNative !== null) {
         setError('root.deposit', {
           type: 'custom',
-          message: 'Error: can not create transaction',
+          message: 'Could not create transaction',
         });
         console.log(error);
         console.log(config);
@@ -189,7 +189,7 @@ export const DepositAssets = () => {
       if (!sendTransactionAsync) {
         setError('root.deposit', {
           type: 'custom',
-          message: 'Error: can not create transaction',
+          message: 'Could not create transaction',
         });
         return;
       }
@@ -201,7 +201,7 @@ export const DepositAssets = () => {
       if (error !== null) {
         setError('root.deposit', {
           type: 'custom',
-          message: 'Error: can not create transaction',
+          message: 'Could not create transaction',
         });
         console.log(error);
         console.log(config);
@@ -211,7 +211,7 @@ export const DepositAssets = () => {
       if (!writeAsync) {
         setError('root.deposit', {
           type: 'custom',
-          message: 'Error: can not create transaction',
+          message: 'Could not create transaction',
         });
         return;
       }
