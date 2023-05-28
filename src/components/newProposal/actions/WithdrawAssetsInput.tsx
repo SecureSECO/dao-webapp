@@ -306,10 +306,7 @@ export const WithdrawAssetsInput = () => {
           name="tokenType"
           error={errors?.tokenType}
         >
-          <Label
-            tooltip="The contract address type of the token"
-            htmlFor="tokenType"
-          >
+          <Label tooltip="The type of the token" htmlFor="tokenType">
             Token type
           </Label>
           <Controller
@@ -344,101 +341,92 @@ export const WithdrawAssetsInput = () => {
           />
         </ErrorWrapper>
 
-        <ErrorWrapper
-          className={cn(address === 'custom' || 'hidden')}
-          name="tokenAddressCustom"
-          error={errors?.tokenAddressCustom}
-        >
-          <Label
-            tooltip="The contract address of the token"
-            htmlFor="tokenAddressCustom"
-          >
-            Token address
-          </Label>
-          <Input
+        {address === 'custom' && tokenType !== TokenType.NATIVE && (
+          <ErrorWrapper
+            name="tokenAddressCustom"
             error={errors?.tokenAddressCustom}
-            placeholder="0x..."
-            {...register(`${prefix}.tokenAddressCustom`, {
-              validate: (v) => {
-                if (address == 'custom') {
-                  const valid =
-                    v === undefined ? false : AddressPattern.test(v);
-                  return (
-                    valid ||
-                    'Please enter an address starting with 0x, followed by 40 address characters'
-                  );
-                }
-              },
-              onChange: () => getERC20Decimals(),
-            })}
-          />
-        </ErrorWrapper>
-
-        <ErrorWrapper
-          //Only show when custom NFT tokens are shown
-          className={cn(tokenType === TokenType.ERC721 || 'hidden')}
-          name="tokenID"
-          error={errors?.tokenID}
-        >
-          <Label
-            tooltip="The token ID of the NFT (ERC721/ERC1155)"
-            htmlFor="tokenID"
           >
-            Token ID
+            <Label
+              tooltip="The contract address of the token"
+              htmlFor="tokenAddressCustom"
+            >
+              Token address
+            </Label>
+            <Input
+              error={errors?.tokenAddressCustom}
+              placeholder="0x..."
+              {...register(`${prefix}.tokenAddressCustom`, {
+                validate: (v) => {
+                  if (address == 'custom') {
+                    const valid =
+                      v === undefined ? false : AddressPattern.test(v);
+                    return (
+                      valid ||
+                      'Please enter an address starting with 0x, followed by 40 address characters'
+                    );
+                  }
+                },
+                onChange: () => getERC20Decimals(),
+              })}
+            />
+          </ErrorWrapper>
+        )}
+
+        {tokenType === TokenType.ERC721 && (
+          <ErrorWrapper name="tokenID" error={errors?.tokenID}>
+            <Label tooltip="The token ID of the NFT" htmlFor="tokenID">
+              Token ID
+            </Label>
+            <Input
+              error={errors?.tokenID}
+              placeholder="123..."
+              {...register(`${prefix}.tokenID`, {
+                validate: (v) => {
+                  if (tokenType === TokenType.ERC721) {
+                    const empty = v === '' || v === undefined || v === null;
+                    const valid = !empty && IntegerPattern.test(v);
+
+                    return (
+                      valid ||
+                      'Please enter a valid token ID, i.e. a number like 123'
+                    );
+                  }
+                  // Not NFT token, thus valid
+                  return true;
+                },
+              })}
+            />
+          </ErrorWrapper>
+        )}
+      </div>
+
+      {address === 'custom' && tokenType === TokenType.ERC20 && (
+        <ErrorWrapper name="tokenID" error={errors?.tokenDecimals}>
+          <Label
+            tooltip="The amount of decimals the token has. Automatically retrieved when possible."
+            htmlFor="tokenDecimals"
+          >
+            Token decimals
           </Label>
           <Input
             error={errors?.tokenID}
-            placeholder="123..."
-            {...register(`${prefix}.tokenID`, {
-              validate: (v) => {
-                if (tokenType === TokenType.ERC721) {
-                  const empty = v === '' || v === undefined || v === null;
-                  const valid = !empty && IntegerPattern.test(v);
-
-                  return (
-                    valid ||
-                    'Please enter a valid token ID, i.e. a number like 123'
-                  );
+            placeholder={decimalsLoadingText}
+            disabled={!isManualDecimalEntry}
+            {...register(`${prefix}.tokenDecimals`, {
+              validate: (x) => {
+                if (x === null || x === undefined || x === '') {
+                  return 'Please enter decimals';
                 }
-                // Not NFT token, thus valid
-                return true;
+                if (x === decimalsLoadingText) {
+                  return 'Please wait for the decimals to be loaded';
+                }
+                const valid = IntegerPattern.test(x);
+                return valid || 'Please enter decimals';
               },
             })}
           />
         </ErrorWrapper>
-      </div>
-      <ErrorWrapper
-        //Only show when decimals is Unknown
-        className={cn(
-          (address === 'custom' && tokenType === TokenType.ERC20) || 'hidden'
-        )}
-        name="tokenID"
-        error={errors?.tokenDecimals}
-      >
-        <Label
-          tooltip="The amount of decimals the token has. Automatically retrieved if applicable."
-          htmlFor="tokenDecimals"
-        >
-          Token decimals
-        </Label>
-        <Input
-          error={errors?.tokenID}
-          placeholder={decimalsLoadingText}
-          disabled={!isManualDecimalEntry}
-          {...register(`${prefix}.tokenDecimals`, {
-            validate: (x) => {
-              if (x === null || x === undefined || x === '') {
-                return 'Please enter decimals';
-              }
-              if (x === decimalsLoadingText) {
-                return 'Please wait for the decimals to be loaded';
-              }
-              const valid = IntegerPattern.test(x);
-              return valid || 'Please enter decimals';
-            },
-          })}
-        />
-      </ErrorWrapper>
+      )}
     </MainCard>
   );
 };
