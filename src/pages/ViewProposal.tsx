@@ -31,6 +31,7 @@ import {
   ConditionalButton,
   ConnectWalletWarning,
 } from '../components/ui/ConditionalButton';
+import { useState } from 'react';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -40,6 +41,7 @@ const ViewProposal = () => {
   const { totalVotingWeight } = useTotalVotingWeight({
     blockNumber: proposal?.data.parameters.snapshotBlock,
   });
+  const [isExecuting, setIsExecuting] = useState(false);
 
   const statusText = (status: ProposalStatus) => {
     if (!proposal) return '';
@@ -63,12 +65,12 @@ const ViewProposal = () => {
         description: 'Please try again later',
       });
 
+    setIsExecuting(true);
     toast.contractTransaction(() => proposal.Execute(), {
       error: 'Error executing proposal',
       success: 'Execution successful!',
-      onSuccess: () => {
-        refetch();
-      },
+      onSuccess: () => refetch(),
+      onFinish: () => setIsExecuting(false),
     });
   };
 

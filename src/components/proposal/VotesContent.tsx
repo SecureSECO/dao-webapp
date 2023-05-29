@@ -42,6 +42,7 @@ import {
   InsufficientRepWarning,
   Warning,
 } from '../ui/ConditionalButton';
+import { useState } from 'react';
 
 type VoteFormData = {
   vote_option: string;
@@ -123,6 +124,7 @@ const VotesContentActive = ({
 }) => {
   const { handleSubmit, watch, control } = useForm<VoteFormData>();
   const { isConnected, address } = useAccount();
+  const [isVoting, setIsVoting] = useState(false);
   const { getProposalVotingPower, votingPower } = useVotingPower({
     address,
   });
@@ -130,6 +132,7 @@ const VotesContentActive = ({
 
   const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
     try {
+      setIsVoting(true);
       // Fetch most recent voting power, to vote with all available rep
       const votingPower = await getProposalVotingPower(proposal);
       if (votingPower.lte(0)) {
@@ -146,9 +149,8 @@ const VotesContentActive = ({
         {
           error: 'Error submitting vote',
           success: 'Vote submitted!',
-          onSuccess: () => {
-            refetch();
-          },
+          onSuccess: () => refetch(),
+          onFinish: () => setIsVoting(false),
         }
       );
     } catch (e) {
@@ -157,6 +159,7 @@ const VotesContentActive = ({
         title: 'Error submitting vote',
         description: 'Unable to get voting power',
       });
+      setIsVoting(false);
     }
   };
 
@@ -203,7 +206,7 @@ const VotesContentActive = ({
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
       <div className="ml-6 flex flex-row items-center gap-x-4">
         <ConditionalButton
-          disabled={!userCanVote}
+          disabled={!userCanVote || isVoting}
           conditions={[
             {
               when: !isConnected,
