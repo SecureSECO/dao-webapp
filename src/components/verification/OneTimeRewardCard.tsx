@@ -64,6 +64,7 @@ const OneTimeRewardCard = ({
             amount={reward}
             tokenDecimals={TOKENS.rep.decimals}
             symbol={TOKENS.rep.symbol}
+            displayDecimals={0}
           />
         </strong>
       </Card>

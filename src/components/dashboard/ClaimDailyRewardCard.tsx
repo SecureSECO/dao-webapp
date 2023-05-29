@@ -45,6 +45,7 @@ export const ClaimDailyRewardCard = () => {
               amount={amountClaimable}
               tokenDecimals={TOKENS.rep.decimals}
               symbol={TOKENS.rep.symbol}
+              displayDecimals={0}
             />
           )}
         </strong>
