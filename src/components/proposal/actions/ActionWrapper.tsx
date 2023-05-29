@@ -46,7 +46,7 @@ const ActionWrapper = ({
         {iconNode}
         <p className="text-lg">{title}</p>
       </AccordionTrigger>
-      <AccordionContent className="space-y-4">
+      <AccordionContent className="space-y-4 pt-2">
         <p className="text-popover-foreground/80">{description}</p>
         {/* Only render a seperator if children were provided */}
         {children && (

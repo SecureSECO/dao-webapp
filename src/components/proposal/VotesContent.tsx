@@ -282,7 +282,7 @@ const VotesContentOption = ({
           </div>
           <Progress value={percentage} size="sm" />
         </AccordionTrigger>
-        <AccordionContent className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
+        <AccordionContent className="grid grid-cols-1 gap-x-4 gap-y-2 pt-2 sm:grid-cols-2">
           {filteredVotes.length > 0 ? (
             filteredVotes.map((vote) => (
               <div

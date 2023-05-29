@@ -45,6 +45,10 @@ export const useVotingPower = ({
   const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
   const [proposalVotingPower, setProposalVotingPower] =
     useState<BigNumber | null>(null);
+  // ID of the proposal to whicht he proposalVotingPower applies
+  const [proposalVotingPowerId, setProposalVotingPowerId] = useState<
+    number | null
+  >(null);
   const [minProposalVotingPower, setMinProposalVotingPower] =
     useState<BigNumber>(BigNumber.from(0));
   const [loading, setLoading] = useState<boolean>(true);
@@ -103,11 +107,12 @@ export const useVotingPower = ({
 
   // Update state variable for capped voting power
   const updateProposalVotingPower = async () => {
-    if (!client || !address || !proposal) return;
+    if (!proposal) return;
 
     try {
       const cappedBal = await getProposalVotingPower(proposal);
       setProposalVotingPower(cappedBal);
+      setProposalVotingPowerId(proposal.id);
     } catch (e) {
       console.error('Error fetching capped voting power', e);
     }
@@ -144,7 +149,7 @@ export const useVotingPower = ({
   }, [client]);
 
   useEffect(() => {
-    if (!proposal) return;
+    if (!proposal || proposal.id === proposalVotingPowerId) return;
     updateProposalVotingPower();
   }, [proposal]);
 

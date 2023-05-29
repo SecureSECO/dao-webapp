@@ -214,6 +214,9 @@ export const useProposal = ({
     No: false,
     Abstain: false,
   });
+  // ID of the proposal to which the canVote applies
+  // used to avoid unnecessary refetching
+  const [canVoteId, setCanVoteId] = useState<number | null>(null);
   const [votes, setVotes] = useState<AddressVotes[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -288,7 +291,9 @@ export const useProposal = ({
     };
 
     const checkCanVote = async () => {
-      if (!proposal || !proposalVotingPower) return;
+      // Check if proposal.id === canVoteId to avoid unnecessary refetching of the canVote data
+      if (!proposal || !proposalVotingPower || proposal.id === canVoteId)
+        return;
 
       try {
         const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
@@ -300,6 +305,7 @@ export const useProposal = ({
           No: canVoteData[2],
           Abstain: canVoteData[0],
         });
+        console.log(proposalVotingPower, canVoteData);
       } catch (e) {
         console.error('Error fetching canVote', e);
       }
