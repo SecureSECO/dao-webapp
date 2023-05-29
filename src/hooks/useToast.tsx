@@ -324,6 +324,8 @@ toast.contractTransaction = async (
     config.onFinish && config.onFinish();
   }
 
+  config.onFinish && config.onFinish();
+
   return id;
 };
 

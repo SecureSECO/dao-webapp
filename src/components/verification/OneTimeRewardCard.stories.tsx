@@ -22,7 +22,7 @@ export const Default: Story = {
   args: {
     reward: 100,
     claimReward() {
-      return Promise.resolve();
+      return Promise.resolve({} as any);
     },
     refetch() {
       return Promise.resolve();

@@ -75,10 +75,10 @@ export const useVerification = () => {
     providerId: string,
     proofSignature: string
   ) => {
-    if (!client) return;
+    if (!client) throw new Error('No client found');
 
     try {
-      await client.verification.Verify(
+      return await client.verification.Verify(
         addressToVerify,
         userHash,
         timestamp,
@@ -97,8 +97,8 @@ export const useVerification = () => {
    * @param providerId The id of the provider to unverify with
    */
   const unverify = async (providerId: string) => {
-    if (!client) return;
-    return client.verification.Unverify(providerId);
+    if (!client) throw new Error('No client found');
+    return await client.verification.Unverify(providerId);
   };
 
   /**
@@ -166,10 +166,10 @@ export const useVerification = () => {
    * Claims all the pending rewards for verifying
    */
   const claimReward = async () => {
-    if (!client) return;
+    if (!client) throw new Error('No client found');
     const oneTimeVerificationRewardFacet =
       await client.pure.IERC20OneTimeVerificationRewardFacet();
-    await oneTimeVerificationRewardFacet.claimVerificationRewardAll();
+    return await oneTimeVerificationRewardFacet.claimVerificationRewardAll();
   };
 
   /**
@@ -252,7 +252,9 @@ export const useVerification = () => {
 
     try {
       const facet = await client.pure.IERC20OneTimeVerificationRewardFacet();
-      const reward = await facet.tokensClaimableVerificationRewardAll();
+      const reward18 = await facet.tokensClaimableVerificationRewardAll();
+
+      const reward = reward18.div(BigNumber.from(10).pow(18));
 
       setReward(reward.toNumber());
     } catch (e: any) {

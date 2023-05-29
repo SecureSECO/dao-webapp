@@ -11,6 +11,7 @@ import Header from '@/src/components/ui/Header';
 import { Button } from '@/src/components/ui/Button';
 import { useState } from 'react';
 import { toast, useToast } from '@/src/hooks/useToast';
+import { ContractTransaction } from 'ethers';
 // import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 
 /**
@@ -22,7 +23,7 @@ const OneTimeRewardCard = ({
   refetch,
 }: {
   reward: number;
-  claimReward: () => Promise<void>;
+  claimReward: () => Promise<ContractTransaction>;
   refetch: () => void;
 }) => {
   const [isClaiming, setIsClaiming] = useState(false);
@@ -38,24 +39,21 @@ const OneTimeRewardCard = ({
         Claimable tokens: <strong>{reward}</strong>
       </p>
       <Button
+        disabled={isClaiming}
         onClick={() => {
           if (isClaiming) return;
 
           setIsClaiming(true);
-          const promise = claimReward();
-
-          toast.promise(promise, {
-            loading: 'Claiming reward...',
+          toast.contractTransaction(claimReward, {
             success: 'Successfully claimed reward!',
             error: (err: any) => ({
               title: 'Failed to claim reward',
               description: err.message,
             }),
-          });
-
-          promise.finally(() => {
-            setIsClaiming(false);
-            refetch();
+            onFinish() {
+              setIsClaiming(false);
+              refetch();
+            },
           });
         }}
       >
