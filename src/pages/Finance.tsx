@@ -31,7 +31,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../components/ui/Dropdown';
 import { ACTIONS } from '../lib/constants/actions';

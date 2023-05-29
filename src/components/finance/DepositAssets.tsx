@@ -8,8 +8,10 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { ContractTransactionToast, toast } from '@/src/hooks/useToast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { NumberPattern } from '@/src/lib/constants/patterns';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -17,10 +19,12 @@ import { HiChevronLeft } from 'react-icons/hi2';
 import {
   erc20ABI,
   useAccount,
+  useBalance,
   useContractWrite,
   useNetwork,
   usePrepareContractWrite,
-  useWaitForTransaction,
+  usePrepareSendTransaction,
+  useSendTransaction,
 } from 'wagmi';
 
 import Loading from '../icons/Loading';
@@ -45,21 +49,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/Select';
+import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 
-type Token = (typeof Tokens)[number];
 type DepositAssetsData = {
   token: Token;
   amount?: string;
 };
 type AddressString = `0x${string}`;
-type SendData = Record<Token, AddressString | undefined>;
+type TokenData =
+  | {
+      address: AddressString;
+      isNativeToken: boolean;
+      decimals: number;
+    }
+  | undefined;
 
+type Token = (typeof Tokens)[number];
+// All tokens (including native tokens)
+// NOTE: Currently, only tokens with exactly 18 decimals are supported
 const Tokens = ['Matic', 'SECOIN', 'Other'] as const;
-const tokenAddresses: SendData = {
-  Matic: '0x0000000000000000000000000000000000001010',
-  SECOIN: '0x...',
-  Other: undefined,
-};
 
 export const DepositAssets = () => {
   const {
@@ -69,47 +77,83 @@ export const DepositAssets = () => {
     formState: { errors },
     setError,
   } = useForm<DepositAssetsData>({});
-  const { daoAddress } = useDiamondSDKContext();
-  const { isConnected } = useAccount();
+  // Context
+  const { daoAddress, secoinAddress } = useDiamondSDKContext();
+  const { isConnected, address } = useAccount();
+  const { secoinBalance } = useSecoinBalance({ address });
+  const { data: maticData } = useBalance({ address });
   const { chain } = useNetwork();
 
+  // Creating 'tokens', the object displaying known tokens that can be deposited through this component, using ERC20 contract writes or native token transaction.
+  const secoin: TokenData = secoinAddress
+    ? {
+        address: secoinAddress as AddressString,
+        isNativeToken: false,
+        decimals: TOKENS.secoin.decimals,
+      }
+    : undefined;
+  const tokens: Record<Token, TokenData> = {
+    Matic: {
+      address: '0x0000000000000000000000000000000000001010',
+      isNativeToken: true,
+      decimals: PREFERRED_NETWORK_METADATA.nativeCurrency.decimals,
+    },
+    SECOIN: secoin,
+    Other: undefined,
+  };
+
+  // Adding watches + their derivatives
   const watchToken = useWatch({ control: control, name: 'token' });
-  const tokenAddress = tokenAddresses[watchToken];
+  const token = tokens[watchToken];
   const isKnownToken = watchToken !== undefined && watchToken !== 'Other';
 
   const watchAmount = useWatch({ control: control, name: 'amount' });
-  const amount = parseTokenAmount(watchAmount, 18);
+  const amount = parseTokenAmount(watchAmount, token?.decimals);
 
-  const debouncedTokenId = useDebounce(amount, 500);
-
+  // Hooks for non native tokens
+  const debouncedTokenId = useDebounce(
+    [amount ?? BigNumber.from(0), token?.address],
+    500
+  );
   const { config, error } = usePrepareContractWrite({
-    address: tokenAddress,
+    address: token?.address,
     abi: erc20ABI,
     functionName: 'transfer',
-    args: [daoAddress as AddressString, amount as BigNumber],
-    enabled: Boolean(debouncedTokenId),
+    args: [daoAddress as AddressString, amount ?? BigNumber.from(0)],
+    enabled: Boolean(debouncedTokenId) && !token?.isNativeToken,
   });
 
-  const { data: writeData, writeAsync } = useContractWrite(config);
+  const { writeAsync } = useContractWrite(config);
 
-  const { isLoading } = useWaitForTransaction({
-    hash: writeData?.hash,
-  });
+  // Hooks for native tokens
+  const { config: configNative, error: errorNative } =
+    usePrepareSendTransaction({
+      request: { to: daoAddress as string, value: amount ?? BigNumber.from(0) },
+      chainId: PREFERRED_NETWORK_METADATA.id,
+      enabled: Boolean(debouncedTokenId) && token?.isNativeToken,
+    });
 
+  const { sendTransactionAsync } = useSendTransaction(configNative);
+
+  // State for loading symbol during transaction
+  const [isSendingTransaction, setIsSendingTransaction] =
+    useState<boolean>(false);
+
+  // OnSubmit: First validate data, then send the transaction
   const onSubmit = (data: DepositAssetsData) => {
     //Can only send known tokens
     if (!isKnownToken || data.amount === undefined) {
       setError('root.deposit', {
         type: 'custom',
-        message: 'Error: can only deposit known token types',
+        message: 'You can only deposit known token types',
       });
       return;
     }
-    //Should not happen
-    if (tokenAddress === undefined) {
+    //Should not happen because submitting is not allowed for undefined tokens
+    if (token === undefined) {
       setError('root.deposit', {
         type: 'custom',
-        message: 'Error: can not deposit this type of token',
+        message: 'You cannnot deposit this type of token',
       });
       return;
     }
@@ -117,7 +161,7 @@ export const DepositAssets = () => {
     if (daoAddress === undefined) {
       setError('root.deposit', {
         type: 'custom',
-        message: "Error: can not determine DAO's address",
+        message: 'Could not determine DAO address',
       });
       return;
     }
@@ -125,30 +169,63 @@ export const DepositAssets = () => {
     if (!BigNumber.isBigNumber(amount)) {
       setError('root.deposit', {
         type: 'custom',
-        message: 'Error: the amount is not in the correct format',
+        message: 'Incorrect format for amount',
       });
       return;
     }
 
-    if (error !== null) {
-      setError('root.deposit', {
-        type: 'custom',
-        message: 'Error: can not create transaction',
-      });
-      console.log(error);
-      console.log(config);
-      return;
-    }
+    const toasterConfig: ContractTransactionToast = {
+      success: 'Deposit successful!',
+      error: 'Deposit failed',
+      onFinish: () => {
+        setIsSendingTransaction(false);
+      },
+    };
 
-    if (!writeAsync) {
-      setError('root.deposit', {
-        type: 'custom',
-        message: 'Error: can not create transaction',
-      });
-      return;
-    }
+    if (token.isNativeToken) {
+      if (errorNative !== null) {
+        setError('root.deposit', {
+          type: 'custom',
+          message: 'Could not create transaction',
+        });
+        console.log(error);
+        console.log(config);
+        return;
+      }
 
-    writeAsync();
+      if (!sendTransactionAsync) {
+        setError('root.deposit', {
+          type: 'custom',
+          message: 'Could not create transaction',
+        });
+        return;
+      }
+
+      // send transaction (Note that the toast will set the loading state to false)
+      setIsSendingTransaction(true);
+      toast.contractTransaction(() => sendTransactionAsync(), toasterConfig);
+    } else {
+      if (error !== null) {
+        setError('root.deposit', {
+          type: 'custom',
+          message: 'Could not create transaction',
+        });
+        console.log(error);
+        console.log(config);
+        return;
+      }
+
+      if (!writeAsync) {
+        setError('root.deposit', {
+          type: 'custom',
+          message: 'Could not create transaction',
+        });
+        return;
+      }
+      // send transaction (Note that the toast will set the loading state to false)
+      setIsSendingTransaction(true);
+      toast.contractTransaction(() => writeAsync(), toasterConfig);
+    }
 
     console.log(data);
   };
@@ -164,7 +241,7 @@ export const DepositAssets = () => {
         className="text-lg"
       />
       <Card className="space-y-4">
-        <Header className="">Depost assets</Header>
+        <Header className="">Deposit assets</Header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-y-2">
@@ -182,6 +259,7 @@ export const DepositAssets = () => {
                         defaultValue={value}
                         onValueChange={onChange}
                         name={name}
+                        disabled={isSendingTransaction}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select a token" />
@@ -224,15 +302,15 @@ export const DepositAssets = () => {
                   tooltip={`Amount of ${watchToken} to deposit`}
                   label="Amount"
                   error={errors.amount}
-                  disabled={!isKnownToken}
+                  disabled={!isKnownToken || isSendingTransaction}
                 />
               )}
             </div>
             {watchToken === 'Other' ? (
-              <div>
+              <div className="space-y-1">
                 <p className="">
-                  Copy the address or ENS below and use your wallet&apos;s send
-                  feature to send money to the DAO&apos;s treasury.
+                  Copy the address and use your wallet&apos;s send feature to
+                  send assets to the DAO&apos;s treasury.
                 </p>
                 <div className="flex flex-col gap-2 md:flex-row">
                   <Card variant="outline">
@@ -243,14 +321,14 @@ export const DepositAssets = () => {
                       address={daoAddress ?? ''}
                     />
                   </Card>
-                  <Card variant="outline">
+                  {/* <Card variant="outline">
                     <Address
                       showCopy={true}
                       hasLink={false}
                       maxLength={AddressLength.Full}
                       address={'ENS not yet supported'}
                     />
-                  </Card>
+                  </Card> */}
                 </div>
               </div>
             ) : (
@@ -258,8 +336,8 @@ export const DepositAssets = () => {
                 <div className="flex flex-row gap-x-2">
                   <ConditionalButton
                     label="Deposit assets"
-                    icon={isLoading ? Loading : null}
-                    disabled={isLoading || !isKnownToken}
+                    disabled={!isKnownToken || isSendingTransaction}
+                    icon={isSendingTransaction ? Loading : null}
                     conditions={[
                       {
                         when: !isConnected,
@@ -269,6 +347,31 @@ export const DepositAssets = () => {
                         when: chain?.id !== PREFERRED_NETWORK_METADATA.id,
                         content: (
                           <Warning> Switch network to deposit assets </Warning>
+                        ),
+                      },
+                      {
+                        when:
+                          watchToken === 'Matic' &&
+                          maticData !== undefined &&
+                          amount !== null &&
+                          amount.gt(maticData.value),
+                        content: (
+                          <Warning>
+                            You do not have enough {maticData?.symbol} to
+                            deposit
+                          </Warning>
+                        ),
+                      },
+                      {
+                        when:
+                          watchToken === 'SECOIN' &&
+                          amount !== null &&
+                          amount.gt(secoinBalance),
+                        content: (
+                          <Warning>
+                            You do not have enough {TOKENS.secoin.symbol} to
+                            deposit
+                          </Warning>
                         ),
                       },
                     ]}
