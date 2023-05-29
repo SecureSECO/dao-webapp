@@ -19,6 +19,7 @@ import { HiChevronLeft } from 'react-icons/hi2';
 import {
   erc20ABI,
   useAccount,
+  useBalance,
   useContractWrite,
   useNetwork,
   usePrepareContractWrite,
@@ -48,6 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/Select';
+import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 
 type DepositAssetsData = {
   token: Token;
@@ -77,7 +79,9 @@ export const DepositAssets = () => {
   } = useForm<DepositAssetsData>({});
   // Context
   const { daoAddress, secoinAddress } = useDiamondSDKContext();
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+  const { secoinBalance } = useSecoinBalance({ address });
+  const { data: maticData } = useBalance({ address });
   const { chain } = useNetwork();
 
   // Creating 'tokens', the object displaying known tokens that can be deposited through this component, using ERC20 contract writes or native token transaction.
@@ -303,10 +307,10 @@ export const DepositAssets = () => {
               )}
             </div>
             {watchToken === 'Other' ? (
-              <div>
+              <div className="space-y-1">
                 <p className="">
-                  Copy the address or ENS below and use your wallet&apos;s send
-                  feature to send money to the DAO&apos;s treasury.
+                  Copy the address and use your wallet&apos;s send feature to
+                  send assets to the DAO&apos;s treasury.
                 </p>
                 <div className="flex flex-col gap-2 md:flex-row">
                   <Card variant="outline">
@@ -317,14 +321,14 @@ export const DepositAssets = () => {
                       address={daoAddress ?? ''}
                     />
                   </Card>
-                  <Card variant="outline">
+                  {/* <Card variant="outline">
                     <Address
                       showCopy={true}
                       hasLink={false}
                       maxLength={AddressLength.Full}
                       address={'ENS not yet supported'}
                     />
-                  </Card>
+                  </Card> */}
                 </div>
               </div>
             ) : (
@@ -343,6 +347,31 @@ export const DepositAssets = () => {
                         when: chain?.id !== PREFERRED_NETWORK_METADATA.id,
                         content: (
                           <Warning> Switch network to deposit assets </Warning>
+                        ),
+                      },
+                      {
+                        when:
+                          watchToken === 'Matic' &&
+                          maticData !== undefined &&
+                          amount !== null &&
+                          amount.gt(maticData.value),
+                        content: (
+                          <Warning>
+                            You do not have enough {maticData?.symbol} to
+                            deposit
+                          </Warning>
+                        ),
+                      },
+                      {
+                        when:
+                          watchToken === 'SECOIN' &&
+                          amount !== null &&
+                          amount.gt(secoinBalance),
+                        content: (
+                          <Warning>
+                            You do not have enough {TOKENS.secoin.symbol} to
+                            deposit
+                          </Warning>
                         ),
                       },
                     ]}

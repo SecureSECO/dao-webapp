@@ -16,7 +16,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
-import { Contract, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { useSigner } from 'wagmi';
 
 type SDKContext = {
