@@ -8,7 +8,7 @@
 
 import WithdrawAction from '@/src/components/proposal/actions/WithdrawAction';
 import { Accordion } from '@/src/components/ui/Accordion';
-import { dummyWithdrawAction } from '@/src/hooks/useProposal';
+import { dummyWithdrawActions } from '@/src/hooks/useProposal';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -35,43 +35,56 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Required for BigInts to be serialized correctly
-// Taken from: https://stackoverflow.com/questions/65152373/typescript-serialize-bigint-in-json
-// @ts-ignore
-BigInt.prototype.toJSON = function () {
-  return this.toString();
+const decorators = [
+  (Story: any) => (
+    <Accordion type="single" collapsible>
+      <Story />
+    </Accordion>
+  ),
+];
+
+export const NativeToken: Story = {
+  args: {
+    value: 'first', // value is only for the accordion, unimportant
+    action: dummyWithdrawActions[0],
+  },
+  decorators,
 };
 
-export const Default: Story = {
+export const ERC20Token: Story = {
   args: {
-    value: 'first',
-    action: dummyWithdrawAction,
+    value: 'first', // value is only for the accordion, unimportant
+    action: dummyWithdrawActions[1],
   },
-  decorators: [
-    (Story) => (
-      <Accordion type="single" collapsible>
-        <Story />
-      </Accordion>
-    ),
-  ],
+  decorators,
+};
+
+export const ERC721Token: Story = {
+  args: {
+    value: 'first', // value is only for the accordion, unimportant
+    action: dummyWithdrawActions[2],
+  },
+  decorators,
+};
+
+export const ERC1155Token: Story = {
+  args: {
+    value: 'first', // value is only for the accordion, unimportant
+    action: dummyWithdrawActions[3],
+  },
+  decorators,
 };
 
 export const UnknownToken: Story = {
   args: {
     value: 'first',
     action: {
-      ...dummyWithdrawAction,
+      ...dummyWithdrawActions[1],
       params: {
-        ...dummyWithdrawAction.params,
-        _tokenAddress: '0x2222222222222222222222222222222222222222',
+        ...dummyWithdrawActions[1].params,
+        _contractAddress: '0x2222222222222222222222222222222222222222',
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <Accordion type="single" collapsible>
-        <Story />
-      </Accordion>
-    ),
-  ],
+  decorators,
 };

@@ -34,7 +34,7 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
   return (
     <ActionWrapper
       icon={FaGithub}
-      title="Merge Pull Request"
+      title="Merge pull request"
       description="Merge the specified pull request into the corresponding branch"
       {...props}
     >
