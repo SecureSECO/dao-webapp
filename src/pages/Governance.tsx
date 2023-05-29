@@ -88,7 +88,7 @@ const ProposalTabs = () => {
     useDummyData: false,
     status: currentTab,
     sorting,
-    order: order,
+    order,
   });
 
   return (

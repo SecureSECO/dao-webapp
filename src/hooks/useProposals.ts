@@ -37,7 +37,7 @@ const defaultProps: UseProposalsProps = {
   useDummyData: false,
   status: undefined,
   sorting: ProposalSorting.Creation,
-  order: SortingOrder.Desc,
+  order: SortingOrder.Asc,
   limit: undefined,
 };
 
@@ -77,11 +77,16 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
   };
 
   const fetchProposals = async (client: DiamondGovernanceClient) => {
+    console.log(
+      order,
+      order !== undefined ? SortingOrder[order] : 'Default (asc)'
+    );
+
     try {
       const daoProposals: Proposal[] | null = await client.sugar.GetProposals(
         status ? [status] : undefined,
         sorting,
-        order ?? SortingOrder.Desc
+        order === undefined ? SortingOrder.Asc : order
       );
 
       if (daoProposals) {

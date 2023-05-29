@@ -91,6 +91,7 @@ const ViewProposal = () => {
           <>
             <HeaderCard
               loading={loading}
+              className="max-h-96 overflow-y-auto"
               title={proposal?.metadata.title ?? 'Proposal not found'}
               aside={
                 <div className="flex flex-row-reverse items-center justify-between gap-y-4 sm:flex-col sm:items-end">
@@ -118,7 +119,7 @@ const ViewProposal = () => {
                   {proposal.metadata.body &&
                     proposal.metadata.body !== '<p></p>' && (
                       <div
-                        className="styled-editor-content"
+                        className="styled-editor-content w-full break-words"
                         dangerouslySetInnerHTML={{
                           __html: DOMPurify.sanitize(proposal.metadata.body),
                         }}
