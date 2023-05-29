@@ -76,14 +76,14 @@ export const DepositAssets = () => {
     setError,
   } = useForm<DepositAssetsData>({});
   // Context
-  const { daoAddress, secoinContractAddress } = useDiamondSDKContext();
+  const { daoAddress, secoinAddress } = useDiamondSDKContext();
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
 
   // Creating 'tokens', the object displaying known tokens that can be deposited through this component, using ERC20 contract writes or native token transaction.
-  const secoin: TokenData = secoinContractAddress
+  const secoin: TokenData = secoinAddress
     ? {
-        address: secoinContractAddress as AddressString,
+        address: secoinAddress as AddressString,
         isNativeToken: false,
         decimals: TOKENS.secoin.decimals,
       }
@@ -107,12 +107,15 @@ export const DepositAssets = () => {
   const amount = parseTokenAmount(watchAmount, token?.decimals);
 
   // Hooks for non native tokens
-  const debouncedTokenId = useDebounce([amount, token?.address], 500);
+  const debouncedTokenId = useDebounce(
+    [amount ?? BigNumber.from(0), token?.address],
+    500
+  );
   const { config, error } = usePrepareContractWrite({
     address: token?.address,
     abi: erc20ABI,
     functionName: 'transfer',
-    args: [daoAddress as AddressString, amount as BigNumber],
+    args: [daoAddress as AddressString, amount ?? BigNumber.from(0)],
     enabled: Boolean(debouncedTokenId) && !token?.isNativeToken,
   });
 
@@ -121,7 +124,7 @@ export const DepositAssets = () => {
   // Hooks for native tokens
   const { config: configNative, error: errorNative } =
     usePrepareSendTransaction({
-      request: { to: daoAddress as string, value: amount as BigNumber },
+      request: { to: daoAddress as string, value: amount ?? BigNumber.from(0) },
       chainId: PREFERRED_NETWORK_METADATA.id,
       enabled: Boolean(debouncedTokenId) && token?.isNativeToken,
     });
@@ -234,7 +237,7 @@ export const DepositAssets = () => {
         className="text-lg"
       />
       <Card className="space-y-4">
-        <Header className="">Depost assets</Header>
+        <Header className="">Deposit assets</Header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-y-2">

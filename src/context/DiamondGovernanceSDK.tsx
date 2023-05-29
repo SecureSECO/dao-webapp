@@ -22,7 +22,7 @@ import { useSigner } from 'wagmi';
 type SDKContext = {
   client?: DiamondGovernanceClient;
   daoAddress?: string;
-  secoinContractAddress?: string;
+  secoinAddress?: string;
 };
 
 const DiamondSDKContext = createContext<SDKContext>({});
@@ -33,9 +33,9 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     undefined
   );
   const [daoAddress, setDaoAddress] = useState<string | undefined>(undefined);
-  const [secoinContractAddress, setSecoinContractAddress] = useState<
-    string | undefined
-  >(undefined);
+  const [secoinAddress, setSecoinAddress] = useState<string | undefined>(
+    undefined
+  );
 
   const signer = useSigner().data || undefined;
 
@@ -67,17 +67,17 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
       setDaoAddress(daoAddressData);
     };
 
-    const getSecoinContractAddress = async () => {
+    const getSecoinAddress = async () => {
       if (!client) return;
       const IChangeableTokenContract =
         await client.pure.IChangeableTokenContract();
       const monetaryTokenContractAddress =
         await IChangeableTokenContract.getTokenContractAddress();
-      setSecoinContractAddress(monetaryTokenContractAddress);
+      setSecoinAddress(monetaryTokenContractAddress);
     };
 
     getDaoAddress();
-    getSecoinContractAddress();
+    getSecoinAddress();
   }, [client]);
 
   return (
@@ -85,7 +85,7 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
       value={{
         client,
         daoAddress,
-        secoinContractAddress,
+        secoinAddress,
       }}
     >
       {children}
