@@ -97,7 +97,7 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
         daoMembers.sort((a, b) => {
           if (a.bal === null) return 1;
           if (b.bal === null) return -1;
-          return b.bal.sub(a.bal).toNumber();
+          return b.bal.gt(a.bal) ? 1 : b.bal.lt(a.bal) ? -1 : 0;
         });
         // If a limit is set, only return that many members (with the highest balance)
         if (limit) setMembers(daoMembers.splice(0, limit));

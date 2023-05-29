@@ -35,7 +35,7 @@ import {
   HiUserGroup,
 } from 'react-icons/hi2';
 
-import { ClaimDailyReward } from '../components/dashboard/ClaimDailyReward';
+import { ClaimDailyRewardCard } from '../components/dashboard/ClaimDailyRewardCard';
 
 const Dashboard = () => {
   const { dao, loading: daoLoading, error: daoError } = useDao();
@@ -72,7 +72,6 @@ const Dashboard = () => {
     );
   }
 
-  const currentNetwork = PREFERRED_NETWORK;
   const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
 
   return (
@@ -162,7 +161,7 @@ const Dashboard = () => {
       {/* div containing the right column of the dashboard */}
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
         {/* Card containing the option to claim daily rewards*/}
-        <ClaimDailyReward />
+        <ClaimDailyRewardCard />
 
         {/* Card containing the latest dao transfers */}
         <MainCard

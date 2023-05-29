@@ -55,7 +55,7 @@ export const useVerification = () => {
   const [verificationHistory, setVerificationHistory] = useState<
     VerificationHistory[]
   >([]);
-  const [reward, setReward] = useState<number>(0);
+  const [reward, setReward] = useState<BigNumber | null>(null);
 
   const { client } = useDiamondSDKContext();
   const { address } = useAccount();
@@ -252,11 +252,8 @@ export const useVerification = () => {
 
     try {
       const facet = await client.pure.IERC20OneTimeVerificationRewardFacet();
-      const reward18 = await facet.tokensClaimableVerificationRewardAll();
-
-      const reward = reward18.div(BigNumber.from(10).pow(18));
-
-      setReward(reward.toNumber());
+      const _reward = await facet.tokensClaimableVerificationRewardAll();
+      setReward(_reward);
     } catch (e: any) {
       console.error(e);
       setError(e.message);

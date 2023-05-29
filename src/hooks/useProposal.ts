@@ -288,7 +288,7 @@ export const useProposal = ({
     };
 
     const checkCanVote = async () => {
-      if (!proposal || !address || !client || !proposalVotingPower) return;
+      if (!proposal || !proposalVotingPower) return;
 
       try {
         const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
