@@ -44,7 +44,7 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     // All operations that actually require a signer should be blocked anwyways
     if (!signer) {
       let jsonRpcProvider = new ethers.providers.JsonRpcProvider(
-        'https://rpc.ankr.com/polygon_mumbai',
+        PREFERRED_NETWORK_METADATA.rpc,
         {
           chainId: PREFERRED_NETWORK_METADATA.id,
           name: PREFERRED_NETWORK_METADATA.name,
