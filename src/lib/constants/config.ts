@@ -7,7 +7,7 @@
  */
 
 export const CONFIG = {
-  VERIFICATION_API_URL: 'http://localhost:43210/api',
+  VERIFICATION_API_URL: 'https://securesecodao.science.uu.nl/verification_api',
   SEARCHSECO_API_URL: 'http://localhost:25566/api',
   DIAMOND_ADDRESS: '0xCD9608070400B3bbCCc08E61F398fcB6D6E61CEC',
   PREFERRED_NETWORK_ID: 80001,

@@ -75,17 +75,16 @@ export const useVerification = () => {
     providerId: string,
     proofSignature: string
   ) => {
-    if (!client) return;
+    if (!client) throw new Error('No client found');
 
     try {
-      const tx = await client.verification.Verify(
+      return await client.verification.Verify(
         addressToVerify,
         userHash,
         timestamp,
         providerId,
         proofSignature
       );
-      await tx.wait();
     } catch (e: any) {
       console.error(e);
       setError(e.message);
@@ -98,9 +97,8 @@ export const useVerification = () => {
    * @param providerId The id of the provider to unverify with
    */
   const unverify = async (providerId: string) => {
-    if (!client) return;
-    const tx = await client.verification.Unverify(providerId);
-    await tx.wait();
+    if (!client) throw new Error('No client found');
+    return await client.verification.Unverify(providerId);
   };
 
   /**
@@ -168,12 +166,10 @@ export const useVerification = () => {
    * Claims all the pending rewards for verifying
    */
   const claimReward = async () => {
-    if (!client) return;
+    if (!client) throw new Error('No client found');
     const oneTimeVerificationRewardFacet =
       await client.pure.IERC20OneTimeVerificationRewardFacet();
-    const tx =
-      await oneTimeVerificationRewardFacet.claimVerificationRewardAll();
-    await tx.wait();
+    return await oneTimeVerificationRewardFacet.claimVerificationRewardAll();
   };
 
   /**

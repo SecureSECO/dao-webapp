@@ -34,6 +34,7 @@ import {
 } from '@/src/hooks/useVerification';
 import { toast, useToast } from '@/src/hooks/useToast';
 import { availableStamps } from '@/src/pages/Verification';
+import { ContractTransaction } from 'ethers';
 
 /**
  * @returns A Card element containing information about a previous verification
@@ -80,9 +81,9 @@ const PendingVerificationCard = ({
 
   /**
    * Actually makes a write call to the contract to verify the address
-   * @returns {Promise<void>} Promise that resolves when the verification settles
+   * @returns {Promise<ContractTransaction>} Promise that resolves when the verification settles
    */
-  const verify = async (): Promise<void> => {
+  const verify = async (): Promise<ContractTransaction> => {
     // Check if verification is still valid
     if (timeLeft <= 0) {
       setPendingVerifications(
@@ -95,15 +96,12 @@ const PendingVerificationCard = ({
 
     setIsBusy(true);
 
-    await sdkVerify(addressToVerify, hash, Number(timestamp), providerId, sig);
-    setIsSuccess(true);
-    refetch();
-
-    // Remove from pendingVerifications
-    setPendingVerifications(
-      pendingVerifications.filter(
-        (pendingVerification) => pendingVerification.hash !== hash
-      )
+    return await sdkVerify(
+      addressToVerify,
+      hash,
+      Number(timestamp),
+      providerId,
+      sig
     );
   };
 
@@ -157,14 +155,24 @@ const PendingVerificationCard = ({
       <div className="flex items-center gap-x-2">
         <Button
           onClick={() => {
-            toast.promise(verify(), {
-              loading: 'Verifying, please wait...',
+            toast.contractTransaction(verify, {
               success: 'Successfully verified!',
               error: (e) => ({
                 title: 'Verification failed',
               }),
+              onSuccess: () => {
+                setIsSuccess(true);
+                // Remove from pendingVerifications
+                setPendingVerifications(
+                  pendingVerifications.filter(
+                    (pendingVerification) => pendingVerification.hash !== hash
+                  )
+                );
+              },
               onFinish() {
                 setIsBusy(false);
+
+                refetch();
               },
             });
           }}

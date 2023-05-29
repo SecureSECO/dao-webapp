@@ -316,6 +316,8 @@ toast.contractTransaction = async (
     toast.error(promisePropToToast(config.error, e), id);
   }
 
+  config.onFinish && config.onFinish();
+
   return id;
 };
 
