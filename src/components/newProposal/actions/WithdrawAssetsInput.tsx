@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   ActionFormContext,
   ActionFormError,
@@ -119,8 +119,10 @@ export const WithdrawAssetsInput = () => {
 
   //Shadow register for daoAddress.
   const { daoAddress } = useDiamondSDKContext();
-  register(`${prefix}.daoAddress`);
-  setValue(`${prefix}.daoAddress`, daoAddress);
+  useEffect(() => {
+    register(`${prefix}.daoAddress`);
+    setValue(`${prefix}.daoAddress`, daoAddress);
+  }, []);
 
   const address = useWatch({ control, name: `${prefix}.tokenAddress` });
   const tokenType = useWatch({ control, name: `${prefix}.tokenType` });
@@ -141,7 +143,7 @@ export const WithdrawAssetsInput = () => {
       setValue(`${prefix}.tokenDecimals`, tokenInfo.decimals.toString());
     } else {
       setIsManualDecimalEntry(true);
-      setValue(`${prefix}.tokenDecimals`, 'Please enter decimals');
+      setValue(`${prefix}.tokenDecimals`, '');
     }
   };
 
@@ -201,15 +203,11 @@ export const WithdrawAssetsInput = () => {
             render={({ field: { onChange, name, value } }) => (
               <Select
                 onValueChange={(v) => {
-                  console.log(v);
                   onChange(v);
                   let token = undefined;
                   if (v && v !== 'custom') {
                     token = filteredDaoBalances.find((x) => x.address === v);
-                    if (token) {
-                      console.log(token);
-                      setValue(`${prefix}.tokenType`, token.type);
-                    }
+                    if (token) setValue(`${prefix}.tokenType`, token.type);
                   }
 
                   // Set the token decimals
@@ -366,7 +364,8 @@ export const WithdrawAssetsInput = () => {
                     );
                   }
                 },
-                onChange: () => getERC20Decimals(),
+                onChange: () =>
+                  tokenType !== TokenType.ERC721 && getERC20Decimals(),
               })}
             />
           </ErrorWrapper>
@@ -403,14 +402,18 @@ export const WithdrawAssetsInput = () => {
       {address === 'custom' && tokenType === TokenType.ERC20 && (
         <ErrorWrapper name="tokenID" error={errors?.tokenDecimals}>
           <Label
-            tooltip="The amount of decimals the token has. Automatically retrieved when possible."
+            tooltip="Decimals for this token. Automatically retrieved when possible."
             htmlFor="tokenDecimals"
           >
             Token decimals
           </Label>
           <Input
             error={errors?.tokenID}
-            placeholder={decimalsLoadingText}
+            placeholder={
+              isManualDecimalEntry
+                ? 'Please enter decimals'
+                : decimalsLoadingText
+            }
             disabled={!isManualDecimalEntry}
             {...register(`${prefix}.tokenDecimals`, {
               validate: (x) => {
