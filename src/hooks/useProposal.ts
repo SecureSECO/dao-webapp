@@ -305,7 +305,7 @@ export const useProposal = ({
           No: canVoteData[2],
           Abstain: canVoteData[0],
         });
-        console.log(proposalVotingPower, canVoteData);
+        setCanVoteId(proposal.id);
       } catch (e) {
         console.error('Error fetching canVote', e);
       }
