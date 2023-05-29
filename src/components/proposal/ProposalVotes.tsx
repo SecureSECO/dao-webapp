@@ -72,7 +72,9 @@ const getCategories = (
       items: [
         {
           label: 'Support threshold',
-          value: `${proposal.data.parameters.supportThreshold * 100}%`,
+          value: `${
+            (proposal.data.parameters.supportThreshold / 10 ** 6) * 100
+          }%`,
         },
         {
           label: 'Minimum participation',

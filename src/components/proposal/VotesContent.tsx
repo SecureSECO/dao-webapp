@@ -40,6 +40,7 @@ import {
   ConditionalButton,
   ConnectWalletWarning,
   InsufficientRepWarning,
+  Warning,
 } from '../ui/ConditionalButton';
 
 type VoteFormData = {
@@ -122,7 +123,10 @@ const VotesContentActive = ({
 }) => {
   const { handleSubmit, watch, control } = useForm<VoteFormData>();
   const { isConnected, address } = useAccount();
-  const { getProposalVotingPower, votingPower } = useVotingPower({ address });
+  const { getProposalVotingPower, votingPower } = useVotingPower({
+    address,
+  });
+  const hasVoted = votes.some((v) => v.address === address);
 
   const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
     try {
@@ -209,10 +213,16 @@ const VotesContentActive = ({
               when: votingPower.lte(0),
               content: <InsufficientRepWarning action="to vote" />,
             },
+            {
+              when: hasVoted,
+              content: (
+                <Warning>You have already voted on this proposal</Warning>
+              ),
+            },
           ]}
           type="submit"
         >
-          {!userCanVote && isConnected && votingPower.gt(0) ? (
+          {hasVoted && isConnected && votingPower.gt(0) ? (
             'Vote submitted'
           ) : (
             <span className="ml-1 inline-block ">
