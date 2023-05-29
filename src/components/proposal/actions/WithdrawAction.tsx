@@ -23,11 +23,19 @@ import { useEffect, useState } from 'react';
 import { HiArrowRight, HiBanknotes } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';
 
+/**
+ * Interface for a withdraw assets action.
+ * The exact parameters depend on the type of token that is being withdrawn.
+ * See file /src/lib/constants/actions.tsx for the different types of tokens and their parameters.
+ */
 export interface ProposalWithdrawAction extends Action {
   params: {
-    _amount: BigNumber;
-    _tokenAddress: string;
+    _from?: string;
     _to: string;
+    _value?: BigNumber; // In case of NATIVE token
+    _amount?: BigNumber;
+    _contractAddress?: string;
+    _tokenId?: BigNumber; // In case of ERC721 or ERC1155
   };
 }
 
@@ -47,17 +55,21 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
     chainId: CONFIG.PREFERRED_NETWORK_ID,
   });
 
+  // If _value is present in params, the token being withdrawn is the native token
+  const isNative = !!action.params._value;
+
   useEffect(() => {
     async function fetchTokenInfo() {
       const fetchedTokenInfo = await getTokenInfo(
-        action.params._tokenAddress,
+        action.params._contractAddress,
         provider,
-        PREFERRED_NETWORK_METADATA.nativeCurrency
+        PREFERRED_NETWORK_METADATA.nativeCurrency,
+        action.params._tokenId ? 'erc721' : 'erc20'
       );
       setTokenInfo(fetchedTokenInfo);
     }
 
-    if (provider) {
+    if (provider && !isNative) {
       fetchTokenInfo();
     }
   }, [action]);
@@ -76,16 +88,25 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
           className="flex flex-row items-center justify-between"
         >
           <p className="text-xl font-medium leading-9">
-            {tokenInfo?.name ?? 'Unknown token'}
+            {isNative
+              ? PREFERRED_NETWORK_METADATA.nativeCurrency.name
+              : tokenInfo?.name ?? 'Unknown token'}
           </p>
           <p className="text-base text-popover-foreground/80">
-            {tokenInfo?.decimals
+            {isNative || tokenInfo?.decimals !== undefined
               ? toAbbreviatedTokenAmount({
-                  value: action.params._amount,
-                  tokenDecimals: tokenInfo.decimals,
+                  value: isNative
+                    ? action.params._value
+                    : action.params._amount ?? BigNumber.from(1),
+                  tokenDecimals:
+                    tokenInfo?.decimals ??
+                    PREFERRED_NETWORK_METADATA.nativeCurrency.decimals,
+                  displayDecimals: action.params._tokenId ? 0 : 2, // Round to integer for ERC721/ERC1155
                 })
               : '?'}{' '}
-            {tokenInfo?.symbol}
+            {isNative
+              ? PREFERRED_NETWORK_METADATA.nativeCurrency.symbol
+              : tokenInfo?.symbol}
           </p>
         </Card>
         <div className="flex flex-row items-center justify-between gap-x-2">

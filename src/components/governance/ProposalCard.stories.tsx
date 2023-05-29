@@ -13,7 +13,7 @@ import {
   dummyMergeAction,
   dummyMintAction,
   dummyProposal,
-  dummyWithdrawAction,
+  dummyWithdrawActions,
 } from '@/src/hooks/useProposal';
 import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import { add, sub } from 'date-fns';
@@ -104,7 +104,7 @@ export const WithActions: Story = {
       endDate: sub(new Date(), { days: 1 }),
       actions: [
         dummyMintAction,
-        dummyWithdrawAction,
+        ...dummyWithdrawActions,
         dummyChangeParamsAction,
         dummyMergeAction,
       ],
