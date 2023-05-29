@@ -56,7 +56,7 @@ export const useVotingSettings = (
 
     try {
       const proposalFacet = await client?.pure.IPartialVotingProposalFacet();
-      const minDurationData = await proposalFacet.minDuration();
+      const minDurationData = await proposalFacet.getMinDuration();
       setLoading(false);
       setData({ minDuration: minDurationData.toNumber() });
     } catch (e) {
