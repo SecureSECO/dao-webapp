@@ -6,31 +6,30 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
 import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
+import CategoryList from '@/src/components/ui/CategoryList';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { toast } from '@/src/hooks/useToast';
+import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import { anyNullOrUndefined } from '@/src/lib/utils';
+import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
 import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { add, format } from 'date-fns';
 import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import CategoryList from '@/src/components/ui/CategoryList';
-import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useNavigate } from 'react-router';
-import { Provider } from '@wagmi/core';
-import { useProvider } from 'wagmi';
-import { useEffect, useState } from 'react';
-import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
-import { Action } from '@plopmenz/diamond-governance-sdk';
-import { toast } from '@/src/hooks/useToast';
+
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
 
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
@@ -38,14 +37,11 @@ import { toast } from '@/src/hooks/useToast';
  * @returns A list of corresponding Action objects
  */
 const parseActionInputs = async (
-  actions: ProposalFormActionData[],
-  provider: Provider
+  actions: ProposalFormActionData[]
 ): Promise<Action[]> => {
   const res: Action[] = [];
   const parsed = await Promise.all(
-    actions.map((action) =>
-      ACTIONS[action.name].parseInput(action as any, provider)
-    )
+    actions.map((action) => ACTIONS[action.name].parseInput(action as any))
   );
   parsed.forEach((action) => action && res.push(action));
 
@@ -94,14 +90,11 @@ export const Confirmation = () => {
   const [actions, setActions] = useState<Action[]>([]);
   const { client } = useDiamondSDKContext();
   const navigate = useNavigate();
-  const provider = useProvider();
 
   // Maps the action form iputs to Action interface
   useEffect(() => {
     if (dataStep3)
-      parseActionInputs(dataStep3.actions, provider).then((res) =>
-        setActions(res)
-      );
+      parseActionInputs(dataStep3.actions).then((res) => setActions(res));
   }, [dataStep3]);
 
   const {
@@ -130,7 +123,7 @@ export const Confirmation = () => {
         description: 'Some data appears to be missing',
       });
 
-    const parsedActions = await parseActionInputs(dataStep3.actions, provider);
+    const parsedActions = await parseActionInputs(dataStep3.actions);
 
     // Send proposal to SDK
     toast.contractTransaction(

@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
-
-import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
 import { useEffect, useState } from 'react';
+import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
-import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
+import { constants } from 'ethers';
 
 export type UseDaoBalanceData = {
   daoBalances: DaoBalance[] | null;
@@ -47,7 +47,7 @@ export const useDaoBalance = (
   const [error, setError] = useState<string | null>(null);
 
   const { client } = useAragonSDKContext();
-  const { client: diamondClient } = useDiamondSDKContext();
+  const { client: diamondClient, daoAddress } = useDiamondSDKContext();
 
   const fetchDaoBalance = async (client: Client) => {
     if (!diamondClient) {
@@ -55,19 +55,19 @@ export const useDaoBalance = (
       setError('No DiamondGovernanceSDK client found');
       return;
     }
+    if (!daoAddress) {
+      setLoading(false);
+      setError('No DAO address found');
+      return;
+    }
 
     try {
-      // Fetch DAO address from Diamond governance facet
-      const daoRef = await diamondClient?.pure.IDAOReferenceFacet();
-      const daoAddress = await daoRef.dao();
       const daoBal: AssetBalance[] | null = await client.methods.getDaoBalances(
         { daoAddressOrEns: daoAddress }
       );
       let balances: DaoBalance[] = [];
       if (daoBal != null) {
-        balances = daoBal.map((dBal) =>
-          assetBalanceToDaoBalance(dBal, daoAddress)
-        );
+        balances = daoBal.map((dBal) => assetBalanceToDaoBalance(dBal));
       }
       setDaoBalances(balances);
 
@@ -105,12 +105,11 @@ export const useDaoBalance = (
       symbol: 'TOK2',
       updateDate: new Date(2023, 2, 10),
     };
-    const daoAddress = '0x16905fC451f755B1893c0BEcC4C179eB010fe070';
 
     setDaoBalances([
-      assetBalanceToDaoBalance(nativeBal, daoAddress),
-      assetBalanceToDaoBalance(erc20Bal, daoAddress),
-      assetBalanceToDaoBalance(erc721Bal, daoAddress),
+      assetBalanceToDaoBalance(nativeBal),
+      assetBalanceToDaoBalance(erc20Bal),
+      assetBalanceToDaoBalance(erc721Bal),
     ]);
   };
 
@@ -127,10 +126,7 @@ export const useDaoBalance = (
   };
 };
 
-function assetBalanceToDaoBalance(
-  assetBalance: AssetBalance,
-  daoAddress: string
-): DaoBalance {
+function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
   const x = assetBalance as any;
   let result = {
     type: assetBalance.type,
@@ -146,7 +142,7 @@ function assetBalanceToDaoBalance(
       // eslint-disable-next-line no-case-declarations
       const metadata = PREFERRED_NETWORK_METADATA;
       result.decimals = metadata.nativeCurrency.decimals;
-      result.address = daoAddress;
+      result.address = constants.AddressZero;
       result.name = metadata.nativeCurrency.name;
       result.symbol = metadata.nativeCurrency.symbol;
       break;

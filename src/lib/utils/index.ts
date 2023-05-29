@@ -125,3 +125,7 @@ export function throwIfNullOrUndefined<T>(value: T | null | undefined): T {
   }
   return value;
 }
+
+export function assertUnreachable(x: never): never {
+  throw new Error('Reached a state that was asserted to be unreachable');
+}
