@@ -19,6 +19,7 @@ import {
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
+
 import {
   Controller,
   FieldErrors,
