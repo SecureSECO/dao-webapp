@@ -347,9 +347,10 @@ export const DepositAssets = () => {
                       },
                       {
                         when:
-                          watchToken === 'SECOIN' &&
-                          amount !== null &&
-                          amount.gt(secoinBalance),
+                          !secoinBalance ||
+                          (watchToken === 'SECOIN' &&
+                            amount !== null &&
+                            amount.gt(secoinBalance)),
                         content: (
                           <Warning>
                             You do not have enough {TOKENS.secoin.symbol} to
