@@ -246,7 +246,9 @@ export const useProposal = ({
       }
     } catch (e) {
       console.error(e);
-      setError('An error occurred');
+      if (e instanceof Error && e.message === 'Invalid id')
+        setError('Proposal not found');
+      else setError('An error occurred');
       setLoading(false);
     }
   };
