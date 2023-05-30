@@ -7,10 +7,11 @@
  */
 
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { getErrorMessage } from '@/src/lib/utils';
+import { CONFIG } from '@/src/lib/constants/config';
 import { Proposal } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
+import { useBalance } from 'wagmi';
 
 export type UseVotingPowerData = {
   loading: boolean;
@@ -21,7 +22,6 @@ export type UseVotingPowerData = {
   proposalVotingPower: BigNumber | null;
   // Minimum voting power required to create a proposal
   minProposalVotingPower: BigNumber;
-  getVotingPower: () => Promise<BigNumber>;
   getProposalVotingPower: (proposal: Proposal) => Promise<BigNumber>;
   refetch: () => void;
 };
@@ -29,7 +29,6 @@ export type UseVotingPowerData = {
 export type UseVotingPowerProps = {
   address: string | undefined;
   proposal?: Proposal;
-  useDummyData?: boolean;
 };
 
 /**
@@ -40,9 +39,7 @@ export type UseVotingPowerProps = {
 export const useVotingPower = ({
   address,
   proposal,
-  useDummyData = false,
 }: UseVotingPowerProps): UseVotingPowerData => {
-  const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
   const [proposalVotingPower, setProposalVotingPower] =
     useState<BigNumber | null>(null);
   // ID of the proposal to which the proposalVotingPower applies
@@ -51,21 +48,28 @@ export const useVotingPower = ({
   >(null);
   const [minProposalVotingPower, setMinProposalVotingPower] =
     useState<BigNumber>(BigNumber.from(0));
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const { client } = useDiamondSDKContext();
+  const {
+    data: repData,
+    error: repError,
+    isLoading: repLoading,
+    refetch,
+  } = useBalance({
+    address: address as `0x${string}` | undefined,
+    token: CONFIG.DIAMOND_ADDRESS as `0x${string}` | undefined,
+  });
 
   /**
    * Fetches the voting power of an address through the Diamond Governance SDK
    * @returns Voting power of given wallet address
    */
-  const getVotingPower = async (): Promise<BigNumber> => {
-    if (!client || !address) throw new Error('Client or address not set');
+  // const getVotingPower = async (): Promise<BigNumber> => {
+  //   if (!client || !address) throw new Error('Client or address not set');
 
-    const governance = await client.pure.IERC20();
-    const repBalance = await governance.balanceOf(address);
-    return repBalance;
-  };
+  //   const governance = await client.pure.IERC20();
+  //   const repBalance = await governance.balanceOf(address);
+  //   return repBalance;
+  // };
 
   /**
    * Fetches the voting power of an address at the time of proposal creation through the Diamond Governance SDK.
@@ -92,18 +96,18 @@ export const useVotingPower = ({
   };
 
   // Update state variable for voting power
-  const updateVotingPower = async () => {
-    if (!client || !address) return;
+  // const updateVotingPower = async () => {
+  //   if (!client || !address) return;
 
-    try {
-      const repBalance = await getVotingPower();
-      setVotingPower(repBalance);
-    } catch (e) {
-      console.error('Error fetching voting power', e);
-      setError(getErrorMessage(e));
-    }
-    setLoading(false);
-  };
+  //   try {
+  //     const repBalance = await getVotingPower();
+  //     setVotingPower(repBalance);
+  //   } catch (e) {
+  //     console.error('Error fetching voting power', e);
+  //     setError(getErrorMessage(e));
+  //   }
+  //   setLoading(false);
+  // };
 
   // Update state variable for capped voting power
   const updateProposalVotingPower = async () => {
@@ -123,29 +127,17 @@ export const useVotingPower = ({
     if (!client) return;
 
     try {
-      const partialVoting = await client.pure.IPartialVotingProposalFacet();
-      const minVotingPowerData =
-        await partialVoting.getMinProposerVotingPower();
+      const facet = await client.pure.IPartialVotingProposalFacet();
+      const minVotingPowerData = await facet.getMinProposerVotingPower();
       setMinProposalVotingPower(minVotingPowerData);
     } catch (e) {
       console.error('Error fetching min proposal voting power', e);
     }
   };
 
-  //** Set dummy data for development without querying SDK */
-  const setDummyData = () => {
-    setLoading(false);
-    setError(null);
-    setVotingPower(BigNumber.from(0));
-  };
-
   useEffect(() => {
-    if (useDummyData) return setDummyData();
-    updateVotingPower();
     updateMinProposalVotingPower();
-    const id = setInterval(() => updateVotingPower(), 60000);
-    return () => clearInterval(id);
-  }, [client]);
+  }, [client, repData]);
 
   useEffect(() => {
     if (!proposal || proposal.id === proposalVotingPowerId) return;
@@ -153,14 +145,13 @@ export const useVotingPower = ({
   }, [proposal]);
 
   return {
-    loading,
-    error,
-    votingPower,
+    loading: repLoading,
+    error: repError?.message || '',
+    votingPower: repData?.value || BigNumber.from(0),
     proposalVotingPower,
     minProposalVotingPower,
-    getVotingPower,
     getProposalVotingPower,
     // Only allow refetching if not using dummy data
-    refetch: () => (!useDummyData ? updateVotingPower() : void 0),
+    refetch,
   };
 };

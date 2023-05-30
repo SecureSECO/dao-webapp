@@ -22,7 +22,8 @@ const UserBalances = () => {
     address,
   });
 
-  const showBalances = isConnected && !repLoading && !secoinLoading;
+  const showBalances =
+    isConnected && !repLoading && !secoinLoading && secoinBalance;
 
   return showBalances ? (
     <div className="flex flex-col leading-5">

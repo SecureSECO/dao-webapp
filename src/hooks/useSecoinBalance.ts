@@ -8,13 +8,12 @@
 
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { BigNumber } from 'ethers';
-import { useEffect } from 'react';
 import { useBalance } from 'wagmi';
 
 export type UseVotingPowerData = {
   loading: boolean;
   error: string | null;
-  secoinBalance: BigNumber;
+  secoinBalance: BigNumber | undefined;
 };
 
 export type UseVotingPowerProps = {
@@ -39,6 +38,6 @@ export const useSecoinBalance = ({
   return {
     loading: isLoading,
     error: error?.message ?? null,
-    secoinBalance: !address || !data ? BigNumber.from(0) : data.value,
+    secoinBalance: !secoinAddress ? undefined : data?.value,
   };
 };
