@@ -20,7 +20,7 @@ import {
 import { Card } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
 import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
-import DOMPurify from "dompurify";
+import DOMPurify from 'dompurify';
 
 export interface ProposalResourcesProps
   extends Omit<MainCardProps, 'icon' | 'header'> {
@@ -39,15 +39,14 @@ export const ProposalResources = ({
   className,
   ...props
 }: ProposalResourcesProps) => {
-
-  const sanitizeHref = (v:string) => {
+  const sanitizeHref = (v: string) => {
     const regex = /^<a href="(.+)"><\/a>$/;
     const clean = DOMPurify.sanitize(`<a href="${v}"></a>`);
     const matches = regex.exec(clean);
     //matches: [<a href="example.com"></a>, example.com]
     //Or in case of failure: matches: null.
     return matches && matches.length >= 1 ? matches[1] : '';
-  }
+  };
 
   return (
     <MainCard
