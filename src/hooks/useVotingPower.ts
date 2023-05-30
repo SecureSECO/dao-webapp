@@ -101,8 +101,8 @@ export const useVotingPower = ({
     } catch (e) {
       console.error('Error fetching voting power', e);
       setError(getErrorMessage(e));
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   // Update state variable for capped voting power
@@ -141,7 +141,6 @@ export const useVotingPower = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (client) setLoading(true);
     updateVotingPower();
     updateMinProposalVotingPower();
     const id = setInterval(() => updateVotingPower(), 60000);

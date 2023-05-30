@@ -11,7 +11,6 @@
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 import { toast } from '@/src/hooks/useToast';
@@ -105,48 +104,44 @@ export const Address: React.FC<AddressProps> = ({
         />
       )}
       <div className="flex items-center">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild className="rounded-sm">
-              {hasLink ? (
-                <a
-                  href={blockExplorer}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
-                >
-                  {linkContent}
-                </a>
-              ) : (
-                <span>{linkContent}</span>
-              )}
-            </TooltipTrigger>
-            <TooltipContent>
-              {hasLink ? <p>Open in block explorer</p> : <p>{address}</p>}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild className="rounded-sm">
+            {hasLink ? (
+              <a
+                href={blockExplorer}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+              >
+                {linkContent}
+              </a>
+            ) : (
+              <span>{linkContent}</span>
+            )}
+          </TooltipTrigger>
+          <TooltipContent>
+            {hasLink ? <p>Open in block explorer</p> : <p>{address}</p>}
+          </TooltipContent>
+        </Tooltip>
 
         {showCopy && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={handleClick}
-                  className="ml-2 rounded-sm transition-opacity duration-200 hover:opacity-80"
-                >
-                  {status === 'copied' ? (
-                    <HiCheck className="text-[1.15em]" />
-                  ) : (
-                    <HiDocumentDuplicate className="text-[1.15em]" />
-                  )}
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Copy address</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleClick}
+                className="ml-2 rounded-sm transition-opacity duration-200 hover:opacity-80"
+              >
+                {status === 'copied' ? (
+                  <HiCheck className="text-[1.15em]" />
+                ) : (
+                  <HiDocumentDuplicate className="text-[1.15em]" />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Copy address</p>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
     </div>

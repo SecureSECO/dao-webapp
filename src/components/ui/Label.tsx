@@ -23,7 +23,6 @@ import { cn } from '@/src/lib/utils';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
@@ -53,16 +52,14 @@ const Label = React.forwardRef<
   >
     {children}
     {tooltip && (
-      <TooltipProvider delayDuration={0}>
-        <Tooltip>
-          <TooltipTrigger className="rounded-full hover:cursor-help">
-            <HiQuestionMarkCircle className="h-5 w-5 shrink-0 text-highlight-foreground/80" />
-          </TooltipTrigger>
-          <TooltipContent className="max-w-[400px] font-normal">
-            {tooltip}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger className="rounded-full hover:cursor-help">
+          <HiQuestionMarkCircle className="h-5 w-5 shrink-0 text-highlight-foreground/80" />
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[400px] font-normal">
+          {tooltip}
+        </TooltipContent>
+      </Tooltip>
     )}
   </LabelPrimitive.Root>
 ));
