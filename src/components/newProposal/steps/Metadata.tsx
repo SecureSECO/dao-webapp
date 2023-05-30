@@ -13,11 +13,13 @@ import { Label } from '@/src/components/ui/Label';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { UrlPattern } from '@/src/lib/constants/patterns';
+import { IsEmptyOrOnlyWhitespace } from '@/src/lib/utils';
 import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
+
 import {
   Controller,
   FieldErrors,
@@ -94,7 +96,16 @@ export const Metadata = () => {
           <Label htmlFor="title">Title</Label>
           <ErrorWrapper name="Title" error={errors.title}>
             <Input
-              {...register('title', { required: true })}
+              {...register('title', {
+                required: true,
+                validate: {
+                  maxlength: (v) =>
+                    v.length <= 140 ||
+                    'Title too long (at most 140 characters)',
+                  whitespace: (v) =>
+                    !IsEmptyOrOnlyWhitespace(v) || 'Please provide a title',
+                },
+              })}
               type="text"
               placeholder="Title"
               id="title"
@@ -108,7 +119,17 @@ export const Metadata = () => {
           <Label htmlFor="description">Description</Label>
           <ErrorWrapper name="Description" error={errors.description}>
             <Textarea
-              {...register('description', { required: true })}
+              {...register('description', {
+                required: true,
+                validate: {
+                  maxlength: (v) =>
+                    v.length <= 512 ||
+                    'Title too long (at most 512 characters)',
+                  whitespace: (v) =>
+                    !IsEmptyOrOnlyWhitespace(v) ||
+                    'Please provide a description',
+                },
+              })}
               placeholder="Description"
               id="description"
               className="..."

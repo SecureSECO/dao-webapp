@@ -67,15 +67,15 @@ export const Primary: Story = {
             wallets: [
               {
                 address: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
-                amount: 1,
+                amount: '1',
               },
               {
                 address: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
-                amount: 3.141,
+                amount: '3.141',
               },
               {
                 address: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
-                amount: 1000,
+                amount: '1000',
               },
             ],
           },
@@ -83,7 +83,7 @@ export const Primary: Story = {
             name: 'withdraw_assets',
             recipient: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
             tokenAddress: constants.AddressZero,
-            amount: 3.141,
+            amount: '3.141',
             tokenDecimals: '3',
             tokenType: TokenType.ERC20,
             daoAddress: '0x123',
