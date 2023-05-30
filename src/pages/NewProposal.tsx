@@ -131,7 +131,7 @@ export const StepNavigator = ({
   isSubmitting,
 }: {
   onBack?: () => void;
-  isSubmitting: boolean;
+  isSubmitting?: boolean;
 }) => {
   const { step, setStep } = useNewProposalFormContext();
   const { address, isConnected } = useAccount();
