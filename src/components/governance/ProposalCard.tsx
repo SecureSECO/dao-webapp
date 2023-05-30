@@ -106,25 +106,32 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
 
   return (
     <Card variant="light" className="space-y-2 font-normal">
-      <div className="flex flex-col gap-y-2">
+      <div className="relative flex w-full flex-col gap-y-2">
         <ProposalStatusBadge
           status={ProposalStatus[status] as ProposalStatusString}
           className="xs:hidden"
         />
-        <div className="flex flex-row justify-between">
+        <div className="relative flex w-full flex-row justify-between">
           <Link
             to={`/governance/proposals/${proposal.id}`}
-            className="flex flex-row items-center gap-x-2 rounded-sm ring-ring ring-offset-2 ring-offset-background hover:underline focus:outline-none focus:ring-1"
+            className="flex max-w-full flex-row items-center gap-x-2 rounded-sm ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-1 xs:max-w-[80%]"
           >
-            <Header level={2}>{title}</Header>
-            <HiChevronRight className="h-5 w-5" />
+            <Header
+              level={2}
+              className="relative truncate pb-1 hover:underline"
+            >
+              {title}
+            </Header>
+            <HiChevronRight className="h-5 w-5 shrink-0" />
           </Link>
           <ProposalStatusBadge
             status={ProposalStatus[status] as ProposalStatusString}
             className="hidden xs:flex"
           />
         </div>
-        <p className="leading-5 text-popover-foreground/80">{description}</p>
+        <p className="w-full truncate leading-5 text-popover-foreground/80">
+          {description}
+        </p>
       </div>
       <div className="flex flex-wrap gap-1">
         {getProposalTags(proposal, totalVotingWeight).map((tagProps, i) => (

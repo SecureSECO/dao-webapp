@@ -18,11 +18,11 @@ import { ConditionalButton, Warning } from '../ui/ConditionalButton';
 import { MainCard } from '../ui/MainCard';
 import TokenAmount from '../ui/TokenAmount';
 
-export const ClaimDailyReward = () => {
+export const ClaimDailyRewardCard = () => {
   const { claimReward, amountClaimable, loading, error } = useTimeClaimable({});
 
   const handleClaimReward = async () => {
-    toast.contractTransaction(() => claimReward(), {
+    toast.contractTransaction(claimReward, {
       error: 'Could not claim reward',
       success: 'Reward claimed!',
     });
@@ -32,9 +32,9 @@ export const ClaimDailyReward = () => {
     <MainCard
       className="flex flex-col gap-y-2"
       icon={HiGift}
-      header={<p className="mb-1 text-base leading-4">Daily reward</p>}
+      header="Daily reward"
     >
-      <p>Everyday you are eligible to claim a reward.</p>
+      <p>You can claim free {TOKENS.rep.name} everyday.</p>
       <Card variant="outline" className="flex flex-row items-center gap-x-2">
         Claimable amount:
         <strong>
@@ -45,26 +45,24 @@ export const ClaimDailyReward = () => {
               amount={amountClaimable}
               tokenDecimals={TOKENS.rep.decimals}
               symbol={TOKENS.rep.symbol}
+              displayDecimals={0}
             />
           )}
         </strong>
       </Card>
       <ConditionalButton
-        label="Claim reward"
+        label="Claim"
         onClick={handleClaimReward}
+        disabled={loading || error !== null}
         conditions={[
-          {
-            when: loading,
-            content: <Loading className="h-5 w-5" />,
-          },
           {
             when:
               amountClaimable !== null && BigNumber.from(0).eq(amountClaimable),
-            content: <Warning>There is no reward to claim</Warning>,
+            content: <Warning>No claimable rewards</Warning>,
           },
           {
             when: Boolean(error),
-            content: <Warning>An error occured.</Warning>,
+            content: <Warning>An error occured</Warning>,
           },
         ]}
       />

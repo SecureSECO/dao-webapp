@@ -8,13 +8,13 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ClaimDailyReward } from './ClaimDailyReward';
+import { ClaimDailyRewardCard } from './ClaimDailyRewardCard';
 
-const meta: Meta<typeof ClaimDailyReward> = {
-  component: ClaimDailyReward,
+const meta: Meta<typeof ClaimDailyRewardCard> = {
+  component: ClaimDailyRewardCard,
 };
 
 export default meta;
-type Story = StoryObj<typeof ClaimDailyReward>;
+type Story = StoryObj<typeof ClaimDailyRewardCard>;
 
 export const Primary: Story = {};

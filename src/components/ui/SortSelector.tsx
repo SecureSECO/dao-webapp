@@ -190,9 +190,9 @@ const SortSelector = ({
           <TooltipContent>
             <p>
               Sort{' '}
-              {orderSelected === SortOrderState.Asc
-                ? 'ascending'
-                : 'descending'}
+              {orderSelected === SortOrderState.Desc
+                ? 'descending'
+                : 'ascending'}
             </p>
           </TooltipContent>
         </Tooltip>

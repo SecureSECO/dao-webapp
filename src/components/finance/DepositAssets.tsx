@@ -189,7 +189,6 @@ export const DepositAssets = () => {
           message: 'Could not create transaction',
         });
         console.log(error);
-        console.log(config);
         return;
       }
 
@@ -211,7 +210,6 @@ export const DepositAssets = () => {
           message: 'Could not create transaction',
         });
         console.log(error);
-        console.log(config);
         return;
       }
 
@@ -226,8 +224,6 @@ export const DepositAssets = () => {
       setIsSendingTransaction(true);
       toast.contractTransaction(() => writeAsync(), toasterConfig);
     }
-
-    console.log(data);
   };
 
   return (

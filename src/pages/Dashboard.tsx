@@ -35,9 +35,11 @@ import {
   HiUserGroup,
 } from 'react-icons/hi2';
 
-import { ClaimDailyReward } from '../components/dashboard/ClaimDailyReward';
+import { ClaimDailyRewardCard } from '../components/dashboard/ClaimDailyRewardCard';
+import { useAccount } from 'wagmi';
 
 const Dashboard = () => {
+  const { isConnected } = useAccount();
   const { dao, loading: daoLoading, error: daoError } = useDao();
   const {
     proposals,
@@ -45,7 +47,6 @@ const Dashboard = () => {
     loading: proposalsLoading,
     error: proposalsError,
   } = useProposals({ limit: 5 });
-
   const {
     daoTransfers,
     loading: daoTransfersLoading,
@@ -72,7 +73,6 @@ const Dashboard = () => {
     );
   }
 
-  const currentNetwork = PREFERRED_NETWORK;
   const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
 
   return (
@@ -162,7 +162,7 @@ const Dashboard = () => {
       {/* div containing the right column of the dashboard */}
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
         {/* Card containing the option to claim daily rewards*/}
-        <ClaimDailyReward />
+        {isConnected && <ClaimDailyRewardCard />}
 
         {/* Card containing the latest dao transfers */}
         <MainCard

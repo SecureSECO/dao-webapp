@@ -7,7 +7,6 @@
  */
 
 import { useEffect, useState } from 'react';
-import { IERC20TimeClaimableFacet } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber, ContractTransaction } from 'ethers';
 
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
@@ -34,8 +33,6 @@ export const useTimeClaimable = ({
   );
   const { client } = useDiamondSDKContext();
 
-  let facet: IERC20TimeClaimableFacet | null = null;
-
   //** Set dummy data for development without querying SDK */
   const setDummyData = () => {
     setLoading(false);
@@ -43,36 +40,31 @@ export const useTimeClaimable = ({
     setAmountClaimable(BigNumber.from(123456));
   };
 
-  const initFacet = async () => {
+  const updateAmountClaimable = async () => {
     if (!client) return;
-    if (facet) return;
 
     try {
-      const _facet = await client.pure.IERC20TimeClaimableFacet();
-      facet = _facet;
+      const facet = await client.pure.IERC20TimeClaimableFacet();
+      const claimable = await facet.tokensClaimableTime();
+      setAmountClaimable(claimable);
     } catch (e) {
-      console.error('Error fetching TimeClaimableFacet', e);
+      console.error('Error fetching claimaible tokens', e);
       setError(getErrorMessage(e));
       setLoading(false);
+      return null;
     }
   };
 
-  const updateAmountClaimable = async () => {
-    if (!facet) return;
-    const claimable = await facet.tokensClaimableTime();
-    setAmountClaimable(claimable);
-  };
-
-  const claimReward = () => {
-    if (!client || !facet) throw new Error('Client or facet are not defined.');
-    return facet.claimTime();
+  const claimReward = async () => {
+    if (!client) throw new Error('Diamond SDK client not set.');
+    const facet = await client.pure.IERC20TimeClaimableFacet();
+    return await facet.claimTime();
   };
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    initFacet();
     updateAmountClaimable();
-    if (facet) setLoading(false);
+    if (client) setLoading(false);
   }, [client]);
 
   return {

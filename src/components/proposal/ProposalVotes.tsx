@@ -72,7 +72,11 @@ const getCategories = (
       items: [
         {
           label: 'Support threshold',
-          value: `${proposal.data.parameters.supportThreshold * 100}%`,
+          value: `${
+            // Converts the supportThreshold from integer to percentage (e.g. 500000000 -> 50%)
+            // Necessary because this number has to be stored as an integer on the blockchain, so cannot have decimals
+            proposal.data.parameters.supportThreshold / 10 ** 4
+          }%`,
         },
         {
           label: 'Minimum participation',

@@ -90,6 +90,7 @@ export const Confirmation = () => {
   const [actions, setActions] = useState<Action[]>([]);
   const { client } = useDiamondSDKContext();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Maps the action form iputs to Action interface
   useEffect(() => {
@@ -126,6 +127,7 @@ export const Confirmation = () => {
     const parsedActions = await parseActionInputs(dataStep3.actions);
 
     // Send proposal to SDK
+    setIsSubmitting(true);
     toast.contractTransaction(
       () =>
         client.sugar.CreateProposal(
@@ -144,6 +146,7 @@ export const Confirmation = () => {
           // Send user to proposals page
           navigate('/governance');
         },
+        onFinish: () => setIsSubmitting(false),
       }
     );
   };
@@ -242,7 +245,7 @@ export const Confirmation = () => {
         </MainCard>
       </div>
       <ErrorWrapper name="submit" error={errors?.root?.step4error as any}>
-        <StepNavigator />
+        <StepNavigator isSubmitting={isSubmitting} />
       </ErrorWrapper>
     </form>
   );

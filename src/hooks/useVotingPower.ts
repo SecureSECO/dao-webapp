@@ -17,6 +17,8 @@ export type UseVotingPowerData = {
   error: string | null;
   // Voting power of given wallet
   votingPower: BigNumber;
+  // Voting power of given wallet at the time of proposal creation
+  proposalVotingPower: BigNumber | null;
   // Minimum voting power required to create a proposal
   minProposalVotingPower: BigNumber;
   getVotingPower: () => Promise<BigNumber>;
@@ -26,6 +28,7 @@ export type UseVotingPowerData = {
 
 export type UseVotingPowerProps = {
   address: string | undefined;
+  proposal?: Proposal;
   useDummyData?: boolean;
 };
 
@@ -36,9 +39,16 @@ export type UseVotingPowerProps = {
  */
 export const useVotingPower = ({
   address,
+  proposal,
   useDummyData = false,
 }: UseVotingPowerProps): UseVotingPowerData => {
   const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
+  const [proposalVotingPower, setProposalVotingPower] =
+    useState<BigNumber | null>(null);
+  // ID of the proposal to which the proposalVotingPower applies
+  const [proposalVotingPowerId, setProposalVotingPowerId] = useState<
+    number | null
+  >(null);
   const [minProposalVotingPower, setMinProposalVotingPower] =
     useState<BigNumber>(BigNumber.from(0));
   const [loading, setLoading] = useState<boolean>(true);
@@ -75,9 +85,10 @@ export const useVotingPower = ({
       address,
       proposal.data.parameters.snapshotBlock
     );
-    return maxVotingPower.gt(walletVotingPower)
-      ? walletVotingPower
-      : maxVotingPower;
+
+    return walletVotingPower.gt(maxVotingPower)
+      ? maxVotingPower
+      : walletVotingPower;
   };
 
   // Update state variable for voting power
@@ -91,6 +102,19 @@ export const useVotingPower = ({
       console.error('Error fetching voting power', e);
       setError(getErrorMessage(e));
       setLoading(false);
+    }
+  };
+
+  // Update state variable for capped voting power
+  const updateProposalVotingPower = async () => {
+    if (!proposal) return;
+
+    try {
+      const cappedBal = await getProposalVotingPower(proposal);
+      setProposalVotingPower(cappedBal);
+      setProposalVotingPowerId(proposal.id);
+    } catch (e) {
+      console.error('Error fetching capped voting power', e);
     }
   };
 
@@ -120,14 +144,20 @@ export const useVotingPower = ({
     if (client) setLoading(true);
     updateVotingPower();
     updateMinProposalVotingPower();
-    const id = setInterval(() => updateVotingPower(), 10000);
+    const id = setInterval(() => updateVotingPower(), 60000);
     return () => clearInterval(id);
   }, [client]);
+
+  useEffect(() => {
+    if (!proposal || proposal.id === proposalVotingPowerId) return;
+    updateProposalVotingPower();
+  }, [proposal]);
 
   return {
     loading,
     error,
     votingPower,
+    proposalVotingPower,
     minProposalVotingPower,
     getVotingPower,
     getProposalVotingPower,

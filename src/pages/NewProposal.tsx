@@ -30,9 +30,11 @@ import { HiChevronLeft } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
 
 import {
+  ConditionalButton,
   ConnectWalletWarning,
   InsufficientRepWarning,
 } from '../components/ui/ConditionalButton';
+import { Warning } from '@/src/components/ui/ConditionalButton';
 
 const totalSteps = 4;
 
@@ -124,7 +126,13 @@ export const NewProposalFormProvider = ({
   );
 };
 
-export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
+export const StepNavigator = ({
+  onBack,
+  isSubmitting,
+}: {
+  onBack?: () => void;
+  isSubmitting?: boolean;
+}) => {
   const { step, setStep } = useNewProposalFormContext();
   const { address, isConnected } = useAccount();
   const { votingPower, minProposalVotingPower } = useVotingPower({
@@ -145,24 +153,33 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <Button onClick={handlePrevStep} type="button" disabled={step === 1}>
+      <Button
+        onClick={handlePrevStep}
+        type="button"
+        disabled={step === 1 || isSubmitting}
+      >
         Back
       </Button>
 
-      <div className="flex flex-row items-center gap-x-4">
-        <Button type="submit" disabled={isLastStep && !canCreate}>
-          {isLastStep ? 'Submit' : 'Next'}
-        </Button>
-        {/* Show a warning to connect wallet if not connected, or unsifficient voting power if so */}
-        {isLastStep &&
-          (!isConnected ? (
-            <ConnectWalletWarning action="to submit" />
-          ) : (
-            votingPower.lt(minProposalVotingPower) && (
-              <InsufficientRepWarning action="to submit" />
-            )
-          ))}
-      </div>
+      <ConditionalButton
+        type="submit"
+        label={isLastStep ? 'Submit' : 'Next'}
+        disabled={isSubmitting}
+        conditions={[
+          {
+            when: isLastStep && !isConnected,
+            content: <ConnectWalletWarning action="to submit" />,
+          },
+          {
+            when: isLastStep && votingPower.lt(minProposalVotingPower),
+            content: <InsufficientRepWarning action="to submit" />,
+          },
+          {
+            when: isLastStep && !canCreate,
+            content: <Warning>You cannot create a proposal</Warning>,
+          },
+        ]}
+      ></ConditionalButton>
     </div>
   );
 };

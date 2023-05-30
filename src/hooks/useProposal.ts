@@ -218,7 +218,10 @@ export const useProposal = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { client } = useDiamondSDKContext();
-  const { votingPower } = useVotingPower({ address });
+  const { proposalVotingPower } = useVotingPower({
+    address,
+    proposal: proposal ?? undefined,
+  });
 
   const fetchProposal = async () => {
     if (!client) return;
@@ -243,7 +246,7 @@ export const useProposal = ({
       }
     } catch (e) {
       console.error(e);
-      setError(getErrorMessage(e));
+      setError('An error occurred');
       setLoading(false);
     }
   };
@@ -285,13 +288,13 @@ export const useProposal = ({
     };
 
     const checkCanVote = async () => {
-      if (!proposal || !address || !client) return;
+      // Check if proposal.id === canVoteId to avoid unnecessary refetching of the canVote data
+      if (!proposal || !proposalVotingPower) return;
+
       try {
         const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
         const canVoteData = await Promise.all(
-          values.map((vote) => {
-            return proposal.CanVote(vote, votingPower);
-          })
+          values.map((vote) => proposal.CanVote(vote, proposalVotingPower))
         );
         setCanVote({
           Yes: canVoteData[1],
@@ -305,7 +308,7 @@ export const useProposal = ({
 
     checkCanExecute();
     checkCanVote();
-  }, [proposal]);
+  }, [proposal, proposalVotingPower]);
 
   return {
     loading,

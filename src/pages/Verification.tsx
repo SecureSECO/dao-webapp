@@ -277,7 +277,7 @@ const Verification = () => {
         </MainCard>
 
         <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
-          {isConnected && reward > 0 && (
+          {isConnected && reward !== null && reward.gt(0) && (
             <OneTimeRewardCard
               reward={reward}
               claimReward={claimReward}
