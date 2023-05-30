@@ -168,11 +168,14 @@ const MintListItem = ({
                 value: NumberPattern,
                 message: 'Please enter a number, e.g. 3.141',
               },
+              valueAsNumber: false,
             })}
             id="tokens"
             error={errors?.amount}
             className="w-full basis-2/3"
             min="0"
+            step="0.001"
+            type="number"
             required
           />
         </ErrorWrapper>
