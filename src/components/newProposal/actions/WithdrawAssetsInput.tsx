@@ -397,39 +397,38 @@ export const WithdrawAssetsInput = () => {
             />
           </ErrorWrapper>
         )}
+        {address === 'custom' && tokenType === TokenType.ERC20 && (
+          <ErrorWrapper name="tokenID" error={errors?.tokenDecimals}>
+            <Label
+              tooltip="Decimals for this token. Automatically retrieved when possible."
+              htmlFor="tokenDecimals"
+            >
+              Token decimals
+            </Label>
+            <Input
+              error={errors?.tokenID}
+              placeholder={
+                isManualDecimalEntry
+                  ? 'Please enter decimals'
+                  : decimalsLoadingText
+              }
+              disabled={!isManualDecimalEntry}
+              {...register(`${prefix}.tokenDecimals`, {
+                validate: (x) => {
+                  if (x === null || x === undefined || x === '') {
+                    return 'Please enter decimals';
+                  }
+                  if (x === decimalsLoadingText) {
+                    return 'Please wait for the decimals to be loaded';
+                  }
+                  const valid = IntegerPattern.test(x);
+                  return valid || 'Please enter decimals';
+                },
+              })}
+            />
+          </ErrorWrapper>
+        )}
       </div>
-
-      {address === 'custom' && tokenType === TokenType.ERC20 && (
-        <ErrorWrapper name="tokenID" error={errors?.tokenDecimals}>
-          <Label
-            tooltip="Decimals for this token. Automatically retrieved when possible."
-            htmlFor="tokenDecimals"
-          >
-            Token decimals
-          </Label>
-          <Input
-            error={errors?.tokenID}
-            placeholder={
-              isManualDecimalEntry
-                ? 'Please enter decimals'
-                : decimalsLoadingText
-            }
-            disabled={!isManualDecimalEntry}
-            {...register(`${prefix}.tokenDecimals`, {
-              validate: (x) => {
-                if (x === null || x === undefined || x === '') {
-                  return 'Please enter decimals';
-                }
-                if (x === decimalsLoadingText) {
-                  return 'Please wait for the decimals to be loaded';
-                }
-                const valid = IntegerPattern.test(x);
-                return valid || 'Please enter decimals';
-              },
-            })}
-          />
-        </ErrorWrapper>
-      )}
     </MainCard>
   );
 };
