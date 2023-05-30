@@ -32,7 +32,7 @@ import {
 import { ClaimDailyRewardCard } from '../components/dashboard/ClaimDailyRewardCard';
 import { useAccount } from 'wagmi';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 
 const Dashboard = () => {
   const { isConnected } = useAccount();
@@ -78,12 +78,7 @@ const Dashboard = () => {
             </div>
             <div className="flex flex-row items-center gap-x-1">
               <HiHome className="h-5 w-5 shrink-0 text-primary" />
-              <Address
-                address={daoAddress ?? '...'}
-                maxLength={AddressLength.Medium}
-                showCopy
-                hasLink={false}
-              />
+              <Address address={daoAddress ?? '...'} showCopy />
             </div>
           </div>
         </div>

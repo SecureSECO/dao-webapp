@@ -17,7 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 import { Progress } from '@/src/components/ui/Progress';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import TokenAmount from '@/src/components/ui/TokenAmount';
@@ -292,13 +292,7 @@ const VotesContentOption = ({
                 key={vote.address}
                 className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-border px-3 py-1"
               >
-                <Address
-                  address={vote.address}
-                  maxLength={AddressLength.Small}
-                  hasLink={true}
-                  showCopy={false}
-                  replaceYou={false}
-                />
+                <Address address={vote.address} length="sm" hasLink />
                 <div className="grid grid-cols-4 text-right opacity-80">
                   {/* The vote.votes is an array of how much was voted for each option, because the underlying 
                       smart contract implements partial voting, but this is not supported in the web-app

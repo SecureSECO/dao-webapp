@@ -9,7 +9,7 @@
 import ActionWrapper, {
   ActionContentSeparator,
 } from '@/src/components/proposal/actions/ActionWrapper';
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import CategoryList from '@/src/components/ui/CategoryList';
 import { Category } from '@/src/components/ui/CategoryList';
@@ -144,10 +144,9 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
           >
             <Address
               address={address}
-              maxLength={AddressLength.Small}
-              hasLink={true}
-              showCopy={false}
-              replaceYou={false}
+              length="sm"
+              hasLink
+              replaceYou
               jazziconSize="md"
             />
             <TokenAmount

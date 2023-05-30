@@ -22,12 +22,12 @@ import { HiCheck, HiDocumentDuplicate } from 'react-icons/hi2';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useAccount } from 'wagmi';
 
-export enum AddressLength {
-  Small = 10,
-  Medium = 20,
-  Large = 40,
-  Full = -1, // no trunction
-}
+const addressLengthVariants = {
+  sm: 10,
+  md: 20,
+  lg: 40,
+  full: -1,
+};
 
 const jazziconVariants = {
   none: 0,
@@ -38,11 +38,11 @@ const jazziconVariants = {
 
 type AddressProps = {
   address: string;
-  maxLength: AddressLength;
-  hasLink: boolean;
-  showCopy: boolean;
+  length?: keyof typeof addressLengthVariants | number;
+  hasLink?: boolean;
+  showCopy?: boolean;
   replaceYou?: boolean;
-  jazziconSize?: 'sm' | 'md' | 'lg' | 'none';
+  jazziconSize?: keyof typeof jazziconVariants | number;
 };
 
 /**
@@ -62,10 +62,10 @@ type AddressProps = {
 
 export const Address: React.FC<AddressProps> = ({
   address,
-  maxLength,
-  hasLink,
-  showCopy,
-  replaceYou = true,
+  length = 'md',
+  hasLink = false,
+  showCopy = false,
+  replaceYou = false,
   jazziconSize = 'none',
 }) => {
   const [status, setStatus] = useState<'idle' | 'copied'>('idle');
@@ -76,7 +76,10 @@ export const Address: React.FC<AddressProps> = ({
   const linkContent =
     address.toLowerCase() === currentUser?.toLowerCase() && replaceYou
       ? 'you'
-      : truncateMiddle(address, maxLength);
+      : truncateMiddle(
+          address,
+          typeof length === 'number' ? length : addressLengthVariants[length]
+        );
 
   const handleClick = () => {
     if (showCopy) {
@@ -93,7 +96,11 @@ export const Address: React.FC<AddressProps> = ({
     <div className="flex flex-row items-center gap-x-2">
       {jazziconSize !== 'none' && (
         <Jazzicon
-          diameter={jazziconVariants[jazziconSize]}
+          diameter={
+            typeof jazziconSize === 'number'
+              ? jazziconSize
+              : jazziconVariants[jazziconSize]
+          }
           seed={jsNumberForAddress(address!)}
         />
       )}

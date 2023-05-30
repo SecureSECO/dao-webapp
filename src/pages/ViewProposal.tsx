@@ -15,7 +15,7 @@ import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { toast } from '@/src/hooks/useToast';
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Link } from '@/src/components/ui/Link';
 import { useProposal } from '@/src/hooks/useProposal';
@@ -30,6 +30,7 @@ import { useAccount } from 'wagmi';
 import {
   ConditionalButton,
   ConnectWalletWarning,
+  Warning,
 } from '../components/ui/ConditionalButton';
 import { useState } from 'react';
 
@@ -132,9 +133,8 @@ const ViewProposal = () => {
                       </span>
                       <Address
                         address={proposal.data.creator}
-                        maxLength={AddressLength.Medium}
-                        hasLink={true}
-                        showCopy={false}
+                        hasLink
+                        replaceYou
                       />
                     </div>
                     {proposal.status === ProposalStatus.Executed && (
@@ -144,9 +144,8 @@ const ViewProposal = () => {
                         </span>
                         <Address
                           address={proposal.data.executor}
-                          maxLength={AddressLength.Medium}
-                          hasLink={true}
-                          showCopy={false}
+                          hasLink
+                          replaceYou
                         />
                       </div>
                     )}
@@ -177,7 +176,7 @@ const ViewProposal = () => {
                     proposal.actions.length > 0 && (
                       <div className="flex flex-row items-center gap-x-4">
                         <ConditionalButton
-                          disabled={!canExecute || !address}
+                          disabled={isExecuting}
                           type="submit"
                           label="Execute"
                           onClick={() => executeProposal()}
@@ -186,6 +185,14 @@ const ViewProposal = () => {
                               when: !isConnected,
                               content: (
                                 <ConnectWalletWarning action="to execute this proposal" />
+                              ),
+                            },
+                            {
+                              when: !canExecute,
+                              content: (
+                                <Warning>
+                                  You cannot execute this proposal
+                                </Warning>
                               ),
                             },
                           ]}

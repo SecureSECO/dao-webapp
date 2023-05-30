@@ -7,7 +7,7 @@
  */
 
 import { Card } from '@/src/components/ui/Card';
-import { Address, AddressLength } from '@/src/components/ui//Address';
+import { Address } from '@/src/components/ui//Address';
 import Header from '@/src/components/ui/Header';
 import ProposalTag, {
   getProposalTags,
@@ -140,12 +140,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
       </div>
       <div className="flex items-center gap-x-1 text-xs text-popover-foreground/60">
         <span>Published by</span>
-        <Address
-          address={creator}
-          maxLength={AddressLength.Medium}
-          hasLink={true}
-          showCopy={true}
-        />
+        <Address address={creator} hasLink showCopy replaceYou />
       </div>
     </Card>
   );

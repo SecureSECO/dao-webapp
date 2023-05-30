@@ -7,7 +7,7 @@
  */
 
 import { useState } from 'react';
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
@@ -109,9 +109,10 @@ const DaoTokensList = ({
             <span className="text-popover-foreground/80">
               <Address
                 address={balance.address ?? '-'}
-                maxLength={AddressLength.Small}
-                hasLink={true}
-                showCopy={true}
+                length="sm"
+                hasLink
+                showCopy
+                replaceYou
               />
             </span>
           </div>
@@ -179,9 +180,10 @@ export const DaoTransfersList = ({
               <div className="text-popover-foreground/80">
                 <Address
                   address={daoTransferAddress(transfer)}
-                  maxLength={AddressLength.Small}
-                  hasLink={true}
-                  showCopy={true}
+                  length="sm"
+                  hasLink
+                  showCopy
+                  replaceYou
                 />
               </div>
             </div>

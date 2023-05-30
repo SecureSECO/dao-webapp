@@ -23,7 +23,7 @@ const exampleAddress = '0x2B868C8ed12EAD37ef76457e7B6443192e231442';
 export const Medium: Story = {
   args: {
     address: exampleAddress,
-    maxLength: AddressLength.Medium,
+    length: AddressLength.Medium,
     hasLink: true,
     showCopy: true,
   },
@@ -32,21 +32,21 @@ export const Medium: Story = {
 export const Small: Story = {
   args: {
     ...Medium.args,
-    maxLength: AddressLength.Small,
+    length: AddressLength.Small,
   },
 };
 
 export const Large: Story = {
   args: {
     ...Medium.args,
-    maxLength: AddressLength.Large,
+    length: AddressLength.Large,
   },
 };
 
 export const Full: Story = {
   args: {
     ...Medium.args,
-    maxLength: AddressLength.Full,
+    length: AddressLength.Full,
   },
 };
 
