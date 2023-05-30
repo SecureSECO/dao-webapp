@@ -60,18 +60,6 @@ export const useVotingPower = ({
   });
 
   /**
-   * Fetches the voting power of an address through the Diamond Governance SDK
-   * @returns Voting power of given wallet address
-   */
-  // const getVotingPower = async (): Promise<BigNumber> => {
-  //   if (!client || !address) throw new Error('Client or address not set');
-
-  //   const governance = await client.pure.IERC20();
-  //   const repBalance = await governance.balanceOf(address);
-  //   return repBalance;
-  // };
-
-  /**
    * Fetches the voting power of an address at the time of proposal creation through the Diamond Governance SDK.
    * Keeps into account the maximum voting power per wallet for the given proposal.
    * @param proposal Proposal to fetch the voting power of
@@ -94,20 +82,6 @@ export const useVotingPower = ({
       ? maxVotingPower
       : walletVotingPower;
   };
-
-  // Update state variable for voting power
-  // const updateVotingPower = async () => {
-  //   if (!client || !address) return;
-
-  //   try {
-  //     const repBalance = await getVotingPower();
-  //     setVotingPower(repBalance);
-  //   } catch (e) {
-  //     console.error('Error fetching voting power', e);
-  //     setError(getErrorMessage(e));
-  //   }
-  //   setLoading(false);
-  // };
 
   // Update state variable for capped voting power
   const updateProposalVotingPower = async () => {
@@ -151,7 +125,6 @@ export const useVotingPower = ({
     proposalVotingPower,
     minProposalVotingPower,
     getProposalVotingPower,
-    // Only allow refetching if not using dummy data
     refetch,
   };
 };
