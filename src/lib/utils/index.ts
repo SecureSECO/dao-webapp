@@ -129,3 +129,7 @@ export function throwIfNullOrUndefined<T>(value: T | null | undefined): T {
 export function assertUnreachable(x: never): never {
   throw new Error('Reached a state that was asserted to be unreachable');
 }
+
+export function IsEmptyOrOnlyWhitespace(x: string): boolean {
+  return x.trim() === '';
+}
