@@ -28,7 +28,7 @@ import {
 } from 'wagmi';
 
 import Loading from '../icons/Loading';
-import { Address, AddressLength } from '../ui/Address';
+import { Address } from '../ui/Address';
 import { Card } from '../ui/Card';
 import {
   ConditionalButton,
@@ -310,21 +310,8 @@ export const DepositAssets = () => {
                 </p>
                 <div className="flex flex-col gap-2 md:flex-row">
                   <Card variant="outline">
-                    <Address
-                      showCopy={true}
-                      hasLink={true}
-                      maxLength={AddressLength.Medium}
-                      address={daoAddress ?? ''}
-                    />
+                    <Address address={daoAddress ?? ''} showCopy hasLink />
                   </Card>
-                  {/* <Card variant="outline">
-                    <Address
-                      showCopy={true}
-                      hasLink={false}
-                      maxLength={AddressLength.Full}
-                      address={'ENS not yet supported'}
-                    />
-                  </Card> */}
                 </div>
               </div>
             ) : (

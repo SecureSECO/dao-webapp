@@ -8,7 +8,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 
 const meta: Meta<typeof Address> = {
   component: Address,
@@ -23,7 +23,6 @@ const exampleAddress = '0x2B868C8ed12EAD37ef76457e7B6443192e231442';
 export const Medium: Story = {
   args: {
     address: exampleAddress,
-    maxLength: AddressLength.Medium,
     hasLink: true,
     showCopy: true,
   },
@@ -32,21 +31,21 @@ export const Medium: Story = {
 export const Small: Story = {
   args: {
     ...Medium.args,
-    maxLength: AddressLength.Small,
+    length: 'sm',
   },
 };
 
 export const Large: Story = {
   args: {
     ...Medium.args,
-    maxLength: AddressLength.Large,
+    length: 'lg',
   },
 };
 
 export const Full: Story = {
   args: {
     ...Medium.args,
-    maxLength: AddressLength.Full,
+    length: 'full',
   },
 };
 

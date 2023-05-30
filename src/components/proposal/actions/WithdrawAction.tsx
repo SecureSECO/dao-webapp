@@ -7,7 +7,7 @@
  */
 
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
@@ -117,13 +117,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
           <HiArrowRight className="h-4 w-4 shrink-0 text-popover-foreground/80" />
           <Card variant="outline" size="sm" className="font-medium">
             <p className="text-xs font-normal text-popover-foreground/80">To</p>
-            <Address
-              address={action.params._to}
-              maxLength={AddressLength.Medium}
-              hasLink={false}
-              showCopy={false}
-              replaceYou={false}
-            />
+            <Address address={action.params._to} replaceYou />
           </Card>
         </div>
       </div>
