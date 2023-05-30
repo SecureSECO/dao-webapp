@@ -98,9 +98,9 @@ export const Metadata = () => {
               {...register('title', {
                 required: true,
                 validate: {
-                  maxLength: (v) =>
+                  maxlength: (v) =>
                     v.length <= 140 ||
-                    'Title may be at most 140 characters long',
+                    'Title too long (at most 140 characters)',
                   whitespace: (v) =>
                     !IsEmptyOrOnlyWhitespace(v) || 'Please provide a title',
                 },
@@ -121,9 +121,9 @@ export const Metadata = () => {
               {...register('description', {
                 required: true,
                 validate: {
-                  maxLength: (v) =>
+                  maxlength: (v) =>
                     v.length <= 512 ||
-                    'Title may be at most 512 characters long',
+                    'Title too long (at most 512 characters)',
                   whitespace: (v) =>
                     !IsEmptyOrOnlyWhitespace(v) ||
                     'Please provide a description',
