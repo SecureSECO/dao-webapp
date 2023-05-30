@@ -36,6 +36,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 
 import { DepositAssets } from './components/finance/DepositAssets';
 import { Mining } from './pages/Mining';
+import { TooltipProvider } from '@/src/components/ui/Tooltip';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -133,7 +134,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <WagmiConfig client={wagmiClient}>
       <AragonSDKWrapper>
         <DiamondSDKWrapper>
-          <RouterProvider router={router} />
+          <TooltipProvider>
+            <RouterProvider router={router} />
+          </TooltipProvider>
         </DiamondSDKWrapper>
       </AragonSDKWrapper>
     </WagmiConfig>

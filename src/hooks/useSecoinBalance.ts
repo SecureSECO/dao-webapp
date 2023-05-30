@@ -13,7 +13,7 @@ import { useBalance } from 'wagmi';
 export type UseVotingPowerData = {
   loading: boolean;
   error: string | null;
-  secoinBalance: BigNumber;
+  secoinBalance: BigNumber | undefined;
 };
 
 export type UseVotingPowerProps = {
@@ -29,6 +29,7 @@ export const useSecoinBalance = ({
   address,
 }: UseVotingPowerProps): UseVotingPowerData => {
   const { secoinAddress } = useDiamondSDKContext();
+
   const { data, error, isLoading } = useBalance({
     address: address as `0x${string}` | undefined,
     token: secoinAddress as `0x${string}` | undefined,
@@ -37,6 +38,6 @@ export const useSecoinBalance = ({
   return {
     loading: isLoading,
     error: error?.message ?? null,
-    secoinBalance: address || !data ? BigNumber.from(0) : data.value,
+    secoinBalance: !secoinAddress ? undefined : data?.value,
   };
 };

@@ -24,7 +24,6 @@ import {
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 import { Button } from '@/src/components/ui/Button';
@@ -75,18 +74,16 @@ const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
           <span className="sr-only">Open wallet menu</span>
           <Jazzicon diameter={40} seed={jazznumber} />
           {chain?.id !== PREFERRED_NETWORK_METADATA.id && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild className="absolute -right-2 -top-2">
-                  <div>
-                    <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgba(0,0,0,0.4)]" />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Incorrect Network</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild className="absolute -right-2 -top-2">
+                <div>
+                  <HiExclamationCircle className="text-xl text-primary drop-shadow-[0_0_8px_rgba(0,0,0,0.4)]" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Incorrect Network</p>
+              </TooltipContent>
+            </Tooltip>
           )}
         </DropdownMenuTrigger>
 
@@ -94,18 +91,16 @@ const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
           <DropdownMenuLabel>
             <div className="flex items-center justify-center gap-x-2">
               <Jazzicon diameter={24} seed={jazznumber} />
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <p className="text-sm font-medium text-popover-foreground">
-                      {address?.slice(0, 5) + '...' + address?.slice(-4)}
-                    </p>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{address}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="text-sm font-medium text-popover-foreground">
+                    {address?.slice(0, 5) + '...' + address?.slice(-4)}
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{address}</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -134,73 +129,3 @@ const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
 };
 
 export default ConnectButton;
-
-//The following can later be used to display the balance of the connected wallet in $SECOREP and $SECOIN
-
-// type BalanceIconProps = {
-//   name: string
-//   balance: string | null | undefined
-//   network?: ethers.providers.Network | null | undefined
-//   isLoading: boolean
-// }
-
-// const BalanceIcon = ({ name, balance, isLoading }: BalanceIconProps) => {
-//   const { chain } = useNetwork()
-
-//   return (
-//     <div className="flex items-center gap-x-1">
-//       <Tippy
-//         content={`${name} Balance`}
-//         theme={'tooltip'}
-//         arrow={false}
-//         offset={[0, 6]}
-//         animation="scale"
-//       >
-//         <span className="flex flex-shrink-0 cursor-help">
-//           <Image
-//             src={`/ethIcons/${name.toLowerCase()}.svg`}
-//             alt={`${name} icon`}
-//             width={16}
-//             height={16}
-//           />
-//         </span>
-//       </Tippy>
-//       <p className="font-medium leading-none">
-//         {/* {network?.chainId === 1 ? balance?.toFixed(2) : "-"} */}
-//         {chain?.id === 1 ? (isLoading ? 'Loading...' : balance) : '-'}
-//       </p>
-//     </div>
-//   )
-// }
-
-// const Balances = () => {
-//   const { address } = useAccount()
-//   const [ethBal, setEthBal] = useState<string>('')
-//   const [wethBal, setWethBal] = useState<string>('')
-
-//   const { data, isLoading } = useBalance({
-//     address,
-//     formatUnits: 'ether',
-//   })
-
-//   const { data: wethData, isLoading: wethIsLoading } = useBalance({
-//     address,
-//     formatUnits: 'ether',
-//     token: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-//   })
-
-//   useEffect(() => {
-//     if (!isLoading) {
-//       setEthBal(parseFloat(data?.formatted!).toFixed(2))
-//     }
-//     if (!wethIsLoading) {
-//       setWethBal(parseFloat(wethData?.formatted!).toFixed(2))
-//     }
-//   }, [address, isLoading, wethIsLoading])
-//   return (
-//     <>
-//       <BalanceIcon name="ETH" balance={ethBal} isLoading={isLoading} />
-//       <BalanceIcon name="WETH" balance={wethBal} isLoading={wethIsLoading} />
-//     </>
-//   )
-// }
