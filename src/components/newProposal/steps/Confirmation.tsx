@@ -23,7 +23,6 @@ import {
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 import { Action } from '@plopmenz/diamond-governance-sdk';
-import { Provider } from '@wagmi/core';
 import { add, format } from 'date-fns';
 import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
@@ -39,8 +38,7 @@ import { ErrorWrapper } from '../../ui/ErrorWrapper';
  * @returns A list of corresponding Action objects
  */
 const parseActionInputs = async (
-  actions: ProposalFormActionData[],
-  provider: Provider
+  actions: ProposalFormActionData[]
 ): Promise<Action[]> => {
   const res: Action[] = [];
   const parsed = await Promise.all(
@@ -93,14 +91,11 @@ export const Confirmation = () => {
   const [actions, setActions] = useState<Action[]>([]);
   const { client } = useDiamondSDKContext();
   const navigate = useNavigate();
-  const provider = useProvider();
 
   // Maps the action form iputs to Action interface
   useEffect(() => {
     if (dataStep3)
-      parseActionInputs(dataStep3.actions, provider).then((res) =>
-        setActions(res)
-      );
+      parseActionInputs(dataStep3.actions).then((res) => setActions(res));
   }, [dataStep3]);
 
   const {
@@ -129,7 +124,7 @@ export const Confirmation = () => {
         description: 'Some data appears to be missing',
       });
 
-    const parsedActions = await parseActionInputs(dataStep3.actions, provider);
+    const parsedActions = await parseActionInputs(dataStep3.actions);
 
     // Send proposal to SDK
     toast.contractTransaction(
