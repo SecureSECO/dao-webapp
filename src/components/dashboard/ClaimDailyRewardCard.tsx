@@ -19,12 +19,14 @@ import { MainCard } from '../ui/MainCard';
 import TokenAmount from '../ui/TokenAmount';
 
 export const ClaimDailyRewardCard = () => {
-  const { claimReward, amountClaimable, loading, error } = useTimeClaimable({});
+  const { claimReward, amountClaimable, loading, error, refetch } =
+    useTimeClaimable({});
 
   const handleClaimReward = async () => {
     toast.contractTransaction(claimReward, {
       error: 'Could not claim reward',
       success: 'Reward claimed!',
+      onSuccess: () => refetch(),
     });
   };
 

@@ -21,6 +21,7 @@ export type UseTimeClaimableData = {
   error: string | null;
   amountClaimable: BigNumber | null;
   claimReward: () => Promise<ContractTransaction>;
+  refetch: () => void;
 };
 
 export const useTimeClaimable = ({
@@ -72,5 +73,6 @@ export const useTimeClaimable = ({
     error,
     claimReward,
     amountClaimable,
+    refetch: () => (useDummyData ? void 0 : updateAmountClaimable()),
   };
 };
