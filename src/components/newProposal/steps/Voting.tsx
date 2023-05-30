@@ -16,6 +16,7 @@ import {
   VotingSettings,
   useVotingSettings,
 } from '@/src/hooks/useVotingSettings';
+import { IsEmptyOrOnlyWhitespace, cn } from '@/src/lib/utils';
 import {
   getDurationDateAhead,
   getDurationInSeconds,
@@ -23,10 +24,8 @@ import {
   getTodayDateString,
   getUserTimezone,
   inputToDate,
-  isGapEnough,
   timezoneOffsetDifference,
 } from '@/src/lib/utils/date';
-import { cn } from '@/src/lib/utils';
 import {
   StepNavigator,
   useNewProposalFormContext,
@@ -111,6 +110,16 @@ export const Voting = () => {
       });
       return;
     }
+
+    const end_time_too_soon = endTimeTooSoon(data, settings);
+    if (end_time_too_soon) {
+      setError('root.endTooSoon', {
+        type: 'custom',
+        message: end_time_too_soon,
+      });
+      return;
+    }
+
     setStep(3);
     setDataStep2(data);
   };
@@ -373,52 +382,52 @@ export const EndTime = ({
           </ErrorWrapper>
         ) : (
           endTimeType === 'end-custom' && (
-            <Card variant="light" className="flex gap-2">
-              <LabelledInput
-                id="custom_end_date"
-                type="date"
-                label="Date"
-                {...register('custom_end_date', { required: true })}
-                min={minEndDate}
-                error={errors.custom_end_date}
-                max={getDurationDateAhead(364 * 24 * 60 * 60, minEndDate)} //max 364 days ahead
-              />
-              <LabelledInput
-                id="custom_end_time"
-                type="time"
-                label="Time"
-                {...register('custom_end_time', { required: true })}
-                min={
-                  //if the user has selected a custom start time, calculate the minimum end time.
-                  // If they don't they get a required error.
-                  startDate &&
-                  startTime &&
-                  minEndTime &&
-                  minEndDate &&
-                  //this is done so you don't need to have a minimum time if it is weeks apart
-                  isGapEnough(
-                    //if the gap between the start and end time is big enough, set the min time to 00:00
-                    startDate,
-                    startTime,
-                    minEndDate,
-                    minEndTime,
-                    settings ? settings.minDuration : 24 * 60 * 60
-                  )
-                    ? '00:00'
-                    : minEndTime //else if the gap is not big enough, set the min time to the minEndTime
-                }
-                error={errors.custom_end_time}
-              />
-              <div className="w-full">
-                <Label htmlFor="custom_end_timezone">Timezone</Label>
-                <TimezoneSelector
-                  id={'custom_end_timezone'}
-                  control={control}
-                  error={errors.custom_end_timezone}
-                  name="custom_end_timezone"
+            <ErrorWrapper
+              name="Duration between start and end too short"
+              error={errors?.root?.endTooSoon as any}
+            >
+              <Card
+                variant="light"
+                className={cn(
+                  'flex gap-2',
+                  errors?.root?.durationTooLow &&
+                    'border-2 border-destructive focus:ring-destructive'
+                )}
+              >
+                <LabelledInput
+                  id="custom_end_date"
+                  type="date"
+                  label="Date"
+                  {...register('custom_end_date', { required: true })}
+                  min={minEndDate}
+                  error={errors.custom_end_date}
+                  max={getDurationDateAhead(364 * 24 * 60 * 60, minEndDate)} //max 364 days ahead
                 />
-              </div>
-            </Card>
+                <LabelledInput
+                  id="custom_end_time"
+                  {...register('custom_end_time', {
+                    validate: {
+                      required: (v, fv) =>
+                        fv.end_time_type !== 'end-custom' ||
+                        (v !== undefined && !IsEmptyOrOnlyWhitespace(v)) ||
+                        'Time is required',
+                    },
+                  })}
+                  type="time"
+                  label="Time"
+                  error={errors.custom_end_time}
+                />
+                <div className="w-full">
+                  <Label htmlFor="custom_end_timezone">Timezone</Label>
+                  <TimezoneSelector
+                    id={'custom_end_timezone'}
+                    control={control}
+                    error={errors.custom_end_timezone}
+                    name="custom_end_timezone"
+                  />
+                </div>
+              </Card>
+            </ErrorWrapper>
           )
         )}
       </div>
@@ -513,6 +522,64 @@ const durationTooLow = (
     })
   );
   const msg = `Duration should be at least ${minDur}`;
+
+  return msg;
+};
+
+const endTimeTooSoon = (
+  data: ProposalFormVotingSettings,
+  settings: VotingSettings | null
+): false | string => {
+  // If it is not a custom end type, no majority voting setting is known, or if duration data is not defined.
+  // Then the end time is not too soon.
+  if (
+    data.end_time_type !== 'end-custom' ||
+    !settings ||
+    data.custom_end_date === undefined ||
+    data.custom_end_time === undefined ||
+    data.custom_end_timezone === undefined ||
+    data.custom_start_date === undefined ||
+    data.custom_start_time === undefined ||
+    data.custom_start_timezone === undefined
+  ) {
+    return false;
+  }
+
+  console.log('a');
+
+  const start =
+    data.start_time_type === 'now'
+      ? new Date()
+      : inputToDate(
+          data.custom_start_date,
+          data.custom_start_time,
+          data.custom_start_timezone
+        );
+  const end = inputToDate(
+    data.custom_end_date,
+    data.custom_end_time,
+    data.custom_end_timezone
+  );
+
+  const durationAsSeconds = (end.getTime() - start.getTime()) / 1000;
+
+  console.log(start, end, durationAsSeconds, settings, data.custom_end_time);
+
+  // Duration is not too low if it is larger or equal to the minimum duration.
+  if (durationAsSeconds >= settings.minDuration) {
+    return false;
+  }
+
+  console.log('b');
+  // Duration is too low, return a formated end date message.
+
+  const minDur = formatDuration(
+    intervalToDuration({
+      start: 0,
+      end: (settings?.minDuration ?? 0) * 1000,
+    })
+  );
+  const msg = `The time between the start end end should be at least ${minDur}`;
 
   return msg;
 };

@@ -134,9 +134,8 @@ const Verification = () => {
   const [nonce, setNonce] = useState<number>(0);
   const [providerId, setProviderId] = useState<string>('');
 
-  const amountOfVerifiedStamps = stamps.filter(
-    (stamp) => isVerified(stamp).verified
-  ).length;
+  const amountOfVerifiedStamps =
+    stamps?.filter((stamp) => isVerified(stamp).verified).length ?? 0;
 
   useEffect(() => {
     // Check if there are any pending verifications in url params
@@ -195,7 +194,7 @@ const Verification = () => {
   const verify = async (providerId: string) => {
     try {
       // Check if the account has already been verified
-      const stamp = stamps.find(([id]) => id === providerId);
+      const stamp = stamps?.find(([id]) => id === providerId);
       if (stamp) {
         const [, , verifiedAt] = stamp;
         const lastVerifiedAt = verifiedAt[verifiedAt.length - 1];
@@ -265,7 +264,7 @@ const Verification = () => {
                 <StampCard
                   key={stampInfo.id}
                   stampInfo={stampInfo}
-                  stamp={stamps.find(([id]) => id === stampInfo.id) || null}
+                  stamp={stamps?.find(([id]) => id === stampInfo.id) || null}
                   thresholdHistory={thresholdHistory ?? []}
                   verify={verify}
                   refetch={refetch}

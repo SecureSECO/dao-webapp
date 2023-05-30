@@ -15,6 +15,10 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { toast } from '@/src/hooks/useToast';
+import {
+  VotingSettings,
+  useVotingSettings,
+} from '@/src/hooks/useVotingSettings';
 import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
@@ -68,6 +72,7 @@ const parseStartDate = (settings: ProposalFormVotingSettings): Date => {
 
 /**
  * Convert the proposal voting settings form input to a end date.
+ * Will add extra time if proposal start is now
  * @param settings Proposal voting settings form input
  * @returns The end of the proposal as a Date object
  */
@@ -85,12 +90,31 @@ const parseEndDate = (settings: ProposalFormVotingSettings): Date => {
       });
 };
 
+const addBufferToEnd = (
+  start: Date,
+  end: Date,
+  settings: ProposalFormVotingSettings,
+  votingSettings: VotingSettings | null
+) => {
+  if (settings.start_time_type === 'now' && votingSettings) {
+    const duration = (end.getTime() - start.getTime()) / 1000;
+    // duration is less than the min duration (with a 60 second extra buffer), add 3 minutes to the end duration.
+    if (duration <= votingSettings.minDuration + 60) {
+      return add(end, { minutes: 3 });
+    }
+  }
+  return end;
+};
+
 export const Confirmation = () => {
   const { dataStep1, dataStep2, dataStep3 } = useNewProposalFormContext();
   const [actions, setActions] = useState<Action[]>([]);
   const { client } = useDiamondSDKContext();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  //retrieve settings for the minDuration
+  const { settings: votingSettings } = useVotingSettings();
 
   // Maps the action form iputs to Action interface
   useEffect(() => {
@@ -126,6 +150,10 @@ export const Confirmation = () => {
 
     const parsedActions = await parseActionInputs(dataStep3.actions);
 
+    const start = parseStartDate(dataStep2);
+    const endRaw = parseEndDate(dataStep2);
+    const end = addBufferToEnd(start, endRaw, dataStep2, votingSettings);
+
     // Send proposal to SDK
     setIsSubmitting(true);
     toast.contractTransaction(
@@ -136,15 +164,17 @@ export const Confirmation = () => {
             resources: dataStep1.resources.filter((res) => res.url !== ''),
           },
           parsedActions,
-          parseStartDate(dataStep2),
-          parseEndDate(dataStep2)
+          start,
+          end
         ),
       {
         error: 'Error creating proposal',
         success: 'Proposal created!',
-        onSuccess: () => {
+        onSuccess: async (receipt) => {
+          // Fetch ID of created proposal to send user to that page
+          const id = await client.sugar.GetProposalId(receipt);
           // Send user to proposals page
-          navigate('/governance');
+          navigate(`/governance/proposals/${id}`);
         },
         onFinish: () => setIsSubmitting(false),
       }
@@ -172,7 +202,7 @@ export const Confirmation = () => {
         dataStep2!.custom_start_time!,
         dataStep2!.custom_start_timezone!
       );
-      let minStart = getTimeInxMinutesAsDate(5);
+      let minStart = getTimeInxMinutesAsDate(3);
       // If the start is past our minStart (less or equal), there is a proplem
       if (start <= minStart) {
         setError('root.step4error', {

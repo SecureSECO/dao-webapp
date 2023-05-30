@@ -37,7 +37,7 @@ const defaultProps: UseProposalsProps = {
   useDummyData: false,
   status: undefined,
   sorting: ProposalSorting.Creation,
-  order: SortingOrder.Asc,
+  order: SortingOrder.Desc,
   limit: undefined,
 };
 
@@ -81,7 +81,7 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
       const daoProposals: Proposal[] | null = await client.sugar.GetProposals(
         status ? [status] : undefined,
         sorting,
-        order === undefined ? SortingOrder.Asc : order
+        order === undefined ? SortingOrder.Desc : order
       );
 
       if (daoProposals) {
