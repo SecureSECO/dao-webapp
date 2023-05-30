@@ -114,11 +114,11 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
         <div className="relative flex w-full flex-row justify-between">
           <Link
             to={`/governance/proposals/${proposal.id}`}
-            className="flex max-w-full flex-row items-center gap-x-2 rounded-sm ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-1 xs:max-w-[80%]"
+            className="group flex max-w-full flex-row items-center gap-x-2 rounded-sm ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-1 xs:max-w-[80%]"
           >
             <Header
               level={2}
-              className="relative truncate pb-1 hover:underline"
+              className="relative truncate pb-1 group-hover:underline"
             >
               {title}
             </Header>

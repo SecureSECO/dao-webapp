@@ -72,14 +72,14 @@ const navItems: NavItemData[] = [
         label: 'Query',
         url: '/query',
         icon: HiOutlineDocumentMagnifyingGlass,
-        description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.}`,
+        description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.`,
       },
-      {
-        label: 'Mining',
-        url: '/mining',
-        icon: HiOutlineTerminal,
-        description: `Claim your mining rewards in ${TOKENS.secoin.symbol} or ${TOKENS.rep.symbol}.`,
-      },
+      // {
+      //   label: 'Mining',
+      //   url: '/mining',
+      //   icon: HiOutlineTerminal,
+      //   description: `Claim your mining rewards in ${TOKENS.secoin.symbol} or ${TOKENS.rep.symbol}.`,
+      // },
     ],
     alternativeLinks: [
       { label: 'Website', url: '#', icon: HiOutlineGlobeAlt },
