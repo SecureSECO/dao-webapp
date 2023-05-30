@@ -100,7 +100,8 @@ export const useVotingPower = ({
 
     try {
       const partialVoting = await client.pure.IPartialVotingProposalFacet();
-      const minVotingPowerData = await partialVoting.minProposerVotingPower();
+      const minVotingPowerData =
+        await partialVoting.getMinProposerVotingPower();
       setMinProposalVotingPower(minVotingPowerData);
     } catch (e) {
       console.error('Error fetching min proposal voting power', e);

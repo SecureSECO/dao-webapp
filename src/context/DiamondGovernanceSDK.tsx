@@ -13,15 +13,16 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useSigner } from 'wagmi';
-import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
-import { Contract, ethers } from 'ethers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
+import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
+import { ethers } from 'ethers';
+import { useSigner } from 'wagmi';
 
 type SDKContext = {
   client?: DiamondGovernanceClient;
   daoAddress?: string;
+  secoinAddress?: string;
 };
 
 const DiamondSDKContext = createContext<SDKContext>({});
@@ -32,6 +33,9 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     undefined
   );
   const [daoAddress, setDaoAddress] = useState<string | undefined>(undefined);
+  const [secoinAddress, setSecoinAddress] = useState<string | undefined>(
+    undefined
+  );
 
   const signer = useSigner().data || undefined;
 
@@ -40,7 +44,7 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     // All operations that actually require a signer should be blocked anwyways
     if (!signer) {
       let jsonRpcProvider = new ethers.providers.JsonRpcProvider(
-        'https://rpc.ankr.com/polygon_mumbai',
+        PREFERRED_NETWORK_METADATA.rpc,
         {
           chainId: PREFERRED_NETWORK_METADATA.id,
           name: PREFERRED_NETWORK_METADATA.name,
@@ -63,7 +67,17 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
       setDaoAddress(daoAddressData);
     };
 
+    const getSecoinAddress = async () => {
+      if (!client) return;
+      const IChangeableTokenContract =
+        await client.pure.IChangeableTokenContract();
+      const monetaryTokenContractAddress =
+        await IChangeableTokenContract.getTokenContractAddress();
+      setSecoinAddress(monetaryTokenContractAddress);
+    };
+
     getDaoAddress();
+    getSecoinAddress();
   }, [client]);
 
   return (
@@ -71,6 +85,7 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
       value={{
         client,
         daoAddress,
+        secoinAddress,
       }}
     >
       {children}

@@ -47,6 +47,7 @@ import {
 } from '../ui/ConditionalButton';
 import { Button } from '@/src/components/ui/Button';
 import { StampInfo, useVerification } from '@/src/hooks/useVerification';
+import { ContractTransaction } from 'ethers';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -120,18 +121,13 @@ const StampCard = ({
    * Deletes the stamp from this specific provider
    * @returns {Promise<void>} Promise that resolves when the stamp is deleted
    */
-  const unverify = async (): Promise<void> => {
-    try {
-      if (isBusy) {
-        throw new Error('Already unverifying');
-      }
-
-      setIsBusy(true);
-      await sdkUnverify(providerId);
-    } catch (error) {
-      console.log(error);
-      throw new Error('Something went wrong while unverifying');
+  const unverify = async (): Promise<ContractTransaction> => {
+    if (isBusy) {
+      throw new Error('Already unverifying');
     }
+
+    setIsBusy(true);
+    return await sdkUnverify(providerId);
   };
 
   return (
@@ -211,14 +207,16 @@ const StampCard = ({
       <div className="flex items-center gap-2">
         <div className="flex flex-row items-center gap-x-4">
           <ConditionalButton
-            disabled={isError}
+            disabled={isError || isBusy}
             conditions={[
               {
                 when: !isConnected,
                 content: <ConnectWalletWarning action="to verify" />,
               },
             ]}
-            onClick={() => verify(providerId)}
+            onClick={async () => {
+              verify(providerId);
+            }}
           >
             {verified ? 'Reverify' : 'Verify'}
           </ConditionalButton>
@@ -235,7 +233,9 @@ const StampCard = ({
         {verified && isConnected && !isError && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="subtle">Remove</Button>
+              <Button variant="subtle" disabled={isBusy}>
+                Remove
+              </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -250,8 +250,7 @@ const StampCard = ({
                 <AlertDialogAction
                   disabled={isBusy}
                   onClick={() => {
-                    toast.promise(unverify(), {
-                      loading: 'Removing verification...',
+                    toast.contractTransaction(unverify, {
                       success: 'Verification removed',
                       error: 'Failed to remove verification: ',
                       onFinish() {

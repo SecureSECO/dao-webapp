@@ -12,8 +12,6 @@ import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
 import { BigNumber, Contract, constants, providers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
 
-import { NumberPattern } from '../constants/patterns';
-
 export type TokenInfo = {
   decimals?: number;
   name?: string;
@@ -31,30 +29,46 @@ export type TokenInfo = {
 export async function getTokenInfo(
   address: string | undefined,
   provider: providers.Provider,
-  nativeTokenData: NativeTokenData | undefined
+  nativeTokenData: NativeTokenData | undefined,
+  tokenType: 'erc20' | 'erc721' = 'erc20'
 ): Promise<TokenInfo> {
   if (!address) return {};
-
   if (isNativeToken(address)) return { ...nativeTokenData };
 
   const contract = new Contract(address, erc20ABI, provider);
 
   try {
-    const values = await Promise.all([
-      contract.decimals(),
-      contract.name(),
-      contract.symbol(),
-      contract.totalSupply(),
-    ]);
+    if (tokenType === 'erc20') {
+      const values = await Promise.all([
+        contract.decimals(),
+        contract.name(),
+        contract.symbol(),
+        contract.totalSupply(),
+      ]);
 
-    return {
-      decimals: values[0],
-      name: values[1],
-      symbol: values[2],
-      totalSupply: values[3],
-    };
+      return {
+        decimals: values[0],
+        name: values[1],
+        symbol: values[2],
+        totalSupply: values[3],
+      };
+    } else if (tokenType === 'erc721') {
+      // erc721 can be used for both ERC721 and ERC1155 tokens, since we're only trying to get the name here
+
+      // Note that we use the ERC20 ABI here as well, since it contains the name() function
+      // May fail if the contract does not have the name() function (does not support ERC721Metadata interface in the case of ERC721)
+      // In that case, we return undefined for the name
+      const name: string | undefined = await contract
+        .name()
+        .catch(() => undefined);
+
+      return {
+        name,
+        decimals: 0, // ERC721 tokens do not have decimals
+      };
+    }
   } catch (error) {
-    console.error('Error getting token info from contract');
+    console.error('Error getting token info from contract: ', error);
   }
 
   return {};

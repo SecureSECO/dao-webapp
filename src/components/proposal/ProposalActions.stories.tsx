@@ -11,7 +11,7 @@ import {
   dummyChangeParamsAction,
   dummyMergeAction,
   dummyMintAction,
-  dummyWithdrawAction,
+  dummyWithdrawActions,
 } from '@/src/hooks/useProposal';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -47,7 +47,7 @@ export const Primary: Story = {
   args: {
     actions: [
       dummyMintAction,
-      dummyWithdrawAction,
+      ...dummyWithdrawActions,
       dummyMergeAction,
       dummyChangeParamsAction,
       dummyUnknownAction,
@@ -65,7 +65,7 @@ export const Loading: Story = {
   args: {
     actions: [
       dummyMintAction,
-      dummyWithdrawAction,
+      ...dummyWithdrawActions,
       dummyMergeAction,
       dummyChangeParamsAction,
       dummyUnknownAction,

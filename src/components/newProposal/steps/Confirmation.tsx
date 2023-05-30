@@ -28,7 +28,6 @@ import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router';
-import { useProvider } from 'wagmi';
 
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 
