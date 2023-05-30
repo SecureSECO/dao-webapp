@@ -110,7 +110,7 @@ export const AllOk: Story = {
         expired: false,
         preCondition: true,
         verified: true,
-        timeLeftUntilExpiration: 60,
+        timeLeftUntilExpiration: 60 * 86400,
       };
     },
     getThresholdForTimestamp() {
