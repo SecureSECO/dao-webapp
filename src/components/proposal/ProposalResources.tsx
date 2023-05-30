@@ -40,7 +40,7 @@ export const ProposalResources = ({
   ...props
 }: ProposalResourcesProps) => {
 
-  const sanitizeHref = (v) => {
+  const sanitizeHref = (v:string) => {
     const regex = /^<a href="(.+)"><\/a>$/;
     const clean = DOMPurify.sanitize(`<a href="${v}"></a>`);
     const matches = regex.exec(clean);
