@@ -62,7 +62,7 @@ export const IncorrectNetworkCanSwitch: Story = {
 };
 
 export const NotMember: Story = {
-  args: { isConnected: true },
+  args: { isConnected: true, stamps: [] },
 };
 
 export const AlmostExpired: Story = {

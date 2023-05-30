@@ -55,11 +55,7 @@ export const useDaoBalance = (
       setError('No DiamondGovernanceSDK client found');
       return;
     }
-    if (!daoAddress) {
-      setLoading(false);
-      setError('No DAO address found');
-      return;
-    }
+    if (!daoAddress) return;
 
     try {
       const daoBal: AssetBalance[] | null = await client.methods.getDaoBalances(
@@ -117,7 +113,7 @@ export const useDaoBalance = (
     if (!client) return;
     if (useDummyData) return setDummyData();
     fetchDaoBalance(client);
-  }, [client]);
+  }, [client, daoAddress]);
 
   return {
     loading,
