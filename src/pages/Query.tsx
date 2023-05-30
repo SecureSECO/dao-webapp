@@ -227,22 +227,25 @@ const Query = () => {
                   onClick={async () => {
                     setIsPaying(true);
 
-                    try {
+                    const startAndPaySession = async () => {
                       const session = await startSession();
-                      await payForSession(session);
-                      setPaymentSent(true);
-                    } catch (error: any) {
-                      console.log(error);
+                      return payForSession(session);
+                    };
 
-                      toast.error({
-                        title: error.message.substring(0, 100),
-                      });
-
-                      // Reset session
-                      resetQuery();
-                    }
-
-                    setIsPaying(false);
+                    toast.contractTransaction(startAndPaySession, {
+                      success: 'Paid for session!',
+                      error: 'Failed to pay for session',
+                      onError() {
+                        // Reset session
+                        resetQuery(false);
+                      },
+                      onSuccess() {
+                        setPaymentSent(true);
+                      },
+                      onFinish() {
+                        setIsPaying(false);
+                      },
+                    });
                   }}
                   disabled={!isConnected || isPaying}
                   icon={isPaying ? Loading : null}
@@ -331,7 +334,7 @@ export const CancelButton = ({
   resetQuery,
   setPaymentSent,
 }: {
-  resetQuery: () => void;
+  resetQuery: (clearQueryResult?: boolean) => void;
   // eslint-disable-next-line no-unused-vars
   setPaymentSent: (value: boolean) => void;
 }) => {

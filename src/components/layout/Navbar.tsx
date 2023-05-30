@@ -72,7 +72,7 @@ const navItems: NavItemData[] = [
         label: 'Query',
         url: '/query',
         icon: HiOutlineDocumentMagnifyingGlass,
-        description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.}`,
+        description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.`,
       },
       {
         label: 'Mining',

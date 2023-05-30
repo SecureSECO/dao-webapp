@@ -186,6 +186,7 @@ type PromiseToast<TData> = {
   success: PromiseProp<TData>;
   error: PromiseProp<unknown>;
   onSuccess?: (data: TData) => void;
+  onError?: (error: unknown) => void;
   onFinish?: () => void;
 };
 
@@ -228,6 +229,9 @@ toast.promise = function <TData>(
       toast.error(promisePropToToast(config.error, error), id);
     }
   );
+  promise.catch((err) => {
+    config.onError && config.onError(err);
+  });
   promise.finally(() => {
     config.onFinish && config.onFinish();
   });
@@ -320,6 +324,7 @@ toast.contractTransaction = async (
   } catch (e) {
     console.error(e);
     toast.error(promisePropToToast(config.error, e), id);
+    config.onError && config.onError(e);
   } finally {
     config.onFinish && config.onFinish();
   }
