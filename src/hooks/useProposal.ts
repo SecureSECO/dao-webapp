@@ -214,9 +214,6 @@ export const useProposal = ({
     No: false,
     Abstain: false,
   });
-  // ID of the proposal to which the canVote applies
-  // used to avoid unnecessary refetching
-  const [canVoteId, setCanVoteId] = useState<number | null>(null);
   const [votes, setVotes] = useState<AddressVotes[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -292,12 +289,9 @@ export const useProposal = ({
 
     const checkCanVote = async () => {
       // Check if proposal.id === canVoteId to avoid unnecessary refetching of the canVote data
-      if (!proposal || !proposalVotingPower || proposal.id === canVoteId)
-        return;
+      if (!proposal || !proposalVotingPower) return;
 
       try {
-        console.log(await client?.pure.signer.getAddress());
-
         const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
         const canVoteData = await Promise.all(
           values.map((vote) => proposal.CanVote(vote, proposalVotingPower))
@@ -307,7 +301,6 @@ export const useProposal = ({
           No: canVoteData[2],
           Abstain: canVoteData[0],
         });
-        setCanVoteId(proposal.id);
       } catch (e) {
         console.error('Error fetching canVote', e);
       }

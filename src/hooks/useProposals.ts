@@ -77,11 +77,6 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
   };
 
   const fetchProposals = async (client: DiamondGovernanceClient) => {
-    console.log(
-      order,
-      order !== undefined ? SortingOrder[order] : 'Default (asc)'
-    );
-
     try {
       const daoProposals: Proposal[] | null = await client.sugar.GetProposals(
         status ? [status] : undefined,
