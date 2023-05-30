@@ -34,12 +34,12 @@ export interface ProposalFormMintData extends ProposalFormAction {
 
 export type ProposalFormMintWallet = {
   address: string;
-  amount: number;
+  amount: string;
 };
 
 export const emptyMintWallet: ProposalFormMintWallet = {
   address: '',
-  amount: 0,
+  amount: '0',
 };
 
 export const emptyMintData: ProposalFormMintData = {
@@ -106,7 +106,7 @@ export const MintTokensInput = () => {
         type="button"
         label="Add wallet"
         icon={HiPlus}
-        onClick={() => append({ address: '', amount: 0 })}
+        onClick={() => append({ address: '', amount: '0' })}
       />
     </MainCard>
   );
@@ -169,12 +169,10 @@ const MintListItem = ({
                 message: 'Please enter a number, e.g. 3.141',
               },
             })}
-            type="number"
             id="tokens"
             error={errors?.amount}
             className="w-full basis-2/3"
             min="0"
-            step="1" // Only allow integers
             required
           />
         </ErrorWrapper>
