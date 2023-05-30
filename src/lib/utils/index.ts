@@ -34,7 +34,9 @@ export function getErrorMessage(error: unknown): string {
  * @param value The value to check
  * @returns True iff the value is null or undefined
  */
-export function isNullOrUndefined(value: any): boolean {
+export function isNullOrUndefined<T>(
+  value: T | undefined | null
+): value is undefined | null {
   return value === null || value === undefined;
 }
 
@@ -128,4 +130,8 @@ export function throwIfNullOrUndefined<T>(value: T | null | undefined): T {
 
 export function assertUnreachable(x: never): never {
   throw new Error('Reached a state that was asserted to be unreachable');
+}
+
+export function IsEmptyOrOnlyWhitespace(x: string): boolean {
+  return x.trim() === '';
 }
