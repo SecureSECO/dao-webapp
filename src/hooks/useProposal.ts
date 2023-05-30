@@ -275,37 +275,37 @@ export const useProposal = ({
     fetchProposal();
   }, [client, id]);
 
+  const checkCanExecute = async () => {
+    if (!proposal) return;
+    // Fetch if the current proposal can be executed
+    try {
+      const canExecuteData = await proposal.CanExecute();
+      setCanExecute(canExecuteData);
+    } catch (e) {
+      console.error('Error fetching canExecute', e);
+    }
+  };
+
+  const checkCanVote = async () => {
+    // Check if proposal.id === canVoteId to avoid unnecessary refetching of the canVote data
+    if (!proposal || !proposalVotingPower) return;
+
+    try {
+      const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
+      const canVoteData = await Promise.all(
+        values.map((vote) => proposal.CanVote(vote, proposalVotingPower))
+      );
+      setCanVote({
+        Yes: canVoteData[1],
+        No: canVoteData[2],
+        Abstain: canVoteData[0],
+      });
+    } catch (e) {
+      console.error('Error fetching canVote', e);
+    }
+  };
+
   useEffect(() => {
-    const checkCanExecute = async () => {
-      if (!proposal) return;
-      // Fetch if the current proposal can be executed
-      try {
-        const canExecuteData = await proposal.CanExecute();
-        setCanExecute(canExecuteData);
-      } catch (e) {
-        console.error('Error fetching canExecute', e);
-      }
-    };
-
-    const checkCanVote = async () => {
-      // Check if proposal.id === canVoteId to avoid unnecessary refetching of the canVote data
-      if (!proposal || !proposalVotingPower) return;
-
-      try {
-        const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
-        const canVoteData = await Promise.all(
-          values.map((vote) => proposal.CanVote(vote, proposalVotingPower))
-        );
-        setCanVote({
-          Yes: canVoteData[1],
-          No: canVoteData[2],
-          Abstain: canVoteData[0],
-        });
-      } catch (e) {
-        console.error('Error fetching canVote', e);
-      }
-    };
-
     checkCanExecute();
     checkCanVote();
   }, [proposal, proposalVotingPower]);
@@ -318,6 +318,10 @@ export const useProposal = ({
     canVote,
     votes,
     // Only allow refetching if not using dummy data
-    refetch: () => (!useDummyData ? fetchProposal() : void 0),
+    refetch: () => {
+      proposal && proposal.Refresh();
+      checkCanExecute();
+      checkCanVote();
+    },
   };
 };

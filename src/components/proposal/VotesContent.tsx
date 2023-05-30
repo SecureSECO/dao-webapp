@@ -132,7 +132,6 @@ const VotesContentActive = ({
 
   const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
     try {
-      setIsVoting(true);
       // Fetch most recent voting power, to vote with all available rep
       const votingPower = await getProposalVotingPower(proposal);
       if (votingPower.lte(0)) {
@@ -140,6 +139,7 @@ const VotesContentActive = ({
           title: 'You do not have any voting power',
         });
       }
+      setIsVoting(true);
       toast.contractTransaction(
         () =>
           proposal.Vote(
@@ -159,7 +159,6 @@ const VotesContentActive = ({
         title: 'Error submitting vote',
         description: 'Unable to get voting power',
       });
-      setIsVoting(false);
     }
   };
 
@@ -290,10 +289,10 @@ const VotesContentOption = ({
             filteredVotes.map((vote) => (
               <div
                 key={vote.address}
-                className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-border px-3 py-1"
+                className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-border px-3 py-1"
               >
                 <Address address={vote.address} length="sm" hasLink />
-                <div className="grid grid-cols-4 text-right opacity-80">
+                <div className="flex flex-row items-center gap-x-4 text-right opacity-80">
                   {/* The vote.votes is an array of how much was voted for each option, because the underlying 
                       smart contract implements partial voting, but this is not supported in the web-app
                       meaning realistically, the vote.votes array will only ever have 1 entry */}
