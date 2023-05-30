@@ -204,15 +204,15 @@ export const toAbbreviatedTokenAmount = ({
 };
 
 /**
- * Parses a given token amount (string) to a BigNumer token amount, correctly handling decimal places.
+ * Parses a given token amount (string or number) to a BigNumer token amount, correctly handling decimal places.
  * Prefered over ethers.utils.parseUnits because this return null on errors (instead of an exception).
  * Furthermore it cuts off inputs with too many numbers after the decimal point (instead of throwing an exception).
  * Note: If any input is null or undefined it can not parse the value thus null will be returned.
- * @param value Token amount as string (e.g. "123.456")
+ * @param value Token amount as string or number (e.g. "123.456")
  * @param tokenDecimals Number of decimals of the token
  */
 export const parseTokenAmount = (
-  value: string | null | undefined,
+  value: string | number | null | undefined,
   tokenDecimals: number | null | undefined
 ): BigNumber | null => {
   if (
@@ -226,12 +226,17 @@ export const parseTokenAmount = (
 
   let num;
   try {
-    // If the amount of decimals in the value is larger than decimals, it is cut off.
-    if (value.includes('.')) {
-      const values = value.split('.');
-      if (values[1].length > tokenDecimals) {
-        value = `${values[0]}.${values[1].slice(0, tokenDecimals)}`;
+    // Check if num is a string
+    if (typeof value == 'string') {
+      // If the amount of decimals in the value is larger than decimals, it is cut off.
+      if (value.includes('.')) {
+        const values = value.split('.');
+        if (values[1].length > tokenDecimals) {
+          value = `${values[0]}.${values[1].slice(0, tokenDecimals)}`;
+        }
       }
+    } else if (typeof value == 'number') {
+      value = value.toFixed(tokenDecimals);
     }
 
     num = parseUnits(value, tokenDecimals);
