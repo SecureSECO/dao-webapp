@@ -115,7 +115,7 @@ export const Address: React.FC<AddressProps> = ({
               )}
             </TooltipTrigger>
             <TooltipContent>
-              <p>Open in block explorer</p>
+              {hasLink ? <p>Open in block explorer</p> : <p>{address}</p>}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

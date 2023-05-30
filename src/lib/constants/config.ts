@@ -12,3 +12,15 @@ export const CONFIG = {
   DIAMOND_ADDRESS: '0xc57052Bb93BFF80b637A2f5c85Bac28bEa8C5A8d',
   PREFERRED_NETWORK_ID: 80001,
 } as const;
+
+export const DAO_METADATA = {
+  name: 'SecureSECO DAO',
+  description:
+    'Distributed Autonomous Organization for the SecureSECO project.',
+  links: [
+    {
+      name: 'SecureSECO Website',
+      url: 'https://secureseco.org/',
+    },
+  ],
+};
