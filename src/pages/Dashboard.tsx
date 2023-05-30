@@ -36,8 +36,10 @@ import {
 } from 'react-icons/hi2';
 
 import { ClaimDailyRewardCard } from '../components/dashboard/ClaimDailyRewardCard';
+import { useAccount } from 'wagmi';
 
 const Dashboard = () => {
+  const { isConnected } = useAccount();
   const { dao, loading: daoLoading, error: daoError } = useDao();
   const {
     proposals,
@@ -160,7 +162,7 @@ const Dashboard = () => {
       {/* div containing the right column of the dashboard */}
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
         {/* Card containing the option to claim daily rewards*/}
-        <ClaimDailyRewardCard />
+        {isConnected && <ClaimDailyRewardCard />}
 
         {/* Card containing the latest dao transfers */}
         <MainCard

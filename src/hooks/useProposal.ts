@@ -296,6 +296,8 @@ export const useProposal = ({
         return;
 
       try {
+        console.log(await client?.pure.signer.getAddress());
+
         const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
         const canVoteData = await Promise.all(
           values.map((vote) => proposal.CanVote(vote, proposalVotingPower))
