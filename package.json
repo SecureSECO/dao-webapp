@@ -1,7 +1,7 @@
 {
   "name": "dao-webapp",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "license": "MIT",
   "scripts": {
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@aragon/sdk-client": "^1.4.0",
-    "@plopmenz/diamond-governance-sdk": "^0.1.24",
+    "@plopmenz/diamond-governance-sdk": "^0.1.25",
     "@radix-ui/react-accordion": "^1.1.1",
     "@radix-ui/react-alert-dialog": "^1.0.3",
     "@radix-ui/react-collapsible": "^1.0.2",

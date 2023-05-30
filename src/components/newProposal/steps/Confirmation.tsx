@@ -170,9 +170,11 @@ export const Confirmation = () => {
       {
         error: 'Error creating proposal',
         success: 'Proposal created!',
-        onSuccess: () => {
+        onSuccess: async (receipt) => {
+          // Fetch ID of created proposal to send user to that page
+          const id = await client.sugar.GetProposalId(receipt);
           // Send user to proposals page
-          navigate('/governance');
+          navigate(`/governance/proposals/${id}`);
         },
         onFinish: () => setIsSubmitting(false),
       }

@@ -47,7 +47,7 @@ export type PendingVerification = {
 export const useVerification = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [stamps, setStamps] = useState<Stamp[]>([]);
+  const [stamps, setStamps] = useState<Stamp[] | null>(null);
   const [thresholdHistory, setThresholdHistory] = useState<
     VerificationThreshold[]
   >([]);
@@ -183,8 +183,8 @@ export const useVerification = () => {
       setStamps(_stamps);
       // Convert stamps to verification history
       let verificationHistory: VerificationHistory[] = [];
-      for (let i = 0; i < stamps.length; i++) {
-        const stamp = stamps[i];
+      for (let i = 0; i < _stamps.length; i++) {
+        const stamp = _stamps[i];
         for (let j = 0; j < stamp[2].length; j++) {
           verificationHistory.push({
             id: stamp[0],

@@ -63,7 +63,7 @@ export const MembershipStatusView = ({
   isConnected: boolean;
   chainId?: number;
   openConnector: (options?: any | undefined) => Promise<void>;
-  stamps?: Stamp[];
+  stamps?: Stamp[] | null;
   isVerified: (stamp: Stamp) => VerificationStatus;
   getThresholdForTimestamp: (timestamp: number) => BigNumber;
   switchNetwork?:
@@ -125,7 +125,7 @@ export const MembershipStatusView = ({
 
   // If user has connected wallet but is not member:
   // An informative banner on how to become member, with button
-  const isNotMember = !stamps || stamps.length === 0;
+  const isNotMember = stamps && stamps.length === 0;
   if (isNotMember)
     return (
       <MembershipCard message="You are not yet a member of this DAO!">
@@ -136,9 +136,10 @@ export const MembershipStatusView = ({
     );
 
   // Set boolean values needed for futher code
-  let expired = stamps.some((stamp) => isVerified(stamp).expired);
+  let expired = stamps && stamps.some((stamp) => isVerified(stamp).expired);
   let almostExpired =
     !expired &&
+    stamps &&
     stamps.some((stamp) => {
       const { timeLeftUntilExpiration, verified } = isVerified(stamp);
 
