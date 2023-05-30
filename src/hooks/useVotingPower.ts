@@ -45,7 +45,7 @@ export const useVotingPower = ({
   const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
   const [proposalVotingPower, setProposalVotingPower] =
     useState<BigNumber | null>(null);
-  // ID of the proposal to whicht he proposalVotingPower applies
+  // ID of the proposal to which the proposalVotingPower applies
   const [proposalVotingPowerId, setProposalVotingPowerId] = useState<
     number | null
   >(null);
