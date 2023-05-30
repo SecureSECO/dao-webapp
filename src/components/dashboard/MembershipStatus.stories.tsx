@@ -62,7 +62,7 @@ export const IncorrectNetworkCanSwitch: Story = {
 };
 
 export const NotMember: Story = {
-  args: { isConnected: true },
+  args: { isConnected: true, stamps: [] },
 };
 
 export const AlmostExpired: Story = {
@@ -110,7 +110,7 @@ export const AllOk: Story = {
         expired: false,
         preCondition: true,
         verified: true,
-        timeLeftUntilExpiration: 60,
+        timeLeftUntilExpiration: 60 * 86400,
       };
     },
     getThresholdForTimestamp() {
