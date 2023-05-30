@@ -196,8 +196,8 @@ export const ProposalCardList = ({
           doubleColumn && 'lg:grid-cols-2'
         )}
       >
-        {proposals.map((proposal, i) => (
-          <ProposalCard key={i} proposal={proposal} />
+        {proposals.map((proposal) => (
+          <ProposalCard key={proposal.id} proposal={proposal} />
         ))}
       </div>
     </div>
