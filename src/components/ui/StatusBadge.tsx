@@ -9,7 +9,6 @@
 import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '@/src/lib/utils';
 import { IconType } from 'react-icons';
-import { createElement } from 'react';
 
 const statusVariants = cva(
   'rounded-lg px-2 py-1 flex flex-row w-fit gap-x-1 items-center h-fit',

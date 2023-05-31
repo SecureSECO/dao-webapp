@@ -7,7 +7,10 @@
  */
 
 import Layout from '@/src/components/layout/Layout';
-import Header from '@/src/components/ui/Header';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { Link } from '@/src/components/ui/Link';
+import { StatusBadge } from '@/src/components/ui/StatusBadge';
+import { HiChevronLeft, HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { useRouteError } from 'react-router-dom';
 
 const ErrorPage = () => {
@@ -15,13 +18,39 @@ const ErrorPage = () => {
 
   return (
     <Layout>
-      <div className="flex h-screen w-full flex-col items-center justify-center gap-y-4">
-        <Header level={1} className="text-xl">
-          An unexpected error has occurred
-        </Header>
-        <p>
-          <i>{error.statusText || error.message}</i>
-        </p>
+      <div className="space-y-2">
+        {/* Back button */}
+        <Link
+          to="/dashboard"
+          icon={HiChevronLeft}
+          variant="outline"
+          label="Dashboard"
+          className="text-lg"
+        />
+        <HeaderCard
+          title={error?.statusText ?? 'An error occurred'}
+          aside={
+            error &&
+            error.status && (
+              <StatusBadge
+                icon={HiOutlineExclamationTriangle}
+                text={error.status}
+                size="lg"
+              />
+            )
+          }
+        >
+          {error?.status === 404 ? (
+            <p>
+              The page you are looking for does not exist. Please check the URL
+              and try again.
+            </p>
+          ) : (
+            <p>
+              An error occurred while loading the page. Please try again later.
+            </p>
+          )}
+        </HeaderCard>
       </div>
     </Layout>
   );
