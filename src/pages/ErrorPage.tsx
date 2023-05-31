@@ -21,7 +21,7 @@ const ErrorPage = () => {
       <div className="space-y-2">
         {/* Back button */}
         <Link
-          to="/dashboard"
+          to="/"
           icon={HiChevronLeft}
           variant="outline"
           label="Dashboard"
