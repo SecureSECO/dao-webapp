@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { CONFIG } from '@/src/lib/constants/config';
 import { getErrorMessage } from '@/src/lib/utils';
-import { BigNumber, ContractTransaction, ethers } from 'ethers';
+import { ContractTransaction, ethers } from 'ethers';
 
 import { erc20ABI } from '../lib/constants/erc20ABI';
 import { parseTokenAmount } from '../lib/utils/token';

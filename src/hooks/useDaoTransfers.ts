@@ -61,20 +61,12 @@ export const useDaoTransfers = (
   const [error, setError] = useState<string | null>(null);
 
   const { client } = useAragonSDKContext();
-  const { client: diamondClient } = useDiamondSDKContext();
+  const { daoAddress } = useDiamondSDKContext();
 
   const fetchDaoTransfers = async (client: Client) => {
-    if (!diamondClient) {
-      setLoading(false);
-      setError('No DiamondGovernanceSDK client found');
-      return;
-    }
+    if (!daoAddress) return;
 
     try {
-      // Fetch DAO address from Diamond governance facet
-      const daoRef = await diamondClient?.pure.IDAOReferenceFacet();
-      const daoAddress = await daoRef.dao();
-
       const params: ITransferQueryParams = {
         daoAddressOrEns: daoAddress,
         sortBy: TransferSortBy.CREATED_AT, // optional
@@ -155,7 +147,7 @@ export const useDaoTransfers = (
     if (useDummyData) return setDummyData();
     if (!client) return;
     fetchDaoTransfers(client);
-  }, [client]);
+  }, [client, daoAddress]);
 
   return {
     loading,
