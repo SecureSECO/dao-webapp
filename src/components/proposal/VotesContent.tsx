@@ -254,10 +254,16 @@ const VotesContentOption = ({
   const voteValueString = VoteOption[voteOption];
 
   const voteValueLower = voteValueString.toLowerCase() as VoteOptionStringLower;
-  const voteTally = proposal.data.tally[voteValueLower];
   const filteredVotes = votes.filter(
     (vote) => vote.votes[0].option === voteOption
   );
+  const voteTally =
+    voteOption === VoteOption.Abstain
+      ? filteredVotes.reduce(
+          (acc, vote) => acc.add(vote.votes[0].amount),
+          BigNumber.from(0)
+        )
+      : proposal.data.tally[voteValueLower];
   const percentage = calcBigNumberPercentage(voteTally, totalVotingWeight);
 
   return (
