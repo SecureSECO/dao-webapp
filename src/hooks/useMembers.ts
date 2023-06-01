@@ -46,7 +46,7 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
   const [memberCount, setMemberCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { client } = useDiamondSDKContext();
+  const { anonClient } = useDiamondSDKContext();
 
   /**
    * Fetch balances for a list of addresses
@@ -55,11 +55,11 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
    * @see Member for the type of object returned in the list
    */
   const fetchBalances = async (addressList: string[]): Promise<Member[]> => {
-    if (!client) throw new Error('Client not set');
+    if (!anonClient) throw new Error('Client not set');
     return Promise.all(
       addressList.map(async (address) => {
         try {
-          const contract = await client.pure.IERC20();
+          const contract = await anonClient.pure.IERC20();
           const bal = await contract.balanceOf(address);
           return {
             address,
@@ -124,9 +124,9 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!client) return;
-    fetchMembers(client);
-  }, [client]);
+    if (!anonClient) return;
+    fetchMembers(anonClient);
+  }, [anonClient]);
 
   /**
    * Check if an address is a member of the DAO

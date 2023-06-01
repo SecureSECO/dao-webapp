@@ -13,7 +13,6 @@ import { ProposalWithdrawAction } from '@/src/components/proposal/actions/Withdr
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { ACTIONS } from '@/src/lib/constants/actions';
-import { getErrorMessage } from '@/src/lib/utils';
 import {
   VoteOption,
   Proposal,
@@ -21,6 +20,7 @@ import {
   ProposalStatus,
   AddressVotes,
   IPartialVotingFacet,
+  DiamondGovernanceClient,
 } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -217,13 +217,13 @@ export const useProposal = ({
   const [votes, setVotes] = useState<AddressVotes[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { client } = useDiamondSDKContext();
+  const { anonClient, client } = useDiamondSDKContext();
   const { proposalVotingPower } = useVotingPower({
     address,
     proposal: proposal ?? undefined,
   });
 
-  const fetchProposal = async () => {
+  const fetchProposal = async (client?: DiamondGovernanceClient) => {
     if (!client) return;
     if (!id) {
       setError('Proposal not found');
@@ -239,6 +239,8 @@ export const useProposal = ({
         setError(null);
         setLoading(false);
         fetchVotes(daoProposal);
+        checkCanExecute(daoProposal);
+        checkCanVote(daoProposal);
       } else {
         setError('Proposal not found');
         setLoading(false);
@@ -273,12 +275,10 @@ export const useProposal = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (client) setLoading(true);
-    fetchProposal();
-  }, [client, id]);
+    fetchProposal(client ?? anonClient);
+  }, [client, anonClient, id]);
 
-  const checkCanExecute = async () => {
-    if (!proposal) return;
+  const checkCanExecute = async (proposal: Proposal) => {
     // Fetch if the current proposal can be executed
     try {
       const canExecuteData = await proposal.CanExecute();
@@ -288,11 +288,13 @@ export const useProposal = ({
     }
   };
 
-  const checkCanVote = async () => {
+  const checkCanVote = async (proposal: Proposal) => {
     // Check if proposal.id === canVoteId to avoid unnecessary refetching of the canVote data
-    if (!proposal || !proposalVotingPower) return;
+    if (!proposalVotingPower) return;
 
     try {
+      console.log('fetching CanVote', proposalVotingPower);
+
       const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
       const canVoteData = await Promise.all(
         values.map((vote) => proposal.CanVote(vote, proposalVotingPower))
@@ -308,9 +310,10 @@ export const useProposal = ({
   };
 
   useEffect(() => {
-    checkCanExecute();
-    checkCanVote();
-  }, [proposal, proposalVotingPower]);
+    if (!proposal) return;
+    checkCanExecute(proposal);
+    checkCanVote(proposal);
+  }, [proposalVotingPower]);
 
   return {
     loading,
@@ -321,9 +324,11 @@ export const useProposal = ({
     votes,
     // Only allow refetching if not using dummy data
     refetch: () => {
-      proposal && proposal.Refresh();
-      checkCanExecute();
-      checkCanVote();
+      if (proposal) {
+        proposal.Refresh();
+        checkCanExecute(proposal);
+        checkCanVote(proposal);
+      }
     },
   };
 };

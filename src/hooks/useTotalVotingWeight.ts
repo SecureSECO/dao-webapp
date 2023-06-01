@@ -35,13 +35,13 @@ export const useTotalVotingWeight = ({
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { client } = useDiamondSDKContext();
+  const { anonClient } = useDiamondSDKContext();
 
   const fetchVotingWeight = async () => {
-    if (!client || !blockNumber) return;
+    if (!anonClient || !blockNumber) return;
 
     try {
-      const governance = await client.pure.IGovernanceStructure();
+      const governance = await anonClient.pure.IGovernanceStructure();
       const totalVotingWeightData = await governance.totalVotingPower(
         blockNumber
       );
@@ -66,10 +66,10 @@ export const useTotalVotingWeight = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (client) setLoading(true);
+    if (anonClient) setLoading(true);
     fetchVotingWeight();
     setLoading(false);
-  }, [client, blockNumber]);
+  }, [anonClient, blockNumber]);
 
   return {
     loading,

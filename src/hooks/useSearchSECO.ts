@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { CONFIG } from '@/src/lib/constants/config';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { BigNumber, ContractTransaction, ethers } from 'ethers';
+import { ContractTransaction, ethers } from 'ethers';
 import { erc20ABI } from '../lib/constants/erc20ABI';
 import { parseTokenAmount } from '../lib/utils/token';
 

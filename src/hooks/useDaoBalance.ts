@@ -47,14 +47,9 @@ export const useDaoBalance = (
   const [error, setError] = useState<string | null>(null);
 
   const { client } = useAragonSDKContext();
-  const { client: diamondClient, daoAddress } = useDiamondSDKContext();
+  const { daoAddress } = useDiamondSDKContext();
 
   const fetchDaoBalance = async (client: Client) => {
-    if (!diamondClient) {
-      setLoading(false);
-      setError('No DiamondGovernanceSDK client found');
-      return;
-    }
     if (!daoAddress) return;
 
     try {

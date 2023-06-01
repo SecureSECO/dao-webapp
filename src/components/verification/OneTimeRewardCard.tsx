@@ -36,10 +36,7 @@ const OneTimeRewardCard = ({
     setIsClaiming(true);
     toast.contractTransaction(claimReward, {
       success: 'Successfully claimed reward!',
-      error: (err: any) => ({
-        title: 'Failed to claim reward',
-        description: err.message,
-      }),
+      error: 'Could not claim reward',
       onFinish() {
         setIsClaiming(false);
         refetch();
