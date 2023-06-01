@@ -78,6 +78,7 @@ export const useDaoVariable = ({
   };
 
   useEffect(() => {
+    setLoading(true);
     if (useDummyData) return setDummyData();
     if (!client) return;
     setVariableValue(client);
