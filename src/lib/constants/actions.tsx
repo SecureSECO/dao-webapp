@@ -377,6 +377,9 @@ export const getIdentifier = (action: Action | ActionData<any, any>) =>
  * // actionName === 'mint_tokens'
  */
 export const actionNames: { [identifier: string]: ActionName } = {};
+// Developer's note: the actonNames object is expanded upon with the identifiers for all possible
+// change_param action interfaces and methods in DiamondGovernanceSDK.tsx, after fetching the
+// list of all possible variables to change in the DAO from the SDK.
 Object.entries(ACTIONS).forEach(([name, action]) => {
   if (typeof action.method === 'string')
     actionNames[getIdentifier({ ...action, method: action.method })] =
