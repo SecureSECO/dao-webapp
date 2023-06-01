@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/Select';
-import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useDaoVariable } from '@/src/hooks/useDaoVariable';
 import { useDaoVariables } from '@/src/hooks/useDaoVariables';
 import { ProposalFormAction } from '@/src/lib/constants/actions';
@@ -28,8 +27,6 @@ import {
   SignedIntegerPattern,
 } from '@/src/lib/constants/patterns';
 import { isNullOrUndefined } from '@/src/lib/utils';
-import { InterfaceVariables } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber } from 'ethers';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiCog, HiXMark } from 'react-icons/hi2';
 
