@@ -21,6 +21,7 @@ import {
 import { toast } from '@/src/hooks/useToast';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
 import {
@@ -42,6 +43,7 @@ import {
   Warning,
 } from '../../ui/ConditionalButton';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
+import TokenAmount from '../../ui/TokenAmount';
 
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
@@ -296,7 +298,11 @@ export const Confirmation = () => {
           )}
         </MainCard>
       </div>
-      <ErrorWrapper name="submit" error={errors?.root?.step4error as any}>
+      <ErrorWrapper
+        className="flex gap-x-2 flex-row items-center"
+        name="submit"
+        error={errors?.root?.step4error as any}
+      >
         <StepNavigator
           isSubmitting={isSubmitting}
           nextStepConditions={[
@@ -324,6 +330,18 @@ export const Confirmation = () => {
             },
           ]}
         />
+        {isConnected &&
+          proposalCreationCost !== null &&
+          votingPower.gte(proposalCreationCost) && (
+            <p>
+              Creating a proposal costs{' '}
+              <TokenAmount
+                amount={proposalCreationCost}
+                symbol={TOKENS.rep.symbol}
+                tokenDecimals={TOKENS.rep.decimals}
+              />
+            </p>
+          )}
       </ErrorWrapper>
     </form>
   );
