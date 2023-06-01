@@ -67,8 +67,7 @@ export type EndTimeType = 'duration' | 'end-custom';
 export const Voting = () => {
   const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
 
-  const { data: minDurationBN, error } = usePartialVotingProposalMinDuration();
-  const minDuration = minDurationBN?.toNumber() ?? null;
+  const { data: minDuration, error } = usePartialVotingProposalMinDuration();
 
   if (error) console.error('Voting settings fetching error', error);
 
@@ -267,8 +266,7 @@ export const EndTime = ({
   } = getWatchers(control);
 
   //retrieve settings for the minDuration
-  const { data: minDurationBN } = usePartialVotingProposalMinDuration();
-  const minDuration = minDurationBN?.toNumber() ?? null;
+  const { data: minDuration } = usePartialVotingProposalMinDuration();
 
   //initialize minEndDate and minEndTime
   let minEndDate = undefined;

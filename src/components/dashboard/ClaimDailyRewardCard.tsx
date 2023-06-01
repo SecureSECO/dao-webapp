@@ -21,10 +21,6 @@ import TokenAmount from '../ui/TokenAmount';
 export const ClaimDailyRewardCard = () => {
   const { data: timeClaimable, loading, error, refetch } = useTimeClaimable();
 
-  console.log(
-    timeClaimable?.claimPeriodInterval.toString(),
-    timeClaimable?.claimPeriodMax.toString()
-  );
   const handleClaimReward = async () => {
     if (!timeClaimable) return;
     toast.contractTransaction(timeClaimable.claimReward, {

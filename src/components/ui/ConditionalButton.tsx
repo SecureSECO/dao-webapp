@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { Button, ButtonProps } from '@/src/components/ui/Button';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { useWeb3Modal } from '@web3modal/react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 
@@ -81,5 +82,5 @@ export const ConnectWalletWarning = ({ action }: WarningWithActionProps) => {
  * @returns A div with a warning message
  */
 export const InsufficientRepWarning = ({ action }: WarningWithActionProps) => (
-  <Warning> {`Insufficient voting power ${action}`} </Warning>
+  <Warning> {`Insufficient ${TOKENS.rep.symbol} ${action}`} </Warning>
 );

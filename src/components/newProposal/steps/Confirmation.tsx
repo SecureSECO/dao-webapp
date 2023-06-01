@@ -31,6 +31,7 @@ import {
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { add, format } from 'date-fns';
 import DOMPurify from 'dompurify';
+import { BigNumber } from 'ethers';
 import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router';
@@ -124,8 +125,7 @@ export const Confirmation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   //retrieve settings for the minDuration
-  const { data: minDurationBN } = usePartialVotingProposalMinDuration();
-  const minDuration = minDurationBN?.toNumber() ?? null;
+  const { data: minDuration } = usePartialVotingProposalMinDuration();
 
   const { address, isConnected } = useAccount();
   const { votingPower, loading: votingPowerLoading } = useVotingPower({
@@ -317,9 +317,7 @@ export const Confirmation = () => {
             {
               when: proposalCreationCostError !== null,
               content: (
-                <Warning>
-                  Can not determine if you may create a proposal
-                </Warning>
+                <Warning>Unable to determine proposal creation cost</Warning>
               ),
             },
             {
@@ -334,11 +332,12 @@ export const Confirmation = () => {
           proposalCreationCost !== null &&
           votingPower.gte(proposalCreationCost) && (
             <p>
-              Creating a proposal costs{' '}
+              You will pay{' '}
               <TokenAmount
                 amount={proposalCreationCost}
                 symbol={TOKENS.rep.symbol}
                 tokenDecimals={TOKENS.rep.decimals}
+                displayDecimals={0}
               />
             </p>
           )}
