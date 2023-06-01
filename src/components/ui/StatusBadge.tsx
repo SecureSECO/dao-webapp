@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '@/src/lib/utils';
+import { VariantProps, cva } from 'class-variance-authority';
 import { IconType } from 'react-icons';
 
 const statusVariants = cva(

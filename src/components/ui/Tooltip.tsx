@@ -15,9 +15,8 @@
  */
 
 import * as React from 'react';
-import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-
 import { cn } from '@/src/lib/utils';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
 /**
  * Provider to control display delay globally.

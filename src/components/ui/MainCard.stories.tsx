@@ -7,9 +7,8 @@
  */
 
 import { Button } from '@/src/components/ui/Button';
-import type { Meta, StoryObj } from '@storybook/react';
-
 import { MainCard } from '@/src/components/ui/MainCard';
+import type { Meta, StoryObj } from '@storybook/react';
 import { HiInbox } from 'react-icons/hi2';
 
 const meta: Meta<typeof MainCard> = {

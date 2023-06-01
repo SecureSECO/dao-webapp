@@ -6,19 +6,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useState } from 'react';
 import {
   ProposalStatusBadge,
   ProposalStatusString,
 } from '@/src/components/governance/ProposalCard';
+import ProposalActions from '@/src/components/proposal/ProposalActions';
+import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
-import ProposalHistory from '@/src/components/proposal/ProposalHistory';
-import ProposalActions from '@/src/components/proposal/ProposalActions';
-import { toast } from '@/src/hooks/useToast';
 import { Address } from '@/src/components/ui/Address';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Link } from '@/src/components/ui/Link';
 import { useProposal } from '@/src/hooks/useProposal';
+import { toast } from '@/src/hooks/useToast';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 import { countdownText } from '@/src/lib/utils/date';
 import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
@@ -32,7 +33,6 @@ import {
   ConnectWalletWarning,
   Warning,
 } from '../components/ui/ConditionalButton';
-import { useState } from 'react';
 
 const ViewProposal = () => {
   const { id } = useParams();

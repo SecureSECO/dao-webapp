@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
 import { ProposalChangeParamAction } from '@/src/components/proposal/actions/ChangeParamAction';
 import { ProposalMergeAction } from '@/src/components/proposal/actions/MergeAction';
 import { ProposalMintAction } from '@/src/components/proposal/actions/MintAction';
@@ -15,15 +16,14 @@ import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { ACTIONS } from '@/src/lib/constants/actions';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
-  VoteOption,
-  Proposal,
-  IPartialVotingProposalFacet,
-  ProposalStatus,
   AddressVotes,
   IPartialVotingFacet,
+  IPartialVotingProposalFacet,
+  Proposal,
+  ProposalStatus,
+  VoteOption,
 } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber, ContractTransaction } from 'ethers';
-import { useEffect, useState } from 'react';
 
 export type CanVote = {
   Yes: boolean;

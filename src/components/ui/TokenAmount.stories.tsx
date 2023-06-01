@@ -6,9 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import TokenAmount from '@/src/components/ui/TokenAmount';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof TokenAmount> = {
   component: TokenAmount,

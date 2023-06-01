@@ -6,10 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Link } from '@/src/components/ui/Link';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-
-import { Link } from '@/src/components/ui/Link';
 
 const meta = {
   component: Link,
@@ -39,14 +38,5 @@ export const Outline: Story = {
     variant: 'outline',
     label: 'Link',
     to: '#',
-  },
-};
-
-export const Clicked: Story = {
-  ...Default,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    userEvent.hover(canvas.getByRole('link'));
-    userEvent.click(canvas.getByRole('link'));
   },
 };

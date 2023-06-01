@@ -6,14 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { getErrorMessage } from '@/src/lib/utils';
 import { useEffect, useState } from 'react';
-import { useLocalStorage } from './useLocalStorage';
-import { CONFIG } from '@/src/lib/constants/config';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { CONFIG } from '@/src/lib/constants/config';
+import { getErrorMessage } from '@/src/lib/utils';
 import { BigNumber, ContractTransaction, ethers } from 'ethers';
+
 import { erc20ABI } from '../lib/constants/erc20ABI';
 import { parseTokenAmount } from '../lib/utils/token';
+import { useLocalStorage } from './useLocalStorage';
 
 type QueryResponse = any;
 type CheckResponse = any;

@@ -6,8 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
 import { useAragonSDKContext } from '@/src/context/AragonSDK';
-
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { getErrorMessage } from '@/src/lib/utils';
 import {
   Client,
   ITransferQueryParams,
@@ -17,10 +20,6 @@ import {
   TransferSortBy,
   TransferType,
 } from '@aragon/sdk-client';
-import { useEffect, useState } from 'react';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { getErrorMessage } from '@/src/lib/utils';
-import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 
 export type UseDaoTransfersData = {
   daoTransfers: DaoTransfer[] | null;

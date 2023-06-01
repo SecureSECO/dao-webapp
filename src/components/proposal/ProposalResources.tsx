@@ -11,16 +11,16 @@
  * It is designed to be used as a main container for other components and elements.
  */
 
-import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
+import { Card } from '@/src/components/ui/Card';
 import {
   DefaultMainCardHeader,
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
-import { Card } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
 import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
 import DOMPurify from 'dompurify';
+import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
 
 export interface ProposalResourcesProps
   extends Omit<MainCardProps, 'icon' | 'header'> {

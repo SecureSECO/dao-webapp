@@ -6,9 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import Legend from '@/src/components/ui/Legend';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Legend> = {
   tags: ['autodocs'],

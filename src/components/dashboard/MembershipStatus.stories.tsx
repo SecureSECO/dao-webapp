@@ -6,16 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Stamp } from '@plopmenz/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
 import { addDays } from 'date-fns';
+import { BigNumber } from 'ethers';
 
 import { MembershipStatusView } from './MembershipStatus';
-import { Stamp } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber } from 'ethers';
-import {
-  VerificationStatus,
-  useVerification,
-} from '@/src/hooks/useVerification';
 
 const meta: Meta<typeof MembershipStatusView> = {
   component: MembershipStatusView,

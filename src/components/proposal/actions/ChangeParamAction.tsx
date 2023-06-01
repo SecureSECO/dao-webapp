@@ -6,11 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { HiCog } from 'react-icons/hi2';
+
 import { Card } from '../../ui/Card';
 import ActionWrapper from './ActionWrapper';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 
 export interface ProposalChangeParamAction extends Action {
   params: {

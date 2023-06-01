@@ -17,6 +17,7 @@ import Governance from './pages/Governance';
 import Query from './pages/Query';
 import '@/src/index.css';
 import { Toaster } from '@/src/components/ui/Toaster';
+import { TooltipProvider } from '@/src/components/ui/Tooltip';
 import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
 import Finance from '@/src/pages/Finance';
@@ -36,7 +37,6 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 
 import { DepositAssets } from './components/finance/DepositAssets';
 import { Mining } from './pages/Mining';
-import { TooltipProvider } from '@/src/components/ui/Tooltip';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {

@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import ProposalMilestone from '@/src/components/proposal/ProposalMilestone';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: ProposalMilestone,

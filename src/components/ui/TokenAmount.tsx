@@ -6,9 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import React from 'react';
 import { toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
-import React from 'react';
 
 interface TokenAmountProps extends React.HTMLAttributes<HTMLSpanElement> {
   amount?: BigInt | BigNumber | null;

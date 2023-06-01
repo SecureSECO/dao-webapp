@@ -6,17 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
-
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@/src/components/ui/Tabs';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,

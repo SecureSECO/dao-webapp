@@ -6,12 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { HiExclamationCircle, HiOutlineLogout } from 'react-icons/hi';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useWeb3Modal } from '@web3modal/react';
-import { useAccount, useNetwork, useDisconnect, useSwitchNetwork } from 'wagmi';
-import { FaWallet } from 'react-icons/fa';
-
+import { useEffect, useState } from 'react';
+import { Button } from '@/src/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,16 +16,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
-
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
-import { Button } from '@/src/components/ui/Button';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { cn } from '@/src/lib/utils';
-import { useEffect, useState } from 'react';
+import { useWeb3Modal } from '@web3modal/react';
+import { FaWallet } from 'react-icons/fa';
+import { HiExclamationCircle, HiOutlineLogout } from 'react-icons/hi';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { useAccount, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi';
 
 const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
   const { disconnect } = useDisconnect();

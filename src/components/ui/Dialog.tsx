@@ -14,10 +14,9 @@
  * Inspired by https://ui.shadcn.com/docs/primitives/dialog
  */
 import * as React from 'react';
+import { cn } from '@/src/lib/utils';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { HiXMark } from 'react-icons/hi2';
-
-import { cn } from '@/src/lib/utils';
 
 /**
  * The Dialog component is the parent component that provides the context for the other components.

@@ -9,8 +9,8 @@
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
-import { useAccount } from 'wagmi';
 import { BigNumber, ethers } from 'ethers';
+import { useAccount } from 'wagmi';
 
 /**
  * This type contains info about a certain verification method (GitHub, Twitter, etc.), that is not stored on-chain.
