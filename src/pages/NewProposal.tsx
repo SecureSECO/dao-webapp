@@ -22,19 +22,13 @@ import {
 } from '@/src/components/newProposal/steps/Voting';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { Warning } from '@/src/components/ui/ConditionalButton';
+import { ConditionalWarning } from '@/src/components/ui/ConditionalButton';
 import Header from '@/src/components/ui/Header';
 import { Link } from '@/src/components/ui/Link';
 import { Progress } from '@/src/components/ui/Progress';
-import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { HiChevronLeft } from 'react-icons/hi2';
-import { useAccount } from 'wagmi';
 
-import {
-  ConditionalButton,
-  ConnectWalletWarning,
-  InsufficientRepWarning,
-} from '../components/ui/ConditionalButton';
+import { ConditionalButton } from '../components/ui/ConditionalButton';
 
 const totalSteps = 4;
 
@@ -129,15 +123,13 @@ export const NewProposalFormProvider = ({
 export const StepNavigator = ({
   onBack,
   isSubmitting,
+  nextStepConditions,
 }: {
   onBack?: () => void;
   isSubmitting?: boolean;
+  nextStepConditions?: ConditionalWarning[];
 }) => {
   const { step, setStep } = useNewProposalFormContext();
-  const { address, isConnected } = useAccount();
-  const { votingPower, minProposalVotingPower } = useVotingPower({
-    address,
-  });
 
   const handlePrevStep = () => {
     if (onBack) {
@@ -149,7 +141,6 @@ export const StepNavigator = ({
   };
 
   const isLastStep = step === totalSteps;
-  const canCreate = isConnected && votingPower.gte(minProposalVotingPower);
 
   return (
     <div className="flex items-center gap-2">
@@ -165,20 +156,7 @@ export const StepNavigator = ({
         type="submit"
         label={isLastStep ? 'Submit' : 'Next'}
         disabled={isSubmitting}
-        conditions={[
-          {
-            when: isLastStep && !isConnected,
-            content: <ConnectWalletWarning action="to submit" />,
-          },
-          {
-            when: isLastStep && votingPower.lt(minProposalVotingPower),
-            content: <InsufficientRepWarning action="to submit" />,
-          },
-          {
-            when: isLastStep && !canCreate,
-            content: <Warning>You cannot create a proposal</Warning>,
-          },
-        ]}
+        conditions={nextStepConditions ?? []}
       ></ConditionalButton>
     </div>
   );

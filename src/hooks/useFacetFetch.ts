@@ -53,8 +53,16 @@ export const useFacetFetch = <TFacet, TResult>(
   return { data, error, loading };
 };
 
+// The place to add hooks that are direct mappings of useFacetFetch
+
 export const usePartialVotingProposalMinDuration = () =>
   useFacetFetch({
     facet: (c) => c.IPartialVotingProposalFacet(),
     data: (f) => f.getMinDuration(),
+  });
+
+export const useBurnVotingProposalCreationCost = () =>
+  useFacetFetch({
+    facet: (c) => c.IBurnVotingProposalFacet(),
+    data: (f) => f.getProposalCreationCost(),
   });

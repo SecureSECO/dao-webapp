@@ -14,8 +14,12 @@ import CategoryList from '@/src/components/ui/CategoryList';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { usePartialVotingProposalMinDuration } from '@/src/hooks/useFacetFetch';
+import {
+  useBurnVotingProposalCreationCost,
+  usePartialVotingProposalMinDuration,
+} from '@/src/hooks/useFacetFetch';
 import { toast } from '@/src/hooks/useToast';
+import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
@@ -29,8 +33,11 @@ import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router';
+import { useAccount } from 'wagmi';
 
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
+import { ConnectWalletWarning, InsufficientRepWarning, Warning } from '../../ui/ConditionalButton';
+import Loading from '../../icons/Loading';
 
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
@@ -113,6 +120,14 @@ export const Confirmation = () => {
   //retrieve settings for the minDuration
   const { data: minDurationBN } = usePartialVotingProposalMinDuration();
   const minDuration = minDurationBN?.toNumber() ?? null;
+
+  const { address, isConnected } = useAccount();
+  const { votingPower, loading: votingPowerLoading } = useVotingPower({
+    address: address,
+  });
+
+  const { data: proposalCreationCost, loading: proposalCreationCostLoading, error: proposalCreationCostError} =
+    useBurnVotingProposalCreationCost();
 
   // Maps the action form iputs to Action interface
   useEffect(() => {
@@ -211,6 +226,8 @@ export const Confirmation = () => {
         return false;
       }
     }
+
+    //No issues, is valid
     return true;
   };
 
@@ -273,7 +290,26 @@ export const Confirmation = () => {
         </MainCard>
       </div>
       <ErrorWrapper name="submit" error={errors?.root?.step4error as any}>
-        <StepNavigator isSubmitting={isSubmitting} />
+        <StepNavigator isSubmitting={isSubmitting} nextStepConditions={
+          [
+          {
+            when: !isConnected,
+            content: <ConnectWalletWarning action="to submit" />,
+          },
+          {
+              when: votingPowerLoading || proposalCreationCostLoading,
+              content: <Loading className="w-5 h-5"/> 
+          },
+          {
+              when:  proposalCreationCostError !== null,
+              content: <Warning>Can not determine if you may create a proposal</Warning>
+          },
+          {
+            when: votingPower.lt(proposalCreationCost!),
+            content: <InsufficientRepWarning action="to create proposal" />,
+          },
+        ]
+        }/>
       </ErrorWrapper>
     </form>
   );
