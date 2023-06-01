@@ -40,6 +40,7 @@ import {
   ActionFormError,
   ProposalFormActions,
 } from '../steps/Actions';
+import Loading from '@/src/components/icons/Loading';
 
 export interface ProposalFormChangeParamData extends ProposalFormAction {
   plugin: string;
@@ -211,8 +212,14 @@ export const ChangeParamInput = () => {
         />
       }
     >
-      {variablesLoading && 'Retrieving plugins from DAO'}
-      {variablesErrors && 'Could not retrieve plugins from DAO'}
+      {variablesErrors && (
+        <div className="flex items-center gap-x-2">
+          <p className="italic text-destructive">
+            Could not retrieve plugins from DAO
+          </p>
+          <Button size="xs" label="Retry" variant="subtle" />
+        </div>
+      )}
       <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
         <div className="flex flex-col gap-y-1">
           <Label tooltip="Plugin to change" htmlFor="amount">
@@ -230,8 +237,8 @@ export const ChangeParamInput = () => {
                   onValueChange={onChange}
                   name={name}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Plugin" />
+                  <SelectTrigger loading={variablesLoading}>
+                    <SelectValue placeholder="Select plugin" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -268,7 +275,7 @@ export const ChangeParamInput = () => {
                   name={name}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Parameter" />
+                    <SelectValue placeholder="Select parameter" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -324,13 +331,15 @@ export const ChangeParamInput = () => {
               <p className="text-xs text-popover-foreground/80">
                 Current value
               </p>
-              <p className="font-medium">
-                {paramValueLoading && 'Loading...'}
-                {paramValueError && !paramValueLoading && 'N/A'}
-                {!paramValueError &&
-                  !paramValueLoading &&
-                  paramValue?.toString()}
-              </p>
+              {paramValueLoading ? (
+                <Loading className="h-5 w-5 shrink-0" />
+              ) : (
+                <p className="font-medium">
+                  {paramValueError || !paramValue
+                    ? 'N/A'
+                    : paramValue.toString()}
+                </p>
+              )}
             </Card>
             <Card variant="outline" size="sm">
               <p className="text-xs text-popover-foreground/80">Value type</p>

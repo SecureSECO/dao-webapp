@@ -11,7 +11,6 @@ import {
   DiamondGovernanceClient,
   InterfaceVariables,
 } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber } from 'ethers';
 
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
 import { FetchVariableResult, fetchVariableValue } from './useDaoVariable';
