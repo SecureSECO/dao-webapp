@@ -238,7 +238,6 @@ export const ACTIONS: Actions = {
     view: ChangeParamAction,
     input: ChangeParamInput,
     emptyInputData: emptyChangeParamData,
-    maxPerProposal: 1,
     parseInput: (input) => {
       try {
         let parsedValue: string | number | boolean | BigNumber = input.value;
