@@ -17,6 +17,11 @@ export const NumberPattern = /^\d+\.?\d*$/;
 export const IntegerPattern = /^\d+$/;
 
 /**
+ * Pattern for possibly singned integers (negative or positive).
+ */
+export const SignedIntegerPattern = /^[+-]?\d+$/;
+
+/**
  * AddressPattern is a pattern for Addresses, starting with 0x, followed by 20 to 60 hex characters.
  * See the test cases for examples.
  */
