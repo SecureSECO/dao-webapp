@@ -40,12 +40,3 @@ export const Outline: Story = {
     to: '#',
   },
 };
-
-export const Clicked: Story = {
-  ...Default,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    userEvent.hover(canvas.getByRole('link'));
-    userEvent.click(canvas.getByRole('link'));
-  },
-};
