@@ -100,16 +100,11 @@ const createIntValidator = (type: string): Validator | null => {
   const pattern = isUnsigned ? IntegerPattern : SignedIntegerPattern;
 
   const sizeStart = isUnsigned ? 4 : 3;
-  console.log(sizeStart, type, type.slice(sizeStart));
   const size = BigInt(type.slice(sizeStart));
-
-  console.log(size);
 
   const maxValueShift = isUnsigned ? size : size - 1n;
   const maxValue = (1n << maxValueShift) - 1n;
   const minValue = isUnsigned ? 0n : -(1n << (size - 1n));
-
-  console.log(maxValue, minValue);
 
   const message = `Value must be an integer (${type})`;
 
