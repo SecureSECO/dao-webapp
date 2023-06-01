@@ -7,16 +7,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useAccount, useSignMessage } from 'wagmi';
-import StampCard from '@/src/components/verification/StampCard';
-import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import {
-  HiArrowSmallRight,
-  HiOutlineCheckBadge,
-  HiOutlineClock,
-  HiUserCircle,
-} from 'react-icons/hi2';
-import { FaGithub } from 'react-icons/fa';
+import History from '@/src/components/icons/History';
 import { Button } from '@/src/components/ui/Button';
 import {
   Dialog,
@@ -28,20 +19,29 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
-import History from '@/src/components/icons/History';
+import StampCard from '@/src/components/verification/StampCard';
+import { toast } from '@/src/hooks/useToast';
 import {
-  StampInfo,
   PendingVerification,
+  StampInfo,
   useVerification,
 } from '@/src/hooks/useVerification';
 import { CONFIG } from '@/src/lib/constants/config';
-import { toast } from '@/src/hooks/useToast';
+import { FaGithub } from 'react-icons/fa';
+import {
+  HiArrowSmallRight,
+  HiOutlineCheckBadge,
+  HiOutlineClock,
+  HiUserCircle,
+} from 'react-icons/hi2';
+import { useSearchParams } from 'react-router-dom';
+import { useAccount, useSignMessage } from 'wagmi';
 
 import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
 import PendingVerificationCard from '../components/verification/PendingVerificationCard';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { useSearchParams } from 'react-router-dom';
 
 export const availableStamps: StampInfo[] = [
   {

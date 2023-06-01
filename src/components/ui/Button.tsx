@@ -11,9 +11,8 @@
  */
 
 import React, { ReactNode } from 'react';
-import { VariantProps, cva } from 'class-variance-authority';
-
 import { cn } from '@/src/lib/utils';
+import { VariantProps, cva } from 'class-variance-authority';
 import { IconType } from 'react-icons/lib';
 
 /**

@@ -8,6 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 import { ContractTransactionToast, toast } from '@/src/hooks/useToast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { NumberPattern } from '@/src/lib/constants/patterns';
@@ -49,7 +50,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/Select';
-import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 
 type DepositAssetsData = {
   token: Token;

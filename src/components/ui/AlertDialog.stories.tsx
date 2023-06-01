@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +18,7 @@ import {
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
 import { Button } from '@/src/components/ui/Button';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: AlertDialog,

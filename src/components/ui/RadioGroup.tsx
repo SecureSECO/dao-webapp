@@ -14,11 +14,10 @@
  */
 
 import * as React from 'react';
-import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-
-import { cn } from '@/src/lib/utils';
-import { FieldError } from 'react-hook-form';
 import { Label } from '@/src/components/ui/Label';
+import { cn } from '@/src/lib/utils';
+import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
+import { FieldError } from 'react-hook-form';
 
 /**
  * The RadioGroup component wraps a group of RadioGroupItems, providing a layout and common properties for the items.

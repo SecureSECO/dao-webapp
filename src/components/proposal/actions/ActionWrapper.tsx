@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { createElement } from 'react';
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
-import { createElement } from 'react';
 import { IconType } from 'react-icons';
 
 interface ActionWrapperProps extends AccordionItemProps {

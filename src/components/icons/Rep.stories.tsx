@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import Rep from '@/src/components/icons/Rep';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Rep,

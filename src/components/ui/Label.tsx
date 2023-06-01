@@ -17,14 +17,13 @@
  */
 
 import * as React from 'react';
-import * as LabelPrimitive from '@radix-ui/react-label';
-
-import { cn } from '@/src/lib/utils';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
+import { cn } from '@/src/lib/utils';
+import * as LabelPrimitive from '@radix-ui/react-label';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 interface LabelProps

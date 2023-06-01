@@ -6,15 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
+import { Button } from '@/src/components/ui/Button';
 import {
   Tooltip,
+  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  TooltipContent,
 } from '@/src/components/ui/Tooltip';
-import { Button } from '@/src/components/ui/Button';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Tooltip> = {
   tags: ['autodocs'],

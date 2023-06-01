@@ -6,17 +6,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { dummyProposal } from '@/src/hooks/useProposal';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
   DiamondGovernanceClient,
+  Proposal,
   ProposalSorting,
   ProposalStatus,
   SortingOrder,
-  Proposal,
 } from '@plopmenz/diamond-governance-sdk';
-import { useEffect, useState } from 'react';
 
 export type UseProposalsData = {
   loading: boolean;

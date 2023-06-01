@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import {
@@ -18,7 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/src/components/ui/Sheet';
-import { Button } from '@/src/components/ui/Button';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Sheet> = {
   tags: ['autodocs'],

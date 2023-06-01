@@ -6,9 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import { Table } from '@/src/components/ui/Table';
 import { dummyQueryResult } from '@/src/hooks/useSearchSECO';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Table,

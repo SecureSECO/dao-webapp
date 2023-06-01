@@ -8,10 +8,12 @@
 
 import Logo from '@/src/components/Logo';
 import MembersList from '@/src/components/dashboard/MembersList';
+import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { Link } from '@/src/components/ui/Link';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { useMembers } from '@/src/hooks/useMembers';
 import { useProposals } from '@/src/hooks/useProposals';
@@ -28,11 +30,9 @@ import {
   HiInboxStack,
   HiUserGroup,
 } from 'react-icons/hi2';
+import { useAccount } from 'wagmi';
 
 import { ClaimDailyRewardCard } from '../components/dashboard/ClaimDailyRewardCard';
-import { useAccount } from 'wagmi';
-import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { Address } from '@/src/components/ui/Address';
 
 const Dashboard = () => {
   const { isConnected } = useAccount();

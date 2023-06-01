@@ -6,20 +6,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Card } from '@/src/components/ui/Card';
-import { Address } from '@/src/components/ui//Address';
-import Header from '@/src/components/ui/Header';
 import ProposalTag, {
   getProposalTags,
 } from '@/src/components/governance/ProposalTag';
-import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
-import { Link } from 'react-router-dom';
-import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import Activity from '@/src/components/icons/Activity';
 import Check from '@/src/components/icons/Check';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
-import { ProposalStatus, Proposal } from '@plopmenz/diamond-governance-sdk';
+import { Address } from '@/src/components/ui//Address';
+import { Card } from '@/src/components/ui/Card';
+import Header from '@/src/components/ui/Header';
+import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
+import { Link } from 'react-router-dom';
 
 type StatusBadgePropsMap = {
   Pending: StatusBadgeProps;

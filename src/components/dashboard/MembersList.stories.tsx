@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import MembersList from '@/src/components/dashboard/MembersList';
+import type { Meta, StoryObj } from '@storybook/react';
 import { BigNumber } from 'ethers';
 
 const meta = {

@@ -6,9 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import PendingVerificationCard from './PendingVerificationCard';
 import { PendingVerification } from '@/src/hooks/useVerification';
+import type { Meta, StoryObj } from '@storybook/react';
+
+import PendingVerificationCard from './PendingVerificationCard';
 
 const meta = {
   component: PendingVerificationCard,

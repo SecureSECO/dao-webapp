@@ -7,8 +7,9 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import OneTimeRewardCard from './OneTimeRewardCard';
 import { BigNumber } from 'ethers';
+
+import OneTimeRewardCard from './OneTimeRewardCard';
 
 const meta = {
   component: OneTimeRewardCard,

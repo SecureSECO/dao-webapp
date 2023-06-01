@@ -25,14 +25,14 @@ import {
   TabsTrigger,
 } from '@/src/components/ui/Tabs';
 import { useProposals } from '@/src/hooks/useProposals';
-import { HiChevronDown } from 'react-icons/hi2';
 import { cn } from '@/src/lib/utils';
 import {
+  Proposal,
   ProposalSorting,
   ProposalStatus,
   SortingOrder,
-  Proposal,
 } from '@plopmenz/diamond-governance-sdk';
+import { HiChevronDown } from 'react-icons/hi2';
 
 const Governance = () => {
   return (

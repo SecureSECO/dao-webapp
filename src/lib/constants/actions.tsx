@@ -47,6 +47,7 @@ import WithdrawAction, {
 } from '@/src/components/proposal/actions/WithdrawAction';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { parseTokenAmount } from '@/src/lib/utils/token';
+import { TokenType } from '@aragon/sdk-client';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';
@@ -57,7 +58,6 @@ import {
   HiOutlineCircleStack,
   HiOutlineCog,
 } from 'react-icons/hi2';
-import { TokenType } from '@aragon/sdk-client';
 
 /**
  * Type for different proposal form action data.

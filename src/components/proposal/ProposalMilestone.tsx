@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { createElement } from 'react';
 import Loading from '@/src/components/icons/Loading';
 import {
   Tooltip,
@@ -15,7 +16,6 @@ import {
 import { cn } from '@/src/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';
 import { format } from 'date-fns';
-import { createElement } from 'react';
 import { HiCheckCircle, HiCube, HiXCircle } from 'react-icons/hi2';
 
 // The icon and label of the milestone get the text colors defined in this variant
