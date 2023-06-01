@@ -6,11 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { CONFIG } from '@/src/lib/constants/config';
 import { Proposal } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
 import { useBalance } from 'wagmi';
 
 export type UseVotingPowerData = {

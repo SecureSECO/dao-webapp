@@ -37,6 +37,7 @@ import { MainCard } from '@/src/components/ui/MainCard';
 import { Table } from '@/src/components/ui/Table';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
+import { toast } from '@/src/hooks/useToast';
 import { UrlPattern } from '@/src/lib/constants/patterns';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { saveAs } from 'file-saver';
@@ -47,7 +48,6 @@ import {
   HiOutlineDocumentMagnifyingGlass,
 } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
-import { toast } from '@/src/hooks/useToast';
 
 import {
   ConditionalButton,

@@ -7,6 +7,7 @@
  */
 
 import { useContext } from 'react';
+import Loading from '@/src/components/icons/Loading';
 import { Input } from '@/src/components/ui/Input';
 import {
   Select,
@@ -17,12 +18,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/Select';
-import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
+import { useDaoVariable } from '@/src/hooks/useDaoVariable';
+import { useDaoVariables } from '@/src/hooks/useDaoVariables';
+import { ProposalFormAction } from '@/src/lib/constants/actions';
+import {
+  AddressPattern,
+  IntegerPattern,
+  NumberPattern,
+  SignedIntegerPattern,
+} from '@/src/lib/constants/patterns';
 import { isNullOrUndefined } from '@/src/lib/utils';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiCog, HiXMark } from 'react-icons/hi2';
 
 import { Button } from '../../ui/Button';
+import { Card } from '../../ui/Card';
 import { ErrorWrapper } from '../../ui/ErrorWrapper';
 import { Label } from '../../ui/Label';
 import { MainCard } from '../../ui/MainCard';
@@ -31,7 +41,6 @@ import {
   ActionFormError,
   ProposalFormActions,
 } from '../steps/Actions';
-import { ProposalFormAction } from '@/src/lib/constants/actions';
 
 export interface ProposalFormChangeParamData extends ProposalFormAction {
   plugin: string;
@@ -56,27 +65,49 @@ type Validator = {
   message?: string;
 };
 
-type Parameter = {
-  param: string;
-  validator?: Validator;
-};
-
-type Plugin = {
-  plugin: string;
-  parameters: Parameter[];
-};
-
 // VALIDATORS:
 // This is the place to add new validators
-
-const numberValidator: Validator = {
-  pattern: NumberPattern,
-  message: 'The value should be a number, e.g.: 3.141',
-};
 
 const addressValidator: Validator = {
   pattern: AddressPattern,
   message: 'The value should be an address, starting with 0x',
+};
+
+const stringValidator: Validator = {
+  validate: (x) => true,
+};
+
+const boolValidator: Validator = {
+  validate: (x) =>
+    x === 'true' || x === 'false' || 'Value must be "true" or "false"',
+};
+
+const createIntValidator = (type: string): Validator | null => {
+  // Pattern + message
+  const isUnsigned = type.startsWith('uint');
+  const pattern = isUnsigned ? IntegerPattern : SignedIntegerPattern;
+  const message = `Value must be an integer (${type})`;
+
+  // Validate
+  const sizeStart = isUnsigned ? 4 : 3;
+  const size = BigInt(type.slice(sizeStart));
+  const maxValueShift = isUnsigned ? size : size - 1n;
+  const maxValue = (1n << maxValueShift) - 1n;
+  const minValue = isUnsigned ? 0n : -(1n << (size - 1n));
+
+  const validate = (v: string) => {
+    try {
+      const value = BigInt(v);
+      if (value < minValue) return `Value must be at least ${minValue}`;
+      if (value > maxValue) return `Value may not be larger than ${maxValue}`;
+
+      return true;
+    } catch {
+      return message;
+    }
+  };
+
+  return { pattern, validate, message };
 };
 
 /*
@@ -84,7 +115,10 @@ const addressValidator: Validator = {
  * @returns true if the value is valid,
  *    a string with an error message for the user if the value is invalid.
  * */
-const applyValidator = (validator: Validator | undefined, value: string) => {
+const applyValidator = (
+  validator: Validator | null | undefined,
+  value: string
+) => {
   // No validator, thus it is valid
   if (!validator) return true;
 
@@ -99,36 +133,15 @@ const applyValidator = (validator: Validator | undefined, value: string) => {
   return true;
 };
 
-//Plugins and parameters:
-//Note: this is the place to add new plugins/parameters
-const PluginParameterOptions: { plugins: Plugin[] } = {
-  plugins: [
-    {
-      plugin: 'ABC',
-      parameters: [
-        {
-          param: 'ABC param 1',
-          validator: numberValidator,
-        },
-        {
-          param: 'ABC param 2',
-          validator: numberValidator,
-        },
-      ],
-    },
-    {
-      plugin: 'Plugin 2',
-      parameters: [
-        {
-          param: 'Plugin 2 param 1 - address',
-          validator: addressValidator,
-        },
-        {
-          param: 'Plugin 2 param 2',
-        },
-      ],
-    },
-  ],
+const getValidator = (type: string | null | undefined): Validator | null => {
+  if (isNullOrUndefined(type)) return null;
+  const intTypePattern = /^u?int\d+$/;
+  if (intTypePattern.test(type)) return createIntValidator(type);
+
+  if (type === 'address') return addressValidator;
+  if (type === 'string') return stringValidator;
+  if (type === 'bool') return boolValidator;
+  return null;
 };
 
 export const ChangeParamInput = () => {
@@ -140,6 +153,13 @@ export const ChangeParamInput = () => {
 
   const { prefix, index, onRemove } = useContext(ActionFormContext);
 
+  const {
+    loading: variablesLoading,
+    error: variablesErrors,
+    refetch: refetchVariables,
+    variables,
+  } = useDaoVariables({});
+
   const errors: ActionFormError<ProposalFormChangeParamData> =
     formErrors.actions ? formErrors.actions[index] : undefined;
 
@@ -150,14 +170,24 @@ export const ChangeParamInput = () => {
 
   //Watches
   const watchPluginText = useWatch({ control: control, name: name_plugin });
-  const watchPlugin = PluginParameterOptions.plugins.find(
-    (x) => x.plugin === watchPluginText
+  const watchPlugin = variables?.find(
+    (x) => x.interfaceName === watchPluginText
   );
 
   const watchParamText = useWatch({ control: control, name: name_param });
-  const watchParam = watchPlugin?.parameters.find(
-    (x) => x.param === watchParamText
+  const watchParam = watchPlugin?.variables.find(
+    (x) => x.variableName === watchParamText
   );
+
+  // Retrieve value of selected plugin + param
+  const {
+    value: paramValue,
+    loading: paramValueLoading,
+    error: paramValueError,
+  } = useDaoVariable({
+    interfaceName: watchPlugin?.interfaceName,
+    variableName: watchParam?.variableName,
+  });
 
   return (
     <MainCard
@@ -174,6 +204,20 @@ export const ChangeParamInput = () => {
         />
       }
     >
+      {variablesErrors && (
+        <div className="flex items-center gap-x-2">
+          <p className="italic text-destructive">
+            Could not retrieve plugins from DAO
+          </p>
+          <Button
+            size="xs"
+            onClick={() => refetchVariables()}
+            type="button"
+            label="Retry"
+            variant="subtle"
+          />
+        </div>
+      )}
       <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
         <div className="flex flex-col gap-y-1">
           <Label tooltip="Plugin to change" htmlFor="amount">
@@ -186,19 +230,23 @@ export const ChangeParamInput = () => {
               rules={{ required: true }}
               render={({ field: { onChange, name, value } }) => (
                 <Select
+                  disabled={isNullOrUndefined(variables)}
                   defaultValue={value}
                   onValueChange={onChange}
                   name={name}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Plugin" />
+                  <SelectTrigger loading={variablesLoading}>
+                    <SelectValue placeholder="Select plugin" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Plugin</SelectLabel>
-                      {PluginParameterOptions.plugins.map((plugin) => (
-                        <SelectItem key={plugin.plugin} value={plugin.plugin}>
-                          {plugin.plugin}
+                      {variables?.map((plugin) => (
+                        <SelectItem
+                          key={plugin.interfaceName}
+                          value={plugin.interfaceName}
+                        >
+                          {plugin.interfaceName}
                         </SelectItem>
                       ))}
                     </SelectGroup>
@@ -225,16 +273,21 @@ export const ChangeParamInput = () => {
                   name={name}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Parameter" />
+                    <SelectValue placeholder="Select parameter" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Parameter</SelectLabel>
-                      {watchPlugin?.parameters.map((param) => (
-                        <SelectItem key={param.param} value={param.param}>
-                          {param.param}
-                        </SelectItem>
-                      ))}
+                      {watchPlugin?.variables
+                        .filter((param) => param.changeable)
+                        .map((param) => (
+                          <SelectItem
+                            key={param.variableName}
+                            value={param.variableName}
+                          >
+                            {param.variableName}
+                          </SelectItem>
+                        ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -243,8 +296,8 @@ export const ChangeParamInput = () => {
           </ErrorWrapper>
         </div>
       </div>
-      <div className="flex flex-col gap-y-1">
-        <div className="w-full">
+      <div className="grid grid-cols-1 items-start gap-x-2 gap-y-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-y-1">
           <Label
             htmlFor="recipient"
             tooltip="The value that the plugin parameter will be changed to"
@@ -258,7 +311,8 @@ export const ChangeParamInput = () => {
                 //since registration happens only once,
                 //we must use a validation function that can retrieve the current validator and apply it.
                 validate: (v: string) => {
-                  const validator = watchParam?.validator;
+                  const type = watchParam?.variableType;
+                  const validator = getValidator(type);
                   return applyValidator(validator, v);
                 },
               })}
@@ -269,6 +323,28 @@ export const ChangeParamInput = () => {
             />
           </ErrorWrapper>
         </div>
+        {watchParam && (
+          <div className="flex flex-row gap-x-2 pt-3">
+            <Card variant="outline" size="sm">
+              <p className="text-xs text-popover-foreground/80">
+                Current value
+              </p>
+              {paramValueLoading ? (
+                <Loading className="h-5 w-5 shrink-0" />
+              ) : (
+                <p className="font-medium">
+                  {paramValueError || !paramValue
+                    ? 'N/A'
+                    : paramValue.toString()}
+                </p>
+              )}
+            </Card>
+            <Card variant="outline" size="sm">
+              <p className="text-xs text-popover-foreground/80">Value type</p>
+              <p className="font-medium">{watchParam?.variableType}</p>
+            </Card>
+          </div>
+        )}
       </div>
     </MainCard>
   );

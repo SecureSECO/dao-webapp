@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import Secoin from '@/src/components/icons/Secoin';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Secoin,

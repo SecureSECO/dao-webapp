@@ -7,9 +7,8 @@
  */
 
 import { Button } from '@/src/components/ui/Button';
-import type { Meta, StoryObj } from '@storybook/react';
-
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof HeaderCard> = {
   component: HeaderCard,

@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+import { WagmiConfig, configureChains, createClient } from 'wagmi';
 import { polygon, polygonMumbai } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { WagmiConfig, configureChains, createClient } from 'wagmi';
-import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 
 export const wagmiClientDecorator = (Story: any) => {
   const projectId = import.meta.env.VITE_APP_PROJECT_ID;

@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import Header from '@/src/components/ui/Header';
 import { Card } from '@/src/components/ui/Card';
+import Header from '@/src/components/ui/Header';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {

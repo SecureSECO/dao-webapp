@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
 import { Label } from '@/src/components/ui/Label';
+import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import {
   StepNavigator,
   useNewProposalFormContext,
@@ -29,7 +30,6 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form';
-import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import { HiPlus } from 'react-icons/hi2';
 
 export type ActionFormContextData = {

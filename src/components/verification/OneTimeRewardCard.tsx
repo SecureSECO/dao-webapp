@@ -6,15 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Card } from '@/src/components/ui/Card';
-import { Button } from '@/src/components/ui/Button';
 import { useState } from 'react';
-import { toast } from '@/src/hooks/useToast';
-import { BigNumber, ContractTransaction } from 'ethers';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { HiGift } from 'react-icons/hi2';
-import { TOKENS } from '@/src/lib/constants/tokens';
 import TokenAmount from '@/src/components/ui/TokenAmount';
+import { toast } from '@/src/hooks/useToast';
+import { TOKENS } from '@/src/lib/constants/tokens';
+import { BigNumber, ContractTransaction } from 'ethers';
+import { HiGift } from 'react-icons/hi2';
 
 /**
  * @returns A card that allows the users to claim their reward for verifying

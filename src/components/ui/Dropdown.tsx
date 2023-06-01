@@ -13,11 +13,9 @@
  */
 
 import * as React from 'react';
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-
-import { HiChevronRight, HiCheck } from 'react-icons/hi2';
-
 import { cn } from '@/src/lib/utils';
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { HiCheck, HiChevronRight } from 'react-icons/hi2';
 
 /**
  * The DropdownMenu component is the root component of the dropdown menu system,

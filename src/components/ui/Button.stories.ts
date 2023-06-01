@@ -6,11 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Button } from '@/src/components/ui/Button';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { HiPlus } from 'react-icons/hi2';
-
-import { Button } from '@/src/components/ui/Button';
 
 const meta = {
   component: Button,

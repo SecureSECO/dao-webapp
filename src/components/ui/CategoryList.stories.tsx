@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import CategoryList from '@/src/components/ui/CategoryList';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: CategoryList,

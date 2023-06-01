@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import CheckList from '@/src/components/icons/CheckList';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: CheckList,

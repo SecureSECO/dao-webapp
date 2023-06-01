@@ -6,6 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
+import { Button } from '@/src/components/ui/Button';
 import {
   DropdownMenu as Dropdown,
   DropdownMenuContent,
@@ -13,11 +15,9 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
-import { Button } from '@/src/components/ui/Button';
-import { useEffect, useState } from 'react';
+import { cn } from '@/src/lib/utils';
 import { HiComputerDesktop, HiMoon, HiSun } from 'react-icons/hi2';
 import { IconType } from 'react-icons/lib';
-import { cn } from '@/src/lib/utils';
 
 type Theme = 'dark' | 'light' | 'system';
 type ThemeOption = {
