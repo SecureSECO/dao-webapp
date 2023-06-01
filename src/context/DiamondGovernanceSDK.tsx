@@ -20,7 +20,10 @@ import { ethers } from 'ethers';
 import { useSigner } from 'wagmi';
 
 type SDKContext = {
+  /** Signed client to be used in requests that require a wallet to be connected */
   client?: DiamondGovernanceClient;
+  /** Anonymous client to be used in requests that do not require  */
+  anonClient?: DiamondGovernanceClient;
   daoAddress?: string;
   secoinAddress?: string;
 };
@@ -29,6 +32,9 @@ const DiamondSDKContext = createContext<SDKContext>({});
 const diamondAddress = CONFIG.DIAMOND_ADDRESS;
 
 export function DiamondSDKWrapper({ children }: any): JSX.Element {
+  const [anonClient, setAnonClient] = useState<
+    DiamondGovernanceClient | undefined
+  >(undefined);
   const [client, setClient] = useState<DiamondGovernanceClient | undefined>(
     undefined
   );
@@ -40,37 +46,40 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
   const signer = useSigner().data || undefined;
 
   useEffect(() => {
-    // If no signer is available, use a dummy signer
-    // All operations that actually require a signer should be blocked anwyways
-    if (!signer) {
-      let jsonRpcProvider = new ethers.providers.JsonRpcProvider(
-        PREFERRED_NETWORK_METADATA.rpc,
-        {
-          chainId: PREFERRED_NETWORK_METADATA.id,
-          name: PREFERRED_NETWORK_METADATA.name,
-        }
-      );
-      let dummySigner = jsonRpcProvider.getSigner(
-        '0x0000000000000000000000000000000000000000'
-      );
-      setClient(new DiamondGovernanceClient(diamondAddress, dummySigner));
-      return;
+    // Create client with dummy signer
+    let jsonRpcProvider = new ethers.providers.JsonRpcProvider(
+      PREFERRED_NETWORK_METADATA.rpc,
+      {
+        chainId: PREFERRED_NETWORK_METADATA.id,
+        name: PREFERRED_NETWORK_METADATA.name,
+      }
+    );
+    let dummySigner = jsonRpcProvider.getSigner(
+      '0x0000000000000000000000000000000000000000'
+    );
+    setAnonClient(new DiamondGovernanceClient(diamondAddress, dummySigner));
+  }, []);
+
+  useEffect(() => {
+    // Set signed client when signer is available
+    if (signer) {
+      setClient(new DiamondGovernanceClient(diamondAddress, signer));
+      anonClient?.UpdateSigner(signer);
     }
-    setClient(new DiamondGovernanceClient(diamondAddress, signer));
   }, [signer]);
 
   useEffect(() => {
     const getDaoAddress = async () => {
-      if (!client) return;
-      const daoRef = await client.pure.IDAOReferenceFacet();
+      if (!anonClient) return;
+      const daoRef = await anonClient.pure.IDAOReferenceFacet();
       const daoAddressData = await daoRef.dao();
       setDaoAddress(daoAddressData);
     };
 
     const getSecoinAddress = async () => {
-      if (!client) return;
+      if (!anonClient) return;
       const IChangeableTokenContract =
-        await client.pure.IChangeableTokenContract();
+        await anonClient.pure.IChangeableTokenContract();
       const monetaryTokenContractAddress =
         await IChangeableTokenContract.getTokenContractAddress();
       setSecoinAddress(monetaryTokenContractAddress);
@@ -78,12 +87,13 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
 
     getDaoAddress();
     getSecoinAddress();
-  }, [client]);
+  }, [anonClient]);
 
   return (
     <DiamondSDKContext.Provider
       value={{
         client,
+        anonClient,
         daoAddress,
         secoinAddress,
       }}

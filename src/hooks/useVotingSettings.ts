@@ -49,13 +49,13 @@ export const useVotingSettings = (
   const [data, setData] = useState<VotingSettings | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const { client } = useDiamondSDKContext();
+  const { anonClient } = useDiamondSDKContext();
 
   const fetchVotingSettings = async () => {
-    if (!client) return;
+    if (!anonClient) return;
 
     try {
-      const proposalFacet = await client?.pure.IPartialVotingProposalFacet();
+      const proposalFacet = await anonClient.pure.IPartialVotingProposalFacet();
       const minDurationData = await proposalFacet.getMinDuration();
       setLoading(false);
       setData({ minDuration: minDurationData.toNumber() });
@@ -75,9 +75,9 @@ export const useVotingSettings = (
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (client) setLoading(true);
+    if (anonClient) setLoading(true);
     fetchVotingSettings();
-  }, [client]);
+  }, [anonClient]);
 
   return { settings: data, error, loading };
 };

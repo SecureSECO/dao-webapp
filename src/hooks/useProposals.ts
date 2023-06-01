@@ -23,6 +23,7 @@ export type UseProposalsData = {
   error: string | null;
   proposals: Proposal[];
   proposalCount: number;
+  countLoading: boolean;
 };
 
 export type UseProposalsProps = {
@@ -62,7 +63,7 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
   const [proposalsLoading, setProposalsLoading] = useState<boolean>(true);
   const [countLoading, setCountLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { client } = useDiamondSDKContext();
+  const { anonClient } = useDiamondSDKContext();
 
   const fetchProposalCount = async (client: DiamondGovernanceClient) => {
     try {
@@ -114,22 +115,23 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!client) return;
+    if (!anonClient) return;
     setProposalsLoading(true);
-    fetchProposals(client);
-  }, [client, status, sorting, order]);
+    fetchProposals(anonClient);
+  }, [anonClient, status, sorting, order]);
 
   // Only refetch proposal count if the client changes
   useEffect(() => {
-    if (useDummyData || !client) return;
+    if (useDummyData || !anonClient) return;
     setCountLoading(true);
-    fetchProposalCount(client);
-  }, [client]);
+    fetchProposalCount(anonClient);
+  }, [anonClient]);
 
   return {
     loading: proposalsLoading || countLoading,
     error,
     proposals,
     proposalCount,
+    countLoading,
   };
 };

@@ -9,7 +9,7 @@
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 
 /**
@@ -269,15 +269,12 @@ export const useVerification = () => {
 
     setLoading(true);
 
-    const promises = [fetchThresholdHistory(), fetchReverificationThreshold()];
-
-    // Prevent data being loaded from zero address
-    if (
-      (await client.pure.signer.getAddress()) !== ethers.constants.AddressZero
-    ) {
-      promises.push(fetchStamps());
-      promises.push(fetchReward());
-    }
+    const promises = [
+      fetchThresholdHistory(),
+      fetchReverificationThreshold(),
+      fetchStamps(),
+      fetchReward(),
+    ];
 
     Promise.allSettled(promises).then(() => {
       setLoading(false);
