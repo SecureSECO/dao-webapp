@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { anyNullOrUndefined, cn } from '@/src/lib/utils';
+import { anyNullOrUndefined, cn, lowerCaseFirst } from '@/src/lib/utils';
 
 // These are very simplistic tests, mostly meant as example tests.
 
@@ -33,4 +33,10 @@ test('anyNullOrUndefined works for null and undefined', () => {
 
 test('anyNullOrUndefined does not trigger for falsy values', () => {
   expect(anyNullOrUndefined(0, '', 'null', 'undefined')).toBeFalsy;
+});
+
+test('lowerCaseFirst works as intended', () => {
+  expect(lowerCaseFirst('Test')).toBe('test');
+  expect(lowerCaseFirst('test')).toBe('test');
+  expect(lowerCaseFirst('')).toBe('');
 });

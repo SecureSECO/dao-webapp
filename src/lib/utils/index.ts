@@ -135,3 +135,12 @@ export function assertUnreachable(x: never): never {
 export function IsEmptyOrOnlyWhitespace(x: string): boolean {
   return x.trim() === '';
 }
+
+/**
+ * Lowercases the first letter of a string
+ * @param x String to lowercase the first letter of
+ * @returns The string with the first letter lowercased
+ */
+export function lowerCaseFirst(x: string): string {
+  return x.charAt(0).toLowerCase() + x.slice(1);
+}

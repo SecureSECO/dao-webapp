@@ -46,6 +46,7 @@ import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { lowerCaseFirst } from '@/src/lib/utils';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { TokenType } from '@aragon/sdk-client';
 import { Action } from '@plopmenz/diamond-governance-sdk';
@@ -227,8 +228,10 @@ export const ACTIONS: Actions = {
     },
   },
   change_param: {
-    method: 'changeParameter(string,uint256)',
-    interface: 'IChangeParameter',
+    // The method and interface for this action are dynamically generated in the parseInput function
+    // The actions being fetched are first parsed to make sure all change param actions have this method and interface
+    method: 'ChangeParam',
+    interface: 'DAO',
     label: 'Change param',
     longLabel: 'Change plugin parameters',
     icon: HiOutlineCog,
@@ -237,13 +240,14 @@ export const ACTIONS: Actions = {
     emptyInputData: emptyChangeParamData,
     maxPerProposal: 1,
     parseInput: (input) => {
+      console.log(input);
+      const parsedValue = input.value;
+
       return {
-        method: ACTIONS.change_param.method as string,
-        interface: ACTIONS.change_param.interface,
+        method: `set${input.parameter}(${input.type})`,
+        interface: input.plugin,
         params: {
-          _plugin: input.plugin,
-          _param: input.parameter,
-          _value: input.value,
+          [`_${lowerCaseFirst(input.parameter)}`]: parsedValue,
         },
       };
     },
@@ -347,8 +351,8 @@ type ActionData<TAction, TFormData, TMethod extends string | void = void> = {
  * const identifier = getIdentifier(action);
  * console.log(identifier); // "IERC20MultiMinterFacet.multimint(address[],uint256[])"
  */
-const getIdentifier = (action: Action | ActionData<any, any>) =>
-  `${action.interface}.${typeof action.method}`;
+export const getIdentifier = (action: Action | ActionData<any, any>) =>
+  `${action.interface}.${action.method}`;
 
 /**
  * Object that maps an action identifier to a more readable name as defined in the ACTIONS object.
