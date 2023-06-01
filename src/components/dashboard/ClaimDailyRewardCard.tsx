@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useTimeClaimable } from '@/src/hooks/useTimeClaimable';
+import { useTimeClaimable } from '@/src/hooks/useFacetFetch';
 import { toast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { BigNumber } from 'ethers';
@@ -19,11 +19,15 @@ import { MainCard } from '../ui/MainCard';
 import TokenAmount from '../ui/TokenAmount';
 
 export const ClaimDailyRewardCard = () => {
-  const { claimReward, amountClaimable, loading, error, refetch } =
-    useTimeClaimable({});
+  const { data: timeClaimable, loading, error, refetch } = useTimeClaimable();
 
+  console.log(
+    timeClaimable?.claimPeriodInterval.toString(),
+    timeClaimable?.claimPeriodMax.toString()
+  );
   const handleClaimReward = async () => {
-    toast.contractTransaction(claimReward, {
+    if (!timeClaimable) return;
+    toast.contractTransaction(timeClaimable.claimReward, {
       error: 'Could not claim reward',
       success: 'Reward claimed!',
       onSuccess: () => refetch(),
@@ -44,7 +48,7 @@ export const ClaimDailyRewardCard = () => {
             <Loading className="h-5 w-5" />
           ) : (
             <TokenAmount
-              amount={amountClaimable}
+              amount={timeClaimable?.amountClaimable}
               tokenDecimals={TOKENS.rep.decimals}
               symbol={TOKENS.rep.symbol}
               displayDecimals={0}
@@ -59,7 +63,8 @@ export const ClaimDailyRewardCard = () => {
         conditions={[
           {
             when:
-              amountClaimable !== null && BigNumber.from(0).eq(amountClaimable),
+              timeClaimable !== null &&
+              BigNumber.from(0).eq(timeClaimable.amountClaimable),
             content: <Warning>No claimable rewards</Warning>,
           },
           {

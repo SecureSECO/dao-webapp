@@ -69,3 +69,15 @@ export const useBurnVotingProposalCreationCost = () =>
     facet: (c) => c.IBurnVotingProposalFacet(),
     data: (f) => f.getProposalCreationCost(),
   });
+
+export const useTimeClaimable = () =>
+  useFacetFetch({
+    facet: (c) => c.IERC20TimeClaimableFacet(),
+    data: (f) =>
+      promiseObjectAll({
+        amountClaimable: f.tokensClaimableTime(),
+        claimPeriodMax: f.getClaimPeriodMax(),
+        claimPeriodInterval: f.getClaimPeriodInterval(),
+        claimReward: () => f.claimTime(),
+      }),
+  });
