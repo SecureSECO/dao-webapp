@@ -20,11 +20,34 @@ export type UseDaoVariablesData = {
   error: string | null;
   variables: InterfaceVariables[] | null;
   values: Record<string, Record<string, FetchVariableResult>> | null;
+  refetch: () => void;
 };
 
 export type UseDaoVariablesProps = {
   useDummyData?: boolean;
   fetchWithValues?: boolean;
+};
+
+const fetchInterfaceVariableValues = async (
+  interfaceVariables: InterfaceVariables,
+  client: DiamondGovernanceClient
+): Promise<Record<string, FetchVariableResult>> => {
+  const variableValues = await Promise.all(
+    interfaceVariables.variables.map((v) =>
+      fetchVariableValue(
+        interfaceVariables.interfaceName,
+        v.variableName,
+        client
+      )
+    )
+  );
+
+  let result: Record<string, FetchVariableResult> = {};
+  for (let i = 0; i < interfaceVariables.variables.length; i++) {
+    result[interfaceVariables.variables[i].variableName] = variableValues[i];
+  }
+
+  return result;
 };
 
 export const useDaoVariables = ({
@@ -44,50 +67,17 @@ export const useDaoVariables = ({
     try {
       const _variables = await client.sugar.GetVariables();
       setVariables(_variables);
-    } catch (e) {
-      console.error(e);
-      setError('Could not fetch DAO variables');
-    } finally {
-      setLoading(false);
-    }
-  };
+      if (fetchWithValues) {
+        const _values = await Promise.all(
+          _variables.map((v) => fetchInterfaceVariableValues(v, client))
+        );
 
-  const fetchInterfaceVariableValues = async (
-    interfaceVariables: InterfaceVariables,
-    client: DiamondGovernanceClient
-  ): Promise<Record<string, FetchVariableResult>> => {
-    const variableValues = await Promise.all(
-      interfaceVariables.variables.map((v) =>
-        fetchVariableValue(
-          interfaceVariables.interfaceName,
-          v.variableName,
-          client
-        )
-      )
-    );
-
-    let result: Record<string, FetchVariableResult> = {};
-    for (let i = 0; i < interfaceVariables.variables.length; i++) {
-      result[interfaceVariables.variables[i].variableName] = variableValues[i];
-    }
-
-    return result;
-  };
-
-  const fetchVariablesWithValues = async (client: DiamondGovernanceClient) => {
-    try {
-      const _variables = await client.sugar.GetVariables();
-      const _values = await Promise.all(
-        _variables.map((v) => fetchInterfaceVariableValues(v, client))
-      );
-
-      let result: Record<string, Record<string, FetchVariableResult>> = {};
-      for (let i = 0; i < _variables.length; i++) {
-        result[_variables[i].interfaceName] = _values[i];
+        let result: Record<string, Record<string, FetchVariableResult>> = {};
+        for (let i = 0; i < _variables.length; i++) {
+          result[_variables[i].interfaceName] = _values[i];
+        }
+        setValues(result);
       }
-
-      setVariables(_variables);
-      setValues(result);
     } catch (e) {
       console.error(e);
       setError('Could not fetch DAO variables');
@@ -127,14 +117,14 @@ export const useDaoVariables = ({
     });
   };
 
-  useEffect(() => {
+  const refetch = () => {
     if (useDummyData) return setDummyData();
     if (!client) return;
-    if (fetchWithValues) {
-      fetchVariablesWithValues(client);
-    } else {
-      fetchVariables(client);
-    }
+    fetchVariables(client);
+  };
+
+  useEffect(() => {
+    refetch();
   }, [client]);
 
   return {
@@ -142,5 +132,6 @@ export const useDaoVariables = ({
     error,
     variables,
     values,
+    refetch,
   };
 };

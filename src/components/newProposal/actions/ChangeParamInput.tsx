@@ -7,6 +7,7 @@
  */
 
 import { useContext } from 'react';
+import Loading from '@/src/components/icons/Loading';
 import { Input } from '@/src/components/ui/Input';
 import {
   Select,
@@ -40,7 +41,6 @@ import {
   ActionFormError,
   ProposalFormActions,
 } from '../steps/Actions';
-import Loading from '@/src/components/icons/Loading';
 
 export interface ProposalFormChangeParamData extends ProposalFormAction {
   plugin: string;
@@ -65,23 +65,8 @@ type Validator = {
   message?: string;
 };
 
-type Parameter = {
-  param: string;
-  validator?: Validator;
-};
-
-type Plugin = {
-  plugin: string;
-  parameters: Parameter[];
-};
-
 // VALIDATORS:
 // This is the place to add new validators
-
-const numberValidator: Validator = {
-  pattern: NumberPattern,
-  message: 'The value should be a number, e.g.: 3.141',
-};
 
 const addressValidator: Validator = {
   pattern: AddressPattern,
@@ -90,21 +75,25 @@ const addressValidator: Validator = {
 
 const stringValidator: Validator = {
   validate: (x) => true,
-  message: 'The value should be a string',
+};
+
+const boolValidator: Validator = {
+  validate: (x) =>
+    x === 'true' || x === 'false' || 'Value must be "true" or "false"',
 };
 
 const createIntValidator = (type: string): Validator | null => {
+  // Pattern + message
   const isUnsigned = type.startsWith('uint');
   const pattern = isUnsigned ? IntegerPattern : SignedIntegerPattern;
+  const message = `Value must be an integer (${type})`;
 
+  // Validate
   const sizeStart = isUnsigned ? 4 : 3;
   const size = BigInt(type.slice(sizeStart));
-
   const maxValueShift = isUnsigned ? size : size - 1n;
   const maxValue = (1n << maxValueShift) - 1n;
   const minValue = isUnsigned ? 0n : -(1n << (size - 1n));
-
-  const message = `Value must be an integer (${type})`;
 
   const validate = (v: string) => {
     try {
@@ -146,10 +135,12 @@ const applyValidator = (
 
 const getValidator = (type: string | null | undefined): Validator | null => {
   if (isNullOrUndefined(type)) return null;
-  if (type === 'address') return addressValidator;
-  if (type === 'string') return stringValidator;
   const intTypePattern = /^u?int\d+$/;
   if (intTypePattern.test(type)) return createIntValidator(type);
+
+  if (type === 'address') return addressValidator;
+  if (type === 'string') return stringValidator;
+  if (type === 'bool') return boolValidator;
   return null;
 };
 
@@ -165,6 +156,7 @@ export const ChangeParamInput = () => {
   const {
     loading: variablesLoading,
     error: variablesErrors,
+    refetch: refetchVariables,
     variables,
   } = useDaoVariables({});
 
@@ -217,7 +209,13 @@ export const ChangeParamInput = () => {
           <p className="italic text-destructive">
             Could not retrieve plugins from DAO
           </p>
-          <Button size="xs" label="Retry" variant="subtle" />
+          <Button
+            size="xs"
+            onClick={() => refetchVariables()}
+            type="button"
+            label="Retry"
+            variant="subtle"
+          />
         </div>
       )}
       <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
