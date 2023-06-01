@@ -14,11 +14,8 @@ import CategoryList from '@/src/components/ui/CategoryList';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { usePartialVotingProposalMinDuration } from '@/src/hooks/useFacetFetch';
 import { toast } from '@/src/hooks/useToast';
-import {
-  VotingSettings,
-  useVotingSettings,
-} from '@/src/hooks/useVotingSettings';
 import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
@@ -94,12 +91,12 @@ const addBufferToEnd = (
   start: Date,
   end: Date,
   settings: ProposalFormVotingSettings,
-  votingSettings: VotingSettings | null
+  minDuration: number | null
 ) => {
-  if (settings.start_time_type === 'now' && votingSettings) {
+  if (settings.start_time_type === 'now' && minDuration !== null) {
     const duration = (end.getTime() - start.getTime()) / 1000;
     // duration is less than the min duration (with a 60 second extra buffer), add 3 minutes to the end duration.
-    if (duration <= votingSettings.minDuration + 60) {
+    if (duration <= minDuration + 60) {
       return add(end, { minutes: 3 });
     }
   }
@@ -114,7 +111,8 @@ export const Confirmation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   //retrieve settings for the minDuration
-  const { settings: votingSettings } = useVotingSettings();
+  const { data: minDurationBN } = usePartialVotingProposalMinDuration();
+  const minDuration = minDurationBN?.toNumber() ?? null;
 
   // Maps the action form iputs to Action interface
   useEffect(() => {
@@ -152,7 +150,7 @@ export const Confirmation = () => {
 
     const start = parseStartDate(dataStep2);
     const endRaw = parseEndDate(dataStep2);
-    const end = addBufferToEnd(start, endRaw, dataStep2, votingSettings);
+    const end = addBufferToEnd(start, endRaw, dataStep2, minDuration);
 
     // Send proposal to SDK
     setIsSubmitting(true);

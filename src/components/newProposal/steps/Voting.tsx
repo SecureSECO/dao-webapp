@@ -12,10 +12,7 @@ import { Label } from '@/src/components/ui/Label';
 import Legend from '@/src/components/ui/Legend';
 import { RadioButtonCard, RadioGroup } from '@/src/components/ui/RadioGroup';
 import { TimezoneSelector } from '@/src/components/ui/TimeZoneSelector';
-import {
-  VotingSettings,
-  useVotingSettings,
-} from '@/src/hooks/useVotingSettings';
+import { usePartialVotingProposalMinDuration } from '@/src/hooks/useFacetFetch';
 import { IsEmptyOrOnlyWhitespace, cn } from '@/src/lib/utils';
 import {
   getDurationDateAhead,
@@ -70,7 +67,8 @@ export type EndTimeType = 'duration' | 'end-custom';
 export const Voting = () => {
   const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
 
-  const { settings, error } = useVotingSettings();
+  const { data: minDurationBN, error } = usePartialVotingProposalMinDuration();
+  const minDuration = minDurationBN?.toNumber() ?? null;
 
   if (error) console.error('Voting settings fetching error', error);
 
@@ -94,7 +92,7 @@ export const Voting = () => {
       duration_hours: 0,
       duration_minutes: 0,
       custom_end_date: getDurationDateAhead(
-        settings ? settings.minDuration : 24 * 60 * 60
+        minDuration !== null ? minDuration : 24 * 60 * 60
       ),
       custom_end_time: getTimeIn10Minutes(),
       custom_end_timezone: getUserTimezone(),
@@ -102,7 +100,7 @@ export const Voting = () => {
   });
 
   const onSubmit = (data: ProposalFormVotingSettings) => {
-    const duration_too_low = durationTooLow(data, settings);
+    const duration_too_low = durationTooLow(data, minDuration);
     if (duration_too_low) {
       setError('root.durationTooLow', {
         type: 'custom',
@@ -111,7 +109,7 @@ export const Voting = () => {
       return;
     }
 
-    const end_time_too_soon = endTimeTooSoon(data, settings);
+    const end_time_too_soon = endTimeTooSoon(data, minDuration);
     if (end_time_too_soon) {
       setError('root.endTooSoon', {
         type: 'custom',
@@ -269,7 +267,8 @@ export const EndTime = ({
   } = getWatchers(control);
 
   //retrieve settings for the minDuration
-  const { settings } = useVotingSettings();
+  const { data: minDurationBN } = usePartialVotingProposalMinDuration();
+  const minDuration = minDurationBN?.toNumber() ?? null;
 
   //initialize minEndDate and minEndTime
   let minEndDate = undefined;
@@ -288,7 +287,7 @@ export const EndTime = ({
     //add the duration on top of the startTime
     const minEndDateTime = new Date(
       startDateTime.getTime() +
-        (settings ? settings.minDuration * 1000 : 24 * 60 * 60 * 1000)
+        (minDuration !== null ? minDuration * 1000 : 24 * 60 * 60 * 1000)
     );
 
     //Convert the minEndDateTime to the selected endTimezone
@@ -490,13 +489,13 @@ function getWatchers(control: Control<ProposalFormVotingSettings, any>) {
 
 const durationTooLow = (
   data: ProposalFormVotingSettings,
-  settings: VotingSettings | null
+  minDuration: number | null
 ): false | string => {
   // If it is not a duration end type, no majority voting setting is known, or if duration data is not defined.
   // Then the duration is not too low.
   if (
     data.end_time_type !== 'duration' ||
-    !settings ||
+    minDuration === null ||
     data.duration_days === undefined ||
     data.duration_hours === undefined ||
     data.duration_minutes === undefined
@@ -509,7 +508,7 @@ const durationTooLow = (
     data.duration_minutes
   );
   // Duration is not too low if it is larger or equal to the minimum duration.
-  if (duration >= settings.minDuration) {
+  if (duration >= minDuration) {
     return false;
   }
 
@@ -518,7 +517,7 @@ const durationTooLow = (
   const minDur = formatDuration(
     intervalToDuration({
       start: 0,
-      end: (settings?.minDuration ?? 0) * 1000,
+      end: (minDuration ?? 0) * 1000,
     })
   );
   const msg = `Duration should be at least ${minDur}`;
@@ -528,13 +527,13 @@ const durationTooLow = (
 
 const endTimeTooSoon = (
   data: ProposalFormVotingSettings,
-  settings: VotingSettings | null
+  minDuration: number | null
 ): false | string => {
   // If it is not a custom end type, no majority voting setting is known, or if duration data is not defined.
   // Then the end time is not too soon.
   if (
     data.end_time_type !== 'end-custom' ||
-    !settings ||
+    minDuration === null ||
     data.custom_end_date === undefined ||
     data.custom_end_time === undefined ||
     data.custom_end_timezone === undefined ||
@@ -544,8 +543,6 @@ const endTimeTooSoon = (
   ) {
     return false;
   }
-
-  console.log('a');
 
   const start =
     data.start_time_type === 'now'
@@ -563,20 +560,16 @@ const endTimeTooSoon = (
 
   const durationAsSeconds = (end.getTime() - start.getTime()) / 1000;
 
-  console.log(start, end, durationAsSeconds, settings, data.custom_end_time);
-
   // Duration is not too low if it is larger or equal to the minimum duration.
-  if (durationAsSeconds >= settings.minDuration) {
+  if (durationAsSeconds >= minDuration) {
     return false;
   }
 
-  console.log('b');
   // Duration is too low, return a formated end date message.
-
   const minDur = formatDuration(
     intervalToDuration({
       start: 0,
-      end: (settings?.minDuration ?? 0) * 1000,
+      end: (minDuration ?? 0) * 1000,
     })
   );
   const msg = `The time between the start end end should be at least ${minDur}`;
