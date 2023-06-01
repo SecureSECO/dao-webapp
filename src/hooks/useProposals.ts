@@ -23,6 +23,7 @@ export type UseProposalsData = {
   error: string | null;
   proposals: Proposal[];
   proposalCount: number;
+  countLoading: boolean;
 };
 
 export type UseProposalsProps = {
@@ -131,5 +132,6 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
     error,
     proposals,
     proposalCount,
+    countLoading,
   };
 };

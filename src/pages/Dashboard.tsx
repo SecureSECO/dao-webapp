@@ -42,6 +42,7 @@ const Dashboard = () => {
     proposalCount,
     loading: proposalsLoading,
     error: proposalsError,
+    countLoading,
   } = useProposals({ limit: 5 });
   const {
     daoTransfers,
@@ -100,10 +101,9 @@ const Dashboard = () => {
         </div>
       </Card>
 
-      {/* Proposal Card */}
       <MainCard
         className="col-span-full lg:col-span-4"
-        loading={proposalsLoading}
+        loading={countLoading}
         icon={HiInboxStack}
         header={
           <DefaultMainCardHeader
