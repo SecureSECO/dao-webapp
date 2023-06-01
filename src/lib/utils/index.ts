@@ -135,3 +135,14 @@ export function assertUnreachable(x: never): never {
 export function IsEmptyOrOnlyWhitespace(x: string): boolean {
   return x.trim() === '';
 }
+
+/** Taken from https://stackoverflow.com/questions/29292921/how-to-use-promise-all-with-an-object-as-input
+ * promise.all for entries of an object
+ */
+export async function promiseObjectAll<T extends Record<keyof T, any>>(
+  obj: T
+): Promise<{ [K in keyof T]: Awaited<T[K]> }> {
+  return Promise.all(
+    Object.entries(obj).map(async ([k, v]) => [k, await v])
+  ).then(Object.fromEntries);
+}

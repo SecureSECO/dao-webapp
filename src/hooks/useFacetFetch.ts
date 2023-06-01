@@ -8,18 +8,20 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { getErrorMessage } from '@/src/lib/utils';
+import { getErrorMessage, promiseObjectAll } from '@/src/lib/utils';
 import { DiamondGovernancePure } from '@plopmenz/diamond-governance-sdk';
 
 export type UseFacetFetchProps<TFacet, TResult> = {
   facet: (client: DiamondGovernancePure) => Promise<TFacet>;
   data: (facet: TFacet) => Promise<TResult>;
+  useAnonymousClient?: boolean;
 };
 
 export type UseFacetFetchData<TResult> = {
   data: TResult | null;
   error: string | null;
   loading: boolean;
+  refetch: () => void;
 };
 
 export const useFacetFetch = <TFacet, TResult>(
@@ -28,11 +30,13 @@ export const useFacetFetch = <TFacet, TResult>(
   const [data, setData] = useState<TResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const { client } = useDiamondSDKContext();
+  const { client: _client, anonClient } = useDiamondSDKContext();
+
+  const client = props.useAnonymousClient ? anonClient : _client;
 
   const fetchData = async () => {
     if (!client) return;
-
+    setLoading(true);
     try {
       const facet = await props.facet(client.pure);
       const _data = await props.data(facet);
@@ -46,11 +50,10 @@ export const useFacetFetch = <TFacet, TResult>(
   };
 
   useEffect(() => {
-    if (client) setLoading(true);
     fetchData();
   }, [client]);
 
-  return { data, error, loading };
+  return { data, error, loading, refetch: fetchData };
 };
 
 // The place to add hooks that are direct mappings of useFacetFetch
