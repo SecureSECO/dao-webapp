@@ -19,7 +19,6 @@ import {
   DiamondGovernanceClient,
   IPartialVotingFacet,
   IPartialVotingProposalFacet,
-  InterfaceVariables,
   Proposal,
   ProposalStatus,
   VoteOption,
@@ -127,15 +126,12 @@ export const dummyMergeAction: ProposalMergeAction = {
 
 /**
  * Dummy mint tokens action
- * @note Not yet correct
  */
 export const dummyChangeParamsAction: ProposalChangeParamAction = {
-  method: ACTIONS.change_param.method,
-  interface: ACTIONS.change_param.interface,
+  method: 'setMaxSingleWalletPower(uint32)',
+  interface: 'IPartialVotingProposalFacet',
   params: {
-    _plugin: 'TokenVoting',
-    _param: 'supportThreshold',
-    _value: '1',
+    _maxSingleWalletPower: 100000,
   },
 };
 

@@ -240,16 +240,33 @@ export const ACTIONS: Actions = {
     emptyInputData: emptyChangeParamData,
     maxPerProposal: 1,
     parseInput: (input) => {
-      console.log(input);
-      const parsedValue = input.value;
+      try {
+        let parsedValue: string | number | boolean | BigNumber = input.value;
+        if (
+          input.type === 'uint8' ||
+          input.type === 'uint16' ||
+          input.type === 'uint32'
+        )
+          parsedValue = Number.parseInt(input.value);
+        else if (input.type === 'boolean' && input.value === 'false')
+          parsedValue = false;
+        else if (input.type === 'boolean' && input.value === 'true')
+          parsedValue = true;
+        else if (input.type === 'string' || input.type === 'address')
+          parsedValue = input.value;
+        else parsedValue = BigNumber.from(input.value);
 
-      return {
-        method: `set${input.parameter}(${input.type})`,
-        interface: input.plugin,
-        params: {
-          [`_${lowerCaseFirst(input.parameter)}`]: parsedValue,
-        },
-      };
+        return {
+          method: `set${input.parameter}(${input.type})`,
+          interface: input.plugin,
+          params: {
+            [`_${lowerCaseFirst(input.parameter)}`]: parsedValue,
+          },
+        };
+      } catch (e) {
+        console.log(e);
+        return null;
+      }
     },
   },
   // Add new proposal actions here:
