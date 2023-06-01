@@ -299,7 +299,7 @@ export const Confirmation = () => {
         </MainCard>
       </div>
       <ErrorWrapper
-        className="flex gap-x-2 flex-row items-center"
+        className="flex gap-x-2 flex-row items-center space-y-0"
         name="submit"
         error={errors?.root?.step4error as any}
       >
