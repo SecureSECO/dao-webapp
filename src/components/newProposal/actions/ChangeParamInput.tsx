@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import Loading from '@/src/components/icons/Loading';
 import { Input } from '@/src/components/ui/Input';
 import {
@@ -24,7 +24,6 @@ import { ProposalFormAction } from '@/src/lib/constants/actions';
 import {
   AddressPattern,
   IntegerPattern,
-  NumberPattern,
   SignedIntegerPattern,
 } from '@/src/lib/constants/patterns';
 import { isNullOrUndefined } from '@/src/lib/utils';
@@ -46,6 +45,7 @@ export interface ProposalFormChangeParamData extends ProposalFormAction {
   plugin: string;
   parameter: string;
   value: string;
+  type: string;
 }
 
 export const emptyChangeParamData: ProposalFormChangeParamData = {
@@ -53,6 +53,7 @@ export const emptyChangeParamData: ProposalFormChangeParamData = {
   plugin: '',
   parameter: '',
   value: '',
+  type: '',
 };
 
 // TYPES:
@@ -74,7 +75,7 @@ const addressValidator: Validator = {
 };
 
 const stringValidator: Validator = {
-  validate: (x) => true,
+  validate: (_) => true,
 };
 
 const boolValidator: Validator = {
@@ -149,6 +150,7 @@ export const ChangeParamInput = () => {
     register,
     formState: { errors: formErrors },
     control,
+    setValue,
   } = useFormContext<ProposalFormActions>();
 
   const { prefix, index, onRemove } = useContext(ActionFormContext);
@@ -188,6 +190,16 @@ export const ChangeParamInput = () => {
     interfaceName: watchPlugin?.interfaceName,
     variableName: watchParam?.variableName,
   });
+
+  //Shadow register for type
+  useEffect(() => {
+    register(`${prefix}.type`);
+  }, []);
+
+  //Keep type updated with watchParam
+  useEffect(() => {
+    setValue(`${prefix}.type`, watchParam?.variableType ?? '');
+  }, [watchParam]);
 
   return (
     <MainCard
