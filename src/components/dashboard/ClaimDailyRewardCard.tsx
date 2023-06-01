@@ -27,9 +27,6 @@ export const ClaimDailyRewardCard = () => {
       error: 'Could not claim reward',
       success: 'Reward claimed!',
       onSuccess: () => refetch(),
-      onError(e) {
-        console.log('hi', e);
-      },
     });
   };
 
