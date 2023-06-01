@@ -7,9 +7,10 @@
  */
 
 import { Accordion } from '@/src/components/ui/Accordion';
-import type { Meta, StoryObj } from '@storybook/react';
-import MergeAction from './MergeAction';
 import { dummyMergeAction } from '@/src/hooks/useProposal';
+import type { Meta, StoryObj } from '@storybook/react';
+
+import MergeAction from './MergeAction';
 
 const meta = {
   component: MergeAction,

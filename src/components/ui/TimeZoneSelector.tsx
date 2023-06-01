@@ -6,17 +6,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Control, Controller, FieldError, FieldValues } from 'react-hook-form';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import {
   Select,
-  SelectGroup,
-  SelectTrigger,
   SelectContent,
-  SelectLabel,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/Select';
-import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { Control, Controller, FieldError, FieldValues } from 'react-hook-form';
 
 function generateUtcOptions(): string[] {
   const utcOptions: string[] = [];

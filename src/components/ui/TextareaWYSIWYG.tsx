@@ -12,24 +12,24 @@
  * The MenuBar component is also defined here to handle toolbar actions and styling.
  */
 
+import React, { useCallback, useEffect, useState } from 'react';
 import { Toggle } from '@/src/components/ui/Toggle';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import clsx from 'clsx';
-import React, { useCallback, useState, useEffect } from 'react';
-import { FieldError, FieldValues } from 'react-hook-form';
 import ReactDOM from 'react-dom';
+import { FieldError, FieldValues } from 'react-hook-form';
 import {
   FaBold,
+  FaCompressAlt,
+  FaExpandAlt,
   FaItalic,
   FaLink,
-  FaUnlink,
   FaListOl,
   FaListUl,
-  FaExpandAlt,
-  FaCompressAlt,
+  FaUnlink,
 } from 'react-icons/fa';
 
 type MenuBarProps = {

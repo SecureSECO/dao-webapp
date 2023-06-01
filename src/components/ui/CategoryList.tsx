@@ -10,10 +10,9 @@
  * Component that displays a list of the specified catgories, separated by horizontal lines.
  */
 
+import React, { ReactNode } from 'react';
 import { cn } from '@/src/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';
-import React from 'react';
-import { ReactNode } from 'react';
 
 export type Category = {
   title: string;

@@ -7,9 +7,10 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import StampCard from './StampCard';
 import { BigNumber } from 'ethers';
 import { FaGithub } from 'react-icons/fa';
+
+import StampCard from './StampCard';
 
 const meta = {
   component: StampCard,

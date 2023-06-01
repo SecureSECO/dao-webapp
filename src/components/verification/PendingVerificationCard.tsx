@@ -11,8 +11,6 @@
  * Contains a button to verify, and additional information about the verification
  */
 
-import { HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
-import { Button } from '../ui/Button';
 import { useState } from 'react';
 import { Card } from '@/src/components/ui/Card';
 import CategoryList, { Category } from '@/src/components/ui/CategoryList';
@@ -26,15 +24,18 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
 import Header from '@/src/components/ui/Header';
-import { truncateMiddle } from '@/src/lib/utils';
+import { toast, useToast } from '@/src/hooks/useToast';
 import {
   PendingVerification,
   StampInfo,
   useVerification,
 } from '@/src/hooks/useVerification';
-import { toast, useToast } from '@/src/hooks/useToast';
+import { truncateMiddle } from '@/src/lib/utils';
 import { availableStamps } from '@/src/pages/Verification';
 import { ContractTransaction } from 'ethers';
+import { HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
+
+import { Button } from '../ui/Button';
 
 /**
  * @returns A Card element containing information about a previous verification

@@ -6,9 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { ReactNode } from 'react';
 import { MembershipStatus } from '@/src/components/dashboard/MembershipStatus';
 import Navbar from '@/src/components/layout/Navbar';
-import { ReactNode } from 'react';
 import { Outlet } from 'react-router';
 
 const Layout = ({ children }: { children?: ReactNode }) => {

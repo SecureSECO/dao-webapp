@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { cn } from '@/src/lib/utils';
 import React from 'react';
+import { cn } from '@/src/lib/utils';
 
 interface HeaderProps
   extends React.PropsWithChildren<

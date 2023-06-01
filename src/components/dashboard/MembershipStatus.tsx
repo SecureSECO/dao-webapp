@@ -10,17 +10,17 @@ import { Button } from '@/src/components/ui/Button';
 import { Card, CardProps } from '@/src/components/ui/Card';
 import { Link } from '@/src/components/ui/Link';
 import { toast } from '@/src/hooks/useToast';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { cn } from '@/src/lib/utils';
 import {
   VerificationStatus,
   useVerification,
 } from '@/src/hooks/useVerification';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { cn } from '@/src/lib/utils';
+import { Stamp } from '@plopmenz/diamond-governance-sdk';
 import { useWeb3Modal } from '@web3modal/react';
+import { BigNumber } from 'ethers';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 import { Chain, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
-import { Stamp } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber } from 'ethers';
 
 export const MembershipStatus = () => {
   const { open } = useWeb3Modal();

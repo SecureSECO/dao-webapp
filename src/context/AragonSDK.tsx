@@ -13,9 +13,9 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { Client, Context, ContextParams } from '@aragon/sdk-client';
 import { useSigner } from 'wagmi';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 
 type SDKContext = {
   context?: Context;

@@ -15,13 +15,12 @@
  */
 
 import * as React from 'react';
-import * as ToastPrimitives from '@radix-ui/react-toast';
-import { VariantProps, cva } from 'class-variance-authority';
-
-import { cn } from '@/src/lib/utils';
-import { HiCheck, HiXMark } from 'react-icons/hi2';
 import Loading from '@/src/components/icons/Loading';
 import { buttonVariants } from '@/src/components/ui/Button';
+import { cn } from '@/src/lib/utils';
+import * as ToastPrimitives from '@radix-ui/react-toast';
+import { VariantProps, cva } from 'class-variance-authority';
+import { HiCheck, HiXMark } from 'react-icons/hi2';
 
 const ToastProvider = ToastPrimitives.Provider;
 

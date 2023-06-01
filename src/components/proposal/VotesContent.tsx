@@ -11,6 +11,7 @@
  * and allow the user to submit their own vote if the proposal is active (and they are eligible to vote).
  */
 
+import { useState } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -42,7 +43,6 @@ import {
   InsufficientRepWarning,
   Warning,
 } from '../ui/ConditionalButton';
-import { useState } from 'react';
 
 type VoteFormData = {
   vote_option: string;

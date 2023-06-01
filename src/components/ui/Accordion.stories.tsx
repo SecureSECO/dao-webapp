@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Accordion,

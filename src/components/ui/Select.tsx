@@ -14,11 +14,10 @@
  */
 
 import * as React from 'react';
+import Loading from '@/src/components/icons/Loading';
+import { cn } from '@/src/lib/utils';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { HiCheck, HiChevronDown } from 'react-icons/hi2';
-
-import { cn } from '@/src/lib/utils';
-import Loading from '@/src/components/icons/Loading';
 
 /**
  * Contains all the parts of a select.

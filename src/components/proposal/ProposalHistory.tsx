@@ -11,7 +11,7 @@ import ProposalMilestone, {
   ProposalMilestoneProps,
 } from '@/src/components/proposal/ProposalMilestone';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { ProposalStatus, Proposal } from '@plopmenz/diamond-governance-sdk';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import { compareAsc } from 'date-fns';
 
 /**

@@ -12,7 +12,8 @@
  * If the stamp is verified, a checkmark icon will be displayed next to the providerId.
  */
 
-import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
+import { useState } from 'react';
+import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,13 +25,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
-import { useState } from 'react';
-import DoubleCheck from '@/src/components/icons/DoubleCheck';
+import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
-import { format } from 'date-fns';
 import { toast } from '@/src/hooks/useToast';
+import { StampInfo, useVerification } from '@/src/hooks/useVerification';
+import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
+import { format } from 'date-fns';
+import { ContractTransaction } from 'ethers';
 import {
   HiCalendar,
   HiChartBar,
@@ -45,9 +48,6 @@ import {
   ConditionalButton,
   ConnectWalletWarning,
 } from '../ui/ConditionalButton';
-import { Button } from '@/src/components/ui/Button';
-import { StampInfo, useVerification } from '@/src/hooks/useVerification';
-import { ContractTransaction } from 'ethers';
 
 /**
  * Derives the status badge props from the stamp's verification status

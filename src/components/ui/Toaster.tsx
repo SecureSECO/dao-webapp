@@ -14,8 +14,6 @@
  * inspired by https://ui.shadcn.com/docs/primitives/toast
  */
 
-import { useToast } from '@/src/hooks/useToast';
-
 import {
   Toast,
   ToastClose,
@@ -24,6 +22,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from '@/src/components/ui/Toast';
+import { useToast } from '@/src/hooks/useToast';
 
 /**
  * Used as a container for all of the active toasts.

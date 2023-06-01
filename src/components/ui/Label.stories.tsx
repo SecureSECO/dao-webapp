@@ -6,11 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { Input } from '@/src/components/ui/Input';
 import React from 'react';
-
+import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Label> = {
   tags: ['autodocs'],

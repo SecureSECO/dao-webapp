@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import ProposalCard from '@/src/components/governance/ProposalCard';
 import {
   dummyChangeParamsAction,
@@ -16,6 +15,7 @@ import {
   dummyWithdrawActions,
 } from '@/src/hooks/useProposal';
 import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import type { Meta, StoryObj } from '@storybook/react';
 import { add, sub } from 'date-fns';
 
 const meta = {

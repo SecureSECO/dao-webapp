@@ -13,9 +13,8 @@
  * inspired by https://ui.shadcn.com/docs/primitives/accordion
  */
 import * as React from 'react';
-import * as AccordionPrimitive from '@radix-ui/react-accordion';
-
 import { cn } from '@/src/lib/utils';
+import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { HiChevronDown } from 'react-icons/hi2';
 
 /**

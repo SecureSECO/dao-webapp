@@ -6,12 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
+import { emptyMintData } from '@/src/components/newProposal/actions/MintTokensInput';
+import { emptyWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import { Actions } from '@/src/components/newProposal/steps/Actions';
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
-import { emptyWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
-import { emptyMintData } from '@/src/components/newProposal/actions/MintTokensInput';
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { emptyMergeData } from '../actions/MergePRInput';
 
 const meta: Meta<typeof Actions> = {

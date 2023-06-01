@@ -6,10 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { Textarea } from '@/src/components/ui/Textarea';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Textarea> = {
   tags: ['autodocs'],

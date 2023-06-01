@@ -8,6 +8,8 @@
 /**
  * A module that exports the `Address` component for displaying Ethereum addresses, optionally with a link to Etherscan/Polyscan and a copy-to-clipboard button.
  */
+
+import React, { useState } from 'react';
 import {
   Tooltip,
   TooltipContent,
@@ -16,7 +18,6 @@ import {
 import { toast } from '@/src/hooks/useToast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { copyToClipboard, truncateMiddle } from '@/src/lib/utils';
-import React, { useState } from 'react';
 import { HiCheck, HiDocumentDuplicate } from 'react-icons/hi2';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useAccount } from 'wagmi';

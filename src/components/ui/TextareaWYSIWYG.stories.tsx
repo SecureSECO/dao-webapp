@@ -6,9 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof TextareaWYSIWYG> = {
   component: TextareaWYSIWYG,
