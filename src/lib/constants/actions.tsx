@@ -376,7 +376,7 @@ export const getIdentifier = (action: Action | ActionData<any, any>) =>
  * const actionName = actionNames['IERC20MultiMinterFacet.multimint(address[],uint256[])']
  * // actionName === 'mint_tokens'
  */
-const actionNames: { [identifier: string]: ActionName } = {};
+export const actionNames: { [identifier: string]: ActionName } = {};
 Object.entries(ACTIONS).forEach(([name, action]) => {
   if (typeof action.method === 'string')
     actionNames[getIdentifier({ ...action, method: action.method })] =

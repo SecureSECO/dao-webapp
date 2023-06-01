@@ -18,18 +18,12 @@ import {
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
-import { ACTIONS, ActionName, actionToName } from '@/src/lib/constants/actions';
+import { ACTIONS, actionToName } from '@/src/lib/constants/actions';
 import { Action } from '@plopmenz/diamond-governance-sdk';
-
-/** Extends the Action type to add an optional name property,
- * which can be used to overwrite the usual mapping of the action to its ActionName */
-export interface ActionView extends Action {
-  name?: ActionName;
-}
 
 export interface ProposalActionsProps
   extends Omit<MainCardProps, 'icon' | 'header'> {
-  actions: ActionView[] | undefined;
+  actions: Action[] | undefined;
   loading?: boolean;
 }
 
@@ -61,7 +55,7 @@ const ProposalActions = ({
       ) : (
         <Accordion type="single" collapsible className="space-y-2">
           {actions.map((action, i) => {
-            const actionName = action.name ?? actionToName(action);
+            const actionName = actionToName(action);
             if (!actionName)
               return (
                 <UnknownAction key={i} value={i.toString()} action={action} />

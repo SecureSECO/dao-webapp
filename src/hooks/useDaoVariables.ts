@@ -19,8 +19,6 @@ export type UseDaoVariablesData = {
   loading: boolean;
   error: string | null;
   variables: InterfaceVariables[] | null;
-  /** Set of interface+method identifiers for all fetched variables */
-  variableMap: Set<string> | null;
   values: Record<string, Record<string, FetchVariableResult>> | null;
   refetch: () => void;
 };
@@ -52,19 +50,23 @@ const fetchInterfaceVariableValues = async (
   return result;
 };
 
-export const useDaoVariables = ({
-  useDummyData = false,
-  fetchWithValues = false,
-}: UseDaoVariablesProps): UseDaoVariablesData => {
+const defaultProps: UseDaoVariablesProps = {
+  useDummyData: false,
+  fetchWithValues: false,
+};
+
+export const useDaoVariables = (
+  props?: UseDaoVariablesProps
+): UseDaoVariablesData => {
+  const { useDummyData, fetchWithValues } = Object.assign(defaultProps, props);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [variables, setVariables] = useState<InterfaceVariables[] | null>(null);
-  const [variableMap, setVariableMap] = useState<Set<string> | null>(null);
   const [values, setValues] = useState<Record<
     string,
     Record<string, FetchVariableResult>
   > | null>(null);
-  const { client } = useDiamondSDKContext();
+  const { anonClient } = useDiamondSDKContext();
 
   const fetchVariables = async (client: DiamondGovernanceClient) => {
     try {
@@ -122,32 +124,18 @@ export const useDaoVariables = ({
 
   const refetch = () => {
     if (useDummyData) return setDummyData();
-    if (!client) return;
-    fetchVariables(client);
+    if (!anonClient) return;
+    fetchVariables(anonClient);
   };
 
   useEffect(() => {
     refetch();
-  }, [client]);
-
-  useEffect(() => {
-    if (!variables) return;
-    const _variableMap = new Set<string>();
-    variables.forEach((v) => {
-      v.variables.forEach((vv) => {
-        _variableMap.add(
-          `${v.interfaceName}.set${vv.variableName}(${vv.variableType})`
-        );
-      });
-    });
-    setVariableMap(_variableMap);
-  }, [variables]);
+  }, [anonClient]);
 
   return {
     loading,
     error,
     variables,
-    variableMap,
     values,
     refetch,
   };

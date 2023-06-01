@@ -13,7 +13,7 @@ import { ProposalMintAction } from '@/src/components/proposal/actions/MintAction
 import { ProposalWithdrawAction } from '@/src/components/proposal/actions/WithdrawAction';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
-import { ACTIONS, getIdentifier } from '@/src/lib/constants/actions';
+import { ACTIONS } from '@/src/lib/constants/actions';
 import {
   AddressVotes,
   DiamondGovernanceClient,
@@ -199,26 +199,6 @@ export const dummyVotes: AddressVotes[] = [
   },
 ];
 
-/**
- * Parses a proposal, returning the same proposal with the actions parsed.
- * @param proposal The proposal to parse
- */
-export const parseProposal = (
-  proposal: Proposal,
-  variableMap: Set<string>
-): Proposal => {
-  proposal.actions = proposal.actions.map((action) => {
-    if (variableMap.has(getIdentifier(action)))
-      return {
-        ...action,
-        interface: 'DAO',
-        method: 'ChangeParam',
-      };
-    return action;
-  });
-  return proposal;
-};
-
 export const useProposal = ({
   id,
   address,
@@ -282,7 +262,7 @@ export const useProposal = ({
     }
   };
 
-  //** Set dummy data for development without querying Aragon API */
+  //** Set dummy data for development without querying SDK */
   const setDummyData = () => {
     setLoading(false);
     setError(null);
@@ -306,12 +286,9 @@ export const useProposal = ({
   };
 
   const checkCanVote = async (proposal: Proposal) => {
-    // Check if proposal.id === canVoteId to avoid unnecessary refetching of the canVote data
     if (!proposalVotingPower) return;
 
     try {
-      console.log('fetching CanVote', proposalVotingPower);
-
       const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
       const canVoteData = await Promise.all(
         values.map((vote) => proposal.CanVote(vote, proposalVotingPower))

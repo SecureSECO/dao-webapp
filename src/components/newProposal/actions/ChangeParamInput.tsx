@@ -160,7 +160,7 @@ export const ChangeParamInput = () => {
     error: variablesErrors,
     refetch: refetchVariables,
     variables,
-  } = useDaoVariables({});
+  } = useDaoVariables();
 
   const errors: ActionFormError<ProposalFormChangeParamData> =
     formErrors.actions ? formErrors.actions[index] : undefined;

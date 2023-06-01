@@ -8,9 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
-import ProposalActions, {
-  ActionView,
-} from '@/src/components/proposal/ProposalActions';
+import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import CategoryList from '@/src/components/ui/CategoryList';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
@@ -44,11 +42,11 @@ import { ErrorWrapper } from '../../ui/ErrorWrapper';
  */
 const parseActionInputs = async (
   actions: ProposalFormActionData[]
-): Promise<ActionView[]> => {
-  const res: ActionView[] = [];
+): Promise<Action[]> => {
+  const res: Action[] = [];
   actions.forEach((action) => {
     const parsed = ACTIONS[action.name].parseInput(action as any);
-    if (parsed) res.push({ ...parsed, name: action.name });
+    if (parsed) res.push(parsed);
   });
 
   return res;
