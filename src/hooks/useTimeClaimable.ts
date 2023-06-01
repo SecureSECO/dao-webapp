@@ -48,6 +48,7 @@ export const useTimeClaimable = ({
       const facet = await client.pure.IERC20TimeClaimableFacet();
       const claimable = await facet.tokensClaimableTime();
       setAmountClaimable(claimable);
+      setLoading(false);
     } catch (e) {
       console.error('Error fetching claimaible tokens', e);
       setError(getErrorMessage(e));
@@ -65,7 +66,6 @@ export const useTimeClaimable = ({
   useEffect(() => {
     if (useDummyData) return setDummyData();
     updateAmountClaimable();
-    if (client) setLoading(false);
   }, [client]);
 
   return {

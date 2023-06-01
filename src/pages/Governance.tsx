@@ -89,6 +89,8 @@ const ProposalTabs = () => {
     status: currentTab,
     sorting,
     order,
+    // Needed to override cached value when switching from Dashboard page to Governance page
+    limit: undefined,
   });
 
   return (
