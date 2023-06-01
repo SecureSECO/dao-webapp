@@ -35,9 +35,13 @@ import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router';
 import { useAccount } from 'wagmi';
 
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { ConnectWalletWarning, InsufficientRepWarning, Warning } from '../../ui/ConditionalButton';
 import Loading from '../../icons/Loading';
+import {
+  ConnectWalletWarning,
+  InsufficientRepWarning,
+  Warning,
+} from '../../ui/ConditionalButton';
+import { ErrorWrapper } from '../../ui/ErrorWrapper';
 
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
@@ -126,8 +130,11 @@ export const Confirmation = () => {
     address: address,
   });
 
-  const { data: proposalCreationCost, loading: proposalCreationCostLoading, error: proposalCreationCostError} =
-    useBurnVotingProposalCreationCost();
+  const {
+    data: proposalCreationCost,
+    loading: proposalCreationCostLoading,
+    error: proposalCreationCostError,
+  } = useBurnVotingProposalCreationCost();
 
   // Maps the action form iputs to Action interface
   useEffect(() => {
@@ -290,26 +297,33 @@ export const Confirmation = () => {
         </MainCard>
       </div>
       <ErrorWrapper name="submit" error={errors?.root?.step4error as any}>
-        <StepNavigator isSubmitting={isSubmitting} nextStepConditions={
-          [
-          {
-            when: !isConnected,
-            content: <ConnectWalletWarning action="to submit" />,
-          },
-          {
+        <StepNavigator
+          isSubmitting={isSubmitting}
+          nextStepConditions={[
+            {
+              when: !isConnected,
+              content: <ConnectWalletWarning action="to submit" />,
+            },
+            {
               when: votingPowerLoading || proposalCreationCostLoading,
-              content: <Loading className="w-5 h-5"/> 
-          },
-          {
-              when:  proposalCreationCostError !== null,
-              content: <Warning>Can not determine if you may create a proposal</Warning>
-          },
-          {
-            when: votingPower.lt(proposalCreationCost!),
-            content: <InsufficientRepWarning action="to create proposal" />,
-          },
-        ]
-        }/>
+              content: <Loading className="w-5 h-5" />,
+            },
+            {
+              when: proposalCreationCostError !== null,
+              content: (
+                <Warning>
+                  Can not determine if you may create a proposal
+                </Warning>
+              ),
+            },
+            {
+              when:
+                proposalCreationCost !== null &&
+                votingPower.lt(proposalCreationCost),
+              content: <InsufficientRepWarning action="to create proposal" />,
+            },
+          ]}
+        />
       </ErrorWrapper>
     </form>
   );
