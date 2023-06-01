@@ -24,6 +24,7 @@ import {
   VoteOption,
 } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber, ContractTransaction } from 'ethers';
+import { useAccount } from 'wagmi';
 
 export type CanVote = {
   Yes: boolean;
@@ -204,7 +205,17 @@ export const useProposal = ({
   address,
   useDummyData = false,
 }: UseProposalProps): UseProposalData => {
+  /*
+    The anonProposal (anonymous proposal) is shown when no wallet is connected
+    The regular proposal is shown when a wallet is connected
+    This was necessary because there was an issue where if the same state
+    variable was used for both, somehow the signer in the proposal would stick
+    to the zero address, even after a signer of connected wallet becomes available and 
+    the proposal was refreshed. Possibly due to delayed state updates
+  */
   const [proposal, setProposal] = useState<Proposal | null>(null);
+  const [anonProposal, setAnonProposal] = useState<Proposal | null>(null);
+
   const [canExecute, setCanExecute] = useState<boolean>(false);
   const [canVote, setCanVote] = useState<CanVote>({
     Yes: false,
@@ -215,12 +226,21 @@ export const useProposal = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { anonClient, client } = useDiamondSDKContext();
+  const { isConnected } = useAccount();
   const { proposalVotingPower } = useVotingPower({
     address,
     proposal: proposal ?? undefined,
   });
 
-  const fetchProposal = async (client?: DiamondGovernanceClient) => {
+  /**
+   * Fetch a proposal from the SDK
+   * @param client Diamond SDK client
+   * @param anon Whether or not an anonymous client is being used
+   */
+  const fetchProposal = async (
+    client?: DiamondGovernanceClient,
+    anon = false
+  ) => {
     if (!client) return;
     if (!id) {
       setError('Proposal not found');
@@ -232,12 +252,15 @@ export const useProposal = ({
       const daoProposal: Proposal = await client.sugar.GetProposal(+id);
 
       if (daoProposal) {
-        setProposal(daoProposal);
+        if (anon) setAnonProposal(daoProposal);
+        else setProposal(daoProposal);
         setError(null);
         setLoading(false);
         fetchVotes(daoProposal);
-        checkCanExecute(daoProposal);
-        checkCanVote(daoProposal);
+        if (!anon) {
+          checkCanExecute(daoProposal);
+          checkCanVote(daoProposal);
+        }
       } else {
         setError('Proposal not found');
         setLoading(false);
@@ -272,7 +295,7 @@ export const useProposal = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    fetchProposal(client ?? anonClient);
+    fetchProposal(client ?? anonClient, !client);
   }, [client, anonClient, id]);
 
   const checkCanExecute = async (proposal: Proposal) => {
@@ -312,7 +335,7 @@ export const useProposal = ({
   return {
     loading,
     error,
-    proposal,
+    proposal: isConnected ? proposal : anonProposal,
     canExecute,
     canVote,
     votes,
