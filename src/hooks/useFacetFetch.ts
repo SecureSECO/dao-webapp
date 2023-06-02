@@ -12,9 +12,10 @@ import { getErrorMessage, promiseObjectAll } from '@/src/lib/utils';
 import { DiamondGovernancePure } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 
-export type UseFacetFetchProps<TFacet, TResult> = {
-  facet: (client: DiamondGovernancePure) => Promise<TFacet>;
-  data: (facet: TFacet) => Promise<TResult>;
+export type UseFacetFetchProps<TFacet, TResult, TContext> = {
+  facet: (client: DiamondGovernancePure, context?: TContext) => Promise<TFacet>;
+  data: (facet: TFacet, context?: TContext) => Promise<TResult>;
+  context?: TContext;
   useAnonymousClient?: boolean;
 };
 
@@ -25,8 +26,8 @@ export type UseFacetFetchData<TResult> = {
   refetch: () => void;
 };
 
-export const useFacetFetch = <TFacet, TResult>(
-  props: UseFacetFetchProps<TFacet, TResult>
+export const useFacetFetch = <TFacet, TResult, TContext>(
+  props: UseFacetFetchProps<TFacet, TResult, TContext>
 ): UseFacetFetchData<TResult> => {
   const [data, setData] = useState<TResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,8 +40,8 @@ export const useFacetFetch = <TFacet, TResult>(
     if (!client) return;
     setLoading(true);
     try {
-      const facet = await props.facet(client.pure);
-      const _data = await props.data(facet);
+      const facet = await props.facet(client.pure, props.context);
+      const _data = await props.data(facet, props.context);
       setData(_data);
     } catch (e) {
       console.error('Error fetching from facet', e);
@@ -52,7 +53,8 @@ export const useFacetFetch = <TFacet, TResult>(
 
   useEffect(() => {
     fetchData();
-  }, [client]);
+    console.log('RerunFetch', props.context);
+  }, [client, props.context]);
 
   return { data, error, loading, refetch: fetchData };
 };
@@ -83,8 +85,12 @@ export const useTimeClaimable = () =>
       }),
   });
 
-export const useTieredTimeClaimable = (tier: BigNumber) =>
+export const useTieredTimeClaimable = (tier: BigNumber | null) =>
   useFacetFetch({
     facet: (c) => c.IERC20TieredTimeClaimableFacet(),
-    data: (f) => f.getClaimReward(tier),
+    data: (f, context) =>
+      context !== null && context !== undefined
+        ? (f.getClaimReward(context) as Promise<BigNumber | null>)
+        : (new Promise(() => console.log("Null promise")) as Promise<BigNumber | null>),
+    context: tier,
   });
