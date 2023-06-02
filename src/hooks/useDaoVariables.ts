@@ -7,12 +7,12 @@
  */
 
 import { useEffect, useState } from 'react';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import {
   DiamondGovernanceClient,
   InterfaceVariables,
 } from '@plopmenz/diamond-governance-sdk';
 
-import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
 import { FetchVariableResult, fetchVariableValue } from './useDaoVariable';
 
 export type UseDaoVariablesData = {

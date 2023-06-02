@@ -27,6 +27,10 @@ import {
 } from '@/src/components/ui/AlertDialog';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+} from '@/src/components/ui/ConditionalButton';
 import Header from '@/src/components/ui/Header';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { toast } from '@/src/hooks/useToast';
@@ -43,11 +47,6 @@ import {
   HiXMark,
 } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
-
-import {
-  ConditionalButton,
-  ConnectWalletWarning,
-} from '../ui/ConditionalButton';
 
 /**
  * Derives the status badge props from the stamp's verification status

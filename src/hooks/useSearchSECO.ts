@@ -9,11 +9,11 @@
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { CONFIG } from '@/src/lib/constants/config';
+import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { getErrorMessage } from '@/src/lib/utils';
+import { parseTokenAmount } from '@/src/lib/utils/token';
 import { ContractTransaction, ethers } from 'ethers';
 
-import { erc20ABI } from '../lib/constants/erc20ABI';
-import { parseTokenAmount } from '../lib/utils/token';
 import { useLocalStorage } from './useLocalStorage';
 
 type QueryResponse = any;

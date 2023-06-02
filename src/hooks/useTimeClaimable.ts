@@ -7,10 +7,9 @@
  */
 
 import { useEffect, useState } from 'react';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { getErrorMessage } from '@/src/lib/utils';
 import { BigNumber, ContractTransaction } from 'ethers';
-
-import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
-import { getErrorMessage } from '../lib/utils';
 
 export type UseTimeClaimableProps = {
   useDummyData?: boolean;

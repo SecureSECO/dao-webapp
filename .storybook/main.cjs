@@ -4,19 +4,24 @@
 
 const config = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
-  addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-interactions', '@storybook/addon-styling', '@storybook/addon-mdx-gfm'],
+  addons: [
+    '@storybook/addon-links',
+    '@storybook/addon-essentials',
+    '@storybook/addon-interactions',
+    '@storybook/addon-styling',
+  ],
   framework: {
     name: '@storybook/react-vite',
-    options: {}
+    options: {},
   },
   features: {
-    storyStoreV7: true
+    storyStoreV7: true,
   },
   docs: {
-    autodocs: 'tag'
+    autodocs: 'tag',
   },
   core: {
-    disableTelemetry: true
-  }
+    disableTelemetry: true,
+  },
 };
 module.exports = config;

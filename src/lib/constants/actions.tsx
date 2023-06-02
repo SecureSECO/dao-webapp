@@ -274,18 +274,6 @@ export const ACTIONS: Actions = {
 
 export type ActionName = keyof typeof ACTIONS;
 
-/**
- * Interface for ProposalFormActionData, to ensure the name of actions is always a valid name.
- * This should be used in the type defined for the data of a proposal form action.
- * @example
- * interface ProposalFormMintData extends ProposalFormActoin {
- *  ...
- * }
- */
-export interface ProposalFormAction {
-  name: ActionName;
-}
-
 interface ViewActionProps<TAction> extends AccordionItemProps {
   action: TAction;
 }

@@ -16,6 +16,11 @@ import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
 import { Address } from '@/src/components/ui/Address';
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+  Warning,
+} from '@/src/components/ui/ConditionalButton';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Link } from '@/src/components/ui/Link';
 import { useProposal } from '@/src/hooks/useProposal';
@@ -27,12 +32,6 @@ import DOMPurify from 'dompurify';
 import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
 import { useParams } from 'react-router';
 import { useAccount } from 'wagmi';
-
-import {
-  ConditionalButton,
-  ConnectWalletWarning,
-  Warning,
-} from '../components/ui/ConditionalButton';
 
 const ViewProposal = () => {
   const { id } = useParams();
