@@ -6,11 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {
-  useTieredTimeClaimable,
-  useTimeClaimable,
-} from '@/src/hooks/useFacetFetch';
-import { useTier } from '@/src/hooks/useTier';
 import Loading from '@/src/components/icons/Loading';
 import { Card } from '@/src/components/ui/Card';
 import {
@@ -19,18 +14,17 @@ import {
 } from '@/src/components/ui/ConditionalButton';
 import { MainCard } from '@/src/components/ui/MainCard';
 import TokenAmount from '@/src/components/ui/TokenAmount';
-import { useTimeClaimable } from '@/src/hooks/useFacetFetch';
+import {
+  useTieredTimeClaimable,
+  useTimeClaimable,
+} from '@/src/hooks/useFacetFetch';
+import { useTier } from '@/src/hooks/useTier';
 import { toast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { BigNumber } from 'ethers';
 import { HiGift } from 'react-icons/hi2';
 
-import Loading from '../icons/Loading';
-import { Card } from '../ui/Card';
-import { ConditionalButton, Warning } from '../ui/ConditionalButton';
-import { MainCard } from '../ui/MainCard';
 import { Progress } from '../ui/Progress';
-import TokenAmount from '../ui/TokenAmount';
 
 export const ClaimDailyRewardCard = () => {
   const { tier } = useTier();
