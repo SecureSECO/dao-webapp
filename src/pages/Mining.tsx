@@ -1,13 +1,12 @@
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import { Label } from '@/src/components/ui/Label';
+import { MainCard } from '@/src/components/ui/MainCard';
+import { Slider } from '@/src/components/ui/Slider';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiOutlineCurrencyDollar } from 'react-icons/hi2';
-
-import { Button } from '.@/src/components/ui/Button';
-import { Card } from '.@/src/components/ui/Card';
-import { Label } from '.@/src/components/ui/Label';
-import { MainCard } from '.@/src/components/ui/MainCard';
-import { Slider } from '.@/src/components/ui/Slider';
-import TokenAmount from '.@/src/components/ui/TokenAmount';
 
 /**
  * This program has been developed by students from the bachelor Computer Science at Utrecht University within the Software Project course.

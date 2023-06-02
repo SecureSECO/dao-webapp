@@ -20,6 +20,8 @@ import {
 } from '@/src/components/ui/Dialog';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import OneTimeRewardCard from '@/src/components/verification/OneTimeRewardCard';
+import PendingVerificationCard from '@/src/components/verification/PendingVerificationCard';
 import RecentVerificationCard from '@/src/components/verification/RecentVerificationCard';
 import StampCard from '@/src/components/verification/StampCard';
 import { toast } from '@/src/hooks/useToast';
@@ -40,8 +42,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useAccount, useSignMessage } from 'wagmi';
 
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import OneTimeRewardCard from '.@/src/components/verification/OneTimeRewardCard';
-import PendingVerificationCard from '.@/src/components/verification/PendingVerificationCard';
 
 export const availableStamps: StampInfo[] = [
   {
