@@ -137,7 +137,7 @@ export function IsEmptyOrOnlyWhitespace(x: string): boolean {
 }
 
 /** Taken from https://stackoverflow.com/questions/29292921/how-to-use-promise-all-with-an-object-as-input
- * promise.all for entries of an object
+ * Promise.all for entries of an object. Will resolve when all values of the object have been resolved.
  */
 export async function promiseObjectAll<T extends Record<keyof T, any>>(
   obj: T
@@ -145,4 +145,18 @@ export async function promiseObjectAll<T extends Record<keyof T, any>>(
   return Promise.all(
     Object.entries(obj).map(async ([k, v]) => [k, await v])
   ).then(Object.fromEntries);
+}
+
+/**
+ * Executes a promise (action) only when the condition is true. Otherwise a promise with defaultValue is returned.
+ */
+export async function promiseWhenWithDefaultvalue<TResult, TDefault>(
+  when: boolean,
+  action: () => Promise<TResult>,
+  defaultValue: TDefault
+): Promise<TResult | TDefault> {
+  if (when) {
+    return action();
+  }
+  return new Promise(() => defaultValue);
 }
