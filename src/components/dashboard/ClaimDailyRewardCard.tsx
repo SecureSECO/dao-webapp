@@ -14,18 +14,24 @@ import {
 } from '@/src/components/ui/ConditionalButton';
 import { MainCard } from '@/src/components/ui/MainCard';
 import TokenAmount from '@/src/components/ui/TokenAmount';
-import { useTimeClaimable } from '@/src/hooks/useTimeClaimable';
+import {
+  useTieredTimeClaimable,
+  useTimeClaimable,
+} from '@/src/hooks/useFacetFetch';
+import { useTier } from '@/src/hooks/useTier';
 import { toast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { BigNumber } from 'ethers';
 import { HiGift } from 'react-icons/hi2';
 
+import { Progress } from '../ui/Progress';
+
 export const ClaimDailyRewardCard = () => {
-  const { claimReward, amountClaimable, loading, error, refetch } =
-    useTimeClaimable({});
+  const { data: timeClaimable, loading, error, refetch } = useTimeClaimable();
 
   const handleClaimReward = async () => {
-    toast.contractTransaction(claimReward, {
+    if (!timeClaimable) return;
+    toast.contractTransaction(timeClaimable.claimReward, {
       error: 'Could not claim reward',
       success: 'Reward claimed!',
       onSuccess: () => refetch(),
@@ -46,7 +52,7 @@ export const ClaimDailyRewardCard = () => {
             <Loading className="h-5 w-5" />
           ) : (
             <TokenAmount
-              amount={amountClaimable}
+              amount={timeClaimable?.amountClaimable}
               tokenDecimals={TOKENS.rep.decimals}
               symbol={TOKENS.rep.symbol}
               displayDecimals={0}
@@ -61,7 +67,8 @@ export const ClaimDailyRewardCard = () => {
         conditions={[
           {
             when:
-              amountClaimable !== null && BigNumber.from(0).eq(amountClaimable),
+              timeClaimable !== null &&
+              BigNumber.from(0).eq(timeClaimable.amountClaimable),
             content: <Warning>No claimable rewards</Warning>,
           },
           {

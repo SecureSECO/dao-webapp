@@ -28,7 +28,7 @@ const iconBackgroundVariants = cva('rounded-md p-2', {
       default: 'bg-popover',
       light: 'bg-highlight',
       warning: 'bg-destructive/20',
-      outline: 'bg-highlight',
+      outline: 'bg-popover',
     },
   },
   defaultVariants: {

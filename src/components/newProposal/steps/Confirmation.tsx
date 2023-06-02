@@ -7,20 +7,29 @@
  */
 
 import { useEffect, useState } from 'react';
+import Loading from '@/src/components/icons/Loading';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
 import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import CategoryList from '@/src/components/ui/CategoryList';
+import {
+  ConnectWalletWarning,
+  InsufficientRepWarning,
+  Warning,
+} from '@/src/components/ui/ConditionalButton';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { toast } from '@/src/hooks/useToast';
 import {
-  VotingSettings,
-  useVotingSettings,
-} from '@/src/hooks/useVotingSettings';
+  useBurnVotingProposalCreationCost,
+  usePartialVotingProposalMinDuration,
+} from '@/src/hooks/useFacetFetch';
+import { toast } from '@/src/hooks/useToast';
+import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { anyNullOrUndefined } from '@/src/lib/utils';
 import { getTimeInxMinutesAsDate, inputToDate } from '@/src/lib/utils/date';
 import {
@@ -33,6 +42,7 @@ import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router';
+import { useAccount } from 'wagmi';
 
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
@@ -93,12 +103,12 @@ const addBufferToEnd = (
   start: Date,
   end: Date,
   settings: ProposalFormVotingSettings,
-  votingSettings: VotingSettings | null
+  minDuration: number | null
 ) => {
-  if (settings.start_time_type === 'now' && votingSettings) {
+  if (settings.start_time_type === 'now' && minDuration !== null) {
     const duration = (end.getTime() - start.getTime()) / 1000;
     // duration is less than the min duration (with a 60 second extra buffer), add 3 minutes to the end duration.
-    if (duration <= votingSettings.minDuration + 60) {
+    if (duration <= minDuration + 60) {
       return add(end, { minutes: 3 });
     }
   }
@@ -113,7 +123,18 @@ export const Confirmation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   //retrieve settings for the minDuration
-  const { settings: votingSettings } = useVotingSettings();
+  const { data: minDuration } = usePartialVotingProposalMinDuration();
+
+  const { address, isConnected } = useAccount();
+  const { votingPower, loading: votingPowerLoading } = useVotingPower({
+    address: address,
+  });
+
+  const {
+    data: proposalCreationCost,
+    loading: proposalCreationCostLoading,
+    error: proposalCreationCostError,
+  } = useBurnVotingProposalCreationCost();
 
   // Maps the action form iputs to Action interface
   useEffect(() => {
@@ -151,7 +172,7 @@ export const Confirmation = () => {
 
     const start = parseStartDate(dataStep2);
     const endRaw = parseEndDate(dataStep2);
-    const end = addBufferToEnd(start, endRaw, dataStep2, votingSettings);
+    const end = addBufferToEnd(start, endRaw, dataStep2, minDuration);
 
     // Send proposal to SDK
     setIsSubmitting(true);
@@ -212,6 +233,8 @@ export const Confirmation = () => {
         return false;
       }
     }
+
+    //No issues, is valid
     return true;
   };
 
@@ -273,8 +296,49 @@ export const Confirmation = () => {
           )}
         </MainCard>
       </div>
-      <ErrorWrapper name="submit" error={errors?.root?.step4error as any}>
-        <StepNavigator isSubmitting={isSubmitting} />
+      <ErrorWrapper
+        className="flex gap-x-2 flex-row items-center space-y-0"
+        name="submit"
+        error={errors?.root?.step4error as any}
+      >
+        <StepNavigator
+          isSubmitting={isSubmitting}
+          nextStepConditions={[
+            {
+              when: !isConnected,
+              content: <ConnectWalletWarning action="to submit" />,
+            },
+            {
+              when: votingPowerLoading || proposalCreationCostLoading,
+              content: <Loading className="w-5 h-5" />,
+            },
+            {
+              when: proposalCreationCostError !== null,
+              content: (
+                <Warning>Unable to determine proposal creation cost</Warning>
+              ),
+            },
+            {
+              when:
+                proposalCreationCost !== null &&
+                votingPower.lt(proposalCreationCost),
+              content: <InsufficientRepWarning action="to create proposal" />,
+            },
+          ]}
+        />
+        {isConnected &&
+          proposalCreationCost !== null &&
+          votingPower.gte(proposalCreationCost) && (
+            <p>
+              You will pay{' '}
+              <TokenAmount
+                amount={proposalCreationCost}
+                symbol={TOKENS.rep.symbol}
+                tokenDecimals={TOKENS.rep.decimals}
+                displayDecimals={0}
+              />
+            </p>
+          )}
       </ErrorWrapper>
     </form>
   );
