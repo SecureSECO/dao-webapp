@@ -74,4 +74,4 @@ jobs:
       - name: Serve Storybook and run tests
         run: |
           npm i concurrently wait-on
-          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" "npm run storybook" "npx wait-on tcp:6006 && npm run test-storybook --maxWorkers=2"
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" "npm run storybook" "npx wait-on tcp:6006 && sleep 30 && npm run test-storybook --maxWorkers=2"
