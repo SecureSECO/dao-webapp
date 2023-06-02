@@ -7,6 +7,7 @@
  */
 
 import { Card } from '@/src/components/ui/Card';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { LabelledInput } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import Legend from '@/src/components/ui/Legend';
@@ -43,8 +44,6 @@ import {
   useWatch,
 } from 'react-hook-form';
 
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-
 export type ProposalFormVotingSettings = {
   option: VoteOption;
   start_time_type: StartTimeType;
@@ -67,8 +66,7 @@ export type EndTimeType = 'duration' | 'end-custom';
 export const Voting = () => {
   const { setStep, dataStep2, setDataStep2 } = useNewProposalFormContext();
 
-  const { data: minDurationBN, error } = usePartialVotingProposalMinDuration();
-  const minDuration = minDurationBN?.toNumber() ?? null;
+  const { data: minDuration, error } = usePartialVotingProposalMinDuration();
 
   if (error) console.error('Voting settings fetching error', error);
 
@@ -267,8 +265,7 @@ export const EndTime = ({
   } = getWatchers(control);
 
   //retrieve settings for the minDuration
-  const { data: minDurationBN } = usePartialVotingProposalMinDuration();
-  const minDuration = minDurationBN?.toNumber() ?? null;
+  const { data: minDuration } = usePartialVotingProposalMinDuration();
 
   //initialize minEndDate and minEndTime
   let minEndDate = undefined;

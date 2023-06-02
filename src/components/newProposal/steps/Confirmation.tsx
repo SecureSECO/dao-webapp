@@ -7,12 +7,20 @@
  */
 
 import { useEffect, useState } from 'react';
+import Loading from '@/src/components/icons/Loading';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
 import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import CategoryList from '@/src/components/ui/CategoryList';
+import {
+  ConnectWalletWarning,
+  InsufficientRepWarning,
+  Warning,
+} from '@/src/components/ui/ConditionalButton';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import {
   useBurnVotingProposalCreationCost,
@@ -35,15 +43,6 @@ import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router';
 import { useAccount } from 'wagmi';
-
-import Loading from '../../icons/Loading';
-import {
-  ConnectWalletWarning,
-  InsufficientRepWarning,
-  Warning,
-} from '../../ui/ConditionalButton';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import TokenAmount from '../../ui/TokenAmount';
 
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.
@@ -124,8 +123,7 @@ export const Confirmation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   //retrieve settings for the minDuration
-  const { data: minDurationBN } = usePartialVotingProposalMinDuration();
-  const minDuration = minDurationBN?.toNumber() ?? null;
+  const { data: minDuration } = usePartialVotingProposalMinDuration();
 
   const { address, isConnected } = useAccount();
   const { votingPower, loading: votingPowerLoading } = useVotingPower({
@@ -299,7 +297,7 @@ export const Confirmation = () => {
         </MainCard>
       </div>
       <ErrorWrapper
-        className="flex gap-x-2 flex-row items-center"
+        className="flex gap-x-2 flex-row items-center space-y-0"
         name="submit"
         error={errors?.root?.step4error as any}
       >
@@ -317,9 +315,7 @@ export const Confirmation = () => {
             {
               when: proposalCreationCostError !== null,
               content: (
-                <Warning>
-                  Can not determine if you may create a proposal
-                </Warning>
+                <Warning>Unable to determine proposal creation cost</Warning>
               ),
             },
             {
@@ -334,11 +330,12 @@ export const Confirmation = () => {
           proposalCreationCost !== null &&
           votingPower.gte(proposalCreationCost) && (
             <p>
-              Creating a proposal costs{' '}
+              You will pay{' '}
               <TokenAmount
                 amount={proposalCreationCost}
                 symbol={TOKENS.rep.symbol}
                 tokenDecimals={TOKENS.rep.decimals}
+                displayDecimals={0}
               />
             </p>
           )}

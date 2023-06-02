@@ -7,20 +7,22 @@
  */
 
 import React from 'react';
+import Layout from '@/src/components/layout/Layout';
+import Dashboard from '@/src/pages/Dashboard';
+import ErrorPage from '@/src/pages/ErrorPage';
+import Governance from '@/src/pages/Governance';
+import Query from '@/src/pages/Query';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-import Layout from './components/layout/Layout';
-import Dashboard from './pages/Dashboard';
-import ErrorPage from './pages/ErrorPage';
-import Governance from './pages/Governance';
-import Query from './pages/Query';
 import '@/src/index.css';
+import { DepositAssets } from '@/src/components/finance/DepositAssets';
 import { Toaster } from '@/src/components/ui/Toaster';
 import { TooltipProvider } from '@/src/components/ui/Tooltip';
 import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
 import Finance from '@/src/pages/Finance';
+import { Mining } from '@/src/pages/Mining';
 import NewProposal from '@/src/pages/NewProposal';
 import Settings from '@/src/pages/Settings';
 import Verification from '@/src/pages/Verification';
@@ -34,9 +36,6 @@ import { Web3Modal } from '@web3modal/react';
 import { WagmiConfig, configureChains, createClient } from 'wagmi';
 import { polygon, polygonMumbai } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-
-import { DepositAssets } from './components/finance/DepositAssets';
-import { Mining } from './pages/Mining';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {

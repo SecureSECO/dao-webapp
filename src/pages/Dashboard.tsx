@@ -7,6 +7,7 @@
  */
 
 import Logo from '@/src/components/Logo';
+import { ClaimDailyRewardCard } from '@/src/components/dashboard/ClaimDailyRewardCard';
 import MembersList from '@/src/components/dashboard/MembersList';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
@@ -31,8 +32,6 @@ import {
   HiUserGroup,
 } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
-
-import { ClaimDailyRewardCard } from '../components/dashboard/ClaimDailyRewardCard';
 
 const Dashboard = () => {
   const { isConnected } = useAccount();

@@ -12,6 +12,7 @@
  */
 
 import { useState } from 'react';
+import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import CategoryList, { Category } from '@/src/components/ui/CategoryList';
 import {
@@ -34,8 +35,6 @@ import { truncateMiddle } from '@/src/lib/utils';
 import { availableStamps } from '@/src/pages/Verification';
 import { ContractTransaction } from 'ethers';
 import { HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
-
-import { Button } from '../ui/Button';
 
 /**
  * @returns A Card element containing information about a previous verification

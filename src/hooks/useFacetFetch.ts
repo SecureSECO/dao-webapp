@@ -63,13 +63,20 @@ export const useFacetFetch = <TFacet, TResult, TContext>(
 export const usePartialVotingProposalMinDuration = () =>
   useFacetFetch({
     facet: (c) => c.IPartialVotingProposalFacet(),
-    data: (f) => f.getMinDuration(),
+    // Attempts to convert min duration to number, if it fails, returns null
+    data: (f) =>
+      f
+        .getMinDuration()
+        .then((d) => d.toNumber())
+        .catch(() => null),
+    useAnonymousClient: true,
   });
 
 export const useBurnVotingProposalCreationCost = () =>
   useFacetFetch({
     facet: (c) => c.IBurnVotingProposalFacet(),
     data: (f) => f.getProposalCreationCost(),
+    useAnonymousClient: true,
   });
 
 export const useTimeClaimable = () =>

@@ -21,6 +21,10 @@ import {
 } from '@/src/components/ui/AlertDialog';
 import { Button } from '@/src/components/ui/Button';
 import {
+  ConditionalButton,
+  ConnectWalletWarning,
+} from '@/src/components/ui/ConditionalButton';
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -48,11 +52,6 @@ import {
   HiOutlineDocumentMagnifyingGlass,
 } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
-
-import {
-  ConditionalButton,
-  ConnectWalletWarning,
-} from '../components/ui/ConditionalButton';
 
 interface QueryFormData {
   searchUrl: string;

@@ -29,7 +29,6 @@ import {
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useDaoBalance } from '@/src/hooks/useDaoBalance';
-import { ProposalFormAction } from '@/src/lib/constants/actions';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import {
   AddressPattern,
@@ -43,7 +42,8 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';
 
-export interface ProposalFormWithdrawData extends ProposalFormAction {
+export interface ProposalFormWithdrawData {
+  name: 'withdraw_assets';
   recipient: string;
   tokenAddress: string | 'custom';
   tokenAddressCustom?: string;

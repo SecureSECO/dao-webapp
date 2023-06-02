@@ -7,9 +7,16 @@
  */
 
 import { useContext } from 'react';
+import {
+  ActionFormContext,
+  ActionFormError,
+  ProposalFormActions,
+} from '@/src/components/newProposal/steps/Actions';
+import { Button } from '@/src/components/ui/Button';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
-import { ProposalFormAction } from '@/src/lib/constants/actions';
+import { MainCard } from '@/src/components/ui/MainCard';
 import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
 import { someUntil } from '@/src/lib/utils';
 import {
@@ -19,16 +26,8 @@ import {
 } from 'react-hook-form';
 import { HiCircleStack, HiPlus, HiXMark } from 'react-icons/hi2';
 
-import { Button } from '../../ui/Button';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { MainCard } from '../../ui/MainCard';
-import {
-  ActionFormContext,
-  ActionFormError,
-  ProposalFormActions,
-} from '../steps/Actions';
-
-export interface ProposalFormMintData extends ProposalFormAction {
+export interface ProposalFormMintData {
+  name: 'mint_tokens';
   wallets: ProposalFormMintWallet[];
 }
 

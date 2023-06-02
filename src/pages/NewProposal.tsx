@@ -22,13 +22,14 @@ import {
 } from '@/src/components/newProposal/steps/Voting';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
-import { ConditionalWarning } from '@/src/components/ui/ConditionalButton';
+import {
+  ConditionalButton,
+  ConditionalWarning,
+} from '@/src/components/ui/ConditionalButton';
 import Header from '@/src/components/ui/Header';
 import { Link } from '@/src/components/ui/Link';
 import { Progress } from '@/src/components/ui/Progress';
 import { HiChevronLeft } from 'react-icons/hi2';
-
-import { ConditionalButton } from '../components/ui/ConditionalButton';
 
 const totalSteps = 4;
 

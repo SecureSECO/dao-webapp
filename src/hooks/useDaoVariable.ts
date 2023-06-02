@@ -7,11 +7,10 @@
  */
 
 import { useEffect, useState } from 'react';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { isNullOrUndefined } from '@/src/lib/utils';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
-
-import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
-import { isNullOrUndefined } from '../lib/utils';
 
 export type UseDaoVariableData = {
   loading: boolean;
