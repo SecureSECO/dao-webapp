@@ -20,11 +20,9 @@ import {
 } from '@/src/components/ui/Select';
 import { useDaoVariable } from '@/src/hooks/useDaoVariable';
 import { useDaoVariables } from '@/src/hooks/useDaoVariables';
-import { ProposalFormAction } from '@/src/lib/constants/actions';
 import {
   AddressPattern,
   IntegerPattern,
-  NumberPattern,
   SignedIntegerPattern,
 } from '@/src/lib/constants/patterns';
 import { isNullOrUndefined } from '@/src/lib/utils';
@@ -42,7 +40,8 @@ import {
   ProposalFormActions,
 } from '../steps/Actions';
 
-export interface ProposalFormChangeParamData extends ProposalFormAction {
+export interface ProposalFormChangeParamData {
+  name: 'change_param';
   plugin: string;
   parameter: string;
   value: string;

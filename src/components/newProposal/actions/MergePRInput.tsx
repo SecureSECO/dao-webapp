@@ -8,7 +8,6 @@
 
 import { useContext } from 'react';
 import { Label } from '@/src/components/ui/Label';
-import { ProposalFormAction } from '@/src/lib/constants/actions';
 import { GithubPullRequestPattern } from '@/src/lib/constants/patterns';
 import { useFormContext } from 'react-hook-form';
 import { HiCircleStack, HiXMark } from 'react-icons/hi2';
@@ -23,7 +22,8 @@ import {
   ProposalFormActions,
 } from '../steps/Actions';
 
-export interface ProposalFormMergeData extends ProposalFormAction {
+export interface ProposalFormMergeData {
+  name: 'merge_pr';
   url: string;
 }
 

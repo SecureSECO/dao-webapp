@@ -9,7 +9,6 @@
 import { useContext } from 'react';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
-import { ProposalFormAction } from '@/src/lib/constants/actions';
 import { AddressPattern, NumberPattern } from '@/src/lib/constants/patterns';
 import { someUntil } from '@/src/lib/utils';
 import {
@@ -28,7 +27,8 @@ import {
   ProposalFormActions,
 } from '../steps/Actions';
 
-export interface ProposalFormMintData extends ProposalFormAction {
+export interface ProposalFormMintData {
+  name: 'mint_tokens';
   wallets: ProposalFormMintWallet[];
 }
 
