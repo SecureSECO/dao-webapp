@@ -1,4 +1,4 @@
-name: UI Tests
+name: Format/Lint Checks
 
 on:
   workflow_dispatch:
