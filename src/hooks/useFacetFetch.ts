@@ -8,10 +8,20 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { getErrorMessage, promiseObjectAll } from '@/src/lib/utils';
+import {
+  getErrorMessage,
+  promiseObjectAll,
+  promiseWhenWithDefaultvalue,
+} from '@/src/lib/utils';
 import { DiamondGovernancePure } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 
+/*
+ * facet: Function to get the facet from the client
+ * data: Function to get the data from the facet
+ * context: optional data(=context) that will be passed to facet and data. Will refetch if context changes
+ * useAnonymousClient: if true, the data will be fetched using the anonClient
+ * */
 export type UseFacetFetchProps<TFacet, TResult, TContext> = {
   facet: (client: DiamondGovernancePure, context?: TContext) => Promise<TFacet>;
   data: (facet: TFacet, context?: TContext) => Promise<TResult>;
@@ -26,6 +36,9 @@ export type UseFacetFetchData<TResult> = {
   refetch: () => void;
 };
 
+/*
+ * Generic hook to retieve data from a DiamondSDK facet.
+ * */
 export const useFacetFetch = <TFacet, TResult, TContext>(
   props: UseFacetFetchProps<TFacet, TResult, TContext>
 ): UseFacetFetchData<TResult> => {
@@ -58,8 +71,12 @@ export const useFacetFetch = <TFacet, TResult, TContext>(
   return { data, error, loading, refetch: fetchData };
 };
 
-// The place to add hooks that are direct mappings of useFacetFetch
+// The place to add hooks that are simple usages of useFacetFetch
 
+/**
+ * Retrieves the minimum duration of a proposal in seconds
+ * If the minimum duration is too large to be represented as a number, this will return null.
+ */
 export const usePartialVotingProposalMinDuration = () =>
   useFacetFetch({
     facet: (c) => c.IPartialVotingProposalFacet(),
@@ -72,6 +89,9 @@ export const usePartialVotingProposalMinDuration = () =>
     useAnonymousClient: true,
   });
 
+/**
+ * Retrieves the cost in rep to create a proposal.
+ */
 export const useBurnVotingProposalCreationCost = () =>
   useFacetFetch({
     facet: (c) => c.IBurnVotingProposalFacet(),
@@ -79,6 +99,9 @@ export const useBurnVotingProposalCreationCost = () =>
     useAnonymousClient: true,
   });
 
+/**
+ * Retrieves data and methods from the IERC20TimeClaimableFacet (daily rewards)
+ */
 export const useTimeClaimable = () =>
   useFacetFetch({
     facet: (c) => c.IERC20TimeClaimableFacet(),
@@ -95,8 +118,10 @@ export const useTieredTimeClaimable = (tier: BigNumber | null) =>
   useFacetFetch({
     facet: (c) => c.IERC20TieredTimeClaimableFacet(),
     data: (f, context) =>
-      context !== null && context !== undefined
-        ? (f.getClaimReward(context) as Promise<BigNumber | null>)
-        : (new Promise(() => null) as Promise<BigNumber | null>),
+      promiseWhenWithDefaultvalue(
+        context !== null && context !== undefined,
+        () => f.getClaimReward(context!),
+        null
+      ),
     context: tier,
   });

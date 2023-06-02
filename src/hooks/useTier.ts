@@ -13,6 +13,10 @@ import { useAccount, useBlockNumber } from 'wagmi';
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
 import { getErrorMessage } from '../lib/utils';
 
+/*
+ * Hook to retrieve the tier of the user.
+ * It is possible for member to belong to different tiers, this hook retrieves the Tier of the member.
+ * */
 export const useTier = () => {
   const { address } = useAccount();
   const { data: blockNumber, error: blockNumberError } = useBlockNumber();
