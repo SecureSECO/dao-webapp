@@ -32,7 +32,7 @@ import {
 } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
 
-import { ClaimDailyRewardCard } from '../components/dashboard/ClaimDailyRewardCard';
+import { ClaimDailyRewardCard } from '.@/src/components/dashboard/ClaimDailyRewardCard';
 
 const Dashboard = () => {
   const { isConnected } = useAccount();

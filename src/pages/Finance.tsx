@@ -17,6 +17,7 @@ import { Skeleton } from '@/src/components/ui/Skeleton';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
 import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
+import { ACTIONS } from '@/src/lib/constants/actions';
 import { TransferType } from '@aragon/sdk-client';
 import { format } from 'date-fns';
 import {
@@ -32,8 +33,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../components/ui/Dropdown';
-import { ACTIONS } from '../lib/constants/actions';
+} from '.@/src/components/ui/Dropdown';
 
 /**
  * Convert a TransferType to a sign (+ or -)

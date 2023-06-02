@@ -32,7 +32,7 @@ import {
   ConditionalButton,
   ConnectWalletWarning,
   Warning,
-} from '../components/ui/ConditionalButton';
+} from '.@/src/components/ui/ConditionalButton';
 
 const ViewProposal = () => {
   const { id } = useParams();

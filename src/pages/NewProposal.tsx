@@ -34,7 +34,7 @@ import {
   ConditionalButton,
   ConnectWalletWarning,
   InsufficientRepWarning,
-} from '../components/ui/ConditionalButton';
+} from '.@/src/components/ui/ConditionalButton';
 
 const totalSteps = 4;
 

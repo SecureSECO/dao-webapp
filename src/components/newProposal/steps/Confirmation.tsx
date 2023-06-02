@@ -11,6 +11,7 @@ import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/V
 import ProposalActions from '@/src/components/proposal/ProposalActions';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import CategoryList from '@/src/components/ui/CategoryList';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
@@ -32,8 +33,6 @@ import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router';
-
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
 
 /**
  * Converts actions in their input form to Action objects, to be used to view proposals and sending proposal to SDK.

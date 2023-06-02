@@ -52,7 +52,7 @@ import { useAccount } from 'wagmi';
 import {
   ConditionalButton,
   ConnectWalletWarning,
-} from '../components/ui/ConditionalButton';
+} from '.@/src/components/ui/ConditionalButton';
 
 interface QueryFormData {
   searchUrl: string;

@@ -8,7 +8,17 @@
 
 import { useContext } from 'react';
 import Loading from '@/src/components/icons/Loading';
+import {
+  ActionFormContext,
+  ActionFormError,
+  ProposalFormActions,
+} from '@/src/components/newProposal/steps/Actions';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { Input } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
+import { MainCard } from '@/src/components/ui/MainCard';
 import {
   Select,
   SelectContent,
@@ -28,17 +38,6 @@ import {
 import { isNullOrUndefined } from '@/src/lib/utils';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiCog, HiXMark } from 'react-icons/hi2';
-
-import { Button } from '../../ui/Button';
-import { Card } from '../../ui/Card';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { Label } from '../../ui/Label';
-import { MainCard } from '../../ui/MainCard';
-import {
-  ActionFormContext,
-  ActionFormError,
-  ProposalFormActions,
-} from '../steps/Actions';
 
 export interface ProposalFormChangeParamData {
   name: 'change_param';

@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Accordion } from '@/src/components/ui/Accordion';
 import { dummyChangeParamsAction } from '@/src/hooks/useProposal';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Accordion } from '../../ui/Accordion';
 import { ChangeParamAction } from './ChangeParamAction';
 
 const meta: Meta<typeof ChangeParamAction> = {

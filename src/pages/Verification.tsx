@@ -39,9 +39,9 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { useAccount, useSignMessage } from 'wagmi';
 
-import OneTimeRewardCard from '../components/verification/OneTimeRewardCard';
-import PendingVerificationCard from '../components/verification/PendingVerificationCard';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import OneTimeRewardCard from '.@/src/components/verification/OneTimeRewardCard';
+import PendingVerificationCard from '.@/src/components/verification/PendingVerificationCard';
 
 export const availableStamps: StampInfo[] = [
   {
