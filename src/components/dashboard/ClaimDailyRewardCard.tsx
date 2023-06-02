@@ -6,7 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useTimeClaimable } from '@/src/hooks/useFacetFetch';
+import {
+  useTieredTimeClaimable,
+  useTimeClaimable,
+} from '@/src/hooks/useFacetFetch';
+import { useTier } from '@/src/hooks/useTier';
 import { toast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { BigNumber } from 'ethers';
@@ -16,15 +20,30 @@ import Loading from '../icons/Loading';
 import { Card } from '../ui/Card';
 import { ConditionalButton, Warning } from '../ui/ConditionalButton';
 import { MainCard } from '../ui/MainCard';
+import { Progress } from '../ui/Progress';
 import TokenAmount from '../ui/TokenAmount';
 
 export const ClaimDailyRewardCard = () => {
+  const { tier } = useTier();
   const { data: timeClaimable, loading, error, refetch } = useTimeClaimable();
+  const { data: intervalClaimableAmount } = useTieredTimeClaimable(tier);
 
-  console.log(
-    timeClaimable?.claimPeriodInterval.toString(),
-    timeClaimable?.claimPeriodMax.toString()
-  );
+  // Values for progress bar
+  const maxClaimable =
+    timeClaimable !== null &&
+    intervalClaimableAmount !== null &&
+    !timeClaimable.claimPeriodInterval.eq(BigNumber.from(0))
+      ? timeClaimable.claimPeriodMax
+          .div(timeClaimable.claimPeriodInterval)
+          .mul(intervalClaimableAmount)
+      : null;
+  const progress =
+    maxClaimable !== null &&
+    timeClaimable !== null &&
+    !timeClaimable.amountClaimable.eq(BigNumber.from(0))
+      ? maxClaimable.div(timeClaimable.amountClaimable)
+      : null;
+
   const handleClaimReward = async () => {
     if (!timeClaimable) return;
     toast.contractTransaction(timeClaimable.claimReward, {
@@ -40,6 +59,11 @@ export const ClaimDailyRewardCard = () => {
       icon={HiGift}
       header="Daily reward"
     >
+      <div className="flex flex-row items-center gap-x-1">
+        {maxClaimable && '0'}
+        <Progress value={progress?.toNumber() ?? 0} />
+        {maxClaimable && maxClaimable.toString()}
+      </div>
       <p>You can claim free {TOKENS.rep.name} everyday.</p>
       <Card variant="outline" className="flex flex-row items-center gap-x-2">
         Claimable amount:
