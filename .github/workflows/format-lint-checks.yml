@@ -28,7 +28,7 @@ jobs:
         run: npm ci
   format-and-lint-check:
     runs-on: ubuntu-latest
-    needs: install-dependencies
+    needs: install-cache
     steps:
       - uses: actions/checkout@v3
       - name: Restore npm cache
