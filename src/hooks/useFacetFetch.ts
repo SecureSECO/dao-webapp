@@ -83,8 +83,8 @@ export const useTimeClaimable = () =>
       }),
   });
 
-export const useTieredTimeClaimable = (tier : BigNumber) => useFacetFetch({
-  facet: (c) => c.IERC20TieredTimeClaimableFacet(),
-  data: (f) => f.getClaimReward(tier),
-})
-
+export const useTieredTimeClaimable = (tier: BigNumber) =>
+  useFacetFetch({
+    facet: (c) => c.IERC20TieredTimeClaimableFacet(),
+    data: (f) => f.getClaimReward(tier),
+  });
