@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage, promiseObjectAll } from '@/src/lib/utils';
 import { DiamondGovernancePure } from '@plopmenz/diamond-governance-sdk';
+import { BigNumber } from 'ethers';
 
 export type UseFacetFetchProps<TFacet, TResult> = {
   facet: (client: DiamondGovernancePure) => Promise<TFacet>;
@@ -81,3 +82,9 @@ export const useTimeClaimable = () =>
         claimReward: () => f.claimTime(),
       }),
   });
+
+export const useTieredTimeClaimable = (tier : BigNumber) => useFacetFetch({
+  facet: (c) => c.IERC20TieredTimeClaimableFacet(),
+  data: (f) => f.getClaimReward(tier),
+})
+
