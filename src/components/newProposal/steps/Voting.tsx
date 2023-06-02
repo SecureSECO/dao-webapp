@@ -7,6 +7,7 @@
  */
 
 import { Card } from '@/src/components/ui/Card';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { LabelledInput } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import Legend from '@/src/components/ui/Legend';
@@ -42,8 +43,6 @@ import {
   useForm,
   useWatch,
 } from 'react-hook-form';
-
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
 
 export type ProposalFormVotingSettings = {
   option: VoteOption;

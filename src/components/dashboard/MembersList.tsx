@@ -8,11 +8,10 @@
 
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
+import { Skeleton } from '@/src/components/ui/Skeleton';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { Member } from '@/src/hooks/useMembers';
 import { TOKENS } from '@/src/lib/constants/tokens';
-
-import { Skeleton } from '../ui/Skeleton';
 
 /**
  * @returns A card containg showing a DAO member's address, jazzicon and REP balance (the latter only if available)

@@ -19,6 +19,12 @@ import {
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
 import { Address } from '@/src/components/ui/Address';
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+  InsufficientRepWarning,
+  Warning,
+} from '@/src/components/ui/ConditionalButton';
 import { Progress } from '@/src/components/ui/Progress';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import TokenAmount from '@/src/components/ui/TokenAmount';
@@ -36,13 +42,6 @@ import {
 import { BigNumber } from 'ethers';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-
-import {
-  ConditionalButton,
-  ConnectWalletWarning,
-  InsufficientRepWarning,
-  Warning,
-} from '../ui/ConditionalButton';
 
 type VoteFormData = {
   vote_option: string;

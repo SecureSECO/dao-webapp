@@ -13,7 +13,6 @@ import { MergePRInput } from './MergePRInput';
 
 const meta: Meta<typeof MergePRInput> = {
   component: MergePRInput,
-  tags: ['autodocs'],
 };
 
 export default meta;

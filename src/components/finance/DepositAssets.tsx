@@ -7,6 +7,28 @@
  */
 
 import { useEffect, useState } from 'react';
+import Loading from '@/src/components/icons/Loading';
+import { Address } from '@/src/components/ui/Address';
+import { Card } from '@/src/components/ui/Card';
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+  Warning,
+} from '@/src/components/ui/ConditionalButton';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import Header from '@/src/components/ui/Header';
+import { LabelledInput } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
+import { Link } from '@/src/components/ui/Link';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/src/components/ui/Select';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 import { ContractTransactionToast, toast } from '@/src/hooks/useToast';
@@ -27,29 +49,6 @@ import {
   usePrepareSendTransaction,
   useSendTransaction,
 } from 'wagmi';
-
-import Loading from '../icons/Loading';
-import { Address } from '../ui/Address';
-import { Card } from '../ui/Card';
-import {
-  ConditionalButton,
-  ConnectWalletWarning,
-  Warning,
-} from '../ui/ConditionalButton';
-import { ErrorWrapper } from '../ui/ErrorWrapper';
-import Header from '../ui/Header';
-import { LabelledInput } from '../ui/Input';
-import { Label } from '../ui/Label';
-import { Link } from '../ui/Link';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/Select';
 
 type DepositAssetsData = {
   token: Token;
