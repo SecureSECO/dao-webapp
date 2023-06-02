@@ -63,16 +63,16 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
-    "@storybook/addon-essentials": "^7.0.12",
-    "@storybook/addon-interactions": "^7.0.12",
-    "@storybook/addon-links": "^7.0.12",
-    "@storybook/addon-mdx-gfm": "^7.0.12",
+    "@storybook/addon-essentials": "^7.0.18",
+    "@storybook/addon-interactions": "^7.0.18",
+    "@storybook/addon-links": "^7.0.18",
+    "@storybook/addon-mdx-gfm": "^7.0.18",
     "@storybook/addon-postcss": "^2.0.0",
     "@storybook/addon-styling": "^1.0.8",
-    "@storybook/blocks": "^7.0.12",
+    "@storybook/blocks": "^7.0.18",
     "@storybook/jest": "^0.1.0",
-    "@storybook/react": "^7.0.12",
-    "@storybook/react-vite": "^7.0.12",
+    "@storybook/react": "^7.0.18",
+    "@storybook/react-vite": "^7.0.18",
     "@storybook/test-runner": "^0.10.0",
     "@storybook/testing-library": "^0.1.0",
     "@types/dompurify": "^3.0.2",
@@ -95,12 +95,12 @@
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",
     "prop-types": "^15.8.1",
-    "storybook": "^7.0.12",
+    "storybook": "^7.0.18",
     "tailwindcss": "^3.3.2",
     "tailwindcss-animate": "^1.0.5",
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4",
-    "vite": "^4.3.3"
+    "vite": "^4.3.9"
   },
   "_id": "dao-webapp@0.1.0"
 }
