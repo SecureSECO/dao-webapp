@@ -53,10 +53,10 @@ const parseActionInputs = async (
   actions: ProposalFormActionData[]
 ): Promise<Action[]> => {
   const res: Action[] = [];
-  const parsed = await Promise.all(
-    actions.map((action) => ACTIONS[action.name].parseInput(action as any))
-  );
-  parsed.forEach((action) => action && res.push(action));
+  actions.forEach((action) => {
+    const parsed = ACTIONS[action.name].parseInput(action as any);
+    if (parsed) res.push(parsed);
+  });
 
   return res;
 };

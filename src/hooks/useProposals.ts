@@ -82,7 +82,7 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
       const daoProposals: Proposal[] | null = await client.sugar.GetProposals(
         status ? [status] : undefined,
         sorting,
-        order === undefined ? SortingOrder.Desc : order,
+        order,
         undefined,
         limit
       );

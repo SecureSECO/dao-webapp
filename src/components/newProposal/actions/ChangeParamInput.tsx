@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import Loading from '@/src/components/icons/Loading';
 import {
   ActionFormContext,
@@ -44,6 +44,7 @@ export interface ProposalFormChangeParamData {
   plugin: string;
   parameter: string;
   value: string;
+  type: string;
 }
 
 export const emptyChangeParamData: ProposalFormChangeParamData = {
@@ -51,6 +52,7 @@ export const emptyChangeParamData: ProposalFormChangeParamData = {
   plugin: '',
   parameter: '',
   value: '',
+  type: '',
 };
 
 // TYPES:
@@ -72,7 +74,7 @@ const addressValidator: Validator = {
 };
 
 const stringValidator: Validator = {
-  validate: (x) => true,
+  validate: (_) => true,
 };
 
 const boolValidator: Validator = {
@@ -147,6 +149,7 @@ export const ChangeParamInput = () => {
     register,
     formState: { errors: formErrors },
     control,
+    setValue,
   } = useFormContext<ProposalFormActions>();
 
   const { prefix, index, onRemove } = useContext(ActionFormContext);
@@ -156,7 +159,7 @@ export const ChangeParamInput = () => {
     error: variablesErrors,
     refetch: refetchVariables,
     variables,
-  } = useDaoVariables({});
+  } = useDaoVariables();
 
   const errors: ActionFormError<ProposalFormChangeParamData> =
     formErrors.actions ? formErrors.actions[index] : undefined;
@@ -186,6 +189,16 @@ export const ChangeParamInput = () => {
     interfaceName: watchPlugin?.interfaceName,
     variableName: watchParam?.variableName,
   });
+
+  //Shadow register for type
+  useEffect(() => {
+    register(`${prefix}.type`);
+  }, []);
+
+  //Keep type updated with watchParam
+  useEffect(() => {
+    setValue(`${prefix}.type`, watchParam?.variableType ?? '');
+  }, [watchParam]);
 
   return (
     <MainCard

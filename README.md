@@ -21,13 +21,13 @@
     href="https://github.com/SecureSECODAO/dao-webapp/actions"
     alt="Actions"
   >
-    <img src="https://github.com/SecureSECODAO/dao-webapp/actions/workflows/test.yml/badge.svg?branch=master" />
+    <img src="https://img.shields.io/github/actions/workflow/status/SecureSECODAO/dao-webapp/ui-tests.yml?label=UI%20Tests&logo=github" />
   </a>
   <a
     href="https://dao-webapp-securesecodao.vercel.app/"
     alt="Vercel deployment"
   >
-    <img src="https://img.shields.io/github/deployments/SecureSECODAO/dao-webapp/production?label=vercel&logo=vercel" />
+    <img src="https://img.shields.io/github/deployments/SecureSECODAO/dao-webapp/production%20%E2%80%93%20dao-webapp?label=vercel&logo=vercel" />
   </a>
 </p>
 

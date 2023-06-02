@@ -46,6 +46,7 @@ import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { lowerCaseFirst } from '@/src/lib/utils';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { TokenType } from '@aragon/sdk-client';
 import { Action } from '@plopmenz/diamond-governance-sdk';
@@ -227,25 +228,44 @@ export const ACTIONS: Actions = {
     },
   },
   change_param: {
-    method: 'changeParameter(string,uint256)',
-    interface: 'IChangeParameter',
+    // The method and interface for this action are dynamically generated in the parseInput function
+    // The actions being fetched are first parsed to make sure all change param actions have this method and interface
+    method: 'ChangeParam',
+    interface: 'DAO',
     label: 'Change param',
     longLabel: 'Change plugin parameters',
     icon: HiOutlineCog,
     view: ChangeParamAction,
     input: ChangeParamInput,
     emptyInputData: emptyChangeParamData,
-    maxPerProposal: 1,
     parseInput: (input) => {
-      return {
-        method: ACTIONS.change_param.method as string,
-        interface: ACTIONS.change_param.interface,
-        params: {
-          _plugin: input.plugin,
-          _param: input.parameter,
-          _value: input.value,
-        },
-      };
+      try {
+        let parsedValue: string | number | boolean | BigNumber = input.value;
+        if (
+          input.type === 'uint8' ||
+          input.type === 'uint16' ||
+          input.type === 'uint32'
+        )
+          parsedValue = Number.parseInt(input.value);
+        else if (input.type === 'boolean' && input.value === 'false')
+          parsedValue = false;
+        else if (input.type === 'boolean' && input.value === 'true')
+          parsedValue = true;
+        else if (input.type === 'string' || input.type === 'address')
+          parsedValue = input.value;
+        else parsedValue = BigNumber.from(input.value);
+
+        return {
+          method: `set${input.parameter}(${input.type})`,
+          interface: input.plugin,
+          params: {
+            [`_${lowerCaseFirst(input.parameter)}`]: parsedValue,
+          },
+        };
+      } catch (e) {
+        console.log(e);
+        return null;
+      }
     },
   },
   // Add new proposal actions here:
@@ -335,8 +355,8 @@ type ActionData<TAction, TFormData, TMethod extends string | void = void> = {
  * const identifier = getIdentifier(action);
  * console.log(identifier); // "IERC20MultiMinterFacet.multimint(address[],uint256[])"
  */
-const getIdentifier = (action: Action | ActionData<any, any>) =>
-  `${action.interface}.${typeof action.method}`;
+export const getIdentifier = (action: Action | ActionData<any, any>) =>
+  `${action.interface}.${action.method}`;
 
 /**
  * Object that maps an action identifier to a more readable name as defined in the ACTIONS object.
@@ -344,7 +364,10 @@ const getIdentifier = (action: Action | ActionData<any, any>) =>
  * const actionName = actionNames['IERC20MultiMinterFacet.multimint(address[],uint256[])']
  * // actionName === 'mint_tokens'
  */
-const actionNames: { [identifier: string]: ActionName } = {};
+export const actionNames: { [identifier: string]: ActionName } = {};
+// Developer's note: the actonNames object is expanded upon with the identifiers for all possible
+// change_param action interfaces and methods in DiamondGovernanceSDK.tsx, after fetching the
+// list of all possible variables to change in the DAO from the SDK.
 Object.entries(ACTIONS).forEach(([name, action]) => {
   if (typeof action.method === 'string')
     actionNames[getIdentifier({ ...action, method: action.method })] =

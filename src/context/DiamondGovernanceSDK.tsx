@@ -13,6 +13,7 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { actionNames } from '@/src/lib/constants/actions';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
@@ -30,6 +31,25 @@ type SDKContext = {
 
 const DiamondSDKContext = createContext<SDKContext>({});
 const diamondAddress = CONFIG.DIAMOND_ADDRESS;
+
+/**
+ * Add the identifiers of change_param actions to the actionNames object
+ * such that they will be properly mapped to the change_param action type
+ */
+const updateActionNames = async (client: DiamondGovernanceClient) => {
+  // Each variable that can be changed in the DAO has a unique interface + method combination.
+  // All of these should be mapped to the change_param action type.
+  // The method names follow a general pattern: set<variableName>(<variableType>).
+
+  const variables = await client.sugar.GetVariables();
+  variables.forEach((v) => {
+    v.variables.forEach((vv) => {
+      actionNames[
+        `${v.interfaceName}.set${vv.variableName}(${vv.variableType})`
+      ] = 'change_param';
+    });
+  });
+};
 
 export function DiamondSDKWrapper({ children }: any): JSX.Element {
   const [anonClient, setAnonClient] = useState<
@@ -57,7 +77,12 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     let dummySigner = jsonRpcProvider.getSigner(
       '0x0000000000000000000000000000000000000000'
     );
-    setAnonClient(new DiamondGovernanceClient(diamondAddress, dummySigner));
+    const _anonClient = new DiamondGovernanceClient(
+      diamondAddress,
+      dummySigner
+    );
+    setAnonClient(_anonClient);
+    updateActionNames(_anonClient);
   }, []);
 
   useEffect(() => {

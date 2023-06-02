@@ -50,10 +50,15 @@ const fetchInterfaceVariableValues = async (
   return result;
 };
 
-export const useDaoVariables = ({
-  useDummyData = false,
-  fetchWithValues = false,
-}: UseDaoVariablesProps): UseDaoVariablesData => {
+const defaultProps: UseDaoVariablesProps = {
+  useDummyData: false,
+  fetchWithValues: false,
+};
+
+export const useDaoVariables = (
+  props?: UseDaoVariablesProps
+): UseDaoVariablesData => {
+  const { useDummyData, fetchWithValues } = Object.assign(defaultProps, props);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [variables, setVariables] = useState<InterfaceVariables[] | null>(null);
@@ -61,7 +66,7 @@ export const useDaoVariables = ({
     string,
     Record<string, FetchVariableResult>
   > | null>(null);
-  const { client } = useDiamondSDKContext();
+  const { anonClient } = useDiamondSDKContext();
 
   const fetchVariables = async (client: DiamondGovernanceClient) => {
     try {
@@ -119,13 +124,13 @@ export const useDaoVariables = ({
 
   const refetch = () => {
     if (useDummyData) return setDummyData();
-    if (!client) return;
-    fetchVariables(client);
+    if (!anonClient) return;
+    fetchVariables(anonClient);
   };
 
   useEffect(() => {
     refetch();
-  }, [client]);
+  }, [anonClient]);
 
   return {
     loading,

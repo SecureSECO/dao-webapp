@@ -136,6 +136,15 @@ export function IsEmptyOrOnlyWhitespace(x: string): boolean {
   return x.trim() === '';
 }
 
+/**
+ * Lowercases the first letter of a string
+ * @param x String to lowercase the first letter of
+ * @returns The string with the first letter lowercased
+ */
+export function lowerCaseFirst(x: string): string {
+  return x.charAt(0).toLowerCase() + x.slice(1);
+}
+
 /** Taken from https://stackoverflow.com/questions/29292921/how-to-use-promise-all-with-an-object-as-input
  * Promise.all for entries of an object. Will resolve when all values of the object have been resolved.
  */
