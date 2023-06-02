@@ -6,13 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { emptyMintData } from '@/src/components/newProposal/actions/MintTokensInput';
-import { emptyWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
-import { Actions } from '@/src/components/newProposal/steps/Actions';
+import {
+  Actions,
+  emptyFormActions,
+} from '@/src/components/newProposal/steps/Actions';
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
 import type { Meta, StoryObj } from '@storybook/react';
-
-import { emptyMergeData } from '../actions/MergePRInput';
 
 const meta: Meta<typeof Actions> = {
   component: Actions,
@@ -34,7 +33,7 @@ const FormProviderDecorator = (Story: any, options: any) => {
 
 export const Primary: Story = {
   args: {
-    data: { actions: [emptyMintData, emptyWithdrawData, emptyMergeData] },
+    data: { actions: emptyFormActions },
   },
   decorators: [FormProviderDecorator],
 };

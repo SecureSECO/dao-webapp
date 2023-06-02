@@ -7,6 +7,10 @@
  */
 
 import { createContext } from 'react';
+import { emptyChangeParamData } from '@/src/components/newProposal/actions/ChangeParamInput';
+import { emptyMergeData } from '@/src/components/newProposal/actions/MergePRInput';
+import { emptyMintData } from '@/src/components/newProposal/actions/MintTokensInput';
+import { emptyWithdrawData } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import { Button } from '@/src/components/ui/Button';
 import {
   DropdownMenu,
@@ -42,6 +46,16 @@ export const ActionFormContext = createContext<ActionFormContextData>(null!);
 export interface ProposalFormActions {
   actions: ProposalFormActionData[];
 }
+
+/** Re-export of empty form data for all the actions, to be used in the story for this component
+ * Re-exported here to avoid circular dependencies in the Actions.stories.tsx file
+ */
+export const emptyFormActions = [
+  emptyMintData,
+  emptyMergeData,
+  emptyWithdrawData,
+  emptyChangeParamData,
+];
 
 export const Actions = () => {
   const { setStep, dataStep3, setDataStep3 } = useNewProposalFormContext();
