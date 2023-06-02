@@ -13,7 +13,6 @@ import { Voting } from './Voting';
 
 const meta: Meta<typeof Voting> = {
   component: Voting,
-  tags: ['autodocs'],
 };
 
 export default meta;
