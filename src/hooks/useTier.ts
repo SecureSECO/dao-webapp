@@ -13,7 +13,7 @@ import { useAccount, useBlockNumber } from 'wagmi';
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
 import { getErrorMessage } from '../lib/utils';
 
-const useTier = () => {
+export const useTier = () => {
   const { address } = useAccount();
   const { data: blockNumber, error: blockNumberError } = useBlockNumber();
   const [tier, setTier] = useState<BigNumber | null>(null);
