@@ -53,7 +53,6 @@ export const useFacetFetch = <TFacet, TResult, TContext>(
 
   useEffect(() => {
     fetchData();
-    console.log('RerunFetch', props.context);
   }, [client, props.context]);
 
   return { data, error, loading, refetch: fetchData };
@@ -91,6 +90,6 @@ export const useTieredTimeClaimable = (tier: BigNumber | null) =>
     data: (f, context) =>
       context !== null && context !== undefined
         ? (f.getClaimReward(context) as Promise<BigNumber | null>)
-        : (new Promise(() => console.log("Null promise")) as Promise<BigNumber | null>),
+        : (new Promise(() => null) as Promise<BigNumber | null>),
     context: tier,
   });
