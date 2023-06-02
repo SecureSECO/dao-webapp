@@ -27,25 +27,7 @@ import { HiGift } from 'react-icons/hi2';
 import { Progress } from '../ui/Progress';
 
 export const ClaimDailyRewardCard = () => {
-  const { tier } = useTier();
   const { data: timeClaimable, loading, error, refetch } = useTimeClaimable();
-  const { data: intervalClaimableAmount } = useTieredTimeClaimable(tier);
-
-  // Values for progress bar
-  const maxClaimable =
-    timeClaimable !== null &&
-    intervalClaimableAmount !== null &&
-    !timeClaimable.claimPeriodInterval.eq(BigNumber.from(0))
-      ? timeClaimable.claimPeriodMax
-          .div(timeClaimable.claimPeriodInterval)
-          .mul(intervalClaimableAmount)
-      : null;
-  const progress =
-    maxClaimable !== null &&
-    timeClaimable !== null &&
-    !timeClaimable.amountClaimable.eq(BigNumber.from(0))
-      ? maxClaimable.div(timeClaimable.amountClaimable)
-      : null;
 
   const handleClaimReward = async () => {
     if (!timeClaimable) return;
@@ -62,11 +44,6 @@ export const ClaimDailyRewardCard = () => {
       icon={HiGift}
       header="Daily reward"
     >
-      <div className="flex flex-row items-center gap-x-1">
-        {maxClaimable && '0'}
-        <Progress value={progress?.toNumber() ?? 0} />
-        {maxClaimable && maxClaimable.toString()}
-      </div>
       <p>You can claim free {TOKENS.rep.name} everyday.</p>
       <Card variant="outline" className="flex flex-row items-center gap-x-2">
         Claimable amount:
