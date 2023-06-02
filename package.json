@@ -66,7 +66,6 @@
     "@storybook/addon-essentials": "^7.0.18",
     "@storybook/addon-interactions": "^7.0.18",
     "@storybook/addon-links": "^7.0.18",
-    "@storybook/addon-mdx-gfm": "^7.0.18",
     "@storybook/addon-postcss": "^2.0.0",
     "@storybook/addon-styling": "^1.0.8",
     "@storybook/blocks": "^7.0.18",
