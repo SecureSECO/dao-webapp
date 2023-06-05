@@ -10,10 +10,7 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { InterfaceVariables } from '@plopmenz/diamond-governance-sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
-import {
-  DataTable,
-  HeaderSortableDecorator,
-} from '../components/ui/DataTable';
+import { DataTable, HeaderSortableDecorator } from '../components/ui/DataTable';
 import {
   UseDaoVariablesValuesData,
   useDaoVariables,
@@ -36,7 +33,9 @@ const columns: ColumnDef<DisplaySetting>[] = [
   {
     accessorKey: 'variableName',
     header: ({ column }) => (
-      <HeaderSortableDecorator column={column}>Parameter</HeaderSortableDecorator>
+      <HeaderSortableDecorator column={column}>
+        Parameter
+      </HeaderSortableDecorator>
     ),
   },
   {
