@@ -128,7 +128,7 @@ export const MembershipStatusView = ({
   const isNotMember = stamps && stamps.length === 0;
   if (isNotMember)
     return (
-      <MembershipCard message="You are not yet a member of this DAO!">
+      <MembershipCard message="You are not yet a member of the DAO!">
         <Link to="/verification" variant="subtle">
           Become member
         </Link>
