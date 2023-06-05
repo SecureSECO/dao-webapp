@@ -11,15 +11,20 @@ import { cn } from '@/src/lib/utils';
 import {
   Column,
   ColumnDef,
+  ColumnFiltersState,
   SortingState,
   flexRender,
+
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import {Table} from "@tanstack/table-core";
 import { HiArrowDown, HiArrowUp, HiChevronUpDown } from 'react-icons/hi2';
 
 import { Button } from './Button';
+import Loading from '../icons/Loading';
 
 // Decorators: similair to storybook decorators.
 export const HeaderSortableDecorator = ({
@@ -49,23 +54,39 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const table = useReactTable({
+/*
+ * Simple hook returning a table. This table can be viewed using DataTableRender.
+ * This table can be edited further to support various behaviour such as filtering.
+ */
+export const useDataTable = <TData, TValue>({data, columns} : DataTableProps<TData,TValue>) => {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+
+  const table : Table<TData> = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
+      columnFilters,
     },
   });
 
+  return table;
+}
+
+
+/*
+ * Component for DataTables from the useDataTable hook
+ */
+export function DataTableRender<TData>({table, isLoading = false} : {isLoading?: boolean; table:Table<TData>}) {
   return (
     <div className="rounded-md border">
       <Table>
@@ -103,8 +124,8 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+              <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
+                {isLoading ? <Loading className="w-7 h-7" /> : "No results." }
               </TableCell>
             </TableRow>
           )}
@@ -112,6 +133,15 @@ export function DataTable<TData, TValue>({
       </Table>
     </div>
   );
+}
+
+/*
+ * Convinient wrapper around useDataTable with DataTableRender.
+ * Preferred to be used when the underlying table hook is not needed.
+ */
+export function DataTable<TData, TValue>(props : DataTableProps<TData, TValue>) {
+  const table = useDataTable(props);
+  return DataTableRender({table});
 }
 
 const Table = React.forwardRef<
