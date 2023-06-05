@@ -124,8 +124,9 @@ const VotesContentActive = ({
   const { handleSubmit, watch, control } = useForm<VoteFormData>();
   const { isConnected, address } = useAccount();
   const [isVoting, setIsVoting] = useState(false);
-  const { getProposalVotingPower, votingPower } = useVotingPower({
+  const { getProposalVotingPower, proposalVotingPower } = useVotingPower({
     address,
+    proposal,
   });
   const hasVoted = votes.some((v) => v.address === address);
 
@@ -162,8 +163,7 @@ const VotesContentActive = ({
   };
 
   const voteOption = watch('vote_option');
-  const userCanVote: boolean =
-    canVote[voteOption as VoteOptionString] && votingPower.gt(0);
+  const userCanVote: boolean = canVote[voteOption as VoteOptionString];
 
   return (
     <form onSubmit={handleSubmit(onSubmitVote)} className="space-y-2">
@@ -211,8 +211,10 @@ const VotesContentActive = ({
               content: <ConnectWalletWarning action="to vote" />,
             },
             {
-              when: votingPower.lte(0),
-              content: <InsufficientRepWarning action="to vote" />,
+              when: proposalVotingPower ? proposalVotingPower.lte(0) : false,
+              content: (
+                <InsufficientRepWarning action="(at time of proposal creation) to vote" />
+              ),
             },
             {
               when: hasVoted,
@@ -223,7 +225,10 @@ const VotesContentActive = ({
           ]}
           type="submit"
         >
-          {hasVoted && isConnected && votingPower.gt(0) ? (
+          {hasVoted &&
+          isConnected &&
+          proposalVotingPower &&
+          proposalVotingPower.gt(0) ? (
             'Vote submitted'
           ) : (
             <span className="ml-1 inline-block ">
