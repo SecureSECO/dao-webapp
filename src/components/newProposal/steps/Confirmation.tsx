@@ -40,7 +40,7 @@ import { Action } from '@plopmenz/diamond-governance-sdk';
 import { add, format } from 'date-fns';
 import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
-import { HiChatBubbleLeftRight } from 'react-icons/hi2';
+import { HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router';
 import { useAccount } from 'wagmi';
 
@@ -283,7 +283,7 @@ export const Confirmation = () => {
 
         {/* View voting settings */}
         <MainCard
-          icon={HiChatBubbleLeftRight}
+          icon={HiOutlineChatBubbleLeftRight}
           variant="outline"
           header="Voting settings"
         >

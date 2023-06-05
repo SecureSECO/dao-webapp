@@ -33,7 +33,7 @@ import {
 } from '@plopmenz/diamond-governance-sdk';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
-import { HiChatBubbleLeftRight } from 'react-icons/hi2';
+import { HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
 
 interface ProposalVotesProps {
   proposal: Proposal | null;
@@ -141,7 +141,7 @@ const ProposalVotes = ({
         'col-span-full flex flex-col gap-y-4 lg:col-span-4',
         className
       )}
-      icon={HiChatBubbleLeftRight}
+      icon={HiOutlineChatBubbleLeftRight}
       header={
         <DefaultMainCardHeader
           value={proposal?.data.voterList.length ?? 0}

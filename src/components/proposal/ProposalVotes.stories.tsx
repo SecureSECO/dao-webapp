@@ -32,7 +32,7 @@ export const Active: Story = {
     proposal: dummyProposal,
     votes: dummyVotes,
     loading: false,
-    totalVotingWeight: BigNumber.from(5),
+    totalVotingWeight: BigNumber.from('0x8AC7230489E80000'),
     canVote: {
       Yes: true,
       No: true,
@@ -49,7 +49,7 @@ export const Pending: Story = {
     } as Proposal,
     votes: dummyVotes,
     loading: false,
-    totalVotingWeight: BigNumber.from(5),
+    totalVotingWeight: BigNumber.from('0x8AC7230489E80000'),
     canVote: {
       Yes: true,
       No: true,
@@ -66,7 +66,7 @@ export const Succeeded: Story = {
     } as Proposal,
     votes: dummyVotes,
     loading: false,
-    totalVotingWeight: BigNumber.from(5),
+    totalVotingWeight: BigNumber.from('0x8AC7230489E80000'),
     canVote: {
       Yes: true,
       No: true,
@@ -83,7 +83,7 @@ export const Executed: Story = {
     } as Proposal,
     votes: dummyVotes,
     loading: false,
-    totalVotingWeight: BigNumber.from(5),
+    totalVotingWeight: BigNumber.from('0x8AC7230489E80000'),
     canVote: {
       Yes: true,
       No: true,
@@ -100,7 +100,7 @@ export const Defeated: Story = {
     } as Proposal,
     votes: dummyVotes,
     loading: false,
-    totalVotingWeight: BigNumber.from(5),
+    totalVotingWeight: BigNumber.from('0x8AC7230489E80000'),
     canVote: {
       Yes: true,
       No: true,
@@ -114,7 +114,7 @@ export const Loading: Story = {
     proposal: dummyProposal,
     votes: dummyVotes,
     loading: true,
-    totalVotingWeight: BigNumber.from(5),
+    totalVotingWeight: BigNumber.from('0x8AC7230489E80000'),
     canVote: {
       Yes: true,
       No: true,
