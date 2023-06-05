@@ -11,27 +11,32 @@ import { BigNumber } from 'ethers';
 import { useAccount, useBlockNumber } from 'wagmi';
 
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
+import {
+  CHAIN_METADATA,
+  PREFERRED_NETWORK_METADATA,
+} from '../lib/constants/chains';
 import { getErrorMessage } from '../lib/utils';
 
 /*
- * Hook to retrieve the tier of the user.
+ * Hook to retrieve the current tier of the user.
  * It is possible for member to belong to different tiers, this hook retrieves the Tier of the member.
  * */
 export const useTier = () => {
   const { address } = useAccount();
-  const { data: blockNumber, error: blockNumberError } = useBlockNumber();
   const [tier, setTier] = useState<BigNumber | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { client } = useDiamondSDKContext();
 
+  const now = Math.round(new Date().getTime() / 1000);
+
   const fetchTier = async () => {
-    if (!client || !address || !blockNumber) return;
+    if (!client || !address) return;
     setLoading(true);
 
     try {
       const facet = await client.pure.ITieredMembershipStructure();
-      const tier = await facet.getTierAt(address, blockNumber);
+      const tier = await facet.getTierAt(address, now);
       setTier(tier);
     } catch (e) {
       console.error('Error fetching from facet', e);
@@ -42,13 +47,8 @@ export const useTier = () => {
   };
 
   useEffect(() => {
-    if (blockNumberError) {
-      setError(getErrorMessage(blockNumberError));
-      setLoading(false);
-    } else {
-      fetchTier();
-    }
-  }, [client, address, blockNumber, blockNumberError]);
+    fetchTier();
+  }, [client, address]);
 
   return { tier, error, loading, refetch: fetchTier };
 };

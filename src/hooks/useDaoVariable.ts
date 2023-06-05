@@ -49,7 +49,7 @@ export const useDaoVariable = ({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [value, setValue] = useState<FetchVariableResult | null>(null);
-  const { client } = useDiamondSDKContext();
+  const { anonClient } = useDiamondSDKContext();
 
   const setDummyData = () => {
     setLoading(false);
@@ -79,9 +79,9 @@ export const useDaoVariable = ({
   useEffect(() => {
     setLoading(true);
     if (useDummyData) return setDummyData();
-    if (!client) return;
-    setVariableValue(client);
-  }, [client, interfaceName, variableName]);
+    if (!anonClient) return;
+    setVariableValue(anonClient);
+  }, [anonClient, interfaceName, variableName]);
 
   return {
     loading,
