@@ -6,17 +6,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { createElement } from 'react';
 import Loading from '@/src/components/icons/Loading';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 import { cn } from '@/src/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';
 import { format } from 'date-fns';
-import { createElement } from 'react';
 import { HiCheckCircle, HiCube, HiXCircle } from 'react-icons/hi2';
 
 // The icon and label of the milestone get the text colors defined in this variant
@@ -70,19 +69,17 @@ const ProposalMilestone = ({
         <div className="flex w-full flex-row items-center justify-between">
           <p className="font-medium">{label}</p>
           {blockNumber && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild className="hover:cursor-help">
-                  <div className="flex flex-row items-center gap-x-1 text-highlight-foreground/60">
-                    <p className="text-sm">{blockNumber.toLocaleString()}</p>
-                    <HiCube className="h-4 w-4 shrink-0" />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Transaction block number</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild className="hover:cursor-help">
+                <div className="flex flex-row items-center gap-x-1 text-highlight-foreground/60">
+                  <p className="text-sm">{blockNumber.toLocaleString()}</p>
+                  <HiCube className="h-4 w-4 shrink-0" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Transaction block number</p>
+              </TooltipContent>
+            </Tooltip>
           )}
         </div>
         {date && (

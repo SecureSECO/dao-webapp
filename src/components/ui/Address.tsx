@@ -8,26 +8,26 @@
 /**
  * A module that exports the `Address` component for displaying Ethereum addresses, optionally with a link to Etherscan/Polyscan and a copy-to-clipboard button.
  */
+
+import React, { useState } from 'react';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 import { toast } from '@/src/hooks/useToast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { copyToClipboard, truncateMiddle } from '@/src/lib/utils';
-import React, { useState } from 'react';
 import { HiCheck, HiDocumentDuplicate } from 'react-icons/hi2';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useAccount } from 'wagmi';
 
-export enum AddressLength {
-  Small = 10,
-  Medium = 20,
-  Large = 40,
-  Full = -1, // no trunction
-}
+const addressLengthVariants = {
+  sm: 10,
+  md: 20,
+  lg: 40,
+  full: -1,
+};
 
 const jazziconVariants = {
   none: 0,
@@ -38,11 +38,11 @@ const jazziconVariants = {
 
 type AddressProps = {
   address: string;
-  maxLength: AddressLength;
-  hasLink: boolean;
-  showCopy: boolean;
+  length?: keyof typeof addressLengthVariants | number;
+  hasLink?: boolean;
+  showCopy?: boolean;
   replaceYou?: boolean;
-  jazziconSize?: 'sm' | 'md' | 'lg' | 'none';
+  jazziconSize?: keyof typeof jazziconVariants | number;
 };
 
 /**
@@ -62,10 +62,10 @@ type AddressProps = {
 
 export const Address: React.FC<AddressProps> = ({
   address,
-  maxLength,
-  hasLink,
-  showCopy,
-  replaceYou = true,
+  length = 'md',
+  hasLink = false,
+  showCopy = false,
+  replaceYou = false,
   jazziconSize = 'none',
 }) => {
   const [status, setStatus] = useState<'idle' | 'copied'>('idle');
@@ -76,15 +76,17 @@ export const Address: React.FC<AddressProps> = ({
   const linkContent =
     address.toLowerCase() === currentUser?.toLowerCase() && replaceYou
       ? 'you'
-      : truncateMiddle(address, maxLength);
+      : truncateMiddle(
+          address,
+          typeof length === 'number' ? length : addressLengthVariants[length]
+        );
 
   const handleClick = () => {
     if (showCopy) {
       copyToClipboard(address);
       setStatus('copied');
-      toast({
+      toast.success({
         title: 'Copied to clipboard!',
-        variant: 'success',
       });
       setTimeout(() => setStatus('idle'), 4000);
     }
@@ -94,53 +96,53 @@ export const Address: React.FC<AddressProps> = ({
     <div className="flex flex-row items-center gap-x-2">
       {jazziconSize !== 'none' && (
         <Jazzicon
-          diameter={jazziconVariants[jazziconSize]}
+          diameter={
+            typeof jazziconSize === 'number'
+              ? jazziconSize
+              : jazziconVariants[jazziconSize]
+          }
           seed={jsNumberForAddress(address!)}
         />
       )}
       <div className="flex items-center">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild className="rounded-sm">
-              {hasLink ? (
-                <a
-                  href={blockExplorer}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
-                >
-                  {linkContent}
-                </a>
-              ) : (
-                <span>{linkContent}</span>
-              )}
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Open in block explorer</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild className="rounded-sm">
+            {hasLink ? (
+              <a
+                href={blockExplorer}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-highlight underline transition-colors duration-200 hover:text-primary-highlight/80"
+              >
+                {linkContent}
+              </a>
+            ) : (
+              <span>{linkContent}</span>
+            )}
+          </TooltipTrigger>
+          <TooltipContent>
+            {hasLink ? <p>Open in block explorer</p> : <p>{address}</p>}
+          </TooltipContent>
+        </Tooltip>
 
         {showCopy && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={handleClick}
-                  className="ml-2 rounded-sm transition-opacity duration-200 hover:opacity-80"
-                >
-                  {status === 'copied' ? (
-                    <HiCheck className="text-[1.15em]" />
-                  ) : (
-                    <HiDocumentDuplicate className="text-[1.15em]" />
-                  )}
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Copy address</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleClick}
+                className="ml-2 rounded-sm transition-opacity duration-200 hover:opacity-80"
+              >
+                {status === 'copied' ? (
+                  <HiCheck className="text-[1.15em]" />
+                ) : (
+                  <HiDocumentDuplicate className="text-[1.15em]" />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Copy address</p>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
     </div>

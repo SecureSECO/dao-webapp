@@ -25,10 +25,12 @@ import {
 } from '@/src/components/ui/Dialog';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { CanVote } from '@/src/hooks/useProposal';
-import { TOKENS } from '@/src/lib/constants/tokens';
-import { toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
-import { AddressVotes, Proposal } from '@plopmenz/diamond-governance-sdk';
+import {
+  AddressVotes,
+  Proposal,
+  ProposalStatus,
+} from '@plopmenz/diamond-governance-sdk';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
@@ -50,38 +52,36 @@ interface ProposalVotesProps {
  */
 const getCategories = (
   proposal: Proposal | null,
+  currentParticipation: number,
   totalVotingWeight: BigNumber
 ): Category[] => {
   if (!proposal) return [];
-
-  const currentParticipation = calcBigNumberPercentage(
-    proposal.data.tally.yes
-      .add(proposal.data.tally.no)
-      .add(proposal.data.tally.abstain),
-    totalVotingWeight
-  );
 
   const uniqueVoters = proposal.data.voterList.reduce(
     (acc, vote) => acc.add(vote),
     new Set<string>()
   ).size;
 
+  const minParticipation = calcBigNumberPercentage(
+    proposal.data.parameters.minParticipationThresholdPower,
+    totalVotingWeight
+  );
+
   return [
     {
       title: 'Decision rules',
       items: [
         {
-          label: 'Support threshold',
-          value: `${proposal.data.parameters.supportThreshold * 100}%`,
+          label: 'Approval threshold',
+          value: `≥ ${
+            // Converts the supportThreshold from integer to percentage (e.g. 500000000 -> 50%)
+            // Necessary because this number has to be stored as an integer on the blockchain, so cannot have decimals
+            proposal.data.parameters.supportThreshold / 10 ** 4
+          }% Yes`,
         },
         {
           label: 'Minimum participation',
-          value: `${toAbbreviatedTokenAmount({
-            value: proposal.data.parameters.minParticipationThresholdPower,
-            tokenDecimals: TOKENS.rep.decimals,
-            displayDecimals: 0,
-          })} 
-          ${TOKENS.rep.symbol}`,
+          value: `≥ ${minParticipation}%`,
         },
       ],
     },
@@ -89,7 +89,7 @@ const getCategories = (
       title: 'Voting activity',
       items: [
         {
-          label: 'Current participation',
+          label: 'Current participation / quorum',
           value: `${currentParticipation}%`,
         },
         {
@@ -125,6 +125,15 @@ const ProposalVotes = ({
   className,
   ...props
 }: ProposalVotesProps) => {
+  const currentParticipation = proposal
+    ? calcBigNumberPercentage(
+        proposal.data.tally.yes
+          .add(proposal.data.tally.no)
+          .add(proposal.data.tally.abstain),
+        props.totalVotingWeight
+      )
+    : 0;
+
   return (
     <MainCard
       loading={loading}
@@ -140,26 +149,40 @@ const ProposalVotes = ({
         />
       }
       aside={
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="subtle" label="View details" />
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Voting details</DialogTitle>
-              <DialogDescription asChild>
-                <CategoryList
-                  categories={getCategories(proposal, props.totalVotingWeight)}
-                />
-              </DialogDescription>
-            </DialogHeader>
-            <DialogClose asChild>
-              <div className="flex items-end justify-end">
-                <Button variant="subtle" label="Close" className="self-end" />
-              </div>
-            </DialogClose>
-          </DialogContent>
-        </Dialog>
+        <div className="flex items-center gap-x-2">
+          <p
+            className={cn(
+              'text-highlight-foreground/80',
+              proposal?.status === ProposalStatus.Active && 'ml-6'
+            )}
+          >
+            Quorum: {currentParticipation}%
+          </p>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="subtle" label="View details" />
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Voting details</DialogTitle>
+                <DialogDescription asChild>
+                  <CategoryList
+                    categories={getCategories(
+                      proposal,
+                      currentParticipation,
+                      props.totalVotingWeight
+                    )}
+                  />
+                </DialogDescription>
+              </DialogHeader>
+              <DialogClose asChild>
+                <div className="flex items-end justify-end">
+                  <Button variant="subtle" label="Close" className="self-end" />
+                </div>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
+        </div>
       }
     >
       {proposal && (

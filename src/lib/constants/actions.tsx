@@ -23,15 +23,19 @@ import {
   emptyMergeData,
 } from '@/src/components/newProposal/actions/MergePRInput';
 import {
+  MintTokensInput,
   ProposalFormMintData,
   emptyMintData,
 } from '@/src/components/newProposal/actions/MintTokensInput';
-import { MintTokensInput } from '@/src/components/newProposal/actions/MintTokensInput';
 import {
   ProposalFormWithdrawData,
   WithdrawAssetsInput,
   emptyWithdrawData,
 } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
+import {
+  ChangeParamAction,
+  ProposalChangeParamAction,
+} from '@/src/components/proposal/actions/ChangeParamAction';
 import MergeAction, {
   ProposalMergeAction,
 } from '@/src/components/proposal/actions/MergeAction';
@@ -42,23 +46,19 @@ import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { lowerCaseFirst } from '@/src/lib/utils';
+import { parseTokenAmount } from '@/src/lib/utils/token';
+import { TokenType } from '@aragon/sdk-client';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
-import { parseUnits } from 'ethers/lib/utils.js';
+import { BigNumber } from 'ethers';
 import { IconType } from 'react-icons';
 import { FaGithub } from 'react-icons/fa';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 import {
   HiBanknotes,
   HiOutlineCircleStack,
   HiOutlineCog,
 } from 'react-icons/hi2';
-import {
-  ChangeParamAction,
-  ProposalChangeParamAction,
-} from '@/src/components/proposal/actions/ChangeParamAction';
-import { getTokenInfo } from '@/src/lib/utils/token';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { Provider } from '@wagmi/core';
 
 /**
  * Type for different proposal form action data.
@@ -74,7 +74,11 @@ export type ProposalFormActionData =
 type Actions = {
   mint_tokens: ActionData<ProposalMintAction, ProposalFormMintData>;
   merge_pr: ActionData<ProposalMergeAction, ProposalFormMergeData>;
-  withdraw_assets: ActionData<ProposalWithdrawAction, ProposalFormWithdrawData>;
+  withdraw_assets: ActionData<
+    ProposalWithdrawAction,
+    ProposalFormWithdrawData,
+    'native' | 'erc20' | 'erc721' | 'erc1155'
+  >;
   change_param: ActionData<
     ProposalChangeParamAction,
     ProposalFormChangeParamData
@@ -98,19 +102,27 @@ export const ACTIONS: Actions = {
     input: MintTokensInput,
     emptyInputData: emptyMintData,
     maxPerProposal: 1,
-    parseInput: async (input) => ({
-      method: ACTIONS.mint_tokens.method,
-      interface: ACTIONS.mint_tokens.interface,
-      params: {
-        _addresses: input.wallets.map((wallet) => wallet.address),
-        _amounts: input.wallets.map((wallet) => {
-          return parseUnits(wallet.amount.toString(), TOKENS.rep.decimals);
-        }),
-      },
-    }),
+    parseInput: (input) => {
+      const amounts = input.wallets.map((wallet) =>
+        parseTokenAmount(wallet.amount.toString(), TOKENS.rep.decimals)
+      );
+
+      if (amounts.some((x) => x === null)) {
+        return null;
+      }
+
+      return {
+        method: ACTIONS.mint_tokens.method as string,
+        interface: ACTIONS.mint_tokens.interface,
+        params: {
+          _addresses: input.wallets.map((wallet) => wallet.address),
+          _amounts: amounts as BigNumber[], // Guaranteed by null check above.
+        },
+      };
+    },
   },
   merge_pr: {
-    method: 'mergePullRequest(string,string,string)',
+    method: 'merge(string,string,string)',
     interface: 'IGithubPullRequestFacet',
     label: 'Merge PR',
     longLabel: 'Merge pull request',
@@ -118,13 +130,13 @@ export const ACTIONS: Actions = {
     view: MergeAction,
     input: MergePRInput,
     emptyInputData: emptyMergeData,
-    parseInput: async (input) => {
+    parseInput: (input) => {
       const url = new URL(input.url);
       const owner = url.pathname.split('/')[1];
       const repo = url.pathname.split('/')[2];
       const pullNumber = url.pathname.split('/')[4];
       return {
-        method: ACTIONS.merge_pr.method,
+        method: ACTIONS.merge_pr.method as string,
         interface: ACTIONS.merge_pr.interface,
         params: {
           _owner: owner,
@@ -135,63 +147,125 @@ export const ACTIONS: Actions = {
     },
   },
   withdraw_assets: {
-    method: 'withdraw(string,uint256)', // FIXME: not the correct method yet
-    interface: 'IWithdraw', // FIXME: not the correct interface yet
+    method: {
+      native: 'WithdrawNative',
+      erc20: 'WithdrawERC20',
+      erc721: 'WithdrawERC721',
+      erc1155: 'WithdrawERC1155',
+    },
+    interface: 'DAO',
     label: 'Withdraw assets',
     longLabel: 'Withdraw assets',
     icon: HiBanknotes,
     view: WithdrawAction,
     input: WithdrawAssetsInput,
     emptyInputData: emptyWithdrawData,
-    parseInput: async (input, provider) => {
-      // Fetch token info of the token to withdraw to access its decimals
-      const tokenAddress =
+    parseInput: (input) => {
+      const _amount = parseTokenAmount(
+        input.amount.toString(),
+        parseInt(input.tokenDecimals)
+      );
+      const _from = input.daoAddress;
+      if (
+        _amount === null ||
+        (_from === undefined && input.tokenType !== TokenType.NATIVE)
+      )
+        return null;
+
+      const _contractAddress =
         input.tokenAddress === 'custom'
           ? (input.tokenAddressCustom as string)
           : input.tokenAddress;
-      try {
-        const tokenInfo = await getTokenInfo(
-          input.tokenAddress,
-          provider,
-          PREFERRED_NETWORK_METADATA.nativeCurrency
-        );
 
-        return {
-          method: ACTIONS.withdraw_assets.method,
-          interface: ACTIONS.withdraw_assets.interface,
-          params: {
-            _to: input.recipient,
-            // Convert to correct number of tokens using the fetched decimals
-            _amount: parseUnits(input.amount.toString(), tokenInfo.decimals),
-            _tokenAddress: tokenAddress,
-          },
-        };
-      } catch (e) {
-        console.error(e);
-        return null;
+      switch (input.tokenType) {
+        case TokenType.NATIVE:
+          return {
+            interface: ACTIONS.withdraw_assets.interface,
+            method: ACTIONS.withdraw_assets.method.native,
+            params: {
+              _to: input.recipient,
+              _value: _amount,
+            },
+          };
+        case TokenType.ERC20:
+          return {
+            interface: ACTIONS.withdraw_assets.interface,
+            method: ACTIONS.withdraw_assets.method.erc20,
+            params: {
+              _from,
+              _to: input.recipient,
+              _amount,
+              _contractAddress,
+            },
+          };
+        case TokenType.ERC721:
+          if (input.tokenID === undefined) return null;
+          return {
+            interface: ACTIONS.withdraw_assets.interface,
+            method: ACTIONS.withdraw_assets.method.erc721,
+            params: {
+              _from,
+              _to: input.recipient,
+              _tokenId: BigNumber.from(input.tokenID),
+              _contractAddress,
+            },
+          };
+        // ERC1155 is not supported by Aragon SDK
+        // If it gets support in the future, uncomment this code
+        // case TokenType.ERC1155:
+        //   if (input.tokenID === undefined) return null;
+        //   return {
+        //     interface: ACTIONS.withdraw_assets.interface,
+        //     method: ACTIONS.withdraw_assets.method.erc1155,
+        //     params: {
+        //       _from,
+        //       _to: input.recipient,
+        //       _tokenId: input.tokenID,
+        //       _contractAddress,
+        //     },
+        //   };
       }
     },
   },
   change_param: {
-    method: 'changeParameter(string,uint256)',
-    interface: 'IChangeParameter',
+    // The method and interface for this action are dynamically generated in the parseInput function
+    // The actions being fetched are first parsed to make sure all change param actions have this method and interface
+    method: 'ChangeParam',
+    interface: 'DAO',
     label: 'Change param',
     longLabel: 'Change plugin parameters',
     icon: HiOutlineCog,
     view: ChangeParamAction,
     input: ChangeParamInput,
     emptyInputData: emptyChangeParamData,
-    maxPerProposal: 1,
-    parseInput: async (input) => {
-      return {
-        method: ACTIONS.change_param.method,
-        interface: ACTIONS.change_param.interface,
-        params: {
-          _plugin: input.plugin,
-          _param: input.parameter,
-          _value: input.value,
-        },
-      };
+    parseInput: (input) => {
+      try {
+        let parsedValue: string | number | boolean | BigNumber = input.value;
+        if (
+          input.type === 'uint8' ||
+          input.type === 'uint16' ||
+          input.type === 'uint32'
+        )
+          parsedValue = Number.parseInt(input.value);
+        else if (input.type === 'boolean' && input.value === 'false')
+          parsedValue = false;
+        else if (input.type === 'boolean' && input.value === 'true')
+          parsedValue = true;
+        else if (input.type === 'string' || input.type === 'address')
+          parsedValue = input.value;
+        else parsedValue = BigNumber.from(input.value);
+
+        return {
+          method: `set${input.parameter}(${input.type})`,
+          interface: input.plugin,
+          params: {
+            [`_${lowerCaseFirst(input.parameter)}`]: parsedValue,
+          },
+        };
+      } catch (e) {
+        console.log(e);
+        return null;
+      }
     },
   },
   // Add new proposal actions here:
@@ -200,29 +274,44 @@ export const ACTIONS: Actions = {
 
 export type ActionName = keyof typeof ACTIONS;
 
-/**
- * Interface for ProposalFormActionData, to ensure the name of actions is always a valid name.
- * This should be used in the type defined for the data of a proposal form action.
- * @example
- * interface ProposalFormMintData extends ProposalFormActoin {
- *  ...
- * }
- */
-export interface ProposalFormAction {
-  name: ActionName;
-}
-
 interface ViewActionProps<TAction> extends AccordionItemProps {
   action: TAction;
 }
 
-type ActionData<TAction, TFormData> = {
-  // Method and interface to call on the smart contract
-  method: string;
+/**
+ * Type for the data of a proposal action.
+ * @param TAction Type of the action as expected by the SDK
+ * @param TFormData Type of the data of the input form for this action
+ * @param TMethod Optional string literals for the method name identifiers for this action (see below)
+ */
+type ActionData<TAction, TFormData, TMethod extends string | void = void> = {
+  /**
+   * Interface containing the smart contract function that will be called for this action.
+   */
   interface: string;
-  // Short label used on proposal tags
+  /**
+   * Method of the smart contract function that will be called for this action.
+   * Can be a string or an object with multiple method names.
+   *
+   * In the case of an object, the key is an identifier for the method to be used to access the method name in the UI code
+   * (e.g. to be able to check which pre-defined version of an action you are dealing with),
+   * and the value is the method name as a string.
+   *
+   * Wondering how these types work? Check this out: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
+   */
+  method: [TMethod] extends [string]
+    ? {
+        [key in TMethod]: string;
+      }
+    : string;
+  /**
+   * Label used in the UI to describe this action.
+   */
   label: string;
-  // Long label used in the new-proposal form
+  /**
+   * Longer label used in the UI to describe this action.
+   * This label is used in the new-proposal form.
+   */
   longLabel: string;
   icon: IconType;
   /**
@@ -249,7 +338,7 @@ type ActionData<TAction, TFormData> = {
    * @param provider Provider to use to optionally fetch data from the blockchain
    * @returns Instance of Action as expected by the SDK
    */
-  parseInput: (input: TFormData, provider: Provider) => Promise<TAction | null>;
+  parseInput: (input: TFormData) => TAction | null;
 };
 
 /**
@@ -266,7 +355,7 @@ type ActionData<TAction, TFormData> = {
  * const identifier = getIdentifier(action);
  * console.log(identifier); // "IERC20MultiMinterFacet.multimint(address[],uint256[])"
  */
-const getIdentifier = (action: Action | ActionData<any, any>) =>
+export const getIdentifier = (action: Action | ActionData<any, any>) =>
   `${action.interface}.${action.method}`;
 
 /**
@@ -275,9 +364,20 @@ const getIdentifier = (action: Action | ActionData<any, any>) =>
  * const actionName = actionNames['IERC20MultiMinterFacet.multimint(address[],uint256[])']
  * // actionName === 'mint_tokens'
  */
-const actionNames: { [identifier: string]: ActionName } = {};
+export const actionNames: { [identifier: string]: ActionName } = {};
+// Developer's note: the actonNames object is expanded upon with the identifiers for all possible
+// change_param action interfaces and methods in DiamondGovernanceSDK.tsx, after fetching the
+// list of all possible variables to change in the DAO from the SDK.
 Object.entries(ACTIONS).forEach(([name, action]) => {
-  actionNames[getIdentifier(action)] = name as ActionName;
+  if (typeof action.method === 'string')
+    actionNames[getIdentifier({ ...action, method: action.method })] =
+      name as ActionName;
+  // If the action.method is an object, add all methods to the actionNames object
+  else
+    Object.values(action.method).forEach(
+      (method) =>
+        (actionNames[getIdentifier({ ...action, method })] = name as ActionName)
+    );
 });
 
 /**

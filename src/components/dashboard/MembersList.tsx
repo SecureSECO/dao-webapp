@@ -6,12 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
-import { Member } from '@/src/hooks/useMembers';
-
-import { Skeleton } from '../ui/Skeleton';
+import { Skeleton } from '@/src/components/ui/Skeleton';
 import TokenAmount from '@/src/components/ui/TokenAmount';
+import { Member } from '@/src/hooks/useMembers';
 import { TOKENS } from '@/src/lib/constants/tokens';
 
 /**
@@ -23,13 +22,7 @@ const MemberCard = ({ member }: { member: Member }) => {
       size="sm"
       className="flex flex-row items-center justify-between bg-popover"
     >
-      <Address
-        address={member.address}
-        hasLink={true}
-        maxLength={AddressLength.Medium}
-        showCopy={false}
-        jazziconSize="md"
-      />
+      <Address address={member.address} hasLink replaceYou jazziconSize="md" />
       {member.bal !== null && (
         <TokenAmount
           amount={member.bal}

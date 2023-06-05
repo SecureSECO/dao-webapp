@@ -6,10 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { getErrorMessage } from '@/src/lib/utils';
 import { useEffect, useState } from 'react';
-import { useLocalStorage } from './useLocalStorage';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { CONFIG } from '@/src/lib/constants/config';
+import { erc20ABI } from '@/src/lib/constants/erc20ABI';
+import { getErrorMessage } from '@/src/lib/utils';
+import { parseTokenAmount } from '@/src/lib/utils/token';
+import { ContractTransaction, ethers } from 'ethers';
+
+import { useLocalStorage } from './useLocalStorage';
 
 type QueryResponse = any;
 type CheckResponse = any;
@@ -28,9 +33,9 @@ type UseSearchSECOData = {
   cost: number | null;
   session: SessionData | null;
   runQuery: (url: string, token: string) => Promise<QueryResponse>;
-  resetQuery: () => void;
+  resetQuery: (clearQueryResult?: boolean) => void;
   startSession: () => Promise<SessionData>;
-  payForSession: (session: SessionData) => Promise<any>;
+  payForSession: (session: SessionData) => Promise<ContractTransaction>;
 };
 
 /**
@@ -178,6 +183,8 @@ export const dummyQueryResult = {
 export const useSearchSECO = (
   props?: UseSearchSECOProps
 ): UseSearchSECOData => {
+  const { client } = useDiamondSDKContext();
+
   const { useDummyData } = Object.assign(defaultProps, props);
   const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
   const [hashes, setHashes] = useState<string[]>([]);
@@ -338,19 +345,38 @@ export const useSearchSECO = (
    * @param session Session data
    * @returns Promise that resolves when the hashes are paid for
    */
-  const payForSession = async (session: SessionData) => {
-    setSession({
-      ...session,
-      fetch_status: 'success',
-      data: dummyQueryResult,
-    });
+  const payForSession = async (
+    session: SessionData
+  ): Promise<ContractTransaction> => {
+    if (!session) {
+      throw new Error('Session is not defined');
+    }
 
-    setQueryResult(dummyQueryResult);
-    setDoPoll(false);
+    if (!client) {
+      throw new Error('No client found');
+    }
 
-    console.log('Paid for hashes (dummy)');
+    const { id, hashes } = session;
 
-    return Promise.resolve();
+    const IChangeableTokenContract =
+      await client.pure.IChangeableTokenContract();
+    const ERC20Contract = new ethers.Contract(
+      await IChangeableTokenContract.getTokenContractAddress(),
+      erc20ABI,
+      client.pure.signer
+    );
+
+    // Approve the dao to spend the cost of the session
+    const allowanceAmount = parseTokenAmount(session.cost, 18);
+    const tx = await ERC20Contract.approve(
+      client.pure.pluginAddress,
+      allowanceAmount
+    );
+    await tx.wait();
+
+    // Call the actual payForHashes function
+    const monetizationFacet = await client.pure.ISearchSECOMonetizationFacet();
+    return await monetizationFacet.payForHashes(hashes.length, id);
   };
 
   /**
@@ -386,7 +412,7 @@ export const useSearchSECO = (
       }
     } else {
       console.error(sessionRes.error);
-      console.log(session);
+      console.log(sessionRes);
 
       setSession({
         ...session,
@@ -399,10 +425,12 @@ export const useSearchSECO = (
   /**
    * Resets the query state & deletes the session
    */
-  const resetQuery = () => {
-    setQueryResult(null);
-    setHashes([]);
-    setCost(null);
+  const resetQuery = (clearQueryResult: boolean = true) => {
+    if (clearQueryResult) {
+      setQueryResult(null);
+      setCost(null);
+      setHashes([]);
+    }
     setSession(null);
     setSessionId(null);
     setDoPoll(true);

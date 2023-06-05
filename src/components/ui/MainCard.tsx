@@ -12,10 +12,9 @@
  */
 
 import React, { ReactNode } from 'react';
-import { VariantProps, cva } from 'class-variance-authority';
-
-import { cn } from '@/src/lib/utils';
 import { Card, CardProps } from '@/src/components/ui/Card';
+import { cn } from '@/src/lib/utils';
+import { VariantProps, cva } from 'class-variance-authority';
 import { IconType } from 'react-icons/lib';
 
 const mainCardVariants = cva('w-full flex flex-col gap-y-2', {
@@ -29,7 +28,7 @@ const iconBackgroundVariants = cva('rounded-md p-2', {
       default: 'bg-popover',
       light: 'bg-highlight',
       warning: 'bg-destructive/20',
-      outline: 'bg-highlight',
+      outline: 'bg-popover',
     },
   },
   defaultVariants: {

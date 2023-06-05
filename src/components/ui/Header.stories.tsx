@@ -6,9 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import Header from '@/src/components/ui/Header';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Header> = {
   component: Header,

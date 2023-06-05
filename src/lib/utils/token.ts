@@ -7,9 +7,10 @@
  */
 
 import { NativeTokenData } from '@/src/lib/constants/chains';
-import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
-import { Contract, providers, constants, BigNumber } from 'ethers';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
+import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
+import { BigNumber, Contract, constants, providers } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils.js';
 
 export type TokenInfo = {
   decimals?: number;
@@ -28,30 +29,46 @@ export type TokenInfo = {
 export async function getTokenInfo(
   address: string | undefined,
   provider: providers.Provider,
-  nativeTokenData: NativeTokenData | undefined
+  nativeTokenData: NativeTokenData | undefined,
+  tokenType: 'erc20' | 'erc721' = 'erc20'
 ): Promise<TokenInfo> {
   if (!address) return {};
-
   if (isNativeToken(address)) return { ...nativeTokenData };
 
   const contract = new Contract(address, erc20ABI, provider);
 
   try {
-    const values = await Promise.all([
-      contract.decimals(),
-      contract.name(),
-      contract.symbol(),
-      contract.totalSupply(),
-    ]);
+    if (tokenType === 'erc20') {
+      const values = await Promise.all([
+        contract.decimals(),
+        contract.name(),
+        contract.symbol(),
+        contract.totalSupply(),
+      ]);
 
-    return {
-      decimals: values[0],
-      name: values[1],
-      symbol: values[2],
-      totalSupply: values[3],
-    };
+      return {
+        decimals: values[0],
+        name: values[1],
+        symbol: values[2],
+        totalSupply: values[3],
+      };
+    } else if (tokenType === 'erc721') {
+      // erc721 can be used for both ERC721 and ERC1155 tokens, since we're only trying to get the name here
+
+      // Note that we use the ERC20 ABI here as well, since it contains the name() function
+      // May fail if the contract does not have the name() function (does not support ERC721Metadata interface in the case of ERC721)
+      // In that case, we return undefined for the name
+      const name: string | undefined = await contract
+        .name()
+        .catch(() => undefined);
+
+      return {
+        name,
+        decimals: 0, // ERC721 tokens do not have decimals
+      };
+    }
   } catch (error) {
-    console.error('Error getting token info from contract');
+    console.error('Error getting token info from contract: ', error);
   }
 
   return {};
@@ -184,4 +201,47 @@ export const toAbbreviatedTokenAmount = ({
   // Theoretically 'bigIntToFloat' never returns NaN, guaranteed by its type's preconditions. In practice, this might still happen.
   if (isNaN(valueAsFloat!)) return 'N/A';
   return abbreviateTokenAmount(valueAsFloat!.toFixed(20), displayDecimals);
+};
+
+/**
+ * Parses a given token amount (string or number) to a BigNumer token amount, correctly handling decimal places.
+ * Prefered over ethers.utils.parseUnits because this return null on errors (instead of an exception).
+ * Furthermore it cuts off inputs with too many numbers after the decimal point (instead of throwing an exception).
+ * Note: If any input is null or undefined it can not parse the value thus null will be returned.
+ * @param value Token amount as string or number (e.g. "123.456")
+ * @param tokenDecimals Number of decimals of the token
+ */
+export const parseTokenAmount = (
+  value: string | number | null | undefined,
+  tokenDecimals: number | null | undefined
+): BigNumber | null => {
+  if (
+    value === null ||
+    value === undefined ||
+    tokenDecimals === null ||
+    tokenDecimals === undefined
+  ) {
+    return null;
+  }
+
+  let num;
+  try {
+    // Check if num is a string
+    if (typeof value == 'string') {
+      // If the amount of decimals in the value is larger than decimals, it is cut off.
+      if (value.includes('.')) {
+        const values = value.split('.');
+        if (values[1].length > tokenDecimals) {
+          value = `${values[0]}.${values[1].slice(0, tokenDecimals)}`;
+        }
+      }
+    } else if (typeof value == 'number') {
+      value = value.toFixed(tokenDecimals);
+    }
+
+    num = parseUnits(value, tokenDecimals);
+  } catch {
+    num = null;
+  }
+  return num;
 };

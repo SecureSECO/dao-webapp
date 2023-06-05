@@ -10,12 +10,11 @@
  * It also provides a loading state with a pulse animation.
  */
 import * as React from 'react';
+import { cn } from '@/src/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';
 
-import { cn } from '@/src/lib/utils';
-
 const cardVariants = cva(
-  'w-full rounded-lg h-fit shadow-md text-clip relative',
+  'w-full rounded-lg h-fit shadow-md text-clip relative overflow-x-auto',
   {
     variants: {
       variant: {

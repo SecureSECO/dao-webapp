@@ -6,17 +6,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import Loading from '@/src/components/icons/Loading';
+import { Card } from '@/src/components/ui/Card';
+import { useDaoVariable } from '@/src/hooks/useDaoVariable';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { HiCog } from 'react-icons/hi2';
-import { Card } from '../../ui/Card';
+
 import ActionWrapper from './ActionWrapper';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 
 export interface ProposalChangeParamAction extends Action {
+  // param name and value type depend on the plugin and parameter being changed
   params: {
-    _plugin: string;
-    _param: string;
-    _value: string;
+    [key: string]: any;
   };
 }
 interface ChangeParamActionProps extends AccordionItemProps {
@@ -27,6 +29,12 @@ export const ChangeParamAction = ({
   action,
   ...props
 }: ChangeParamActionProps) => {
+  const variableName = action.method.split('(')[0].slice(3);
+  const { value, loading, error } = useDaoVariable({
+    interfaceName: action.interface,
+    variableName,
+  });
+
   return (
     <ActionWrapper
       icon={HiCog}
@@ -38,18 +46,28 @@ export const ChangeParamAction = ({
         <div className="grid grid-cols-2 gap-2">
           <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">Plugin</p>
-            <p className="font-medium">{action.params._plugin}</p>
+            <p className="font-medium">{action.interface}</p>
           </Card>
           <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">Parameter</p>
-            <p className="font-medium">{action.params._param}</p>
+            {/* First splits the method name on '(' to remove the parameters
+                Then slices the remaining string to remove the 'set' in front of the variable name */}
+            <p className="font-medium">{variableName}</p>
           </Card>
         </div>
         <Card variant="outline" size="sm">
-          <p className="text-xs text-popover-foreground/80">
-            New parameter value
+          <p className="text-xs text-popover-foreground/80">Current value</p>
+          {loading ? (
+            <Loading className="h-4 w-4 shrink-0" />
+          ) : (
+            <p className="font-medium">{error ? '-' : value?.toString()}</p>
+          )}
+        </Card>
+        <Card variant="outline" size="sm">
+          <p className="text-xs text-popover-foreground/80">New value</p>
+          <p className="font-medium">
+            {Object.values(action.params)[0].toString()}
           </p>
-          <p className="font-medium">{action.params._value}</p>
         </Card>
       </div>
     </ActionWrapper>

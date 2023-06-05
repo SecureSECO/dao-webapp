@@ -6,10 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
-import { Input } from '@/src/components/ui/Input';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { Input } from '@/src/components/ui/Input';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Input> = {
   tags: ['autodocs'],

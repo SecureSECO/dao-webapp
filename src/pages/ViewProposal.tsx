@@ -6,28 +6,32 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { HeaderCard } from '@/src/components/ui/HeaderCard';
-import { useProposal } from '@/src/hooks/useProposal';
-import { useParams } from 'react-router';
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { useState } from 'react';
 import {
   ProposalStatusBadge,
   ProposalStatusString,
 } from '@/src/components/governance/ProposalCard';
-import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
-import { Link } from '@/src/components/ui/Link';
-import { countdownText } from '@/src/lib/utils/date';
+import ProposalActions from '@/src/components/proposal/ProposalActions';
+import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import { ProposalResources } from '@/src/components/proposal/ProposalResources';
 import ProposalVotes from '@/src/components/proposal/ProposalVotes';
-import ProposalHistory from '@/src/components/proposal/ProposalHistory';
-import ProposalActions from '@/src/components/proposal/ProposalActions';
-import { contractTransaction, toast } from '@/src/hooks/useToast';
-import { useAccount } from 'wagmi';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
-import { Button } from '@/src/components/ui/Button';
-import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { Address } from '@/src/components/ui/Address';
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+  Warning,
+} from '@/src/components/ui/ConditionalButton';
+import { HeaderCard } from '@/src/components/ui/HeaderCard';
+import { Link } from '@/src/components/ui/Link';
+import { useProposal } from '@/src/hooks/useProposal';
+import { toast } from '@/src/hooks/useToast';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
+import { countdownText } from '@/src/lib/utils/date';
+import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
 import DOMPurify from 'dompurify';
+import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
+import { useParams } from 'react-router';
+import { useAccount } from 'wagmi';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -37,6 +41,7 @@ const ViewProposal = () => {
   const { totalVotingWeight } = useTotalVotingWeight({
     blockNumber: proposal?.data.parameters.snapshotBlock,
   });
+  const [isExecuting, setIsExecuting] = useState(false);
 
   const statusText = (status: ProposalStatus) => {
     if (!proposal) return '';
@@ -55,20 +60,17 @@ const ViewProposal = () => {
    */
   const executeProposal = async () => {
     if (!proposal)
-      return toast({
+      return toast.error({
         title: 'No proposal found',
         description: 'Please try again later',
-        variant: 'error',
       });
 
-    contractTransaction(() => proposal.Execute(), {
-      messages: {
-        error: 'Error executing proposal',
-        success: 'Execution successful!',
-      },
-      onSuccess: () => {
-        refetch();
-      },
+    setIsExecuting(true);
+    toast.contractTransaction(() => proposal.Execute(), {
+      error: 'Error executing proposal',
+      success: 'Execution successful!',
+      onSuccess: () => refetch(),
+      onFinish: () => setIsExecuting(false),
     });
   };
 
@@ -89,6 +91,7 @@ const ViewProposal = () => {
           <>
             <HeaderCard
               loading={loading}
+              className="max-h-96 overflow-y-auto"
               title={proposal?.metadata.title ?? 'Proposal not found'}
               aside={
                 <div className="flex flex-row-reverse items-center justify-between gap-y-4 sm:flex-col sm:items-end">
@@ -116,7 +119,7 @@ const ViewProposal = () => {
                   {proposal.metadata.body &&
                     proposal.metadata.body !== '<p></p>' && (
                       <div
-                        className="styled-editor-content"
+                        className="styled-editor-content w-full break-words"
                         dangerouslySetInnerHTML={{
                           __html: DOMPurify.sanitize(proposal.metadata.body),
                         }}
@@ -129,9 +132,8 @@ const ViewProposal = () => {
                       </span>
                       <Address
                         address={proposal.data.creator}
-                        maxLength={AddressLength.Medium}
-                        hasLink={true}
-                        showCopy={false}
+                        hasLink
+                        replaceYou
                       />
                     </div>
                     {proposal.status === ProposalStatus.Executed && (
@@ -141,9 +143,8 @@ const ViewProposal = () => {
                         </span>
                         <Address
                           address={proposal.data.executor}
-                          maxLength={AddressLength.Medium}
-                          hasLink={true}
-                          showCopy={false}
+                          hasLink
+                          replaceYou
                         />
                       </div>
                     )}
@@ -173,15 +174,28 @@ const ViewProposal = () => {
                     proposal?.actions &&
                     proposal.actions.length > 0 && (
                       <div className="flex flex-row items-center gap-x-4">
-                        <Button
-                          disabled={!canExecute || !address}
+                        <ConditionalButton
+                          disabled={isExecuting}
                           type="submit"
                           label="Execute"
                           onClick={() => executeProposal()}
+                          conditions={[
+                            {
+                              when: !isConnected,
+                              content: (
+                                <ConnectWalletWarning action="to execute this proposal" />
+                              ),
+                            },
+                            {
+                              when: !canExecute,
+                              content: (
+                                <Warning>
+                                  You cannot execute this proposal
+                                </Warning>
+                              ),
+                            },
+                          ]}
                         />
-                        {!isConnected && (
-                          <ConnectWalletWarning action="to execute this proposal" />
-                        )}
                       </div>
                     )}
                 </ProposalActions>

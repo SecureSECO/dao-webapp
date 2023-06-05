@@ -6,47 +6,71 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Card } from '@/src/components/ui/Card';
-import Header from '@/src/components/ui/Header';
+import { useState } from 'react';
 import { Button } from '@/src/components/ui/Button';
-// import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
+import { Card } from '@/src/components/ui/Card';
+import { MainCard } from '@/src/components/ui/MainCard';
+import TokenAmount from '@/src/components/ui/TokenAmount';
+import { toast } from '@/src/hooks/useToast';
+import { TOKENS } from '@/src/lib/constants/tokens';
+import { BigNumber, ContractTransaction } from 'ethers';
+import { HiGift } from 'react-icons/hi2';
 
 /**
  * @returns A card that allows the users to claim their reward for verifying
  */
-const OneTimeRewardCard = () => {
-  // const fetchData = async () => {
-  // }
+const OneTimeRewardCard = ({
+  reward,
+  claimReward,
+  refetch,
+}: {
+  reward: BigNumber | null;
+  claimReward: () => Promise<ContractTransaction>;
+  refetch: () => void;
+}) => {
+  const [isClaiming, setIsClaiming] = useState(false);
 
-  const claimReward = async () => {
-    // if (typeof window.ethereum === 'undefined')
-    //   throw new Error('No ethereum provider found');
-    // const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // await provider.send('eth_requestAccounts', []);
-    // const signer = provider.getSigner();
-    // try {
-    //   const client = new DiamondGovernanceClient(DGaddress, signer);
-    //   const claimer = await client.pure.IERC20OneTimeVerificationRewardFacet();
-    //   const transaction = await claimer.claimVerificationRewardAll();
-    //   await transaction.wait();
-    //   fetchData();
-    // } catch (err) {
-    //   setError(err.message);
-    // }
+  const handleClaimReward = async () => {
+    if (isClaiming) return;
+
+    setIsClaiming(true);
+    toast.contractTransaction(claimReward, {
+      success: 'Successfully claimed reward!',
+      error: 'Could not claim reward',
+      onFinish() {
+        setIsClaiming(false);
+        refetch();
+      },
+    });
   };
 
   return (
-    <Card variant="light" className="flex flex-col gap-y-2 font-normal">
-      <Header level={3}>Verification Reward</Header>
+    <MainCard
+      className="flex flex-col gap-y-2"
+      icon={HiGift}
+      header="Verification reward"
+    >
       <p>
-        Because you have successfully verified your address using one or more
-        providers, you are eligible to claim a reward.
+        You are eligible to claim a onetime verification reward for verifying
+        your wallet with one or more providers.
       </p>
-      <p>
-        Claimable tokens: <strong>100</strong>
-      </p>
-      <Button onClick={claimReward}>Claim reward</Button>
-    </Card>
+      <Card variant="outline" className="flex flex-row items-center gap-x-2">
+        Claimable amount:
+        <strong>
+          <TokenAmount
+            amount={reward}
+            tokenDecimals={TOKENS.rep.decimals}
+            symbol={TOKENS.rep.symbol}
+            displayDecimals={0}
+          />
+        </strong>
+      </Card>
+      <Button
+        label="Claim reward"
+        onClick={handleClaimReward}
+        disabled={isClaiming}
+      />
+    </MainCard>
   );
 };
 

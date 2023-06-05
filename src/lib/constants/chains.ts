@@ -23,14 +23,7 @@ export function isSupportedChainId(
   return SUPPORTED_CHAIN_ID.some((id) => id === chainId);
 }
 
-const SUPPORTED_NETWORKS = [
-  'ethereum',
-  'goerli',
-  'polygon',
-  'mumbai',
-  'arbitrum',
-  'arbitrum-test',
-] as const;
+const SUPPORTED_NETWORKS = ['polygon', 'mumbai'] as const;
 export type SupportedNetworks =
   | (typeof SUPPORTED_NETWORKS)[number]
   | 'unsupported';
@@ -92,46 +85,13 @@ export type ChainData = {
   testnet: boolean;
   explorer: string;
   logo: string;
-  rpc?: string[];
+  rpc: string;
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
 };
 
 export type ChainList = Record<SupportedNetworks, ChainData>;
 export const CHAIN_METADATA: ChainList = {
-  arbitrum: {
-    id: 42161,
-    name: 'Arbitrum One',
-    domain: 'L2 Blockchain',
-    logo: 'https://bridge.arbitrum.io/logo.png',
-    explorer: 'https://arbiscan.io/',
-    testnet: false,
-    // rpc: ['https://arb1.arbitrum.io/rpc', 'wss://arb1.arbitrum.io/ws'],
-    nativeCurrency: {
-      name: 'Ether',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    etherscanApi: 'https://api.arbiscan.io/api',
-  },
-  ethereum: {
-    id: 1,
-    name: 'Ethereum',
-    domain: 'L1 Blockchain',
-    logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
-    explorer: 'https://etherscan.io/',
-    testnet: false,
-    // rpc: [
-    //   `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID['ethereum']}`,
-    //   `wss://mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID['ethereum']}`,
-    // ],
-    nativeCurrency: {
-      name: 'Ether',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    etherscanApi: 'https://api.etherscan.io/api',
-  },
   polygon: {
     id: 137,
     name: 'Polygon',
@@ -139,46 +99,13 @@ export const CHAIN_METADATA: ChainList = {
     logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
     explorer: 'https://polygonscan.com/',
     testnet: false,
-    // rpc: ['https://polygon-rpc.com/', 'https://rpc-mainnet.matic.network'],
+    rpc: 'https://rpc.ankr.com/polygon',
     nativeCurrency: {
       name: 'MATIC',
       symbol: 'MATIC',
       decimals: 18,
     },
     etherscanApi: 'https://api.polygonscan.com/api',
-  },
-  'arbitrum-test': {
-    id: 421613,
-    name: 'Arbitrum Goerli',
-    domain: 'L2 Blockchain',
-    logo: 'https://bridge.arbitrum.io/logo.png',
-    explorer: 'https://goerli-rollup-explorer.arbitrum.io/',
-    testnet: true,
-    // rpc: ['https://goerli-rollup.arbitrum.io/rpc'],
-    nativeCurrency: {
-      name: 'Goerli Ether',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    etherscanApi: 'https://api-goerli.arbiscan.io/api',
-  },
-  goerli: {
-    id: 5,
-    name: 'Goerli',
-    domain: 'L1 Blockchain',
-    logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
-    explorer: 'https://goerli.etherscan.io/',
-    testnet: true,
-    // rpc: [
-    //   `https://goerli.infura.io/v3/${INFURA_PROJECT_ID['goerli']}`,
-    //   `wss://goerli.infura.io/ws/v3/${INFURA_PROJECT_ID['goerli']}`,
-    // ],
-    nativeCurrency: {
-      name: 'Goerli Ether',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    etherscanApi: 'https://api-goerli.etherscan.io/api',
   },
   mumbai: {
     id: 80001,
@@ -187,11 +114,7 @@ export const CHAIN_METADATA: ChainList = {
     logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
     explorer: 'https://mumbai.polygonscan.com/',
     testnet: true,
-    // rpc: [
-    //   'https://matic-mumbai.chainstacklabs.com',
-    //   'https://rpc-mumbai.maticvigil.com',
-    //   'https://matic-testnet-archive-rpc.bwarelabs.com',
-    // ],
+    rpc: 'https://rpc.ankr.com/polygon_mumbai',
     nativeCurrency: {
       name: 'MATIC',
       symbol: 'MATIC',
@@ -206,7 +129,7 @@ export const CHAIN_METADATA: ChainList = {
     logo: '',
     explorer: '',
     testnet: false,
-    // rpc: [],
+    rpc: '',
     nativeCurrency: {
       name: '',
       symbol: '',

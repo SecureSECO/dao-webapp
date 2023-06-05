@@ -6,20 +6,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Card } from '@/src/components/ui/Card';
-import { Address, AddressLength } from '@/src/components/ui//Address';
-import Header from '@/src/components/ui/Header';
 import ProposalTag, {
   getProposalTags,
 } from '@/src/components/governance/ProposalTag';
-import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
-import { Link } from 'react-router-dom';
-import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import Activity from '@/src/components/icons/Activity';
 import Check from '@/src/components/icons/Check';
 import DoubleCheck from '@/src/components/icons/DoubleCheck';
-import { ProposalStatus, Proposal } from '@plopmenz/diamond-governance-sdk';
+import { Address } from '@/src/components/ui//Address';
+import { Card } from '@/src/components/ui/Card';
+import Header from '@/src/components/ui/Header';
+import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
+import { Link } from 'react-router-dom';
 
 type StatusBadgePropsMap = {
   Pending: StatusBadgeProps;
@@ -106,25 +106,32 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
 
   return (
     <Card variant="light" className="space-y-2 font-normal">
-      <div className="flex flex-col gap-y-2">
+      <div className="relative flex w-full flex-col gap-y-2">
         <ProposalStatusBadge
           status={ProposalStatus[status] as ProposalStatusString}
           className="xs:hidden"
         />
-        <div className="flex flex-row justify-between">
+        <div className="relative flex w-full flex-row justify-between">
           <Link
             to={`/governance/proposals/${proposal.id}`}
-            className="flex flex-row items-center gap-x-2 rounded-sm ring-ring ring-offset-2 ring-offset-background hover:underline focus:outline-none focus:ring-1"
+            className="group flex max-w-full flex-row items-center gap-x-2 rounded-sm ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-1 xs:max-w-[80%]"
           >
-            <Header level={2}>{title}</Header>
-            <HiChevronRight className="h-5 w-5" />
+            <Header
+              level={2}
+              className="relative truncate pb-1 group-hover:underline"
+            >
+              {title}
+            </Header>
+            <HiChevronRight className="h-5 w-5 shrink-0" />
           </Link>
           <ProposalStatusBadge
             status={ProposalStatus[status] as ProposalStatusString}
             className="hidden xs:flex"
           />
         </div>
-        <p className="leading-5 text-popover-foreground/80">{description}</p>
+        <p className="w-full truncate leading-5 text-popover-foreground/80">
+          {description}
+        </p>
       </div>
       <div className="flex flex-wrap gap-1">
         {getProposalTags(proposal, totalVotingWeight).map((tagProps, i) => (
@@ -133,12 +140,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
       </div>
       <div className="flex items-center gap-x-1 text-xs text-popover-foreground/60">
         <span>Published by</span>
-        <Address
-          address={creator}
-          maxLength={AddressLength.Medium}
-          hasLink={true}
-          showCopy={true}
-        />
+        <Address address={creator} hasLink showCopy replaceYou />
       </div>
     </Card>
   );

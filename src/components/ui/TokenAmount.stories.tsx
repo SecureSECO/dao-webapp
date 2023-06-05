@@ -6,19 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import TokenAmount from '@/src/components/ui/TokenAmount';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof TokenAmount> = {
   component: TokenAmount,
-};
-
-// Required for BigInts to be serialized correctly
-// Taken from: https://stackoverflow.com/questions/65152373/typescript-serialize-bigint-in-json
-// @ts-ignore
-BigInt.prototype.toJSON = function () {
-  return this.toString();
 };
 
 export default meta;

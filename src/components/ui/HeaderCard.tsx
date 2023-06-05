@@ -12,11 +12,10 @@
  */
 
 import React, { ReactNode } from 'react';
-import { VariantProps, cva } from 'class-variance-authority';
-
-import { cn } from '@/src/lib/utils';
 import { Card, CardProps } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
+import { cn } from '@/src/lib/utils';
+import { VariantProps, cva } from 'class-variance-authority';
 
 const headerCardVariants = cva('w-full h-full flex flex-col gap-y-2', {
   variants: {},
@@ -50,12 +49,12 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
         className={cn(
           headerCardVariants({}),
           className,
-          'flex h-full flex-col justify-between gap-y-6 sm:flex-row'
+          'relative flex h-full flex-col justify-between gap-y-6 sm:flex-row'
         )}
         {...props}
       >
-        <div className="space-y-6">
-          <Header>{title}</Header>
+        <div className="max-w-[80%] space-y-6">
+          <Header className="break-words">{title}</Header>
           {props.children}
         </div>
         <>{aside}</>

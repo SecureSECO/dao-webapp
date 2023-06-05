@@ -13,6 +13,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { Button } from '@/src/components/ui/Button';
 import {
   DropdownMenu as Dropdown,
   DropdownMenuContent,
@@ -20,7 +21,17 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
-import { Button } from '@/src/components/ui/Button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/src/components/ui/Tooltip';
+import { cn } from '@/src/lib/utils';
+import {
+  ProposalSorting,
+  SortingOrder,
+} from '@plopmenz/diamond-governance-sdk';
+import { HiThumbUp } from 'react-icons/hi';
 import {
   HiBarsArrowDown,
   HiCalendar,
@@ -28,18 +39,6 @@ import {
   HiChevronUp,
   HiIdentification,
 } from 'react-icons/hi2';
-import { HiThumbUp } from 'react-icons/hi';
-import { cn } from '@/src/lib/utils';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/src/components/ui/Tooltip';
-import {
-  ProposalSorting,
-  SortingOrder,
-} from '@plopmenz/diamond-governance-sdk';
 
 type ProposalSortingString = 'Creation' | 'Title' | 'TotalVotes';
 const sortProps = [
@@ -154,49 +153,45 @@ const SortSelector = ({
         </DropdownMenuContent>
       </Dropdown>
 
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="subtle"
-              size="sm"
-              iconNode={
-                <div className="relative flex h-4 w-4 flex-col items-center justify-center">
-                  <HiChevronUp
-                    className={cn(
-                      'h-3 w-3 shrink-0 transition-all duration-200',
-                      orderSelected === SortOrderState.Asc && 'scale-150',
-                      orderSelected === SortOrderState.Desc &&
-                        'rotate-180 scale-150',
-                      orderSelected === SortOrderState.None && '-mb-0.5'
-                    )}
-                  />
-                  <HiChevronDown
-                    className={cn(
-                      'h-3 w-3 shrink-0 transition-all duration-200',
-                      (orderSelected === SortOrderState.Desc ||
-                        orderSelected === SortOrderState.Asc) &&
-                        'hidden rotate-180 scale-150',
-                      orderSelected === SortOrderState.None && '-mt-0.5'
-                    )}
-                  />
-                </div>
-              }
-              onClick={() => {
-                setOrderSelected(incrementSortOrder(orderSelected));
-              }}
-            />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>
-              Sort{' '}
-              {orderSelected === SortOrderState.Asc
-                ? 'ascending'
-                : 'descending'}
-            </p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="subtle"
+            size="sm"
+            iconNode={
+              <div className="relative flex h-4 w-4 flex-col items-center justify-center">
+                <HiChevronUp
+                  className={cn(
+                    'h-3 w-3 shrink-0 transition-all duration-200',
+                    orderSelected === SortOrderState.Asc && 'scale-150',
+                    orderSelected === SortOrderState.Desc &&
+                      'rotate-180 scale-150',
+                    orderSelected === SortOrderState.None && '-mb-0.5'
+                  )}
+                />
+                <HiChevronDown
+                  className={cn(
+                    'h-3 w-3 shrink-0 transition-all duration-200',
+                    (orderSelected === SortOrderState.Desc ||
+                      orderSelected === SortOrderState.Asc) &&
+                      'hidden rotate-180 scale-150',
+                    orderSelected === SortOrderState.None && '-mt-0.5'
+                  )}
+                />
+              </div>
+            }
+            onClick={() => {
+              setOrderSelected(incrementSortOrder(orderSelected));
+            }}
+          />
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>
+            Sort{' '}
+            {orderSelected === SortOrderState.Asc ? 'ascending' : 'descending'}
+          </p>
+        </TooltipContent>
+      </Tooltip>
     </>
   );
 };

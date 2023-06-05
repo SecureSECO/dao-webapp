@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { createElement } from 'react';
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
-import { createElement } from 'react';
 import { IconType } from 'react-icons';
 
 interface ActionWrapperProps extends AccordionItemProps {
@@ -46,7 +46,7 @@ const ActionWrapper = ({
         {iconNode}
         <p className="text-lg">{title}</p>
       </AccordionTrigger>
-      <AccordionContent className="space-y-4">
+      <AccordionContent className="space-y-4 pt-2">
         <p className="text-popover-foreground/80">{description}</p>
         {/* Only render a seperator if children were provided */}
         {children && (

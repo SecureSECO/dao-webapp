@@ -7,11 +7,11 @@
  */
 
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
+import { Card } from '@/src/components/ui/Card';
+import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { FaGithub } from 'react-icons/fa';
-import { Card } from '@/src/components/ui/Card';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 
 export interface ProposalMergeAction extends Action {
   params: {
@@ -34,7 +34,7 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
   return (
     <ActionWrapper
       icon={FaGithub}
-      title="Merge Pull Request"
+      title="Merge pull request"
       description="Merge the specified pull request into the corresponding branch"
       {...props}
     >

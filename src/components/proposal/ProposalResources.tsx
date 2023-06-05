@@ -11,15 +11,16 @@
  * It is designed to be used as a main container for other components and elements.
  */
 
-import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
+import { Card } from '@/src/components/ui/Card';
 import {
   DefaultMainCardHeader,
   MainCard,
   MainCardProps,
 } from '@/src/components/ui/MainCard';
-import { Card } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
 import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
+import DOMPurify from 'dompurify';
+import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
 
 export interface ProposalResourcesProps
   extends Omit<MainCardProps, 'icon' | 'header'> {
@@ -38,6 +39,15 @@ export const ProposalResources = ({
   className,
   ...props
 }: ProposalResourcesProps) => {
+  const sanitizeHref = (v: string) => {
+    const regex = /^<a href="(.+)"><\/a>$/;
+    const clean = DOMPurify.sanitize(`<a href="${v}"></a>`);
+    const matches = regex.exec(clean);
+    //matches: [<a href="example.com"></a>, example.com]
+    //Or in case of failure: matches: null.
+    return matches && matches.length >= 1 ? matches[1] : '';
+  };
+
   return (
     <MainCard
       loading={loading ?? resources ? true : false}
@@ -61,7 +71,7 @@ export const ProposalResources = ({
             <li key={resource.url}>
               <Card size="sm" variant="light">
                 <a
-                  href={resource.url}
+                  href={sanitizeHref(resource.url)}
                   rel="noreferrer"
                   target="_blank"
                   className="flex flex-row items-center gap-x-2 font-medium text-primary transition-colors duration-200 hover:text-primary/80"

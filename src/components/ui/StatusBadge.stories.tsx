@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { StatusBadge } from '@/src/components/ui/StatusBadge';
-import Check from '@/src/components/icons/Check';
 import Activity from '@/src/components/icons/Activity';
+import Check from '@/src/components/icons/Check';
+import { StatusBadge } from '@/src/components/ui/StatusBadge';
+import type { Meta, StoryObj } from '@storybook/react';
 import { HiOutlineClock, HiXMark } from 'react-icons/hi2';
 
 const meta = {

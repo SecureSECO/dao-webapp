@@ -6,8 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import {
   Toast,
   ToastAction,
@@ -17,6 +15,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from '@/src/components/ui/Toast';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Toast> = {
   component: Toast,
@@ -80,7 +79,7 @@ export const WithDescription: Story = {
 
 export const Error: Story = {
   args: {
-    variant: 'error',
+    variant: 'destructive',
     duration: Infinity,
     children: (
       <>

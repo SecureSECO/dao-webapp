@@ -15,17 +15,12 @@
  */
 
 import * as React from 'react';
-import * as ToastPrimitives from '@radix-ui/react-toast';
-import { VariantProps, cva } from 'class-variance-authority';
-
-import { cn } from '@/src/lib/utils';
-import {
-  HiOutlineCheckCircle,
-  HiOutlineXCircle,
-  HiXMark,
-} from 'react-icons/hi2';
 import Loading from '@/src/components/icons/Loading';
 import { buttonVariants } from '@/src/components/ui/Button';
+import { cn } from '@/src/lib/utils';
+import * as ToastPrimitives from '@radix-ui/react-toast';
+import { VariantProps, cva } from 'class-variance-authority';
+import { HiCheck, HiXMark } from 'react-icons/hi2';
 
 const ToastProvider = ToastPrimitives.Provider;
 
@@ -51,8 +46,9 @@ const toastVariants = cva(
       variant: {
         default: 'bg-highlight text-highlight-foreground',
         loading: 'bg-highlight text-highlight-foreground',
-        success: 'bg-success-background text-success-foreground',
-        error: 'bg-destructive-background text-destructive-foreground',
+        destructive:
+          'group destructive bg-destructive-background text-destructive-foreground',
+        success: 'group success bg-success-background text-success-foreground',
       },
     },
     defaultVariants: {
@@ -64,8 +60,8 @@ const toastVariants = cva(
 const icons = {
   default: null,
   loading: Loading,
-  success: HiOutlineCheckCircle,
-  error: HiOutlineXCircle,
+  success: HiCheck,
+  destructive: HiXMark,
 };
 
 const Toast = React.forwardRef<

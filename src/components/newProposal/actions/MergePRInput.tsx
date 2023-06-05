@@ -7,23 +7,22 @@
  */
 
 import { useContext } from 'react';
-import { Label } from '@/src/components/ui/Label';
-import { GithubPullRequestPattern } from '@/src/lib/constants/patterns';
-import { useFormContext } from 'react-hook-form';
-import { HiCircleStack, HiXMark } from 'react-icons/hi2';
-
-import { Button } from '../../ui/Button';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { Input } from '../../ui/Input';
-import { MainCard } from '../../ui/MainCard';
 import {
   ActionFormContext,
   ActionFormError,
   ProposalFormActions,
-} from '../steps/Actions';
-import { ProposalFormAction } from '@/src/lib/constants/actions';
+} from '@/src/components/newProposal/steps/Actions';
+import { Button } from '@/src/components/ui/Button';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { Input } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
+import { MainCard } from '@/src/components/ui/MainCard';
+import { GithubPullRequestPattern } from '@/src/lib/constants/patterns';
+import { useFormContext } from 'react-hook-form';
+import { HiCircleStack, HiXMark } from 'react-icons/hi2';
 
-export interface ProposalFormMergeData extends ProposalFormAction {
+export interface ProposalFormMergeData {
+  name: 'merge_pr';
   url: string;
 }
 

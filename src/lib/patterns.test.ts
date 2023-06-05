@@ -9,7 +9,9 @@
 import {
   AddressPattern,
   GithubPullRequestPattern,
+  IntegerPattern,
   NumberPattern,
+  SignedIntegerPattern,
   UrlPattern,
 } from './constants/patterns';
 
@@ -38,6 +40,51 @@ describe('Failure cases for Number Pattern', () => {
     '1 3',
   ];
   testFailures(NumberPattern, failures);
+});
+
+describe('Succes cases for Integer Pattern', () => {
+  const successes = ['1234567890', '0987654321', '1'];
+  testSuccesses(IntegerPattern, successes);
+});
+
+describe('Failures cases for Integer Pattern', () => {
+  const failures = [
+    '', // empty string
+    ' ', // only space
+    ' 123456789', // space at start
+    '12345 6789', // space at middle
+    '123456789 ', // space at end
+    '-123456789 ', // negative number
+  ];
+  testFailures(IntegerPattern, failures);
+});
+
+describe('Succes cases for Signed Integer Pattern', () => {
+  const successes = [
+    '1234567890',
+    '0987654321',
+    '1',
+    '-1234567890',
+    '-0987654321',
+    '-1',
+    '+1234567890',
+    '+0987654321',
+    '+1',
+  ];
+  testSuccesses(SignedIntegerPattern, successes);
+});
+
+describe('Failures cases for Signed Integer Pattern', () => {
+  const failures = [
+    '', // empty string
+    ' ', // only space
+    ' 123456789', // space at start
+    '12345 6789', // space at middle
+    '123456789 ', // space at end
+    '--123456789 ', // double sign number
+    '++1234567890',
+  ];
+  testFailures(SignedIntegerPattern, failures);
 });
 
 describe('Success cases for Address Pattern', () => {

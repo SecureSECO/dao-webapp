@@ -14,10 +14,10 @@
  */
 
 import * as React from 'react';
+import Loading from '@/src/components/icons/Loading';
+import { cn } from '@/src/lib/utils';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { HiCheck, HiChevronDown } from 'react-icons/hi2';
-
-import { cn } from '@/src/lib/utils';
 
 /**
  * Contains all the parts of a select.
@@ -36,13 +36,18 @@ const SelectGroup = SelectPrimitive.Group;
  */
 const SelectValue = SelectPrimitive.Value;
 
+interface SelectTriggerProps
+  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> {
+  loading?: boolean;
+}
+
 /**
  * The button that toggles the select. The Select.Content will position itself by aligning over the trigger.
  */
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+  SelectTriggerProps
+>(({ className, children, loading = false, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
@@ -52,7 +57,11 @@ const SelectTrigger = React.forwardRef<
     {...props}
   >
     {children}
-    <HiChevronDown className="h-4 w-4 opacity-50" />
+    {loading ? (
+      <Loading className="h-5 w-5" />
+    ) : (
+      <HiChevronDown className="h-4 w-4 opacity-50" />
+    )}
   </SelectPrimitive.Trigger>
 ));
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;

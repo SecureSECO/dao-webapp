@@ -25,7 +25,7 @@ export const Primary: Story = {
         {
           name: 'mint_tokens',
           wallets: [
-            { address: '0x123456789012345678901234567890', amount: 321 },
+            { address: '0x123456789012345678901234567890', amount: '321' },
           ],
         },
       ],

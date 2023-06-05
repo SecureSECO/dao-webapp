@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
 import ActionWrapper, {
   ActionContentSeparator,
 } from '@/src/components/proposal/actions/ActionWrapper';
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
-import CategoryList from '@/src/components/ui/CategoryList';
-import { Category } from '@/src/components/ui/CategoryList';
+import CategoryList, { Category } from '@/src/components/ui/CategoryList';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useMembers } from '@/src/hooks/useMembers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
@@ -22,7 +22,6 @@ import { getTokenInfo, toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
 import { HiCircleStack } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';
 
@@ -144,10 +143,9 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
           >
             <Address
               address={address}
-              maxLength={AddressLength.Small}
-              hasLink={true}
-              showCopy={false}
-              replaceYou={false}
+              length="sm"
+              hasLink
+              replaceYou
               jazziconSize="md"
             />
             <TokenAmount

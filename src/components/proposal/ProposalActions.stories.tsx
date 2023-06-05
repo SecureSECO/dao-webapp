@@ -11,7 +11,7 @@ import {
   dummyChangeParamsAction,
   dummyMergeAction,
   dummyMintAction,
-  dummyWithdrawAction,
+  dummyWithdrawActions,
 } from '@/src/hooks/useProposal';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -30,13 +30,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Required for BigInts to be serialized correctly
-// Taken from: https://stackoverflow.com/questions/65152373/typescript-serialize-bigint-in-json
-// @ts-ignore
-BigInt.prototype.toJSON = function () {
-  return this.toString();
-};
-
 const dummyUnknownAction = {
   method: 'unknown()',
   interface: 'IUnknown',
@@ -47,7 +40,7 @@ export const Primary: Story = {
   args: {
     actions: [
       dummyMintAction,
-      dummyWithdrawAction,
+      ...dummyWithdrawActions,
       dummyMergeAction,
       dummyChangeParamsAction,
       dummyUnknownAction,
@@ -65,7 +58,7 @@ export const Loading: Story = {
   args: {
     actions: [
       dummyMintAction,
-      dummyWithdrawAction,
+      ...dummyWithdrawActions,
       dummyMergeAction,
       dummyChangeParamsAction,
       dummyUnknownAction,

@@ -12,21 +12,8 @@
  * If the stamp is verified, a checkmark icon will be displayed next to the providerId.
  */
 
-import {
-  Stamp,
-  StampInfo,
-  VerificationThreshold,
-  isVerified,
-} from '@/src/pages/Verification';
-import { Button } from '@/src/components/ui/Button';
-import { Card } from '@/src/components/ui/Card';
-import {
-  HiCalendar,
-  HiChartBar,
-  HiLink,
-  HiOutlineExclamationCircle,
-} from 'react-icons/hi2';
-import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
+import { useState } from 'react';
+import DoubleCheck from '@/src/components/icons/DoubleCheck';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,15 +25,28 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { verificationAbi } from '@/src/assets/verificationAbi';
-import { useState } from 'react';
-import DoubleCheck from '@/src/components/icons/DoubleCheck';
-import { HiXMark, HiOutlineClock } from 'react-icons/hi2';
-import { useToast } from '@/src/hooks/useToast';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+} from '@/src/components/ui/ConditionalButton';
 import Header from '@/src/components/ui/Header';
+import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
+import { toast } from '@/src/hooks/useToast';
+import { StampInfo, useVerification } from '@/src/hooks/useVerification';
+import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
 import { format } from 'date-fns';
+import { ContractTransaction } from 'ethers';
+import {
+  HiCalendar,
+  HiChartBar,
+  HiLink,
+  HiOutlineClock,
+  HiOutlineExclamationCircle,
+  HiXMark,
+} from 'react-icons/hi2';
+import { useAccount } from 'wagmi';
 
 /**
  * Derives the status badge props from the stamp's verification status
@@ -88,7 +88,6 @@ const getStatusProps = (
 const StampCard = ({
   stampInfo,
   stamp,
-  thresholdHistory,
   verify,
   refetch,
   isError,
@@ -101,6 +100,7 @@ const StampCard = ({
   refetch: () => void;
   isError: boolean;
 }) => {
+  const { isVerified, unverify: sdkUnverify } = useVerification();
   const {
     verified,
     expired,
@@ -109,68 +109,24 @@ const StampCard = ({
     verified: boolean;
     expired: boolean;
     timeLeftUntilExpiration: number | null;
-  } = isVerified(thresholdHistory, stamp);
-  const { promise: promiseToast } = useToast();
+  } = isVerified(stamp);
   const { isConnected } = useAccount();
 
   const providerId = stampInfo.id;
 
   const [isBusy, setIsBusy] = useState(false);
 
-  const { config } = usePrepareContractWrite({
-    address: import.meta.env.VITE_VERIFY_CONTRACT,
-    abi: verificationAbi,
-    functionName: 'unverify',
-    args: [providerId],
-  });
-
-  const { writeAsync } = useContractWrite(config);
-
   /**
    * Deletes the stamp from this specific provider
    * @returns {Promise<void>} Promise that resolves when the stamp is deleted
    */
-  const unverify = async (): Promise<void> => {
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (isBusy) {
-          return reject('Already unverifying');
-        }
+  const unverify = async (): Promise<ContractTransaction> => {
+    if (isBusy) {
+      throw new Error('Already unverifying');
+    }
 
-        setIsBusy(true);
-
-        if (!writeAsync) {
-          setIsBusy(false);
-          return reject('Contract write not ready');
-        }
-
-        const txResult = await writeAsync();
-
-        console.log('txResult', txResult);
-
-        txResult
-          .wait()
-          .then(() => {
-            console.log('Successfully unverified');
-            resolve();
-          })
-          .catch((error: any) => {
-            console.error(
-              'StampCard ~ unverify ~ txResult.catch ~ Unverification failed',
-              error
-            );
-            reject('Transaction failed');
-          });
-      } catch (error: any) {
-        console.error(
-          'StampCard ~ unverify ~ try/catch ~ Unverification failed',
-          error
-        );
-        setIsBusy(false);
-        reject('Unverification failed');
-      }
-    });
+    setIsBusy(true);
+    return await sdkUnverify(providerId);
   };
 
   return (
@@ -249,13 +205,20 @@ const StampCard = ({
 
       <div className="flex items-center gap-2">
         <div className="flex flex-row items-center gap-x-4">
-          <Button
-            disabled={!isConnected || isError}
-            onClick={() => verify(providerId)}
+          <ConditionalButton
+            disabled={isError || isBusy}
+            conditions={[
+              {
+                when: !isConnected,
+                content: <ConnectWalletWarning action="to verify" />,
+              },
+            ]}
+            onClick={async () => {
+              verify(providerId);
+            }}
           >
             {verified ? 'Reverify' : 'Verify'}
-          </Button>
-          {!isConnected && <ConnectWalletWarning action="to verify" />}
+          </ConditionalButton>
           {isError && isConnected && (
             <div className="flex flex-row items-center gap-x-1 text-destructive opacity-80">
               <HiOutlineExclamationCircle className="h-5 w-5 shrink-0" />
@@ -269,7 +232,9 @@ const StampCard = ({
         {verified && isConnected && !isError && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="subtle">Remove</Button>
+              <Button variant="subtle" disabled={isBusy}>
+                Remove
+              </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -284,19 +249,13 @@ const StampCard = ({
                 <AlertDialogAction
                   disabled={isBusy}
                   onClick={() => {
-                    const promise = unverify();
-                    promiseToast(promise, {
-                      loading: 'Removing verification...',
+                    toast.contractTransaction(unverify, {
                       success: 'Verification removed',
-                      error: (err) => ({
-                        title: 'Failed to remove verification: ',
-                        description: err,
-                      }),
-                    });
-
-                    promise.finally(() => {
-                      setIsBusy(false);
-                      refetch();
+                      error: 'Failed to remove verification: ',
+                      onFinish() {
+                        setIsBusy(false);
+                        refetch();
+                      },
                     });
                   }}
                 >

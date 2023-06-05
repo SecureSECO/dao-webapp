@@ -7,6 +7,8 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { BigNumber } from 'ethers';
+
 import OneTimeRewardCard from './OneTimeRewardCard';
 
 const meta = {
@@ -19,5 +21,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    reward: BigNumber.from('0x4563918244F40000'),
+    claimReward() {
+      return Promise.resolve({} as any);
+    },
+    refetch() {
+      return Promise.resolve();
+    },
+  },
 };

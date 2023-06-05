@@ -6,10 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import Logo from '@/src/components/Logo';
 import { Button } from '@/src/components/ui/Button';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +22,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof DropdownMenu> = {
   tags: ['autodocs'],

@@ -7,29 +7,29 @@
  */
 
 import React, { createContext, useContext, useState } from 'react';
-import Header from '@/src/components/ui/Header';
-import { Progress } from '@/src/components/ui/Progress';
-import { Button } from '@/src/components/ui/Button';
-import { Card } from '@/src/components/ui/Card';
-import {
-  ProposalFormVotingSettings,
-  Voting,
-} from '@/src/components/newProposal/steps/Voting';
 import {
   Actions,
   ProposalFormActions,
 } from '@/src/components/newProposal/steps/Actions';
+import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import {
   Metadata,
   ProposalFormMetadata,
 } from '@/src/components/newProposal/steps/Metadata';
-import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
+import {
+  ProposalFormVotingSettings,
+  Voting,
+} from '@/src/components/newProposal/steps/Voting';
+import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
+import {
+  ConditionalButton,
+  ConditionalWarning,
+} from '@/src/components/ui/ConditionalButton';
+import Header from '@/src/components/ui/Header';
 import { Link } from '@/src/components/ui/Link';
+import { Progress } from '@/src/components/ui/Progress';
 import { HiChevronLeft } from 'react-icons/hi2';
-import { useVotingPower } from '@/src/hooks/useVotingPower';
-import { useAccount } from 'wagmi';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
-import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
 
 const totalSteps = 4;
 
@@ -121,12 +121,16 @@ export const NewProposalFormProvider = ({
   );
 };
 
-export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
+export const StepNavigator = ({
+  onBack,
+  isSubmitting,
+  nextStepConditions,
+}: {
+  onBack?: () => void;
+  isSubmitting?: boolean;
+  nextStepConditions?: ConditionalWarning[];
+}) => {
   const { step, setStep } = useNewProposalFormContext();
-  const { address, isConnected } = useAccount();
-  const { votingPower, minProposalVotingPower } = useVotingPower({
-    address,
-  });
 
   const handlePrevStep = () => {
     if (onBack) {
@@ -138,28 +142,23 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
   };
 
   const isLastStep = step === totalSteps;
-  const canCreate = isConnected && votingPower.gte(minProposalVotingPower);
 
   return (
     <div className="flex items-center gap-2">
-      <Button onClick={handlePrevStep} type="button" disabled={step === 1}>
+      <Button
+        onClick={handlePrevStep}
+        type="button"
+        disabled={step === 1 || isSubmitting}
+      >
         Back
       </Button>
 
-      <div className="flex flex-row items-center gap-x-4">
-        <Button type="submit" disabled={isLastStep && !canCreate}>
-          {isLastStep ? 'Submit' : 'Next'}
-        </Button>
-        {/* Show a warning to connect wallet if not connected, or unsifficient voting power if so */}
-        {isLastStep &&
-          (!isConnected ? (
-            <ConnectWalletWarning action="to submit" />
-          ) : (
-            votingPower.lt(minProposalVotingPower) && (
-              <InsufficientRepWarning action="to submit" />
-            )
-          ))}
-      </div>
+      <ConditionalButton
+        type="submit"
+        label={isLastStep ? 'Submit' : 'Next'}
+        disabled={isSubmitting}
+        conditions={nextStepConditions ?? []}
+      ></ConditionalButton>
     </div>
   );
 };
@@ -167,7 +166,7 @@ export const StepNavigator = ({ onBack }: { onBack?: () => void }) => {
 export const ProgressCard = ({ children }: { children?: React.ReactNode }) => {
   const { step } = useNewProposalFormContext();
   return (
-    <Card className="flex flex-col gap-1 px-1 sm:px-6">
+    <Card className="flex flex-col gap-1">
       <div className="flex w-full items-center justify-between">
         <p className="text-primary">New proposal</p>
         <p className="text-sm text-highlight-foreground/80">

@@ -6,34 +6,36 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import ErrorPage from './pages/ErrorPage';
-import Governance from './pages/Governance';
-import Query from './pages/Query';
-import Dashboard from './pages/Dashboard';
-import Layout from './components/layout/Layout';
 import React from 'react';
+import Layout from '@/src/components/layout/Layout';
+import Dashboard from '@/src/pages/Dashboard';
+import ErrorPage from '@/src/pages/ErrorPage';
+import Governance from '@/src/pages/Governance';
+import Query from '@/src/pages/Query';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import '@/src/index.css';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
+import '@/src/index.css';
+import { DepositAssets } from '@/src/components/finance/DepositAssets';
+import { Toaster } from '@/src/components/ui/Toaster';
+import { TooltipProvider } from '@/src/components/ui/Tooltip';
+import { AragonSDKWrapper } from '@/src/context/AragonSDK';
+import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
+import Finance from '@/src/pages/Finance';
+import { Mining } from '@/src/pages/Mining';
+import NewProposal from '@/src/pages/NewProposal';
+import Settings from '@/src/pages/Settings';
+import Verification from '@/src/pages/Verification';
+import ViewProposal from '@/src/pages/ViewProposal';
 import {
   EthereumClient,
   w3mConnectors,
   w3mProvider,
 } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { WagmiConfig, configureChains, createClient } from 'wagmi';
 import { polygon, polygonMumbai } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import Finance from '@/src/pages/Finance';
-import Settings from '@/src/pages/Settings';
-import { AragonSDKWrapper } from '@/src/context/AragonSDK';
-import NewProposal from '@/src/pages/NewProposal';
-import Verification from '@/src/pages/Verification';
-import { Toaster } from '@/src/components/ui/Toaster';
-import ViewProposal from '@/src/pages/ViewProposal';
-import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
-import { Mining } from './pages/Mining';
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!import.meta.env.VITE_APP_PROJECT_ID) {
@@ -94,7 +96,16 @@ const router = createBrowserRouter([
       },
       {
         path: '/finance',
-        element: <Finance />,
+        children: [
+          {
+            path: '',
+            element: <Finance />,
+          },
+          {
+            path: '/finance/new-deposit',
+            element: <DepositAssets />,
+          },
+        ],
       },
       {
         path: '/verification',
@@ -122,7 +133,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <WagmiConfig client={wagmiClient}>
       <AragonSDKWrapper>
         <DiamondSDKWrapper>
-          <RouterProvider router={router} />
+          <TooltipProvider>
+            <RouterProvider router={router} />
+          </TooltipProvider>
         </DiamondSDKWrapper>
       </AragonSDKWrapper>
     </WagmiConfig>

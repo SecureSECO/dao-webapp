@@ -6,45 +6,43 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import MembersList from '@/src/components/dashboard/MembersList';
 import Logo from '@/src/components/Logo';
+import { ClaimDailyRewardCard } from '@/src/components/dashboard/ClaimDailyRewardCard';
+import MembersList from '@/src/components/dashboard/MembersList';
+import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { Link } from '@/src/components/ui/Link';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
-import { useDao } from '@/src/hooks/useDao';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { useMembers } from '@/src/hooks/useMembers';
 import { useProposals } from '@/src/hooks/useProposals';
-import {
-  PREFERRED_NETWORK,
-  PREFERRED_NETWORK_METADATA,
-} from '@/src/lib/constants/chains';
-import { DaoTransfersList } from '@/src/pages/Finance';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { CONFIG, DAO_METADATA } from '@/src/lib/constants/config';
+import { DaoTransfersList, NewTransferDropdown } from '@/src/pages/Finance';
 import { ProposalCardList } from '@/src/pages/Governance';
-import { format } from 'date-fns';
 import {
   HiArrowRight,
   HiArrowTopRightOnSquare,
-  HiCalendar,
   HiCircleStack,
   HiCube,
   HiHome,
   HiInboxStack,
   HiUserGroup,
 } from 'react-icons/hi2';
-import { MembershipStatus } from '../components/dashboard/MembershipStatus';
-import { CONFIG } from '@/src/lib/constants/config';
+import { useAccount } from 'wagmi';
 
 const Dashboard = () => {
-  const { dao, loading: daoLoading, error: daoError } = useDao();
+  const { isConnected } = useAccount();
+  const { daoAddress } = useDiamondSDKContext();
   const {
     proposals,
     proposalCount,
     loading: proposalsLoading,
     error: proposalsError,
+    countLoading,
   } = useProposals({ limit: 5 });
-
   const {
     daoTransfers,
     loading: daoTransfersLoading,
@@ -57,85 +55,54 @@ const Dashboard = () => {
     memberCount,
   } = useMembers({ limit: 5 });
 
-  if (daoError) {
-    console.error(daoError);
-    return (
-      <Card size="lg" className="w-full">
-        <div className="space-y-2">
-          <Header>An error occurred</Header>
-          <p className="text-base font-normal text-highlight-foreground/80">
-            DAO data could not be loaded
-          </p>
-        </div>
-      </Card>
-    );
-  }
-
-  const currentNetwork = PREFERRED_NETWORK;
   const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
 
   return (
     <div className="grid grid-cols-7 gap-6">
-      {/* Banner on top showing optional information about membership status */}
-      <MembershipStatus />
-
       {/* Card showing metadata about the DAO */}
       <Card
-        loading={daoLoading}
         size="lg"
         className="relative col-span-full flex shrink flex-row justify-between"
       >
-        {dao && (
-          <>
-            <div className="flex flex-col justify-between gap-y-6">
-              <div className="flex flex-col gap-y-2">
-                <Header>{dao.name}</Header>
-                <p className="text-xl font-semibold text-highlight-foreground/80">
-                  {dao.ensDomain}
-                </p>
-                <p className="text-base font-normal text-highlight-foreground/80">
-                  {dao.description}
-                </p>
-              </div>
-              <div className="flex flex-col gap-x-6 gap-y-2 text-sm font-normal text-highlight-foreground/80 lg:flex-row lg:items-center">
-                <div className="flex flex-row items-center gap-x-1">
-                  <HiCalendar className="h-5 w-5 shrink-0 text-primary" />
-                  <p>{format(dao.creationDate, 'MMMM yyyy')}</p>
-                </div>
-                <div className="flex flex-row items-center gap-x-1">
-                  <HiCube className="h-5 w-5 shrink-0 text-primary" />
-                  <p>{import.meta.env.DEV ? 'Mumbai' : 'Polygon'}</p>
-                </div>
-                <div className="flex flex-row items-center gap-x-1">
-                  <HiHome className="h-5 w-5 shrink-0 text-primary" />
-                  <p className="w-48 truncate xs:w-full">{dao.address}</p>
-                </div>
-              </div>
+        <div className="flex flex-col justify-between gap-y-6">
+          <div className="space-y-4">
+            <Header>{DAO_METADATA.name}</Header>
+            <p className="text-base font-normal text-highlight-foreground/80">
+              {DAO_METADATA.description}
+            </p>
+          </div>
+          <div className="flex flex-col gap-x-6 gap-y-2 text-sm font-normal text-highlight-foreground/80 lg:flex-row lg:items-center">
+            <div className="flex flex-row items-center gap-x-1">
+              <HiCube className="h-5 w-5 shrink-0 text-primary" />
+              <p>{import.meta.env.DEV ? 'Mumbai' : 'Polygon'}</p>
             </div>
+            <div className="flex flex-row items-center gap-x-1">
+              <HiHome className="h-5 w-5 shrink-0 text-primary" />
+              <Address address={daoAddress ?? '...'} showCopy />
+            </div>
+          </div>
+        </div>
 
-            <div className="hidden flex-col items-end gap-y-6 sm:flex">
-              <Logo className="h-28 w-28" />
-              <div className="flex flex-col gap-y-2">
-                {dao.links.map((link, i) => (
-                  <a
-                    key={i}
-                    href={link.url}
-                    className="flex flex-row items-center gap-x-2 rounded-sm font-medium text-primary-highlight ring-ring ring-offset-2 ring-offset-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
-                  >
-                    {link.name}
-                    <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
+        <div className="hidden flex-col items-end gap-y-6 sm:flex">
+          <Logo className="h-28 w-28" />
+          <div className="flex flex-col gap-y-2">
+            {DAO_METADATA.links.map((link, i) => (
+              <a
+                key={i}
+                href={link.url}
+                className="flex flex-row items-center gap-x-2 rounded-sm font-medium text-primary-highlight ring-ring ring-offset-2 ring-offset-background transition-colors duration-200 hover:text-primary-highlight/80 focus:outline-none focus:ring-1"
+              >
+                {link.name}
+                <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
+              </a>
+            ))}
+          </div>
+        </div>
       </Card>
 
-      {/* Proposal Card */}
       <MainCard
         className="col-span-full lg:col-span-4"
-        loading={proposalsLoading}
+        loading={countLoading}
         icon={HiInboxStack}
         header={
           <DefaultMainCardHeader
@@ -163,6 +130,9 @@ const Dashboard = () => {
 
       {/* div containing the right column of the dashboard */}
       <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
+        {/* Card containing the option to claim daily rewards*/}
+        {isConnected && <ClaimDailyRewardCard />}
+
         {/* Card containing the latest dao transfers */}
         <MainCard
           loading={daoTransfersLoading}
@@ -174,14 +144,7 @@ const Dashboard = () => {
               truncateMobile
             />
           }
-          aside={
-            <Link
-              label="New transfer"
-              target="_blank"
-              rel="noreferrer"
-              to={`https://app.aragon.org/#/daos/${currentNetwork}/${dao?.address}/finance/new-deposit`}
-            />
-          }
+          aside={<NewTransferDropdown />}
         >
           <DaoTransfersList
             daoTransfers={daoTransfers}

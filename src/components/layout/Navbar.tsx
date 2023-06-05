@@ -9,6 +9,7 @@
 import LogoFull from '@/src/components/LogoFull';
 import ConnectButton from '@/src/components/layout/ConnectButton';
 import ThemePicker from '@/src/components/layout/ThemePicker';
+import UserBalances from '@/src/components/layout/UserBalances';
 import { Button } from '@/src/components/ui/Button';
 import {
   DropdownMenu,
@@ -72,14 +73,14 @@ const navItems: NavItemData[] = [
         label: 'Query',
         url: '/query',
         icon: HiOutlineDocumentMagnifyingGlass,
-        description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.}`,
+        description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.`,
       },
-      {
-        label: 'Mining',
-        url: '/mining',
-        icon: HiOutlineTerminal,
-        description: `Claim your mining rewards in ${TOKENS.secoin.symbol} or ${TOKENS.rep.symbol}.`,
-      },
+      // {
+      //   label: 'Mining',
+      //   url: '/mining',
+      //   icon: HiOutlineTerminal,
+      //   description: `Claim your mining rewards in ${TOKENS.secoin.symbol} or ${TOKENS.rep.symbol}.`,
+      // },
     ],
     alternativeLinks: [
       { label: 'Website', url: '#', icon: HiOutlineGlobeAlt },
@@ -186,8 +187,10 @@ const Navbar = () => {
       </nav>
 
       {/* Wallet connection + dark mode toggler */}
-      <div className=" hidden items-center gap-x-2 lg:flex">
+      <div className="hidden items-center gap-x-2 lg:flex">
         <ThemePicker />
+
+        <UserBalances />
 
         <ConnectButton />
       </div>
@@ -286,7 +289,10 @@ const MobileNav = () => {
           <div className="mt-10 flex max-w-md flex-col items-center space-y-4 sm:mt-0">
             <div className="flex w-full items-center justify-between">
               <LogoFull className="h-fit w-32 xs:w-40" />
-              <ConnectButton buttonClassName={''} />
+              <div className="flex items-center gap-x-2">
+                <UserBalances />
+                <ConnectButton buttonClassName={''} />
+              </div>
             </div>
 
             <div className="grid w-full grid-cols-1 place-items-center gap-4 pb-6 md:grid-cols-2">

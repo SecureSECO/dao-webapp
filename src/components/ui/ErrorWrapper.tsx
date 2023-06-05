@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { cn } from '@/src/lib/utils';
 import React from 'react';
+import { cn } from '@/src/lib/utils';
 import { FieldError } from 'react-hook-form';
 
 /**
@@ -31,7 +31,10 @@ interface ErrorWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
 export const ErrorWrapper = React.forwardRef<HTMLDivElement, ErrorWrapperProps>(
   ({ children, error, name, className }, ref) => {
     return (
-      <div className={cn('flex w-full flex-col', className)} ref={ref}>
+      <div
+        className={cn('flex w-full flex-col space-y-1', className)}
+        ref={ref}
+      >
         {children}
         {error && (
           <span className="text-destructive first-letter:capitalize">

@@ -6,16 +6,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import ProposalCard from '@/src/components/governance/ProposalCard';
 import {
   dummyChangeParamsAction,
   dummyMergeAction,
   dummyMintAction,
   dummyProposal,
-  dummyWithdrawAction,
+  dummyWithdrawActions,
 } from '@/src/hooks/useProposal';
 import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import type { Meta, StoryObj } from '@storybook/react';
 import { add, sub } from 'date-fns';
 
 const meta = {
@@ -32,13 +32,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-// Required for BigInts to be serialized correctly
-// Taken from: https://stackoverflow.com/questions/65152373/typescript-serialize-bigint-in-json
-// @ts-ignore
-BigInt.prototype.toJSON = function () {
-  return this.toString();
-};
 
 export const Pending: Story = {
   args: {
@@ -104,7 +97,7 @@ export const WithActions: Story = {
       endDate: sub(new Date(), { days: 1 }),
       actions: [
         dummyMintAction,
-        dummyWithdrawAction,
+        ...dummyWithdrawActions,
         dummyChangeParamsAction,
         dummyMergeAction,
       ],

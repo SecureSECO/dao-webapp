@@ -20,7 +20,10 @@ import {
   AlertDialogTrigger,
 } from '@/src/components/ui/AlertDialog';
 import { Button } from '@/src/components/ui/Button';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import {
+  ConditionalButton,
+  ConnectWalletWarning,
+} from '@/src/components/ui/ConditionalButton';
 import {
   Dialog,
   DialogClose,
@@ -38,9 +41,9 @@ import { MainCard } from '@/src/components/ui/MainCard';
 import { Table } from '@/src/components/ui/Table';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
-import { promise, useToast } from '@/src/hooks/useToast';
-import { TOKENS } from '@/src/lib/constants/tokens';
+import { toast } from '@/src/hooks/useToast';
 import { UrlPattern } from '@/src/lib/constants/patterns';
+import { TOKENS } from '@/src/lib/constants/tokens';
 import { saveAs } from 'file-saver';
 import { useForm } from 'react-hook-form';
 import {
@@ -84,7 +87,6 @@ const Query = () => {
   );
 
   const [paymentSent, setPaymentSent] = useState<boolean>(false);
-  const { toast } = useToast();
 
   /**
    * Downloads the results of the query as a JSON file.
@@ -103,7 +105,7 @@ const Query = () => {
 
     setIsQuerying(false);
 
-    promise(
+    toast.promise(
       runQuery(data.searchUrl, data.token)
         .then(() => {
           setStoredToken(data.token);
@@ -114,9 +116,8 @@ const Query = () => {
       {
         loading: 'Querying SearchSECO database...',
         success: 'Query successful!',
-        error: (err) => ({
-          title: err,
-          description: '',
+        error: () => ({
+          title: 'Query failed',
         }),
       }
     );
@@ -186,16 +187,21 @@ const Query = () => {
               </ErrorWrapper>
             </div>
             <div className="flex flex-row items-center gap-x-4">
-              <Button
+              <ConditionalButton
                 type="submit"
-                disabled={!isConnected || !isQuerying}
+                disabled={!isQuerying}
+                conditions={[
+                  {
+                    when: !isConnected,
+                    content: (
+                      <ConnectWalletWarning action="to query the database" />
+                    ),
+                  },
+                ]}
                 icon={isQuerying ? null : Loading}
               >
                 Submit
-              </Button>
-              {!isConnected && (
-                <ConnectWalletWarning action="to query the database" />
-              )}
+              </ConditionalButton>
             </div>
           </form>
         </MainCard>
@@ -220,23 +226,25 @@ const Query = () => {
                   onClick={async () => {
                     setIsPaying(true);
 
-                    try {
+                    const startAndPaySession = async () => {
                       const session = await startSession();
-                      await payForSession(session);
-                      setPaymentSent(true);
-                    } catch (error: any) {
-                      console.log(error);
+                      return payForSession(session);
+                    };
 
-                      toast({
-                        title: error.message.substring(0, 100),
-                        variant: 'error',
-                      });
-
-                      // Reset session
-                      resetQuery();
-                    }
-
-                    setIsPaying(false);
+                    toast.contractTransaction(startAndPaySession, {
+                      success: 'Paid for session!',
+                      error: 'Failed to pay for session',
+                      onError() {
+                        // Reset session
+                        resetQuery(false);
+                      },
+                      onSuccess() {
+                        setPaymentSent(true);
+                      },
+                      onFinish() {
+                        setIsPaying(false);
+                      },
+                    });
                   }}
                   disabled={!isConnected || isPaying}
                   icon={isPaying ? Loading : null}
@@ -325,7 +333,7 @@ export const CancelButton = ({
   resetQuery,
   setPaymentSent,
 }: {
-  resetQuery: () => void;
+  resetQuery: (clearQueryResult?: boolean) => void;
   // eslint-disable-next-line no-unused-vars
   setPaymentSent: (value: boolean) => void;
 }) => {

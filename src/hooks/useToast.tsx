@@ -4,12 +4,13 @@
  * inspired by https://ui.shadcn.com/docs/primitives/toast
  */
 
-import * as React from 'react';
+// Inspired by react-hot-toast library
 
+import * as React from 'react';
 import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { ContractReceipt, ContractTransaction } from 'ethers';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
-import { ContractTransaction } from 'ethers';
 
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 3000;
@@ -20,9 +21,6 @@ type ToasterToast = ToastProps & {
   description?: React.ReactNode;
   action?: ToastActionElement;
 };
-
-// id property on ToasterToast is not required in upate function of specific toast
-export type ToastUpdate = Partial<ToasterToast>;
 
 const actionTypes = {
   ADD_TOAST: 'ADD_TOAST',
@@ -149,29 +147,13 @@ function dispatch(action: Action) {
 interface Toast extends Omit<ToasterToast, 'id'> {}
 
 /**
- * Update a toast with the given props and id. This will also set a timeout to dismiss the toast after the duration has passed,
- * overriding the pausing and resuming behavior of the default Toast (to avoid an error causing the toast to remain forever)
- */
-const updateToast = (props: ToastUpdate, id: string) => {
-  dispatch({
-    type: 'UPDATE_TOAST',
-    toast: { ...props, id },
-  });
-  // Dismiss toast after duration manually to avoid the shenanigens of radix ui toast, causing the toast to remain forever
-  if (props.duration) {
-    setTimeout(() => {
-      dispatch({ type: 'DISMISS_TOAST', toastId: id });
-    }, props.duration);
-  }
-};
-
-/**
  * Show a toast with the given props
  * @param props Props for the toast, including duration, variant, title and description
- * @returns An object containing the id of the toast, a function to dismiss the toast and a function to update the toast
+ * @returns The ID of the toast
  */
 function toast({ ...props }: Toast) {
   const id = genId();
+
   const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
 
   dispatch({
@@ -186,79 +168,112 @@ function toast({ ...props }: Toast) {
     },
   });
 
-  return {
-    id: id,
-    dismiss,
-    update: (props: ToastUpdate) => updateToast(props, id),
-  };
+  return id;
 }
 
-type PromiseToast = {
-  loading: string;
-  success: string;
-  error: (err: any) => { title: string; description: string };
+toast.dismiss = (id: string) => {
+  dispatch({ type: 'DISMISS_TOAST', toastId: id });
+};
+
+type BasicToast = Pick<ToasterToast, 'title' | 'description'>;
+type PromiseProp<TData> =
+  | ToasterToast['title']
+  | BasicToast
+  | ((data: TData) => BasicToast);
+
+type PromiseToast<TData> = {
+  loading: ToasterToast['title'] | BasicToast;
+  success: PromiseProp<TData>;
+  error: PromiseProp<unknown>;
+  onSuccess?: (data: TData) => void;
+  onError?: (error: unknown) => void;
+  onFinish?: () => void;
 };
 
 /**
- * Show a toast that will be updated when the promise resolves or rejects, using the provided content
- * @param promise The promise to update the toast based off of
- * @param props An object containing the content to show when the promise is loading, resolves (success) or rejects (error)
- * @returns An object containing the id of the toast
+ * Convert a property passed to a promise toast (such as loading) to a title and description for a toast.
+ * Takes care of different cases of the property just a string (for the title), an object, or a function.
+ * @param prop The property passed to the toast.promise function
+ * @param data The data passed to be passed to the function if the property is a function
  */
-function promise(promise: Promise<any>, props: PromiseToast) {
-  const id = genId();
-
-  const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
-
-  dispatch({
-    type: 'ADD_TOAST',
-    toast: {
-      variant: 'loading',
-      duration: Infinity,
-      id,
-      title: props.loading,
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss();
-      },
-    },
-  });
-
-  promise.then(() => {
-    updateToast(
-      {
-        variant: 'success',
-        title: props.success,
-        duration: 3000,
-      },
-      id
-    );
-  });
-  promise.catch((e) => {
-    const updateProps = props.error(e);
-    updateToast(
-      {
-        variant: 'error',
-        duration: 3000,
-        ...updateProps,
-      },
-      id
-    );
-  });
-
-  return {
-    id: id,
+const promisePropToToast = <TData,>(
+  prop: PromiseProp<TData>,
+  data?: TData
+): BasicToast => {
+  const empty = {
+    title: '',
+    description: '',
   };
+
+  if (typeof prop === 'string') {
+    return { title: prop };
+  } else if (typeof prop === 'function') {
+    return data ? prop(data) : empty;
+  } else {
+    return prop ?? empty;
+  }
+};
+
+toast.promise = function <TData>(
+  promise: Promise<TData>,
+  config: PromiseToast<TData>
+) {
+  const id = toast.loading(promisePropToToast(config.loading));
+
+  promise.then(
+    (data) => {
+      toast.success(promisePropToToast(config.success, data), id);
+      config.onSuccess && config.onSuccess(data);
+    },
+    (error) => {
+      toast.error(promisePropToToast(config.error, error), id);
+    }
+  );
+  promise.catch((err) => {
+    config.onError && config.onError(err);
+  });
+  promise.finally(() => {
+    config.onFinish && config.onFinish();
+  });
+
+  return id;
+};
+
+// Show specific types of toasts
+toast.loading = (props: Toast) =>
+  toast({ ...props, variant: 'loading', duration: Infinity });
+toast.update = (id: string, props: Toast) => {
+  dispatch({
+    type: 'UPDATE_TOAST',
+    toast: { ...props, id },
+  });
+};
+toast.error = (props: Toast, id?: string) =>
+  id
+    ? toast.update(id, {
+        ...props,
+        variant: 'destructive',
+        duration: TOAST_REMOVE_DELAY,
+      })
+    : toast({ ...props, variant: 'destructive' });
+toast.success = (props: Toast, id?: string) =>
+  id
+    ? toast.update(id, {
+        ...props,
+        variant: 'success',
+        duration: TOAST_REMOVE_DELAY,
+      })
+    : toast({ ...props, variant: 'success' });
+
+interface ContractTransactionPromiseResult {
+  hash: string;
+  wait: (confirmations?: number | undefined) => Promise<ContractReceipt>;
 }
 
-type ContractTransactionToastProps = {
-  messages: {
-    error: string;
-    success: string;
-  };
-  onSuccess?: () => void;
-  onError?: (error: unknown) => void;
-};
+export type ContractTransactionToast = Omit<
+  PromiseToast<ContractReceipt>,
+  'loading'
+>;
 
 /**
  * Show a toast that will be updated based on interaction with a smart contract, using the provided content.
@@ -266,29 +281,15 @@ type ContractTransactionToastProps = {
  * it will show a loading toast that says "Awaiting confirmation" until the transaction is confirmed. If it is successful, or an error occurs,
  * a toast with corresponding style and using the given content will be shown.
  * @param promise A promise that returns an ethers ContractTransaction object
- * @param props An object containing the content to show when an error is encountered, and when the transaction has is successful, plus optionally a callback function to call when the transation is finished (and confirmed)
+ * @param config An object containing the content to show when an error is encountered, and when the transaction has is successful, plus optionally a callback function to call when the transation is finished (and confirmed)
  * @returns An object containing the id of the toast
  */
-async function contractTransaction(
-  promise: () => Promise<ContractTransaction>,
-  props: ContractTransactionToastProps
-) {
-  const id = genId();
-
-  const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
-
-  dispatch({
-    type: 'ADD_TOAST',
-    toast: {
-      variant: 'loading',
-      duration: Infinity,
-      id,
-      title: 'Awaiting signature...',
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss();
-      },
-    },
+toast.contractTransaction = async (
+  promise: () => Promise<ContractTransactionPromiseResult>,
+  config: ContractTransactionToast
+) => {
+  const id = toast.loading({
+    title: 'Awaiting signature...',
   });
 
   try {
@@ -297,60 +298,44 @@ async function contractTransaction(
     const transaction = await promise();
 
     // Show link to transaction on block explorer
-    updateToast(
-      {
-        title: 'Awaiting confirmation...',
-        description: explorerURL ? (
-          <a
-            href={`${explorerURL}/tx/${transaction.hash}`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex flex-row items-center gap-x-1 text-xs text-primary"
-          >
-            View on block explorer
-            <HiArrowTopRightOnSquare />
-          </a>
-        ) : (
-          ''
-        ),
-      },
-      id
-    );
+    toast.update(id, {
+      title: 'Awaiting confirmation...',
+      description: explorerURL ? (
+        <a
+          href={`${explorerURL}/tx/${transaction.hash}`}
+          target="_blank"
+          rel="noreferrer"
+          className="flex flex-row items-center gap-x-1 text-xs text-primary"
+        >
+          View on block explorer
+          <HiArrowTopRightOnSquare />
+        </a>
+      ) : (
+        ''
+      ),
+    });
 
     // Await confirmation of the transaction
-    await transaction.wait();
+    const receipt = await transaction.wait();
+
     // Call the given success callback function
-    props.onSuccess && props.onSuccess();
-    updateToast(
-      {
-        title: props.messages.success,
-        description: '',
-        variant: 'success',
-        duration: 3000,
-      },
-      id
-    );
+    toast.success(promisePropToToast(config.success, receipt), id);
+    config.onSuccess && config.onSuccess(receipt);
   } catch (e) {
-    // Call the given callback function
-    props.onError && props.onError(e);
-    // Will be shown when the user rejects transaction or another error occurs
-    updateToast(
-      {
-        title: props.messages.error,
-        description: '',
-        variant: 'error',
-        duration: 3000,
-      },
-      id
-    );
+    console.error(e);
+    toast.error(promisePropToToast(config.error, e), id);
+    config.onError && config.onError(e);
+  } finally {
+    config.onFinish && config.onFinish();
   }
-  return {
-    id: id,
-  };
-}
+
+  config.onFinish && config.onFinish();
+
+  return id;
+};
 
 /**
- * @returns An object containing the toasts, a function to show a toast, a function to show a promise toast and a function to dismiss a specific toast
+ * @returns The current state of the active toasts, and a function to add a new toast
  */
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
@@ -368,9 +353,7 @@ function useToast() {
   return {
     ...state,
     toast,
-    promise,
-    dismiss: (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
   };
 }
 
-export { useToast, toast, promise, contractTransaction };
+export { useToast, toast };

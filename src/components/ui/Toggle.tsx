@@ -15,10 +15,9 @@
  */
 
 import * as React from 'react';
+import { cn } from '@/src/lib/utils';
 import * as TogglePrimitive from '@radix-ui/react-toggle';
 import { VariantProps, cva } from 'class-variance-authority';
-
-import { cn } from '@/src/lib/utils';
 
 // Define custom toggle styling and variants using class-variance-authority
 const toggleVariants = cva(

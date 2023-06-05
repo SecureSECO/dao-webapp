@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   Select,
   SelectContent,
@@ -17,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/Select';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Select> = {
   tags: ['autodocs'],

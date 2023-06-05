@@ -7,8 +7,21 @@
  */
 
 export const CONFIG = {
-  VERIFICATION_API_URL: 'http://localhost:43210/api',
+  VERIFICATION_API_URL:
+    'https://securesecodao-api.herokuapp.com/verification_api',
   SEARCHSECO_API_URL: 'http://localhost:25566/api',
-  DIAMOND_ADDRESS: '0xD3C63852E9EF1Dbd7dDc7C2F8587F5133B769814',
+  DIAMOND_ADDRESS: '0xAF0A837d2c709d33eDfd1439E3E0BBc9AC18606B',
   PREFERRED_NETWORK_ID: 80001,
 } as const;
+
+export const DAO_METADATA = {
+  name: 'SecureSECO DAO',
+  description:
+    'Distributed Autonomous Organization for the SecureSECO project.',
+  links: [
+    {
+      name: 'SecureSECO Website',
+      url: 'https://secureseco.org/',
+    },
+  ],
+};

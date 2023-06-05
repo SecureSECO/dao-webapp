@@ -6,8 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Stamp } from '@plopmenz/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
 import { addDays } from 'date-fns';
+import { BigNumber } from 'ethers';
 
 import { MembershipStatusView } from './MembershipStatus';
 
@@ -19,8 +21,28 @@ const meta: Meta<typeof MembershipStatusView> = {
 export default meta;
 type Story = StoryObj<typeof MembershipStatusView>;
 
+const now = new Date();
+
+const expiredStamp: Stamp = [
+  'github',
+  '0x000000',
+  [BigNumber.from(Math.round(addDays(now, -1000).getTime() / 1000))],
+];
+
+const almostExpiredStamp: Stamp = [
+  'github',
+  '0x000000',
+  [BigNumber.from(Math.round(addDays(now, -50).getTime() / 1000))],
+];
+
+const goodStamp: Stamp = [
+  'github',
+  '0x000000',
+  [BigNumber.from(Math.round(addDays(now, -1).getTime() / 1000))],
+];
+
 export const NotConnected: Story = {
-  args: { isConnected: false, verification: null },
+  args: { isConnected: false },
 };
 
 export const IncorrectNetworkCanNotSwitch: Story = {
@@ -31,34 +53,65 @@ export const IncorrectNetworkCanSwitch: Story = {
   args: {
     isConnected: true,
     chainId: 0.01,
-    switchNetwork: (n) => {
-      console.log(n);
-    },
+    switchNetwork: undefined,
   },
 };
 
 export const NotMember: Story = {
-  args: { isConnected: true, verification: null },
+  args: { isConnected: true, stamps: [] },
 };
 
 export const AlmostExpired: Story = {
   args: {
     isConnected: true,
-    verification: [{ expiration: addDays(new Date(), -10) }],
+    stamps: [almostExpiredStamp],
+    isVerified() {
+      return {
+        expired: false,
+        preCondition: true,
+        verified: true,
+        timeLeftUntilExpiration: 1,
+      };
+    },
+    getThresholdForTimestamp() {
+      return BigNumber.from(60);
+    },
   },
 };
 
 export const Expired: Story = {
   args: {
     isConnected: true,
-    verification: [{ expiration: addDays(new Date(), 10) }],
+    stamps: [expiredStamp],
+    isVerified() {
+      return {
+        expired: true,
+        preCondition: true,
+        verified: false,
+        timeLeftUntilExpiration: -1,
+      };
+    },
+    getThresholdForTimestamp() {
+      return BigNumber.from(60);
+    },
   },
 };
 
 export const AllOk: Story = {
   args: {
     isConnected: true,
-    verification: [{ expiration: addDays(new Date(), -100) }],
+    stamps: [goodStamp],
+    isVerified() {
+      return {
+        expired: false,
+        preCondition: true,
+        verified: true,
+        timeLeftUntilExpiration: 60 * 86400,
+      };
+    },
+    getThresholdForTimestamp() {
+      return BigNumber.from(60);
+    },
   },
   decorators: [
     (Story) => (

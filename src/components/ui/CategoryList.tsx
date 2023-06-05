@@ -10,10 +10,9 @@
  * Component that displays a list of the specified catgories, separated by horizontal lines.
  */
 
+import React, { ReactNode } from 'react';
 import { cn } from '@/src/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';
-import React from 'react';
-import { ReactNode } from 'react';
 
 export type Category = {
   title: string;
@@ -66,7 +65,9 @@ const CategoryList = React.forwardRef<HTMLDivElement, CategoryListProps>(
                 key={item.label}
                 className="flex flex-row justify-between gap-x-2"
               >
-                <p className="text-popover-foreground/80">{item.label}</p>
+                <p className="text-left text-popover-foreground/80">
+                  {item.label}
+                </p>
                 <p className="text-primary-highlight">{item.value}</p>
               </div>
             ))}

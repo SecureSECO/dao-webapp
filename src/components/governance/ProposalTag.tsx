@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { actionToName, ACTIONS } from '@/src/lib/constants/actions';
-import { countdownText } from '@/src/lib/utils/date';
-import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
-import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
-import { cva, VariantProps } from 'class-variance-authority';
-import { BigNumber } from 'ethers';
 import React from 'react';
+import { ACTIONS, actionToName } from '@/src/lib/constants/actions';
+import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
+import { countdownText } from '@/src/lib/utils/date';
+import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { VariantProps, cva } from 'class-variance-authority';
+import { BigNumber } from 'ethers';
 import { IconType } from 'react-icons';
 import {
   HiOutlineClock,

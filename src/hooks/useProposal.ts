@@ -6,20 +6,25 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
+import { ProposalChangeParamAction } from '@/src/components/proposal/actions/ChangeParamAction';
+import { ProposalMergeAction } from '@/src/components/proposal/actions/MergeAction';
+import { ProposalMintAction } from '@/src/components/proposal/actions/MintAction';
+import { ProposalWithdrawAction } from '@/src/components/proposal/actions/WithdrawAction';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
 import { ACTIONS } from '@/src/lib/constants/actions';
-import { getErrorMessage } from '@/src/lib/utils';
 import {
-  VoteOption,
-  Proposal,
-  IPartialVotingProposalFacet,
-  ProposalStatus,
   AddressVotes,
+  DiamondGovernanceClient,
   IPartialVotingFacet,
+  IPartialVotingProposalFacet,
+  Proposal,
+  ProposalStatus,
+  VoteOption,
 } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber, ContractTransaction, constants } from 'ethers';
-import { useEffect, useState } from 'react';
+import { BigNumber, ContractTransaction } from 'ethers';
+import { useAccount } from 'wagmi';
 
 export type CanVote = {
   Yes: boolean;
@@ -46,7 +51,7 @@ export type UseProposalProps = {
 /**
  * Dummy mint tokens action
  */
-export const dummyMintAction = {
+export const dummyMintAction: ProposalMintAction = {
   method: ACTIONS.mint_tokens.method,
   interface: ACTIONS.mint_tokens.interface,
   params: {
@@ -62,23 +67,55 @@ export const dummyMintAction = {
 };
 
 /**
- * Dummy withdraw assets action
- * @note Not yet correct
+ * Dummy withdraw assets actions.
+ * Includes a variant for each token type.
  */
-export const dummyWithdrawAction = {
-  method: ACTIONS.withdraw_assets.method,
-  interface: ACTIONS.withdraw_assets.interface,
-  params: {
-    _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
-    _amount: BigNumber.from('0x4563918244F40000'),
-    _tokenAddress: constants.AddressZero,
+export const dummyWithdrawActions: ProposalWithdrawAction[] = [
+  {
+    interface: ACTIONS.withdraw_assets.interface,
+    method: ACTIONS.withdraw_assets.method.native,
+    params: {
+      _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      _value: BigNumber.from('0x4563918244F40000'),
+    },
   },
-};
+  {
+    interface: ACTIONS.withdraw_assets.interface,
+    method: ACTIONS.withdraw_assets.method.erc20,
+    params: {
+      _from: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+      _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      _amount: BigNumber.from('0x4563918244F40000'),
+      _contractAddress: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa', // Token address of WETH on mumbai
+    },
+  },
+  {
+    interface: ACTIONS.withdraw_assets.interface,
+    method: ACTIONS.withdraw_assets.method.erc721,
+    params: {
+      _from: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+      _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      _tokenId: BigNumber.from(1),
+      _contractAddress: '0x042FF2201D1015730d2414DaBF5d627e3e69e7CA', // Test11 NFT on mumbai
+    },
+  },
+  {
+    interface: ACTIONS.withdraw_assets.interface,
+    method: ACTIONS.withdraw_assets.method.erc1155,
+    params: {
+      _from: '0x23868C8ed12EAD37ef76457e7B6443192e231442',
+      _to: '0x2B868C8ed12EAD37ef76457e7B6443192e231442',
+      _tokenId: BigNumber.from(1),
+      _amount: BigNumber.from(1),
+      _contractAddress: '0x29Ba2441Cc4a5Da648f9abb284bc99FDF94dc446', // Some ERC1155 on mumbai
+    },
+  },
+];
 
 /**
  * Dummy merge pull request action
  */
-export const dummyMergeAction = {
+export const dummyMergeAction: ProposalMergeAction = {
   method: ACTIONS.merge_pr.method,
   interface: ACTIONS.merge_pr.interface,
   params: {
@@ -90,15 +127,12 @@ export const dummyMergeAction = {
 
 /**
  * Dummy mint tokens action
- * @note Not yet correct
  */
-export const dummyChangeParamsAction = {
-  method: ACTIONS.change_param.method,
-  interface: ACTIONS.change_param.interface,
+export const dummyChangeParamsAction: ProposalChangeParamAction = {
+  method: 'setMaxSingleWalletPower(uint32)',
+  interface: 'IPartialVotingProposalFacet',
   params: {
-    _plugin: 'TokenVoting',
-    _param: 'supportThreshold',
-    _value: '1',
+    _maxSingleWalletPower: 100000,
   },
 };
 
@@ -171,7 +205,17 @@ export const useProposal = ({
   address,
   useDummyData = false,
 }: UseProposalProps): UseProposalData => {
+  /*
+    The anonProposal (anonymous proposal) is shown when no wallet is connected
+    The regular proposal is shown when a wallet is connected
+    This was necessary because there was an issue where if the same state
+    variable was used for both, somehow the signer in the proposal would stick
+    to the zero address, even after a signer of connected wallet becomes available and 
+    the proposal was refreshed. Possibly due to delayed state updates
+  */
   const [proposal, setProposal] = useState<Proposal | null>(null);
+  const [anonProposal, setAnonProposal] = useState<Proposal | null>(null);
+
   const [canExecute, setCanExecute] = useState<boolean>(false);
   const [canVote, setCanVote] = useState<CanVote>({
     Yes: false,
@@ -181,10 +225,22 @@ export const useProposal = ({
   const [votes, setVotes] = useState<AddressVotes[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { client } = useDiamondSDKContext();
-  const { votingPower } = useVotingPower({ address });
+  const { anonClient, client } = useDiamondSDKContext();
+  const { isConnected } = useAccount();
+  const { proposalVotingPower } = useVotingPower({
+    address,
+    proposal: proposal ?? undefined,
+  });
 
-  const fetchProposal = async () => {
+  /**
+   * Fetch a proposal from the SDK
+   * @param client Diamond SDK client
+   * @param anon Whether or not an anonymous client is being used
+   */
+  const fetchProposal = async (
+    client?: DiamondGovernanceClient,
+    anon = false
+  ) => {
     if (!client) return;
     if (!id) {
       setError('Proposal not found');
@@ -196,10 +252,15 @@ export const useProposal = ({
       const daoProposal: Proposal = await client.sugar.GetProposal(+id);
 
       if (daoProposal) {
-        setProposal(daoProposal);
+        if (anon) setAnonProposal(daoProposal);
+        else setProposal(daoProposal);
         setError(null);
         setLoading(false);
         fetchVotes(daoProposal);
+        if (!anon) {
+          checkCanExecute(daoProposal);
+          checkCanVote(daoProposal);
+        }
       } else {
         setError('Proposal not found');
         setLoading(false);
@@ -207,7 +268,9 @@ export const useProposal = ({
       }
     } catch (e) {
       console.error(e);
-      setError(getErrorMessage(e));
+      if (e instanceof Error && e.message === 'Invalid id')
+        setError('Proposal not found');
+      else setError('An error occurred');
       setLoading(false);
     }
   };
@@ -222,7 +285,7 @@ export const useProposal = ({
     }
   };
 
-  //** Set dummy data for development without querying Aragon API */
+  //** Set dummy data for development without querying SDK */
   const setDummyData = () => {
     setLoading(false);
     setError(null);
@@ -232,53 +295,57 @@ export const useProposal = ({
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (client) setLoading(true);
-    fetchProposal();
-  }, [client, id]);
+    fetchProposal(client ?? anonClient, !client);
+  }, [client, anonClient, id]);
+
+  const checkCanExecute = async (proposal: Proposal) => {
+    // Fetch if the current proposal can be executed
+    try {
+      const canExecuteData = await proposal.CanExecute();
+      setCanExecute(canExecuteData);
+    } catch (e) {
+      console.error('Error fetching canExecute', e);
+    }
+  };
+
+  const checkCanVote = async (proposal: Proposal) => {
+    if (!proposalVotingPower) return;
+
+    try {
+      const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
+      const canVoteData = await Promise.all(
+        values.map((vote) => proposal.CanVote(vote, proposalVotingPower))
+      );
+      setCanVote({
+        Yes: canVoteData[1],
+        No: canVoteData[2],
+        Abstain: canVoteData[0],
+      });
+    } catch (e) {
+      console.error('Error fetching canVote', e);
+    }
+  };
 
   useEffect(() => {
-    const checkCanExecute = async () => {
-      if (!proposal) return;
-      // Fetch if the current proposal can be executed
-      try {
-        const canExecuteData = await proposal.CanExecute();
-        setCanExecute(canExecuteData);
-      } catch (e) {
-        console.error('Error fetching canExecute', e);
-      }
-    };
-
-    const checkCanVote = async () => {
-      if (!proposal || !address || !client) return;
-      try {
-        const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
-        const canVoteData = await Promise.all(
-          values.map((vote) => {
-            return proposal.CanVote(vote, votingPower);
-          })
-        );
-        setCanVote({
-          Yes: canVoteData[1],
-          No: canVoteData[2],
-          Abstain: canVoteData[0],
-        });
-      } catch (e) {
-        console.error('Error fetching canVote', e);
-      }
-    };
-
-    checkCanExecute();
-    checkCanVote();
-  }, [proposal]);
+    if (!proposal) return;
+    checkCanExecute(proposal);
+    checkCanVote(proposal);
+  }, [proposalVotingPower]);
 
   return {
     loading,
     error,
-    proposal,
+    proposal: isConnected ? proposal : anonProposal,
     canExecute,
     canVote,
     votes,
     // Only allow refetching if not using dummy data
-    refetch: () => (!useDummyData ? fetchProposal() : void 0),
+    refetch: () => {
+      if (proposal) {
+        proposal.Refresh();
+        checkCanExecute(proposal);
+        checkCanVote(proposal);
+      }
+    },
   };
 };

@@ -7,9 +7,16 @@
  */
 
 import { useState } from 'react';
-import { Address, AddressLength } from '@/src/components/ui/Address';
+import { Address } from '@/src/components/ui/Address';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/src/components/ui/Dropdown';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Link } from '@/src/components/ui/Link';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
@@ -17,12 +24,14 @@ import { Skeleton } from '@/src/components/ui/Skeleton';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
 import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
+import { ACTIONS } from '@/src/lib/constants/actions';
 import { TransferType } from '@aragon/sdk-client';
 import { format } from 'date-fns';
 import {
   HiArrowSmallRight,
   HiArrowsRightLeft,
   HiCircleStack,
+  HiInboxArrowDown,
 } from 'react-icons/hi2';
 
 /**
@@ -99,9 +108,10 @@ const DaoTokensList = ({
             <span className="text-popover-foreground/80">
               <Address
                 address={balance.address ?? '-'}
-                maxLength={AddressLength.Small}
-                hasLink={true}
-                showCopy={true}
+                length="sm"
+                hasLink
+                showCopy
+                replaceYou
               />
             </span>
           </div>
@@ -169,9 +179,10 @@ export const DaoTransfersList = ({
               <div className="text-popover-foreground/80">
                 <Address
                   address={daoTransferAddress(transfer)}
-                  maxLength={AddressLength.Small}
-                  hasLink={true}
-                  showCopy={true}
+                  length="sm"
+                  hasLink
+                  showCopy
+                  replaceYou
                 />
               </div>
             </div>
@@ -181,6 +192,36 @@ export const DaoTransfersList = ({
     </div>
   );
 };
+
+export const NewTransferDropdown = () => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button label="New transfer" />
+    </DropdownMenuTrigger>
+    <DropdownMenuContent>
+      <DropdownMenuGroup>
+        <DropdownMenuItem className="p-0">
+          <Link
+            className="w-full justify-start px-2 py-1"
+            variant="ghost"
+            to="/finance/new-deposit"
+            label="New deposit"
+            icon={HiInboxArrowDown}
+          />
+        </DropdownMenuItem>
+        <DropdownMenuItem className="p-0">
+          <Link
+            className="w-full justify-start px-2 py-1"
+            variant="ghost"
+            to="/governance/new-proposal"
+            label="New withdraw"
+            icon={ACTIONS.withdraw_assets.icon}
+          />
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
 
 const daoTransferAddress = (transfer: DaoTransfer): string => {
   if (!transfer) return '-';
@@ -210,10 +251,7 @@ const Finance = () => {
 
   return (
     <div className="space-y-6">
-      <HeaderCard
-        title="Finance"
-        aside={<Link to="/governance/new-proposal" label="New transfer" />}
-      />
+      <HeaderCard title="Finance" aside={<NewTransferDropdown />} />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <MainCard
           header={

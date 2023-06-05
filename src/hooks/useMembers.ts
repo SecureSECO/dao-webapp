@@ -6,11 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { getErrorMessage } from '@/src/lib/utils';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
 
 type UseMembersProps = {
   useDummyData?: boolean;
@@ -46,7 +46,7 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
   const [memberCount, setMemberCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { client } = useDiamondSDKContext();
+  const { anonClient } = useDiamondSDKContext();
 
   /**
    * Fetch balances for a list of addresses
@@ -55,11 +55,11 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
    * @see Member for the type of object returned in the list
    */
   const fetchBalances = async (addressList: string[]): Promise<Member[]> => {
-    if (!client) throw new Error('Client not set');
+    if (!anonClient) throw new Error('Client not set');
     return Promise.all(
       addressList.map(async (address) => {
         try {
-          const contract = await client.pure.IERC20();
+          const contract = await anonClient.pure.IERC20();
           const bal = await contract.balanceOf(address);
           return {
             address,
@@ -97,7 +97,7 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
         daoMembers.sort((a, b) => {
           if (a.bal === null) return 1;
           if (b.bal === null) return -1;
-          return b.bal.sub(a.bal).toNumber();
+          return b.bal.gt(a.bal) ? 1 : b.bal.lt(a.bal) ? -1 : 0;
         });
         // If a limit is set, only return that many members (with the highest balance)
         if (limit) setMembers(daoMembers.splice(0, limit));
@@ -124,9 +124,9 @@ export const useMembers = (props?: UseMembersProps): UseMembersData => {
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
-    if (!client) return;
-    fetchMembers(client);
-  }, [client]);
+    if (!anonClient) return;
+    fetchMembers(anonClient);
+  }, [anonClient]);
 
   /**
    * Check if an address is a member of the DAO

@@ -6,26 +6,28 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {
-  useForm,
-  Controller,
-  FieldErrors,
-  UseFormGetValues,
-  useFieldArray,
-} from 'react-hook-form';
 import { Button } from '@/src/components/ui/Button';
-import { HiPlus, HiXMark } from 'react-icons/hi2';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
-import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
 import { Textarea } from '@/src/components/ui/Textarea';
-import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { TextareaWYSIWYG } from '@/src/components/ui/TextareaWYSIWYG';
+import { UrlPattern } from '@/src/lib/constants/patterns';
+import { IsEmptyOrOnlyWhitespace } from '@/src/lib/utils';
 import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
 import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
-import { UrlPattern } from '@/src/lib/constants/patterns';
+import {
+  Controller,
+  FieldErrors,
+  UseFormGetValues,
+  UseFormSetError,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form';
+import { HiPlus, HiXMark } from 'react-icons/hi2';
 
 export interface ProposalFormMetadata {
   title: string;
@@ -38,7 +40,7 @@ const emptyDataStep1: ProposalFormMetadata = {
   title: '',
   description: '',
   body: '',
-  resources: [{ name: '', url: '' }],
+  resources: [{ name: 'Place for discussion', url: '' }],
 };
 
 export const Metadata = () => {
@@ -66,6 +68,9 @@ export const Metadata = () => {
   });
 
   const onSubmit = (data: ProposalFormMetadata) => {
+    if (!validateOnSubmit(data, setError)) {
+      return;
+    }
     setDataStep1(data);
     setStep(2);
   };
@@ -90,7 +95,16 @@ export const Metadata = () => {
           <Label htmlFor="title">Title</Label>
           <ErrorWrapper name="Title" error={errors.title}>
             <Input
-              {...register('title', { required: true })}
+              {...register('title', {
+                required: true,
+                validate: {
+                  maxlength: (v) =>
+                    v.length <= 140 ||
+                    'Title too long (at most 140 characters)',
+                  whitespace: (v) =>
+                    !IsEmptyOrOnlyWhitespace(v) || 'Please provide a title',
+                },
+              })}
               type="text"
               placeholder="Title"
               id="title"
@@ -104,7 +118,17 @@ export const Metadata = () => {
           <Label htmlFor="description">Description</Label>
           <ErrorWrapper name="Description" error={errors.description}>
             <Textarea
-              {...register('description', { required: true })}
+              {...register('description', {
+                required: true,
+                validate: {
+                  maxlength: (v) =>
+                    v.length <= 512 ||
+                    'Title too long (at most 512 characters)',
+                  whitespace: (v) =>
+                    !IsEmptyOrOnlyWhitespace(v) ||
+                    'Please provide a description',
+                },
+              })}
               placeholder="Description"
               id="description"
               className="..."
@@ -140,20 +164,25 @@ export const Metadata = () => {
           </ErrorWrapper>
         </div>
         <fieldset className="space-y-1">
-          <Label htmlFor="resources">Resources</Label>
-          {resources.map((field, index) => (
-            <ResourceInput
-              key={field.id}
-              onRemove={() => handleRemoveResource(index)}
-              register={register}
-              getValues={getValues}
-              defaultValue={field}
-              prefix={`resources.${index}`}
-              errors={
-                errors?.resources?.[index] as FieldErrors<ProposalResource>
-              }
-            />
-          ))}
+          <ErrorWrapper
+            name="root.resourceMin"
+            error={errors?.root?.resourceMin as any}
+            className="space-y-1"
+          >
+            <Label htmlFor="resources">Resources</Label>
+            {resources.map((field, index) => (
+              <ResourceInput
+                key={field.id}
+                onRemove={() => handleRemoveResource(index)}
+                register={register}
+                getValues={getValues}
+                prefix={`resources.${index}`}
+                errors={
+                  errors?.resources?.[index] as FieldErrors<ProposalResource>
+                }
+              />
+            ))}
+          </ErrorWrapper>
           <Button
             onClick={handleAddResource}
             type="button"
@@ -173,14 +202,12 @@ export const Metadata = () => {
 const ResourceInput = ({
   onRemove,
   getValues,
-  defaultValue,
   register,
   prefix,
   errors,
 }: {
   onRemove: () => void;
   getValues: UseFormGetValues<ProposalFormMetadata>;
-  defaultValue: { name: string; url: string };
   register: any;
   prefix: `resources.${number}`;
   errors: FieldErrors<ProposalResource> | undefined;
@@ -191,12 +218,14 @@ const ResourceInput = ({
         <ErrorWrapper name="Name" error={errors?.name}>
           <Input
             {...register(`${prefix}.name`, {
-              validate: (v: any) => {
-                return (
-                  !getValues(`${prefix}.url`) ||
-                  Boolean(v) ||
-                  'You must enter a name'
-                );
+              validate: {
+                ifUrlAlsoName: (v: any) => {
+                  return (
+                    !getValues(`${prefix}.url`) ||
+                    Boolean(v) ||
+                    'You must enter a name'
+                  );
+                },
               },
             })}
             type="text"
@@ -214,12 +243,14 @@ const ResourceInput = ({
                   value: UrlPattern,
                   message: 'Invalid URL',
                 },
-                validate: (v: any) => {
-                  return (
-                    !getValues(`${prefix}.name`) ||
-                    Boolean(v) ||
-                    'You must enter a URL'
-                  );
+                validate: {
+                  ifNameAlsoUrl: (v: any) => {
+                    return (
+                      !getValues(`${prefix}.name`) ||
+                      Boolean(v) ||
+                      'You must enter a URL'
+                    );
+                  },
                 },
               })}
               type="text"
@@ -239,3 +270,23 @@ const ResourceInput = ({
     </div>
   );
 };
+
+/*
+ * @returns true if form is valid, false if it is invalid
+ * */
+function validateOnSubmit(
+  data: ProposalFormMetadata,
+  setError: UseFormSetError<ProposalFormMetadata>
+): boolean {
+  // root.resourceMin Validate at least 1 resource
+  const filledResources = data.resources.filter((x) => x.name !== '');
+  if (filledResources.length === 0) {
+    setError('root.resourceMin', {
+      type: 'custom',
+      message: 'Please add at least one resource for a place for discussion',
+    });
+    return false;
+  }
+
+  return true;
+}

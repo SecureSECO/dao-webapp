@@ -14,6 +14,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { wagmiClientDecorator } from '../src/lib/decorators/wagmiClientDecorator';
 import { AragonSDKWrapper } from '../src/context/AragonSDK';
 import { DiamondSDKWrapper } from '../src/context/DiamondGovernanceSDK';
+import { TooltipProvider } from '../src/components/ui/Tooltip';
 
 const preview: Preview = {
   parameters: {
@@ -51,7 +52,9 @@ const globalDecorator = (Story, context) => {
       <DiamondSDKWrapper>
         {/* MemoryRouter mimics a BrowserRouter, but without actually changing the URL in the browser, for testing */}
         <MemoryRouter>
-          <Story />
+          <TooltipProvider>
+            <Story />
+          </TooltipProvider>
         </MemoryRouter>
       </DiamondSDKWrapper>
     </AragonSDKWrapper>

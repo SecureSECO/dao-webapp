@@ -11,33 +11,37 @@
  * and allow the user to submit their own vote if the proposal is active (and they are eligible to vote).
  */
 
+import { useState } from 'react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/Accordion';
-import { Progress } from '@/src/components/ui/Progress';
-import { Button } from '@/src/components/ui/Button';
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import { Address, AddressLength } from '@/src/components/ui/Address';
-import { calcBigNumberPercentage } from '@/src/lib/utils';
-import { contractTransaction, toast } from '@/src/hooks/useToast';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
+import { Address } from '@/src/components/ui/Address';
 import {
+  ConditionalButton,
+  ConnectWalletWarning,
+  InsufficientRepWarning,
+  Warning,
+} from '@/src/components/ui/ConditionalButton';
+import { Progress } from '@/src/components/ui/Progress';
+import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
+import TokenAmount from '@/src/components/ui/TokenAmount';
+import { CanVote } from '@/src/hooks/useProposal';
+import { toast } from '@/src/hooks/useToast';
+import { useVotingPower } from '@/src/hooks/useVotingPower';
+import { TOKENS } from '@/src/lib/constants/tokens';
+import { calcBigNumberPercentage } from '@/src/lib/utils';
+import {
+  AddressVotes,
+  Proposal,
   ProposalStatus,
   VoteOption,
-  Proposal,
-  AddressVotes,
 } from '@plopmenz/diamond-governance-sdk';
-import { CanVote } from '@/src/hooks/useProposal';
 import { BigNumber } from 'ethers';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-import { useVotingPower } from '@/src/hooks/useVotingPower';
-import InsufficientRepWarning from '@/src/components/ui/InsufficientRepWarning';
-import { TOKENS } from '@/src/lib/constants/tokens';
-import TokenAmount from '@/src/components/ui/TokenAmount';
 
 type VoteFormData = {
   vote_option: string;
@@ -119,38 +123,38 @@ const VotesContentActive = ({
 }) => {
   const { handleSubmit, watch, control } = useForm<VoteFormData>();
   const { isConnected, address } = useAccount();
-  const { getProposalVotingPower, votingPower } = useVotingPower({ address });
+  const [isVoting, setIsVoting] = useState(false);
+  const { getProposalVotingPower, votingPower } = useVotingPower({
+    address,
+  });
+  const hasVoted = votes.some((v) => v.address === address);
 
   const onSubmitVote: SubmitHandler<VoteFormData> = async (data) => {
     try {
       // Fetch most recent voting power, to vote with all available rep
       const votingPower = await getProposalVotingPower(proposal);
       if (votingPower.lte(0)) {
-        return toast({
-          variant: 'error',
+        return toast.error({
           title: 'You do not have any voting power',
         });
       }
-      contractTransaction(
+      setIsVoting(true);
+      toast.contractTransaction(
         () =>
           proposal.Vote(
             VoteOption[data.vote_option as VoteOptionString],
             votingPower
           ),
         {
-          messages: {
-            error: 'Error submitting vote',
-            success: 'Vote submitted!',
-          },
-          onSuccess: () => {
-            refetch();
-          },
+          error: 'Error submitting vote',
+          success: 'Vote submitted!',
+          onSuccess: () => refetch(),
+          onFinish: () => setIsVoting(false),
         }
       );
     } catch (e) {
       console.error(e);
-      toast({
-        variant: 'error',
+      toast.error({
         title: 'Error submitting vote',
         description: 'Unable to get voting power',
       });
@@ -199,20 +203,34 @@ const VotesContentActive = ({
 
       {/* Button is disabled if the user cannot vote for the currently selected voting option */}
       <div className="ml-6 flex flex-row items-center gap-x-4">
-        <Button disabled={!userCanVote || !isConnected} type="submit">
-          {!userCanVote && isConnected && votingPower.gt(0) ? (
+        <ConditionalButton
+          disabled={!userCanVote || isVoting}
+          conditions={[
+            {
+              when: !isConnected,
+              content: <ConnectWalletWarning action="to vote" />,
+            },
+            {
+              when: votingPower.lte(0),
+              content: <InsufficientRepWarning action="to vote" />,
+            },
+            {
+              when: hasVoted,
+              content: (
+                <Warning>You have already voted on this proposal</Warning>
+              ),
+            },
+          ]}
+          type="submit"
+        >
+          {hasVoted && isConnected && votingPower.gt(0) ? (
             'Vote submitted'
           ) : (
             <span className="ml-1 inline-block ">
               {'Vote ' + (voteOption ?? 'yes')}
             </span>
           )}
-        </Button>
-        {!isConnected ? (
-          <ConnectWalletWarning action="to vote" />
-        ) : (
-          votingPower.lte(0) && <InsufficientRepWarning action="to vote" />
-        )}
+        </ConditionalButton>
       </div>
     </form>
   );
@@ -235,10 +253,16 @@ const VotesContentOption = ({
   const voteValueString = VoteOption[voteOption];
 
   const voteValueLower = voteValueString.toLowerCase() as VoteOptionStringLower;
-  const voteTally = proposal.data.tally[voteValueLower];
   const filteredVotes = votes.filter(
     (vote) => vote.votes[0].option === voteOption
   );
+  const voteTally =
+    voteOption === VoteOption.Abstain
+      ? filteredVotes.reduce(
+          (acc, vote) => acc.add(vote.votes[0].amount),
+          BigNumber.from(0)
+        )
+      : proposal.data.tally[voteValueLower];
   const percentage = calcBigNumberPercentage(voteTally, totalVotingWeight);
 
   return (
@@ -265,21 +289,15 @@ const VotesContentOption = ({
           </div>
           <Progress value={percentage} size="sm" />
         </AccordionTrigger>
-        <AccordionContent className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
+        <AccordionContent className="grid grid-cols-1 gap-x-4 gap-y-2 pt-2 sm:grid-cols-2">
           {filteredVotes.length > 0 ? (
             filteredVotes.map((vote) => (
               <div
                 key={vote.address}
-                className="grid grid-cols-2 items-center gap-x-4 rounded-full border border-border px-3 py-1"
+                className="flex flex-row items-center justify-between gap-x-4 rounded-full border border-border px-3 py-1"
               >
-                <Address
-                  address={vote.address}
-                  maxLength={AddressLength.Small}
-                  hasLink={true}
-                  showCopy={false}
-                  replaceYou={false}
-                />
-                <div className="grid grid-cols-4 text-right opacity-80">
+                <Address address={vote.address} length="sm" hasLink />
+                <div className="flex flex-row items-center gap-x-4 text-right opacity-80">
                   {/* The vote.votes is an array of how much was voted for each option, because the underlying 
                       smart contract implements partial voting, but this is not supported in the web-app
                       meaning realistically, the vote.votes array will only ever have 1 entry */}

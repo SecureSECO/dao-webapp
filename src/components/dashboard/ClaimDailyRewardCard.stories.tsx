@@ -7,19 +7,14 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import ConnectWalletWarning from '@/src/components/ui/ConnectWalletWarning';
 
-const meta = {
-  component: ConnectWalletWarning,
-  tags: ['autodocs'],
-  argTypes: {},
-} satisfies Meta<typeof ConnectWalletWarning>;
+import { ClaimDailyRewardCard } from './ClaimDailyRewardCard';
+
+const meta: Meta<typeof ClaimDailyRewardCard> = {
+  component: ClaimDailyRewardCard,
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ClaimDailyRewardCard>;
 
-export const Primary: Story = {
-  args: {
-    action: 'to vote',
-  },
-};
+export const Primary: Story = {};

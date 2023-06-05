@@ -13,64 +13,114 @@
  */
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useNetwork, useSigner, useSwitchNetwork } from 'wagmi';
-import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
-import { Contract, ethers } from 'ethers';
+import { actionNames } from '@/src/lib/constants/actions';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
+import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
+import { ethers } from 'ethers';
+import { useSigner } from 'wagmi';
 
 type SDKContext = {
+  /** Signed client to be used in requests that require a wallet to be connected */
   client?: DiamondGovernanceClient;
-  repTokenContract?: Contract;
+  /** Anonymous client to be used in requests that do not require  */
+  anonClient?: DiamondGovernanceClient;
+  daoAddress?: string;
+  secoinAddress?: string;
 };
 
 const DiamondSDKContext = createContext<SDKContext>({});
 const diamondAddress = CONFIG.DIAMOND_ADDRESS;
 
+/**
+ * Add the identifiers of change_param actions to the actionNames object
+ * such that they will be properly mapped to the change_param action type
+ */
+const updateActionNames = async (client: DiamondGovernanceClient) => {
+  // Each variable that can be changed in the DAO has a unique interface + method combination.
+  // All of these should be mapped to the change_param action type.
+  // The method names follow a general pattern: set<variableName>(<variableType>).
+
+  const variables = await client.sugar.GetVariables();
+  variables.forEach((v) => {
+    v.variables.forEach((vv) => {
+      actionNames[
+        `${v.interfaceName}.set${vv.variableName}(${vv.variableType})`
+      ] = 'change_param';
+    });
+  });
+};
+
 export function DiamondSDKWrapper({ children }: any): JSX.Element {
+  const [anonClient, setAnonClient] = useState<
+    DiamondGovernanceClient | undefined
+  >(undefined);
   const [client, setClient] = useState<DiamondGovernanceClient | undefined>(
+    undefined
+  );
+  const [daoAddress, setDaoAddress] = useState<string | undefined>(undefined);
+  const [secoinAddress, setSecoinAddress] = useState<string | undefined>(
     undefined
   );
 
   const signer = useSigner().data || undefined;
 
-  // Make sure the user is on the correct network
-  const network = useSwitchNetwork({
-    chainId: PREFERRED_NETWORK_METADATA.id,
-  });
-  const { chain } = useNetwork();
-  if (
-    chain?.id !== PREFERRED_NETWORK_METADATA.id &&
-    network.switchNetwork &&
-    !network.isLoading
-  ) {
-    network.switchNetwork();
-  }
+  useEffect(() => {
+    // Create client with dummy signer
+    let jsonRpcProvider = new ethers.providers.JsonRpcProvider(
+      PREFERRED_NETWORK_METADATA.rpc,
+      {
+        chainId: PREFERRED_NETWORK_METADATA.id,
+        name: PREFERRED_NETWORK_METADATA.name,
+      }
+    );
+    let dummySigner = jsonRpcProvider.getSigner(
+      '0x0000000000000000000000000000000000000000'
+    );
+    const _anonClient = new DiamondGovernanceClient(
+      diamondAddress,
+      dummySigner
+    );
+    setAnonClient(_anonClient);
+    updateActionNames(_anonClient);
+  }, []);
 
   useEffect(() => {
-    // If no signer is available, use a dummy signer
-    // All operations that actually require a signer should be blocked anwyways
-    if (!signer) {
-      let jsonRpcProvider = new ethers.providers.JsonRpcProvider(
-        'https://rpc.ankr.com/polygon_mumbai',
-        {
-          chainId: PREFERRED_NETWORK_METADATA.id,
-          name: PREFERRED_NETWORK_METADATA.name,
-        }
-      );
-      let dummySigner = jsonRpcProvider.getSigner(
-        '0x0000000000000000000000000000000000000000'
-      );
-      setClient(new DiamondGovernanceClient(diamondAddress, dummySigner));
-      return;
+    // Set signed client when signer is available
+    if (signer) {
+      setClient(new DiamondGovernanceClient(diamondAddress, signer));
+      anonClient?.UpdateSigner(signer);
     }
-    setClient(new DiamondGovernanceClient(diamondAddress, signer));
   }, [signer]);
+
+  useEffect(() => {
+    const getDaoAddress = async () => {
+      if (!anonClient) return;
+      const daoRef = await anonClient.pure.IDAOReferenceFacet();
+      const daoAddressData = await daoRef.dao();
+      setDaoAddress(daoAddressData);
+    };
+
+    const getSecoinAddress = async () => {
+      if (!anonClient) return;
+      const IChangeableTokenContract =
+        await anonClient.pure.IChangeableTokenContract();
+      const monetaryTokenContractAddress =
+        await IChangeableTokenContract.getTokenContractAddress();
+      setSecoinAddress(monetaryTokenContractAddress);
+    };
+
+    getDaoAddress();
+    getSecoinAddress();
+  }, [anonClient]);
 
   return (
     <DiamondSDKContext.Provider
       value={{
         client,
+        anonClient,
+        daoAddress,
+        secoinAddress,
       }}
     >
       {children}
