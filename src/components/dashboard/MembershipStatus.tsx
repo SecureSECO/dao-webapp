@@ -209,7 +209,7 @@ export const MembershipCard = ({
     >
       <div className="flex flex-row items-center gap-x-2">
         <HiOutlineExclamationCircle className="h-7 w-7 shrink-0" />
-        <span className="text-lg">{message}</span>
+        <span className="text-lg leading-4">{message}</span>
       </div>
       {children}
     </Card>

@@ -205,6 +205,7 @@ const VotesContentActive = ({
       <div className="ml-6 flex flex-row items-center gap-x-4">
         <ConditionalButton
           disabled={!userCanVote || isVoting}
+          className="leading-4"
           conditions={[
             {
               when: !isConnected,
