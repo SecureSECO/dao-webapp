@@ -14,17 +14,11 @@ import {
 } from '@/src/components/ui/ConditionalButton';
 import { MainCard } from '@/src/components/ui/MainCard';
 import TokenAmount from '@/src/components/ui/TokenAmount';
-import {
-  useTieredTimeClaimable,
-  useTimeClaimable,
-} from '@/src/hooks/useFacetFetch';
-import { useTier } from '@/src/hooks/useTier';
+import { useTimeClaimable } from '@/src/hooks/useFacetFetch';
 import { toast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { BigNumber } from 'ethers';
 import { HiGift } from 'react-icons/hi2';
-
-import { Progress } from '../ui/Progress';
 
 export const ClaimDailyRewardCard = () => {
   const { data: timeClaimable, loading, error, refetch } = useTimeClaimable();

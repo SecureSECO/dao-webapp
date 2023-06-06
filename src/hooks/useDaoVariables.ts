@@ -15,11 +15,16 @@ import {
 
 import { FetchVariableResult, fetchVariableValue } from './useDaoVariable';
 
+export type UseDaoVariablesValuesData = Record<
+  string,
+  Record<string, FetchVariableResult>
+>;
+
 export type UseDaoVariablesData = {
   loading: boolean;
   error: string | null;
   variables: InterfaceVariables[] | null;
-  values: Record<string, Record<string, FetchVariableResult>> | null;
+  values: UseDaoVariablesValuesData | null;
   refetch: () => void;
 };
 

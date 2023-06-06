@@ -82,7 +82,7 @@ export const MintTokensInput = () => {
         />
       }
     >
-      <div className="grid grid-cols-2 justify-start gap-2">
+      <div className="grid grid-cols-2 justify-start gap-1">
         <Label tooltip="Address of the wallet to receive the tokens">
           Address
         </Label>

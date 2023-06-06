@@ -100,14 +100,16 @@ const parseEndDate = (settings: ProposalFormVotingSettings): Date => {
 };
 
 const addBufferToEnd = (
-  start: Date,
   end: Date,
   settings: ProposalFormVotingSettings,
   minDuration: number | null
 ) => {
   if (settings.start_time_type === 'now' && minDuration !== null) {
-    const duration = (end.getTime() - start.getTime()) / 1000;
-    // duration is less than the min duration (with a 60 second extra buffer), add 3 minutes to the end duration.
+    const start = new Date();
+    //From miliseconds to seconds
+    const duration = Math.round((end.getTime() - start.getTime()) / 1000);
+
+    // If duration is less than the minimum duration (with a 60 second extra buffer), add 3 minutes to the end duration.
     if (duration <= minDuration + 60) {
       return add(end, { minutes: 3 });
     }
@@ -172,7 +174,7 @@ export const Confirmation = () => {
 
     const start = parseStartDate(dataStep2);
     const endRaw = parseEndDate(dataStep2);
-    const end = addBufferToEnd(start, endRaw, dataStep2, minDuration);
+    const end = addBufferToEnd(endRaw, dataStep2, minDuration);
 
     // Send proposal to SDK
     setIsSubmitting(true);

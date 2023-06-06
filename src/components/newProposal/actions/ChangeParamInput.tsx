@@ -31,13 +31,19 @@ import {
 import { useDaoVariable } from '@/src/hooks/useDaoVariable';
 import { useDaoVariables } from '@/src/hooks/useDaoVariables';
 import {
+  DAO_VARIABLES_METADATA,
+  DAO_VARIABLES_TYPES_METADATA,
+} from '@/src/lib/constants/DaoVariablesMetadata';
+import {
   AddressPattern,
   IntegerPattern,
   SignedIntegerPattern,
 } from '@/src/lib/constants/patterns';
-import { isNullOrUndefined } from '@/src/lib/utils';
+import { indexObject, isNullOrUndefined } from '@/src/lib/utils';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
-import { HiCog, HiXMark } from 'react-icons/hi2';
+import { HiCog, HiQuestionMarkCircle, HiXMark } from 'react-icons/hi2';
+
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/Tooltip';
 
 export interface ProposalFormChangeParamData {
   name: 'change_param';
@@ -178,6 +184,16 @@ export const ChangeParamInput = () => {
   const watchParamText = useWatch({ control: control, name: name_param });
   const watchParam = watchPlugin?.variables.find(
     (x) => x.variableName === watchParamText
+  );
+
+  const paramMetadata = indexObject(
+    indexObject(DAO_VARIABLES_METADATA, watchPlugin?.interfaceName),
+    watchParam?.variableName
+  );
+
+  const paramTypeMetadata = indexObject(
+    DAO_VARIABLES_TYPES_METADATA,
+    paramMetadata?.type
   );
 
   // Retrieve value of selected plugin + param
@@ -335,25 +351,51 @@ export const ChangeParamInput = () => {
           </ErrorWrapper>
         </div>
         {watchParam && (
-          <div className="flex flex-row gap-x-2 pt-3">
-            <Card variant="outline" size="sm">
-              <p className="text-xs text-popover-foreground/80">
-                Current value
-              </p>
-              {paramValueLoading ? (
-                <Loading className="h-5 w-5 shrink-0" />
-              ) : (
-                <p className="font-medium">
-                  {paramValueError || !paramValue
-                    ? 'N/A'
-                    : paramValue.toString()}
+          <div className="flex flex-col gap-2 pt-3">
+            <div className="flex flex-row gap-x-2 pt-3">
+              <Card variant="outline" size="sm">
+                <p className="text-xs text-popover-foreground/80">
+                  Current value
                 </p>
-              )}
-            </Card>
-            <Card variant="outline" size="sm">
-              <p className="text-xs text-popover-foreground/80">Value type</p>
-              <p className="font-medium">{watchParam?.variableType}</p>
-            </Card>
+                {paramValueLoading ? (
+                  <Loading className="h-5 w-5 shrink-0" />
+                ) : (
+                  <p className="font-medium">
+                    {paramValueError || !paramValue
+                      ? 'N/A'
+                      : paramValue.toString()}
+                  </p>
+                )}
+              </Card>
+              <Card variant="outline" size="sm">
+                <p className="text-xs flex flex-row gap-x-1 items-center text-popover-foreground/80">
+                  Value type
+                  {paramTypeMetadata && (
+                    <Tooltip>
+                      <TooltipTrigger className="rounded-full hover:cursor-help">
+                        <HiQuestionMarkCircle className="h-3 w-3 shrink-0 text-highlight-foreground/80" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-[400px] font-normal">
+                        {paramTypeMetadata}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                </p>
+                <p className="font-medium lowercase">
+                  {paramMetadata?.type
+                    ? `${watchParam.variableType} (${paramMetadata.type})`
+                    : watchParam.variableType}
+                </p>
+              </Card>
+            </div>
+            {paramMetadata && (
+              <Card variant="outline" size="sm">
+                <p className="text-xs text-popover-foreground/80">
+                  Description
+                </p>
+                <p className="font-medium">{paramMetadata.description}</p>
+              </Card>
+            )}
           </div>
         )}
       </div>
