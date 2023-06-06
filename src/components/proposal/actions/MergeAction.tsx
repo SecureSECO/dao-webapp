@@ -54,7 +54,7 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
             Pull request #{action.params._pull_number}
           </p>
           <a
-            className="flex flex-row items-center gap-x-2 text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
+            className="w-fit flex flex-row items-center gap-x-2 text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
             href={`https://github.com/${action.params._owner}/${action.params._repo}/pull/${action.params._pull_number}`}
             target="_blank"
             rel="noreferrer"
