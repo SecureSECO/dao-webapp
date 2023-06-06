@@ -95,7 +95,11 @@ const Settings = () => {
       {loading ? (
         <Card loading={loading} />
       ) : (
-        <DataTable columns={columns} data={displayData} />
+        <DataTable
+          columns={columns}
+          data={displayData}
+          className="bg-highlight border-transparent"
+        />
       )}
     </div>
   );
