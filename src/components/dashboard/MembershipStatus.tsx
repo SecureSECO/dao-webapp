@@ -128,7 +128,7 @@ export const MembershipStatusView = ({
   const isNotMember = stamps && stamps.length === 0;
   if (isNotMember)
     return (
-      <MembershipCard message="You are not yet a member of this DAO!">
+      <MembershipCard message="You are not yet a member of the DAO!">
         <Link to="/verification" variant="subtle">
           Become member
         </Link>
@@ -209,7 +209,7 @@ export const MembershipCard = ({
     >
       <div className="flex flex-row items-center gap-x-2">
         <HiOutlineExclamationCircle className="h-7 w-7 shrink-0" />
-        <span className="text-lg">{message}</span>
+        <span className="text-lg leading-4">{message}</span>
       </div>
       {children}
     </Card>
