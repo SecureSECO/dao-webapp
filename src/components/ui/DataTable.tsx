@@ -7,6 +7,7 @@
  */
 
 import * as React from 'react';
+import { useState } from 'react';
 import Loading from '@/src/components/icons/Loading';
 import { cn } from '@/src/lib/utils';
 import {
@@ -17,10 +18,10 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Table as TanstackTable } from '@tanstack/table-core';
 import { HiArrowDown, HiArrowUp, HiChevronUpDown } from 'react-icons/hi2';
 
 import { Button } from './Button';
@@ -38,12 +39,14 @@ export const HeaderSortableDecorator = ({
     onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
   >
     {children}
-    {column.getIsSorted() === 'asc' && <HiArrowUp className="ml-2 h-4 w-4" />}
+    {column.getIsSorted() === 'asc' && (
+      <HiArrowUp className="ml-2 h-3 w-3 shrink-0" />
+    )}
     {column.getIsSorted() === 'desc' && (
-      <HiArrowDown className="ml-2 h-4 w-4" />
+      <HiArrowDown className="ml-2 h-3 w-3 shrink-0" />
     )}
     {column.getIsSorted() === false && (
-      <HiChevronUpDown className="ml-2 h-4 w-4" />
+      <HiChevronUpDown className="ml-2 h-4 w-4 shrink-0" />
     )}
   </Button>
 );
@@ -54,22 +57,16 @@ interface DataTableProps<TData, TValue> {
 }
 
 /*
- * Simple hook returning a table. This table can be viewed using DataTableRender.
- * This table can be edited further to support various behaviour such as filtering.
+ * Render a table with support for sorting and filtering.
  */
-export const useDataTable = <TData, TValue>({
-  data,
-  columns,
-}: DataTableProps<TData, TValue>) => {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const table: TanstackTable<TData> = useReactTable({
-    data,
-    columns,
+  const table = useReactTable({
+    ...props,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -80,21 +77,8 @@ export const useDataTable = <TData, TValue>({
     },
   });
 
-  return table;
-};
-
-/*
- * Component for DataTables from the useDataTable hook
- */
-export function DataTableRender<TData>({
-  table,
-  isLoading = false,
-}: {
-  table: TanstackTable<TData>;
-  isLoading?: boolean;
-}) {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md overflow-hidden border border-border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -134,7 +118,7 @@ export function DataTableRender<TData>({
                 colSpan={table.getAllColumns().length}
                 className="h-24 text-center"
               >
-                {isLoading ? <Loading className="w-7 h-7" /> : 'No results.'}
+                No results
               </TableCell>
             </TableRow>
           )}
@@ -142,15 +126,6 @@ export function DataTableRender<TData>({
       </Table>
     </div>
   );
-}
-
-/*
- * Convinient wrapper around useDataTable with DataTableRender.
- * Preferred to be used when the underlying table hook is not needed.
- */
-export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
-  const table = useDataTable(props);
-  return <DataTableRender table={table} />;
 }
 
 const Table = React.forwardRef<
@@ -171,7 +146,11 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn('[&_tr]:border-b', className)} {...props} />
+  <thead
+    ref={ref}
+    className={cn('[&_tr]:border-b border-border', className)}
+    {...props}
+  />
 ));
 TableHeader.displayName = 'TableHeader';
 
@@ -206,7 +185,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
+      'border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
       className
     )}
     {...props}
@@ -221,7 +200,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
+      'h-12 px-4 text-left align-middle leading-4 font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
       className
     )}
     {...props}
@@ -235,7 +214,10 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn('p-4 align-middle [&:has([role=checkbox])]:pr-0', className)}
+    className={cn(
+      'p-4 align-middle [&:has([role=checkbox])]:pr-0 leading-4',
+      className
+    )}
     {...props}
   />
 ));

@@ -6,15 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Card } from '@/src/components/ui/Card';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { InterfaceVariables } from '@plopmenz/diamond-governance-sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
-import {
-  DataTableRender,
-  HeaderSortableDecorator,
-  useDataTable,
-} from '../components/ui/DataTable';
+import { DataTable, HeaderSortableDecorator } from '../components/ui/DataTable';
 import {
   UseDaoVariablesValuesData,
   useDaoVariables,
@@ -87,16 +84,19 @@ const toDisplayData = (
 };
 
 const Settings = () => {
-  const { variables, values } = useDaoVariables({
+  const { variables, values, loading } = useDaoVariables({
     fetchWithValues: true,
   });
   const displayData = toDisplayData(variables, values);
-  const table = useDataTable({ columns: columns, data: displayData });
 
   return (
     <div className="flex flex-col gap-6">
       <HeaderCard title="Settings" />
-      <DataTableRender table={table} />
+      {loading ? (
+        <Card loading={loading} />
+      ) : (
+        <DataTable columns={columns} data={displayData} />
+      )}
     </div>
   );
 };
