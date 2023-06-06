@@ -55,10 +55,8 @@ const dummyProposals: Proposal[] = [
 ];
 
 export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
-  const { useDummyData, status, sorting, order, limit, fromIndex } = Object.assign(
-    defaultProps,
-    props
-  );
+  const { useDummyData, status, sorting, order, limit, fromIndex } =
+    Object.assign(defaultProps, props);
 
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [proposalCount, setProposalCount] = useState<number>(0);

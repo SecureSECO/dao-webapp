@@ -28,7 +28,7 @@ export type PaginationControlsProps = {
   setPageSize: (size: number) => void;
   getPageIndex: () => number;
   setPageIndex: (index: number) => void;
-  getPageCount: () => number;
+  getPageCount: () => number | undefined | null;
 
   //Array of page sizes users can select
   selectablePageSizes?: number[];
@@ -64,7 +64,7 @@ export const PaginationControls = ({
   }, []);
 
   const canNextPage =
-    getPageIndex() < getPageCount() - 1 &&
+    (getPageCount() ? getPageIndex() < getPageCount()! - 1 : true) &&
     (getCanNextPage ? getCanNextPage() : true);
   const canPreviousPage =
     getPageIndex() > 0 && (getCanPreviousPage ? getCanPreviousPage() : true);
@@ -97,13 +97,14 @@ export const PaginationControls = ({
         </Select>
       </div>
       <div className="flex items-center xpace-x-4 lg:space-x-6">
-        <div className="hidden w-[100px] items-center justify-center text-sm font-medium sm:flex">
-          Page {getPageIndex() + 1} of {getPageCount()}
+        <div className="w-[100px] items-center justify-center text-sm font-medium flex">
+          {`Page ${getPageIndex() + 1}`}
+          {getPageCount() && ` of ${getPageCount()}`}
         </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            className="flex h-8 w-8 p-0"
             onClick={() => setPageIndex(0)}
             disabled={!canPreviousPage}
           >
@@ -130,9 +131,9 @@ export const PaginationControls = ({
           </Button>
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => setPageIndex(getPageCount() - 1)}
-            disabled={!canNextPage}
+            className="flex h-8 w-8 p-0 "
+            onClick={() => setPageIndex(getPageCount()! - 1)}
+            disabled={!canNextPage || !getPageCount()}
           >
             <span className="sr-only">Go to last page</span>
             <HiChevronDoubleRight className="h-4 w-4 shrink-0" />

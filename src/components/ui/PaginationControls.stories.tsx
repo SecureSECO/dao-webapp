@@ -20,9 +20,22 @@ type Story = StoryObj<typeof PaginationControls>;
 export const Primary: Story = {
   args: {
     getPageSize: () => 10,
-    setPageSize: (_) => undefined,
+    setPageSize: (n) => console.log(n),
     getPageIndex: () => 2,
-    setPageIndex: (_) => undefined,
+    setPageIndex: (n) => console.log(n),
     getPageCount: () => 5,
+    //Optionals:
+    //Array of page sizes users can select
+    selectablePageSizes: [10, 100],
+    //The initial/default page size, will be set using setPageSize
+    defaultPageSize: 12345,
+    //Additional check for deciding if it is possible to go to the previous page
+    getCanPreviousPage: () => true,
+    //Additional check for deciding if it is possible to go to the next page
+    getCanNextPage: () => true,
+    //Override function for going to the previous page
+    goPreviousPage: () => undefined,
+    //Override function for going to the next page
+    goNextPage: () => undefined,
   },
 };
