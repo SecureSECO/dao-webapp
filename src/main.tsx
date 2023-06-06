@@ -22,7 +22,6 @@ import { TooltipProvider } from '@/src/components/ui/Tooltip';
 import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
 import Finance from '@/src/pages/Finance';
-import { Mining } from '@/src/pages/Mining';
 import NewProposal from '@/src/pages/NewProposal';
 import Settings from '@/src/pages/Settings';
 import Verification from '@/src/pages/Verification';
@@ -110,10 +109,6 @@ const router = createBrowserRouter([
       {
         path: '/verification',
         element: <Verification />,
-      },
-      {
-        path: '/mining',
-        element: <Mining />,
       },
       {
         path: '/query',
