@@ -60,52 +60,52 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     SupportThreshold: {
       description:
-        'Percentage of yes/no votes that need to be yes for a proposal to pass',
+        'Percentage of yes/no votes that need to be yes for a proposal to pass.',
       type: 'Percentage',
     },
     VotingMode: {
       description:
-        '0: Single vote - vote once with all voting power, 1: Single partial vote - vote once with possibly a part of your voting power , 2: Multiple partial vote - vote multiple times with a part of your voting power',
+        '0: Single vote - vote once with all voting power, 1: Single partial vote - vote once with possibly a part of your voting power , 2: Multiple partial vote - vote multiple times with a part of your voting power.',
     },
   },
   IBurnVotingProposalFacet: {
     ProposalCreationCost: {
-      description: `How much ${TOKENS.rep.symbol} it costs to create a proposal. This ${TOKENS.rep.symbol} is burned`,
+      description: `How much ${TOKENS.rep.symbol} it costs to create a proposal. This ${TOKENS.rep.symbol} is burned.`,
       type: 'SECOREP',
     },
   },
   IERC20TimeClaimableFacet: {
     ClaimPeriodInterval: {
       description:
-        'Interval in seconds between increase in claim reward amount',
+        'Interval in seconds between increase in claim reward amount.',
       type: 'Seconds',
     },
     ClaimPeriodMax: {
       description:
-        'Amount of seconds after which claim reward will no longer increase',
+        'Amount of seconds after which claim reward will no longer increase.',
       type: 'Seconds',
     },
   },
   ISearchSECOMonetizationFacet: {
     HashCost: {
-      description: `${TOKENS.secoin.symbol} cost per hash retrieved`,
+      description: `${TOKENS.secoin.symbol} cost per hash retrieved.`,
       type: 'SECOIN',
     },
   },
   ISearchSECORewardingFacet: {
     HashReward: {
-      description: `${TOKENS.secoin.symbol} rewarded per hash mined`,
+      description: `${TOKENS.secoin.symbol} rewarded per hash mined.`,
       type: 'SECOIN',
     },
     RewardingSigner: {
       description:
-        'Address of the wallet that verifies if claimed hash rewards are actually claimable',
+        'Address of the wallet that verifies if claimed hash rewards are actually claimable.',
     },
   },
   IChangeableTokenContract: {
     TokenContractAddress: {
       description:
-        'Address of the ERC20 contract of the monetary token of the DAO (SECOIN)',
+        'Address of the ERC20 contract of the monetary token of the DAO (SECOIN).',
     },
   },
 };

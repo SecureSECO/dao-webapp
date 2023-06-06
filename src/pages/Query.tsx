@@ -38,12 +38,12 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { Table } from '@/src/components/ui/Table';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
 import { toast } from '@/src/hooks/useToast';
 import { UrlPattern } from '@/src/lib/constants/patterns';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { ColumnDef } from '@tanstack/react-table';
 import { saveAs } from 'file-saver';
 import { useForm } from 'react-hook-form';
 import {
@@ -53,10 +53,52 @@ import {
 } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
 
+import { DataTable, HeaderSortableDecorator } from '../components/ui/DataTable';
+
 interface QueryFormData {
   searchUrl: string;
   token: string;
 }
+
+type DisplayQueryResult = {
+  method_hash: string;
+  file: string;
+  method_name: string;
+  lineNumber: string;
+};
+
+const displayQueryColumns: ColumnDef<DisplayQueryResult>[] = [
+  {
+    header: ({ column }) => (
+      <HeaderSortableDecorator column={column}>Hash</HeaderSortableDecorator>
+    ),
+    accessorKey: 'method_hash',
+  },
+  {
+    header: ({ column }) => (
+      <HeaderSortableDecorator column={column}>
+        File Name
+      </HeaderSortableDecorator>
+    ),
+    accessorKey: 'file',
+  },
+  {
+    header: ({ column }) => (
+      <HeaderSortableDecorator column={column}>
+        Function Name
+      </HeaderSortableDecorator>
+    ),
+    accessorKey: 'method_name',
+  },
+  {
+    header: ({ column }) => (
+      <HeaderSortableDecorator column={column}>
+        Line Number
+      </HeaderSortableDecorator>
+    ),
+    accessorKey: 'lineNumber',
+  },
+];
 
 const Query = () => {
   const {
@@ -74,7 +116,7 @@ const Query = () => {
     resetQuery,
     payForSession,
   } = useSearchSECO({
-    useDummyData: false,
+    useDummyData: true,
   });
 
   const { isConnected } = useAccount();
@@ -126,7 +168,7 @@ const Query = () => {
   return (
     <div className="space-y-6">
       <HeaderCard title="SearchSECO" />
-      <div className="grid grid-cols-7 gap-6">
+      <div className="grid grid-cols-8 gap-6">
         <MainCard
           header="Query"
           className="col-span-full lg:col-span-3"
@@ -207,7 +249,7 @@ const Query = () => {
         </MainCard>
         <MainCard
           header="Result"
-          className="col-span-full lg:col-span-4"
+          className="col-span-full lg:col-span-5"
           icon={HiOutlineCodeBracketSquare}
         >
           {hashes.length > 0 && cost != null ? (
@@ -257,16 +299,8 @@ const Query = () => {
                     queryResult &&
                     queryResult.methodData && (
                       <>
-                        <Table
-                          columns={[
-                            { header: 'Hash', accessor: 'method_hash' },
-                            { header: 'File Name', accessor: 'file' },
-                            {
-                              header: 'Function Name',
-                              accessor: 'method_name',
-                            },
-                            { header: 'Line Number', accessor: 'lineNumber' },
-                          ]}
+                        <DataTable
+                          columns={displayQueryColumns}
                           data={queryResult.methodData}
                         />
                         <div className="flex items-center gap-x-2">
