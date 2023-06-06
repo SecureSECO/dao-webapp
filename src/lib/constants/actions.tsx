@@ -27,7 +27,11 @@ import {
   ProposalFormMintData,
   emptyMintData,
 } from '@/src/components/newProposal/actions/MintTokensInput';
-import { ProposalFormWhitelistData, WhitelistMemberInput, emptyWhitelistData } from '@/src/components/newProposal/actions/WhitelistMemberInput';
+import {
+  ProposalFormWhitelistData,
+  WhitelistMemberInput,
+  emptyWhitelistData,
+} from '@/src/components/newProposal/actions/WhitelistMemberInput';
 import {
   ProposalFormWithdrawData,
   WithdrawAssetsInput,
@@ -43,7 +47,10 @@ import MergeAction, {
 import MintAction, {
   ProposalMintAction,
 } from '@/src/components/proposal/actions/MintAction';
-import { ProposalWhitelistAction, WhitelistAction } from '@/src/components/proposal/actions/WhitelistAction';
+import {
+  ProposalWhitelistAction,
+  WhitelistAction,
+} from '@/src/components/proposal/actions/WhitelistAction';
 import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
@@ -87,7 +94,10 @@ type Actions = {
     ProposalChangeParamAction,
     ProposalFormChangeParamData
   >;
-  whitelist_member: ActionData<ProposalWhitelistAction, ProposalFormWhitelistData>;
+  whitelist_member: ActionData<
+    ProposalWhitelistAction,
+    ProposalFormWhitelistData
+  >;
 
   // Add new proposal actions here
   // ...
@@ -283,15 +293,14 @@ export const ACTIONS: Actions = {
     view: WhitelistAction,
     input: WhitelistMemberInput,
     emptyInputData: emptyWhitelistData,
-    parseInput: (input) => ( {
-        method: ACTIONS.whitelist_member.method as string,
-        interface: ACTIONS.whitelist_member.interface,
-        params: {
-          _address: input.address,
-        },
-      }
-    ),
-  }
+    parseInput: (input) => ({
+      method: ACTIONS.whitelist_member.method as string,
+      interface: ACTIONS.whitelist_member.interface,
+      params: {
+        _address: input.address,
+      },
+    }),
+  },
   // Add new proposal actions here:
   // ...
 };
