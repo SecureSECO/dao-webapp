@@ -80,7 +80,7 @@ const getCategories = (
           }% Yes`,
         },
         {
-          label: 'Minimum participation',
+          label: 'Minimum participation / quorum',
           value: `≥ ${minParticipation}%`,
         },
       ],
@@ -89,7 +89,7 @@ const getCategories = (
       title: 'Voting activity',
       items: [
         {
-          label: 'Current participation / quorum',
+          label: 'Current participation',
           value: `${currentParticipation}%`,
         },
         {
@@ -156,7 +156,7 @@ const ProposalVotes = ({
               proposal?.status === ProposalStatus.Active && 'ml-6'
             )}
           >
-            Quorum: {currentParticipation}%
+            Participation: {currentParticipation}%
           </p>
           <Dialog>
             <DialogTrigger asChild>

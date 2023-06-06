@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Card } from '@/src/components/ui/Card';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { InterfaceVariables } from '@plopmenz/diamond-governance-sdk';
 import { ColumnDef } from '@tanstack/react-table';
@@ -15,12 +16,14 @@ import {
   UseDaoVariablesValuesData,
   useDaoVariables,
 } from '../hooks/useDaoVariables';
+import { DAO_VARIABLES_METADATA } from '../lib/constants/DaoVariablesMetadata';
 
 type DisplaySetting = {
   interfaceName: string;
   variableName: string;
   value?: string;
   type: string;
+  description?: string;
 };
 
 const columns: ColumnDef<DisplaySetting>[] = [
@@ -50,6 +53,10 @@ const columns: ColumnDef<DisplaySetting>[] = [
       <HeaderSortableDecorator column={column}>Type</HeaderSortableDecorator>
     ),
   },
+  {
+    accessorKey: 'description',
+    header: 'Description',
+  },
 ];
 
 const toDisplayData = (
@@ -67,6 +74,9 @@ const toDisplayData = (
       type: v.variableType,
       value:
         values?.[i.interfaceName]?.[v.variableName]?.toString() ?? 'Loading...',
+      description:
+        DAO_VARIABLES_METADATA[i.interfaceName]?.[v.variableName]
+          ?.description ?? 'N/A',
     }))
   );
 
@@ -74,16 +84,23 @@ const toDisplayData = (
 };
 
 const Settings = () => {
-  const { variables, values, error } = useDaoVariables({
+  const { variables, values, loading } = useDaoVariables({
     fetchWithValues: true,
   });
-
   const displayData = toDisplayData(variables, values);
 
   return (
     <div className="flex flex-col gap-6">
       <HeaderCard title="Settings" />
-      <DataTable columns={columns} data={displayData} />
+      {loading ? (
+        <Card loading={loading} />
+      ) : (
+        <DataTable
+          columns={columns}
+          data={displayData}
+          className="bg-highlight border-transparent"
+        />
+      )}
     </div>
   );
 };
