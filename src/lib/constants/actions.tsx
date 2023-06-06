@@ -28,6 +28,11 @@ import {
   emptyMintData,
 } from '@/src/components/newProposal/actions/MintTokensInput';
 import {
+  ProposalFormWhitelistData,
+  WhitelistMemberInput,
+  emptyWhitelistData,
+} from '@/src/components/newProposal/actions/WhitelistMemberInput';
+import {
   ProposalFormWithdrawData,
   WithdrawAssetsInput,
   emptyWithdrawData,
@@ -42,6 +47,10 @@ import MergeAction, {
 import MintAction, {
   ProposalMintAction,
 } from '@/src/components/proposal/actions/MintAction';
+import {
+  ProposalWhitelistAction,
+  WhitelistAction,
+} from '@/src/components/proposal/actions/WhitelistAction';
 import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
@@ -58,6 +67,7 @@ import {
   HiBanknotes,
   HiOutlineCircleStack,
   HiOutlineCog,
+  HiUserPlus,
 } from 'react-icons/hi2';
 
 /**
@@ -67,7 +77,8 @@ export type ProposalFormActionData =
   | ProposalFormWithdrawData
   | ProposalFormMintData
   | ProposalFormMergeData
-  | ProposalFormChangeParamData;
+  | ProposalFormChangeParamData
+  | ProposalFormWhitelistData;
 // Add data type for form data of new proposal actions here:
 //| ...
 
@@ -83,6 +94,11 @@ type Actions = {
     ProposalChangeParamAction,
     ProposalFormChangeParamData
   >;
+  whitelist_member: ActionData<
+    ProposalWhitelistAction,
+    ProposalFormWhitelistData
+  >;
+
   // Add new proposal actions here
   // ...
 };
@@ -267,6 +283,23 @@ export const ACTIONS: Actions = {
         return null;
       }
     },
+  },
+  whitelist_member: {
+    method: 'whitelist(address)',
+    interface: 'IMembershipWhitelisting',
+    label: 'Whitelist',
+    longLabel: 'Whitelist member',
+    icon: HiUserPlus,
+    view: WhitelistAction,
+    input: WhitelistMemberInput,
+    emptyInputData: emptyWhitelistData,
+    parseInput: (input) => ({
+      method: ACTIONS.whitelist_member.method as string,
+      interface: ACTIONS.whitelist_member.interface,
+      params: {
+        _address: input.address,
+      },
+    }),
   },
   // Add new proposal actions here:
   // ...
