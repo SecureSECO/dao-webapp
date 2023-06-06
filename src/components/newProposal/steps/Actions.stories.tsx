@@ -60,6 +60,10 @@ export const Primary: Story = {
           name: 'merge_pr',
           url: '',
         },
+        {
+          name: 'whitelist_member',
+          address: '0x123456789009876543212345678900987654321',
+        },
       ],
     },
   },
