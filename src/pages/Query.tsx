@@ -57,7 +57,7 @@ import { DataTable, HeaderSortableDecorator } from '../components/ui/DataTable';
 
 interface QueryFormData {
   searchUrl: string;
-  token: string;
+  branch?: string;
 }
 
 type DisplayQueryResult = {
@@ -116,17 +116,12 @@ const Query = () => {
     resetQuery,
     payForSession,
   } = useSearchSECO({
-    useDummyData: true,
+    useDummyData: false,
   });
 
   const { isConnected } = useAccount();
   const [isQuerying, setIsQuerying] = useState<boolean>(true);
   const [isPaying, setIsPaying] = useState<boolean>(false);
-
-  const [storedToken, setStoredToken] = useLocalStorage<string>(
-    'githubAccessToken',
-    ''
-  );
 
   const [paymentSent, setPaymentSent] = useState<boolean>(false);
 
@@ -148,13 +143,9 @@ const Query = () => {
     setIsQuerying(false);
 
     toast.promise(
-      runQuery(data.searchUrl, data.token)
-        .then(() => {
-          setStoredToken(data.token);
-        })
-        .finally(() => {
-          setIsQuerying(true);
-        }),
+      runQuery(data.searchUrl, data.branch).finally(() => {
+        setIsQuerying(true);
+      }),
       {
         loading: 'Querying SearchSECO database...',
         success: 'Query successful!',
@@ -205,26 +196,22 @@ const Query = () => {
             </div>
             <div className="space-y-1">
               <Label
-                htmlFor="token"
-                tooltip="Your Github access token will be used to download the repository to know what to fetch from the SearchSECO database. Only read access is required for the access token."
+                htmlFor="branch"
+                tooltip="The branch to query the SearchSECO database for"
               >
-                Github access token
+                Branch
               </Label>
-              <ErrorWrapper name="Token" error={errors.token}>
+              <ErrorWrapper name="Branch" error={errors.branch}>
                 <Input
-                  {...register('token', {
-                    required: true,
-                    pattern: {
-                      value: /^[\w\d-]+$/, //placeholder
-                      message: 'Invalid token',
-                    },
+                  {...register('branch', {
+                    required: false,
                   })}
                   type="text"
-                  placeholder="Your Github token"
-                  id="token"
-                  aria-invalid={errors.token ? 'true' : 'false'}
-                  error={errors.token}
-                  defaultValue={storedToken}
+                  placeholder="master"
+                  id="branch"
+                  aria-invalid={errors.branch ? 'true' : 'false'}
+                  error={errors.branch}
+                  defaultValue="master"
                 />
               </ErrorWrapper>
             </div>
@@ -423,9 +410,7 @@ const ExplanationButton = () => {
               <ol className="list-decimal pl-5">
                 <li>
                   Enter the URL of the GitHub repository you want to query. You
-                  also need to enter your GitHub token to be able to query the
-                  database. This token will be used to download the repository.
-                  Only read access is required.
+                  can also specify the branch.
                 </li>
                 <li>
                   After submitting the form, the repository will be downloaded
