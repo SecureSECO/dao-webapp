@@ -75,15 +75,13 @@ const navItems: NavItemData[] = [
         icon: HiOutlineDocumentMagnifyingGlass,
         description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.`,
       },
-      // {
-      //   label: 'Mining',
-      //   url: '/mining',
-      //   icon: HiOutlineTerminal,
-      //   description: `Claim your mining rewards in ${TOKENS.secoin.symbol} or ${TOKENS.rep.symbol}.`,
-      // },
     ],
     alternativeLinks: [
-      { label: 'Website', url: '#', icon: HiOutlineGlobeAlt },
+      {
+        label: 'Website',
+        url: 'https://secureseco.org/',
+        icon: HiOutlineGlobeAlt,
+      },
       { label: 'Discord', url: '#', icon: FaDiscord },
     ],
   },
