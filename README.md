@@ -417,6 +417,8 @@ React Router DOM is a set of bindings to use React Router with web applications.
 #### Storybook
 
 [Documentation](https://storybook.js.org/docs/react/get-started/install/)
+[Config](.storybook/main.cjs)
+[Test Runner config](/test-runner-jest.config.js)
 
 Storybook is a frontend workshop for building UI components and pages in isolation.
 To run the storybook, use the following command:
