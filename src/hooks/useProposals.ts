@@ -32,6 +32,7 @@ export type UseProposalsProps = {
   sorting?: ProposalSorting | undefined;
   order?: SortingOrder | undefined;
   limit?: number | undefined;
+  fromIndex?: number | undefined;
 };
 
 const defaultProps: UseProposalsProps = {
@@ -40,6 +41,7 @@ const defaultProps: UseProposalsProps = {
   sorting: ProposalSorting.Creation,
   order: SortingOrder.Desc,
   limit: undefined,
+  fromIndex: undefined,
 };
 
 const dummyProposals: Proposal[] = [
@@ -53,7 +55,7 @@ const dummyProposals: Proposal[] = [
 ];
 
 export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
-  const { useDummyData, status, sorting, order, limit } = Object.assign(
+  const { useDummyData, status, sorting, order, limit, fromIndex } = Object.assign(
     defaultProps,
     props
   );
@@ -83,7 +85,7 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
         status ? [status] : undefined,
         sorting,
         order,
-        undefined,
+        fromIndex,
         limit
       );
 
@@ -118,7 +120,7 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
     if (!anonClient) return;
     setProposalsLoading(true);
     fetchProposals(anonClient);
-  }, [anonClient, status, sorting, order]);
+  }, [anonClient, status, sorting, order, fromIndex, limit]);
 
   // Only refetch proposal count if the client changes
   useEffect(() => {

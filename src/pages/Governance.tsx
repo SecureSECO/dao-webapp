@@ -84,13 +84,19 @@ const ProposalTabs = () => {
     ProposalSorting.Creation
   );
   const [order, setOrder] = useState<SortingOrder | undefined>(undefined);
+
+  const [pageNr, setPageNr] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(10);
+
+  const fromIndex = pageNr * limit;
+
   const { proposals, loading, error } = useProposals({
     useDummyData: false,
     status: currentTab,
     sorting,
     order,
-    // Needed to override cached value when switching from Dashboard page to Governance page
-    limit: undefined,
+    fromIndex,
+    limit,
   });
 
   return (
