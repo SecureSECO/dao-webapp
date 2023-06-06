@@ -77,7 +77,11 @@ const navItems: NavItemData[] = [
       },
     ],
     alternativeLinks: [
-      { label: 'Website', url: '#', icon: HiOutlineGlobeAlt },
+      {
+        label: 'Website',
+        url: 'https://secureseco.org/',
+        icon: HiOutlineGlobeAlt,
+      },
       { label: 'Discord', url: '#', icon: FaDiscord },
     ],
   },
