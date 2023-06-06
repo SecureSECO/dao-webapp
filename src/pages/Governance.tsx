@@ -34,6 +34,8 @@ import {
 } from '@plopmenz/diamond-governance-sdk';
 import { HiChevronDown } from 'react-icons/hi2';
 
+import { PaginationControls } from '../components/ui/PaginationControls';
+
 const Governance = () => {
   return (
     <div className="flex flex-col gap-6">
@@ -84,13 +86,19 @@ const ProposalTabs = () => {
     ProposalSorting.Creation
   );
   const [order, setOrder] = useState<SortingOrder | undefined>(undefined);
+
+  const [pageIndex, setPageIndex] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(6);
+
+  const fromIndex = pageIndex * limit;
+
   const { proposals, loading, error } = useProposals({
     useDummyData: false,
     status: currentTab,
     sorting,
     order,
-    // Needed to override cached value when switching from Dashboard page to Governance page
-    limit: undefined,
+    fromIndex,
+    limit,
   });
 
   return (
@@ -147,6 +155,17 @@ const ProposalTabs = () => {
           />
         </TabsContent>
       ))}
+      <PaginationControls
+        getPageSize={() => limit}
+        setPageSize={(n) => setLimit(n)}
+        getPageIndex={() => pageIndex}
+        setPageIndex={(n) => setPageIndex(n)}
+        getPageCount={() => undefined}
+        selectablePageSizes={[6, 12, 20, 40, 50]}
+        getCanNextPage={() =>
+          !(proposals.length < limit) && proposals.length > 0
+        }
+      />
     </Tabs>
   );
 };
