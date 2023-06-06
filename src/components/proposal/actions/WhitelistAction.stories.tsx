@@ -7,6 +7,7 @@
  */
 
 import { Accordion } from '@/src/components/ui/Accordion';
+import { dummyWhitelistMemberAction } from '@/src/hooks/useProposal';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { WhitelistAction } from './WhitelistAction';
@@ -38,13 +39,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     value: 'first',
-    action: {
-      method: 'whitelist(address)',
-      interface: 'IMembershipWhitelisting',
-      params: {
-        _address: '0x123456789009876543211234567890',
-      },
-    },
+    action: dummyWhitelistMemberAction,
   },
   decorators: [
     (Story) => (
