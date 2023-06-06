@@ -88,7 +88,7 @@ const ProposalTabs = () => {
   const [order, setOrder] = useState<SortingOrder | undefined>(undefined);
 
   const [pageIndex, setPageIndex] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(4);
+  const [limit, setLimit] = useState<number>(6);
 
   const fromIndex = pageIndex * limit;
 
@@ -161,7 +161,7 @@ const ProposalTabs = () => {
         getPageIndex={() => pageIndex}
         setPageIndex={(n) => setPageIndex(n)}
         getPageCount={() => undefined}
-        selectablePageSizes={[4, 10, 20, 30, 40, 50]}
+        selectablePageSizes={[6, 12, 20, 40, 50]}
         getCanNextPage={() =>
           !(proposals.length < limit) && proposals.length > 0
         }
