@@ -152,11 +152,12 @@ const ProposalVotes = ({
         <div className="flex items-center gap-x-2">
           <p
             className={cn(
-              'text-highlight-foreground/80',
+              'text-highlight-foreground/80 leading-4',
               proposal?.status === ProposalStatus.Active && 'ml-6'
             )}
           >
-            Participation: {currentParticipation}%
+            <span className="hidden xs:inline-block">Participation:</span>{' '}
+            {currentParticipation}%
           </p>
           <Dialog>
             <DialogTrigger asChild>
