@@ -92,7 +92,7 @@ const ProposalTabs = () => {
 
   const fromIndex = pageIndex * limit;
 
-  const { proposals, loading, error } = useProposals({
+  const { proposals, filteredProposalCount, loading, error } = useProposals({
     useDummyData: false,
     status: currentTab,
     sorting,
@@ -160,7 +160,11 @@ const ProposalTabs = () => {
         setPageSize={(n) => setLimit(n)}
         getPageIndex={() => pageIndex}
         setPageIndex={(n) => setPageIndex(n)}
-        getPageCount={() => undefined}
+        getPageCount={() =>
+          filteredProposalCount
+            ? Math.ceil(filteredProposalCount / limit)
+            : null
+        }
         selectablePageSizes={[6, 12, 20, 40, 50]}
         getCanNextPage={() =>
           !(proposals.length < limit) && proposals.length > 0
