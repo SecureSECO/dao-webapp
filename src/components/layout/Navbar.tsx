@@ -255,7 +255,11 @@ export const NavItemCollectionContent = ({
               <page.icon className="h-6 w-6" aria-hidden="true" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <NavLink {...props} to={page.url}>
+              <NavLink
+                {...props}
+                to={page.url}
+                className="ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2 rounded-md"
+              >
                 <span className=" font-semibold">{page.label}</span>
                 <p className="opacity-80">{page.description}</p>
               </NavLink>
@@ -270,7 +274,7 @@ export const NavItemCollectionContent = ({
             <NavLink
               key={item.label}
               to={item.url}
-              className="flex items-center justify-center gap-x-2.5 p-3 font-semibold hover:bg-popover-foreground/20"
+              className="flex items-center justify-center gap-x-2.5 p-3 font-semibold hover:bg-popover-foreground/20 ring-ring rounded-md focus:outline-none focus:ring-2"
             >
               <item.icon
                 className="h-5 w-5 flex-none opacity-80"
