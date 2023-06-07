@@ -75,8 +75,8 @@ export const PaginationControls = ({
     goNextPage ? goNextPage() : setPageIndex(getPageIndex() + 1);
 
   return (
-    <div className="flex flex-row items-center justify-between px-2 w-full">
-      <div className="hidden items-center space-x-2 md:flex">
+    <div className="flex flex-row items-center justify-end sm:justify-between px-2 w-full">
+      <div className="hidden items-center space-x-2 sm:flex">
         <p className="text-sm font-medium">Rows per page</p>
         <Select
           value={`${getPageSize()}`}
@@ -96,15 +96,15 @@ export const PaginationControls = ({
           </SelectContent>
         </Select>
       </div>
-      <div className="flex items-center xpace-x-4 lg:space-x-6">
-        <div className="w-[100px] items-center justify-center text-sm font-medium flex">
+      <div className="flex items-center space-x-4 lg:space-x-6">
+        <div className="items-center justify-center text-sm font-medium flex">
           {`Page ${getPageIndex() + 1}`}
           {getPageCount() && ` of ${getPageCount()}`}
         </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
-            className="flex h-8 w-8 p-0"
+            className="h-8 w-8 p-0 hidden xs:flex"
             onClick={() => setPageIndex(0)}
             disabled={!canPreviousPage}
           >
@@ -131,7 +131,7 @@ export const PaginationControls = ({
           </Button>
           <Button
             variant="outline"
-            className="flex h-8 w-8 p-0 "
+            className="h-8 w-8 p-0 hidden xs:flex"
             onClick={() => setPageIndex(getPageCount()! - 1)}
             disabled={!canNextPage || !getPageCount()}
           >
