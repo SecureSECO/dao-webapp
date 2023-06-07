@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import ProposalCard from '@/src/components/governance/ProposalCard';
 import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -102,75 +103,77 @@ const ProposalTabs = () => {
   });
 
   return (
-    <Tabs
-      defaultValue="All"
-      onValueChange={(v) =>
-        setCurrentTab(statusStringToEnum(v as ProposalStatusTab))
-      }
-    >
-      <div className="flex flex-row items-center gap-x-2">
-        {/* Mobile category selector (dropdown) */}
-        <div className="lg:hidden">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="subtle" size="sm" className="group">
-                <div className="flex flex-row items-center gap-x-1">
-                  <p className="font-normal">
-                    {currentTab ? ProposalStatus[currentTab] : 'All'}
-                  </p>
-                  <HiChevronDown className="h-4 w-4 transition-all duration-200 group-data-[state=open]:rotate-180" />
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <TabsList className="flex flex-col">
-                {tabs.map((tab) => (
-                  <TabsTrigger key={tab} value={tab}>
-                    <span className="lowercase first-letter:uppercase">
-                      {tab}
-                    </span>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+    <Card>
+      <Tabs
+        defaultValue="All"
+        onValueChange={(v) =>
+          setCurrentTab(statusStringToEnum(v as ProposalStatusTab))
+        }
+      >
+        <div className="flex flex-row items-center gap-x-2">
+          {/* Mobile category selector (dropdown) */}
+          <div className="lg:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="subtle" size="sm" className="group">
+                  <div className="flex flex-row items-center gap-x-1">
+                    <p className="font-normal">
+                      {currentTab ? ProposalStatus[currentTab] : 'All'}
+                    </p>
+                    <HiChevronDown className="h-4 w-4 transition-all duration-200 group-data-[state=open]:rotate-180" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <TabsList className="flex flex-col">
+                  {tabs.map((tab) => (
+                    <TabsTrigger key={tab} value={tab}>
+                      <span className="lowercase first-letter:uppercase">
+                        {tab}
+                      </span>
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-        {/* Desktop category selector */}
-        <TabsList className="hidden lg:inline-block">
-          {tabs.map((tab) => (
-            <TabsTrigger key={tab} value={tab}>
-              <span className="lowercase first-letter:uppercase">{tab}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <SortSelector setSorting={setSorting} setOrder={setOrder} />
-      </div>
-      {tabs.map((tab) => (
-        <TabsContent key={tab} value={tab}>
-          <ProposalCardList
-            proposals={proposals}
-            loading={loading}
-            error={error}
-          />
-        </TabsContent>
-      ))}
-      <PaginationControls
-        getPageSize={() => limit}
-        setPageSize={(n) => setLimit(n)}
-        getPageIndex={() => pageIndex}
-        setPageIndex={(n) => setPageIndex(n)}
-        getPageCount={() =>
-          filteredProposalCount
-            ? Math.ceil(filteredProposalCount / limit)
-            : null
-        }
-        selectablePageSizes={[6, 12, 20, 40, 50]}
-        getCanNextPage={() =>
-          !(proposals.length < limit) && proposals.length > 0
-        }
-      />
-    </Tabs>
+          {/* Desktop category selector */}
+          <TabsList className="hidden lg:inline-block">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab} value={tab}>
+                <span className="lowercase first-letter:uppercase">{tab}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <SortSelector setSorting={setSorting} setOrder={setOrder} />
+        </div>
+        {tabs.map((tab) => (
+          <TabsContent key={tab} value={tab}>
+            <ProposalCardList
+              proposals={proposals}
+              loading={loading}
+              error={error}
+            />
+          </TabsContent>
+        ))}
+        <PaginationControls
+          getPageSize={() => limit}
+          setPageSize={(n) => setLimit(n)}
+          getPageIndex={() => pageIndex}
+          setPageIndex={(n) => setPageIndex(n)}
+          getPageCount={() =>
+            filteredProposalCount
+              ? Math.ceil(filteredProposalCount / limit)
+              : null
+          }
+          selectablePageSizes={[6, 12, 20, 40, 50]}
+          getCanNextPage={() =>
+            !(proposals.length < limit) && proposals.length > 0
+          }
+        />
+      </Tabs>
+    </Card>
   );
 };
 

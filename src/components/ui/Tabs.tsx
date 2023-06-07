@@ -31,7 +31,7 @@ const Tabs = React.forwardRef<
   <TabsPrimitive.Root
     className={cn(
       className,
-      'flex w-full flex-col items-start gap-y-4 bg-highlight px-6 py-4 text-highlight-foreground'
+      'flex w-full flex-col items-start gap-y-4 text-highlight-foreground'
     )}
     {...props}
     ref={ref}
