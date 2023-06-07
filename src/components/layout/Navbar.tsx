@@ -189,7 +189,10 @@ const NavItem = ({ item, className, ...props }: NavItemProps) => {
 const Navbar = () => {
   return (
     <div className="mt-2 flex w-full items-center justify-between lg:mt-0">
-      <NavLink to="/">
+      <NavLink
+        to="/"
+        className="rounded-md ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2"
+      >
         <LogoFull className="h-fit w-32 lg:w-40" />
       </NavLink>
 
