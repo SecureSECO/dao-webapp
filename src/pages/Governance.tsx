@@ -159,7 +159,13 @@ const ProposalTabs = () => {
         ))}
         <PaginationControls
           getPageSize={() => limit}
-          setPageSize={(n) => setLimit(n)}
+          setPageSize={(n) => {
+            // As the limit changes, the pageIndex might also have to change.
+            // Otherwise, the user could end up in an invalid state.
+            // fromIndex = pageIndex * limit, thus pageIndex = fromIndex / limit.
+            setPageIndex(Math.floor(fromIndex / n));
+            setLimit(n);
+          }}
           getPageIndex={() => pageIndex}
           setPageIndex={(n) => setPageIndex(n)}
           getPageCount={() =>
