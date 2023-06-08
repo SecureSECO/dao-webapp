@@ -141,11 +141,21 @@ export const AddActionButton = ({
       <DropdownMenuContent>
         <DropdownMenuGroup>
           {Object.entries(ACTIONS)
-            .filter(([name, action]) => action.view !== null)
+            .filter(
+              // eslint-disable-next-line no-unused-vars
+              ([name, action]) =>
+                action.input !== null && action.emptyInputData !== null
+            )
             .map(([name, action], i) => (
               <DropdownMenuItem
                 key={i}
-                onClick={() => append(action.emptyInputData)}
+                onClick={() =>
+                  // action.emptyInputData will never be null here due to filter above
+                  append(
+                    action.emptyInputData ??
+                      ({} as unknown as ProposalFormActionData)
+                  )
+                }
                 className="gap-x-2 hover:cursor-pointer"
                 disabled={
                   !actions ||

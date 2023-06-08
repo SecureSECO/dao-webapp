@@ -6,6 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* eslint-disable no-unused-vars */
+
 /**
  * @fileoverview This file contains logic to generalize proposal actions.
  * It contains a list of all actions that can be performed on a proposal and serves
@@ -45,8 +47,6 @@ import {
 import {
   DiamondCutAction,
   ProposalDiamondCutAction,
-  ProposalFormDiamondCut,
-  emptyProposalFormDiamondCut,
 } from '@/src/components/proposal/actions/DiamondCutAction';
 import MergeAction, {
   ProposalMergeAction,
@@ -85,8 +85,7 @@ export type ProposalFormActionData =
   | ProposalFormMintData
   | ProposalFormMergeData
   | ProposalFormChangeParamData
-  | ProposalFormWhitelistData
-  | ProposalFormDiamondCut;
+  | ProposalFormWhitelistData;
 // Add data type for form data of new proposal actions here:
 //| ...
 
@@ -106,7 +105,7 @@ type Actions = {
     ProposalWhitelistAction,
     ProposalFormWhitelistData
   >;
-  diamond_cut: ActionData<ProposalDiamondCutAction, ProposalFormDiamondCut>;
+  diamond_cut: ActionData<ProposalDiamondCutAction, null>;
 
   // Add new proposal actions here
   // ...
@@ -317,9 +316,11 @@ export const ACTIONS: Actions = {
     longLabel: 'Diamond Cut',
     icon: Diamond,
     view: DiamondCutAction,
+    // There is not support for adding diamond cut actions through the webapp
+    // Any diamond cut action will have been created through other means, but can be viewed in the webapp to a certain extent
     input: null,
-    emptyInputData: emptyProposalFormDiamondCut,
-    parseInput: (_) => null,
+    emptyInputData: null,
+    parseInput: () => null,
   },
   // Add new proposal actions here:
   // ...

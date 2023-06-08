@@ -6,28 +6,30 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* eslint-disable no-unused-vars */
+import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { ACTIONS } from '@/src/lib/constants/actions';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
-import { BigNumberish, BytesLike } from 'ethers';
+import { BytesLike } from 'ethers';
 
 import ActionWrapper from './ActionWrapper';
 
+export enum FacetCutAction {
+  Add,
+  Replace,
+  Remove,
+  AddWithInit,
+  RemoveWithDeinit,
+}
+
 interface FacetCutStruct {
   facetAddress: string;
-  action: BigNumberish;
+  action: FacetCutAction;
   functionSelectors: BytesLike[];
   initCalldata: BytesLike;
 }
-
-export interface ProposalFormDiamondCut {
-  name: 'whitelist_member';
-}
-
-export const emptyProposalFormDiamondCut: ProposalFormDiamondCut = {
-  name: 'whitelist_member',
-};
 
 export interface ProposalDiamondCutAction extends Action {
   params: {
@@ -46,13 +48,12 @@ export const DiamondCutAction = ({
     <ActionWrapper
       icon={ACTIONS.diamond_cut.icon}
       title="Diamond cut"
-      description="Add, replace or remove a facet of the diamond.
-
-          This is an advanced action. The proposal creator must provide adequate
-          information on how to inspect this diamond cut. If the creator does
-          not provide adequate information, you are advised to vote against this
-          proposal.
-      "
+      description={`
+        Add, replace or remove the following facets of the diamond (based on their addresses).
+        This is an advanced action. The proposal creator must provide adequate
+        information on how to inspect this diamond cut, and if they do not, you are advised to vote against this
+        proposal.
+      `}
       {...props}
     >
       <div className="space-y-2 flex flex-col">
@@ -60,9 +61,9 @@ export const DiamondCutAction = ({
           {action.params._diamondCut.map((x, index) => (
             <Card variant="outline" size="sm" key={index + 1}>
               <p className="text-xs text-popover-foreground/80">
-                Facet address {index}
+                {FacetCutAction[x.action]}
               </p>
-              <p className="font-medium">{x.facetAddress}</p>
+              <Address className="font-medium" address={x.facetAddress} />
             </Card>
           ))}
         </div>
