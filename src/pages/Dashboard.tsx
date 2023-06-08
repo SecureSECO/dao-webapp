@@ -36,13 +36,20 @@ import { useAccount } from 'wagmi';
 const Dashboard = () => {
   const { isConnected } = useAccount();
   const { daoAddress } = useDiamondSDKContext();
+  // UseProposals is passed the default parameters, to ensure switching between pages will not use params from Governange page
   const {
     proposals,
     proposalCount,
     loading: proposalsLoading,
     error: proposalsError,
     countLoading,
-  } = useProposals({ limit: 5 });
+  } = useProposals({
+    limit: 5,
+    status: undefined,
+    fromIndex: 0,
+    order: undefined,
+    sorting: undefined,
+  });
   const {
     daoTransfers,
     loading: daoTransfersLoading,
