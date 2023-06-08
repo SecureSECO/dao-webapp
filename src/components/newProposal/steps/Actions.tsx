@@ -91,6 +91,14 @@ export const Actions = () => {
                       methods.getValues(prefix);
                     const { input: ActionInput } = ACTIONS[action.name];
 
+                    //This should not happen
+                    if (ActionInput === null) {
+                      console.error(
+                        'Action to be rendered does not have an action input'
+                      );
+                      return <></>;
+                    }
+
                     return (
                       <ActionFormContext.Provider value={context} key={index}>
                         <ActionInput />
@@ -132,27 +140,29 @@ export const AddActionButton = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          {Object.entries(ACTIONS).map(([name, action], i) => (
-            <DropdownMenuItem
-              key={i}
-              onClick={() => append(action.emptyInputData)}
-              className="gap-x-2 hover:cursor-pointer"
-              disabled={
-                !actions ||
-                (action.maxPerProposal !== undefined &&
-                  actions.actions &&
-                  actions.actions.filter((x) => x.name === name).length >=
-                    action.maxPerProposal) ||
-                // There's a limit of 256 actions per proposals
-                // This is because AragonOSx uses a uint256 to store a failure map
-                // for actions, and each bit represents an action (so max 256 actions)
-                (actions.actions && actions.actions.length >= 256)
-              }
-            >
-              <action.icon className="h-5 w-5 shrink-0" />
-              <span>{action.longLabel}</span>
-            </DropdownMenuItem>
-          ))}
+          {Object.entries(ACTIONS)
+            .filter(([name, action]) => action.view !== null)
+            .map(([name, action], i) => (
+              <DropdownMenuItem
+                key={i}
+                onClick={() => append(action.emptyInputData)}
+                className="gap-x-2 hover:cursor-pointer"
+                disabled={
+                  !actions ||
+                  (action.maxPerProposal !== undefined &&
+                    actions.actions &&
+                    actions.actions.filter((x) => x.name === name).length >=
+                      action.maxPerProposal) ||
+                  // There's a limit of 256 actions per proposals
+                  // This is because AragonOSx uses a uint256 to store a failure map
+                  // for actions, and each bit represents an action (so max 256 actions)
+                  (actions.actions && actions.actions.length >= 256)
+                }
+              >
+                <action.icon className="h-5 w-5 shrink-0" />
+                <span>{action.longLabel}</span>
+              </DropdownMenuItem>
+            ))}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

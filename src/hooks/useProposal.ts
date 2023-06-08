@@ -26,6 +26,7 @@ import {
 import { BigNumber, ContractTransaction } from 'ethers';
 import { useAccount } from 'wagmi';
 
+import { ProposalDiamondCutAction } from '../components/proposal/actions/DiamondCutAction';
 import { ProposalWhitelistAction } from '../components/proposal/actions/WhitelistAction';
 
 export type CanVote = {
@@ -128,7 +129,7 @@ export const dummyMergeAction: ProposalMergeAction = {
 };
 
 /**
- * Dummy mint tokens action
+ * Dummy change params action
  */
 export const dummyChangeParamsAction: ProposalChangeParamAction = {
   method: 'setMaxSingleWalletPower(uint32)',
@@ -139,13 +140,43 @@ export const dummyChangeParamsAction: ProposalChangeParamAction = {
 };
 
 /**
- * Dummy mint tokens action
+ * Dummy whitelist member action
  */
 export const dummyWhitelistMemberAction: ProposalWhitelistAction = {
   method: 'whitelist(address)',
   interface: 'IMembershipWhitelisting',
   params: {
     _address: '0x123456789009876543211234567890',
+  },
+};
+
+/**
+ * Dummy Diamond cut action
+ */
+export const dummyDiamondCutAction: ProposalDiamondCutAction = {
+  method: 'diamondCut((address,uint8,bytes4[],bytes)[])',
+  interface: 'IDiamondCut',
+  params: {
+    _diamondCut: [
+      {
+        facetAddress: '0x11111678900987654321234567890987654321',
+        action: null!,
+        functionSelectors: null!,
+        initCalldata: null!,
+      },
+      {
+        facetAddress: '0x22222678900987654321234567890987654321',
+        action: null!,
+        functionSelectors: null!,
+        initCalldata: null!,
+      },
+      {
+        facetAddress: '0x33333378900987654321234567890987654321',
+        action: null!,
+        functionSelectors: null!,
+        initCalldata: null!,
+      },
+    ],
   },
 };
 
@@ -195,7 +226,7 @@ export const dummyProposal: Proposal = {
     body: '<p>This is the body</p>',
   },
   status: ProposalStatus.Active,
-  actions: [],
+  actions: [dummyDiamondCutAction],
   startDate: new Date('2023-05-08T18:19:09.000Z'),
   endDate: new Date('2023-05-10T18:19:09.000Z'),
   creationDate: new Date('2023-05-08T18:09:09.000Z'),

@@ -12,6 +12,7 @@
  * as the starting point to add new proposal actions.
  */
 
+import Diamond from '@/src/components/icons/Diamond';
 import {
   ChangeParamInput,
   ProposalFormChangeParamData,
@@ -41,6 +42,12 @@ import {
   ChangeParamAction,
   ProposalChangeParamAction,
 } from '@/src/components/proposal/actions/ChangeParamAction';
+import {
+  DiamondCutAction,
+  ProposalDiamondCutAction,
+  ProposalFormDiamondCut,
+  emptyProposalFormDiamondCut,
+} from '@/src/components/proposal/actions/DiamondCutAction';
 import MergeAction, {
   ProposalMergeAction,
 } from '@/src/components/proposal/actions/MergeAction';
@@ -78,7 +85,8 @@ export type ProposalFormActionData =
   | ProposalFormMintData
   | ProposalFormMergeData
   | ProposalFormChangeParamData
-  | ProposalFormWhitelistData;
+  | ProposalFormWhitelistData
+  | ProposalFormDiamondCut;
 // Add data type for form data of new proposal actions here:
 //| ...
 
@@ -98,6 +106,7 @@ type Actions = {
     ProposalWhitelistAction,
     ProposalFormWhitelistData
   >;
+  diamond_cut: ActionData<ProposalDiamondCutAction, ProposalFormDiamondCut>;
 
   // Add new proposal actions here
   // ...
@@ -301,6 +310,17 @@ export const ACTIONS: Actions = {
       },
     }),
   },
+  diamond_cut: {
+    method: 'diamondCut((address,uint8,bytes4[],bytes)[])',
+    interface: 'IDiamondCut',
+    label: 'Cut',
+    longLabel: 'Diamond Cut',
+    icon: Diamond,
+    view: DiamondCutAction,
+    input: null,
+    emptyInputData: emptyProposalFormDiamondCut,
+    parseInput: (_) => null,
+  },
   // Add new proposal actions here:
   // ...
 };
@@ -354,10 +374,12 @@ type ActionData<TAction, TFormData, TMethod extends string | void = void> = {
   view: (props: ViewActionProps<TAction>) => JSX.Element;
   /**
    * @returns Component to be used inside a form to input data for the action
+   * If it is null, this action is view only and thus can not be created
    */
-  input: () => JSX.Element;
+  input: (() => JSX.Element) | null;
   /**
    * Data to be used as initial values for the input form for this action.
+   * May only be null if input is also null
    */
   emptyInputData: TFormData;
   /**
