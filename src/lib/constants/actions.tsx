@@ -257,7 +257,7 @@ export const ACTIONS: Actions = {
     method: 'ChangeParam',
     interface: 'DAO',
     label: 'Change param',
-    longLabel: 'Change plugin parameters',
+    longLabel: 'Change plugin param',
     icon: HiOutlineCog,
     view: ChangeParamAction,
     input: ChangeParamInput,

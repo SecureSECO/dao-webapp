@@ -41,6 +41,7 @@ const TooltipTrigger = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TooltipPrimitive.Trigger
     ref={ref}
+    type="button"
     className={cn(
       'ring-ring ring-offset-2 ring-offset-highlight focus:outline-none focus:ring-1',
       className
