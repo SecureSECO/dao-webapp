@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import ProposalCard from '@/src/components/governance/ProposalCard';
 import { Button } from '@/src/components/ui/Button';
+import { Card } from '@/src/components/ui/Card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +34,8 @@ import {
   SortingOrder,
 } from '@plopmenz/diamond-governance-sdk';
 import { HiChevronDown } from 'react-icons/hi2';
+
+import { PaginationControls } from '../components/ui/PaginationControls';
 
 const Governance = () => {
   return (
@@ -84,70 +87,99 @@ const ProposalTabs = () => {
     ProposalSorting.Creation
   );
   const [order, setOrder] = useState<SortingOrder | undefined>(undefined);
-  const { proposals, loading, error } = useProposals({
+
+  const [pageIndex, setPageIndex] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(6);
+
+  const fromIndex = pageIndex * limit;
+
+  const { proposals, filteredProposalCount, loading, error } = useProposals({
     useDummyData: false,
     status: currentTab,
     sorting,
     order,
-    // Needed to override cached value when switching from Dashboard page to Governance page
-    limit: undefined,
+    fromIndex,
+    limit,
   });
 
   return (
-    <Tabs
-      defaultValue="All"
-      onValueChange={(v) =>
-        setCurrentTab(statusStringToEnum(v as ProposalStatusTab))
-      }
-    >
-      <div className="flex flex-row items-center gap-x-2">
-        {/* Mobile category selector (dropdown) */}
-        <div className="lg:hidden">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="subtle" size="sm" className="group">
-                <div className="flex flex-row items-center gap-x-1">
-                  <p className="font-normal">
-                    {currentTab ? ProposalStatus[currentTab] : 'All'}
-                  </p>
-                  <HiChevronDown className="h-4 w-4 transition-all duration-200 group-data-[state=open]:rotate-180" />
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <TabsList className="flex flex-col">
-                {tabs.map((tab) => (
-                  <TabsTrigger key={tab} value={tab}>
-                    <span className="lowercase first-letter:uppercase">
-                      {tab}
-                    </span>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+    <Card>
+      <Tabs
+        defaultValue="All"
+        onValueChange={(v) =>
+          setCurrentTab(statusStringToEnum(v as ProposalStatusTab))
+        }
+      >
+        <div className="flex flex-row items-center gap-x-2">
+          {/* Mobile category selector (dropdown) */}
+          <div className="lg:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="subtle" size="sm" className="group">
+                  <div className="flex flex-row items-center gap-x-1">
+                    <p className="font-normal">
+                      {currentTab ? ProposalStatus[currentTab] : 'All'}
+                    </p>
+                    <HiChevronDown className="h-4 w-4 transition-all duration-200 group-data-[state=open]:rotate-180" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <TabsList className="flex flex-col">
+                  {tabs.map((tab) => (
+                    <TabsTrigger key={tab} value={tab}>
+                      <span className="lowercase first-letter:uppercase">
+                        {tab}
+                      </span>
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-        {/* Desktop category selector */}
-        <TabsList className="hidden lg:inline-block">
-          {tabs.map((tab) => (
-            <TabsTrigger key={tab} value={tab}>
-              <span className="lowercase first-letter:uppercase">{tab}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <SortSelector setSorting={setSorting} setOrder={setOrder} />
-      </div>
-      {tabs.map((tab) => (
-        <TabsContent key={tab} value={tab}>
-          <ProposalCardList
-            proposals={proposals}
-            loading={loading}
-            error={error}
-          />
-        </TabsContent>
-      ))}
-    </Tabs>
+          {/* Desktop category selector */}
+          <TabsList className="hidden lg:inline-block">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab} value={tab}>
+                <span className="lowercase first-letter:uppercase">{tab}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <SortSelector setSorting={setSorting} setOrder={setOrder} />
+        </div>
+        {tabs.map((tab) => (
+          <TabsContent key={tab} value={tab}>
+            <ProposalCardList
+              proposals={proposals}
+              loading={loading}
+              error={error}
+            />
+          </TabsContent>
+        ))}
+        <PaginationControls
+          getPageSize={() => limit}
+          setPageSize={(n) => {
+            // As the limit changes, the pageIndex might also have to change.
+            // Otherwise, the user could end up in an invalid state.
+            // fromIndex = pageIndex * limit, thus pageIndex = fromIndex / limit.
+            setPageIndex(Math.floor(fromIndex / n));
+            setLimit(n);
+          }}
+          getPageIndex={() => pageIndex}
+          setPageIndex={(n) => setPageIndex(n)}
+          getPageCount={() =>
+            filteredProposalCount
+              ? Math.ceil(filteredProposalCount / limit)
+              : null
+          }
+          selectablePageSizes={[6, 12, 20, 40, 50]}
+          getCanNextPage={() =>
+            !(proposals.length < limit) && proposals.length > 0
+          }
+        />
+      </Tabs>
+    </Card>
   );
 };
 

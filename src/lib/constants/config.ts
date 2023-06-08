@@ -9,7 +9,7 @@
 export const CONFIG = {
   VERIFICATION_API_URL:
     'https://securesecodao-api.herokuapp.com/verification_api',
-  SEARCHSECO_API_URL: 'http://localhost:25566/api',
+  SEARCHSECO_API_URL: 'https://searchseco-api.herokuapp.com/api',
   DIAMOND_ADDRESS: '0xAF0A837d2c709d33eDfd1439E3E0BBc9AC18606B',
   PREFERRED_NETWORK_ID: 80001,
 } as const;

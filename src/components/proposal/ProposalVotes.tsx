@@ -80,7 +80,7 @@ const getCategories = (
           }% Yes`,
         },
         {
-          label: 'Minimum participation',
+          label: 'Minimum participation / quorum',
           value: `≥ ${minParticipation}%`,
         },
       ],
@@ -89,7 +89,7 @@ const getCategories = (
       title: 'Voting activity',
       items: [
         {
-          label: 'Current participation / quorum',
+          label: 'Current participation',
           value: `${currentParticipation}%`,
         },
         {
@@ -152,11 +152,12 @@ const ProposalVotes = ({
         <div className="flex items-center gap-x-2">
           <p
             className={cn(
-              'text-highlight-foreground/80',
+              'text-highlight-foreground/80 leading-4',
               proposal?.status === ProposalStatus.Active && 'ml-6'
             )}
           >
-            Quorum: {currentParticipation}%
+            <span className="hidden xs:inline-block">Participation:</span>{' '}
+            {currentParticipation}%
           </p>
           <Dialog>
             <DialogTrigger asChild>

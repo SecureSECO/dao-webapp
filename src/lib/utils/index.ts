@@ -145,6 +145,19 @@ export function lowerCaseFirst(x: string): string {
   return x.charAt(0).toLowerCase() + x.slice(1);
 }
 
+/**
+ * Utility function to index objects with null chaining.
+ */
+export function indexObject<T>(
+  object: T | null | undefined,
+  index: keyof T | null | undefined
+): T[keyof T] | null | undefined {
+  if (isNullOrUndefined(object) || isNullOrUndefined(index)) {
+    return null;
+  }
+  return object[index];
+}
+
 /** Taken from https://stackoverflow.com/questions/29292921/how-to-use-promise-all-with-an-object-as-input
  * Promise.all for entries of an object. Will resolve when all values of the object have been resolved.
  */

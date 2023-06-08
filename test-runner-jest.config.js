@@ -6,20 +6,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+/**
+ * This file is used by the Storybook Test Runner to configure Jest
+ */
 
-import { ClaimReward } from './Mining';
+const { getJestConfig } = require('@storybook/test-runner');
 
-const meta: Meta<typeof ClaimReward> = {
-  component: ClaimReward,
-};
-
-export default meta;
-type Story = StoryObj<typeof ClaimReward>;
-
-export const Primary: Story = {
-  args: {
-    repToMonetaryFactor: 0.3,
-    claimableRep: 123,
-  },
+module.exports = {
+  // The default configuration comes from @storybook/test-runner
+  ...getJestConfig(),
+  /** Add your own overrides below
+   * @see https://jestjs.io/docs/configuration
+   */
+  testTimeout: 30000,
 };

@@ -53,7 +53,7 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
         )}
         {...props}
       >
-        <div className="max-w-[80%] space-y-6">
+        <div className="sm:max-w-[80%] space-y-6">
           <Header className="break-words">{title}</Header>
           {props.children}
         </div>

@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { useState } from 'react';
 import LogoFull from '@/src/components/LogoFull';
 import ConnectButton from '@/src/components/layout/ConnectButton';
 import ThemePicker from '@/src/components/layout/ThemePicker';
@@ -23,14 +24,13 @@ import { TOKENS } from '@/src/lib/constants/tokens';
 import { cn } from '@/src/lib/utils';
 import { IconType } from 'react-icons';
 import { FaDiscord } from 'react-icons/fa';
-import { HiOutlineTerminal } from 'react-icons/hi';
 import {
   HiBars3,
   HiChevronDown,
   HiOutlineDocumentMagnifyingGlass,
   HiOutlineGlobeAlt,
 } from 'react-icons/hi2';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, NavLinkProps, useLocation } from 'react-router-dom';
 
 type NavItemPageData = { label: string; url: string };
 type NavItemPageWithIcon = NavItemPageData & {
@@ -75,29 +75,29 @@ const navItems: NavItemData[] = [
         icon: HiOutlineDocumentMagnifyingGlass,
         description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.`,
       },
-      // {
-      //   label: 'Mining',
-      //   url: '/mining',
-      //   icon: HiOutlineTerminal,
-      //   description: `Claim your mining rewards in ${TOKENS.secoin.symbol} or ${TOKENS.rep.symbol}.`,
-      // },
     ],
     alternativeLinks: [
-      { label: 'Website', url: '#', icon: HiOutlineGlobeAlt },
+      {
+        label: 'Website',
+        url: 'https://secureseco.org/',
+        icon: HiOutlineGlobeAlt,
+      },
       { label: 'Discord', url: '#', icon: FaDiscord },
     ],
   },
 ];
 
-const NavItemPage = ({
-  item,
-  className,
-}: {
+interface NavItemPageProps extends Omit<NavLinkProps, 'to'> {
   item: NavItemPageData;
-  className?: string;
-}) => {
+}
+
+/**
+ * Nav item as a link to a single page
+ */
+const NavItemPage = ({ item, className, ...props }: NavItemPageProps) => {
   return (
     <NavLink
+      {...props}
       key={item.label}
       to={item.url}
       className={({ isActive, isPending }) =>
@@ -114,13 +114,19 @@ const NavItemPage = ({
   );
 };
 
+interface NavItemCollectionProps extends Omit<NavLinkProps, 'to'> {
+  item: NavItemCollectionData;
+}
+
+/**
+ * Nav item as a dropdown menu with links to (possibly) multiple pages
+ * The item may also contain alternative links (e.g. to external websites)
+ */
 const NavItemCollection = ({
   item,
   className,
-}: {
-  item: NavItemCollectionData;
-  className?: string;
-}) => {
+  ...props
+}: NavItemCollectionProps) => {
   const location = useLocation();
   const isActive = item.pages.some((x) => x.url === location.pathname);
   return (
@@ -135,33 +141,42 @@ const NavItemCollection = ({
         {item.label}
         <HiChevronDown className="transi h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-screen max-w-xs origin-top rounded-3xl text-sm leading-5 shadow-lg">
+      <DropdownMenuContent className="w-screen max-w-xs origin-top rounded-3xl overflow-hidden text-sm leading-5 shadow-lg">
         <DropdownMenuGroup>
-          <DropdownContent item={item} />
+          <NavItemCollectionContent item={item} {...props} />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 };
 
-const NavItem = ({
-  item,
-  className,
-}: {
+interface NavItemProps extends Omit<NavLinkProps, 'to'> {
   item: NavItemData;
-  className?: string;
-}) => {
+}
+
+/**
+ * Nav item as either a link to a single page or a dropdown menu with links to (possibly) multiple pages
+ */
+const NavItem = ({ item, className, ...props }: NavItemProps) => {
   if ((item as any).url)
-    return <NavItemPage item={item as NavItemPageData} className={className} />;
+    return (
+      <NavItemPage
+        item={item as NavItemPageData}
+        {...props}
+        className={className}
+      />
+    );
   if ((item as any).pages)
     return (
       <>
         <NavItemCollection
+          {...props}
           item={item as NavItemCollectionData}
-          className={className + ' hidden lg:flex'}
+          className={cn(className, 'hidden lg:flex')}
         />
-        <div className="w-full rounded-3xl border border-border text-sm leading-5 shadow-lg md:col-span-2 lg:hidden">
-          <DropdownContent
+        <div className="w-full rounded-3xl overflow-hidden border border-border text-sm leading-5 shadow-lg md:col-span-2 lg:hidden">
+          <NavItemCollectionContent
+            {...props}
             title={item.label}
             item={item as NavItemCollectionData}
           />
@@ -174,7 +189,12 @@ const NavItem = ({
 const Navbar = () => {
   return (
     <div className="mt-2 flex w-full items-center justify-between lg:mt-0">
-      <LogoFull className="h-fit w-32 lg:w-40" />
+      <NavLink
+        to="/"
+        className="rounded-md ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2"
+      >
+        <LogoFull className="h-fit w-32 lg:w-40" />
+      </NavLink>
 
       {/* Mobile nav */}
       <MobileNav />
@@ -198,15 +218,17 @@ const Navbar = () => {
   );
 };
 
-export const DropdownContent = ({
+interface NavItemCollectionContentProps extends Omit<NavLinkProps, 'to'> {
+  item: NavItemCollectionData;
+  title?: string;
+}
+
+export const NavItemCollectionContent = ({
   title,
   item,
   className,
-}: {
-  item: NavItemCollectionData;
-  title?: string;
-  className?: string;
-}) => {
+  ...props
+}: NavItemCollectionContentProps) => {
   return (
     <div className={cn('w-full divide-popover-foreground/10', className)}>
       {title && (
@@ -230,13 +252,17 @@ export const DropdownContent = ({
                 location.pathname == page.url
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-popover-foreground/5 group-hover:bg-popover group-hover:text-primary',
-                'mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg '
+                'mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg'
               )}
             >
               <page.icon className="h-6 w-6" aria-hidden="true" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <NavLink to={page.url}>
+              <NavLink
+                {...props}
+                to={page.url}
+                className="ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2 rounded-md"
+              >
                 <span className=" font-semibold">{page.label}</span>
                 <p className="opacity-80">{page.description}</p>
               </NavLink>
@@ -247,10 +273,11 @@ export const DropdownContent = ({
       <div className="grid h-full w-full grid-cols-2 divide-x divide-popover-foreground/10 bg-popover-foreground/5">
         {item.alternativeLinks &&
           item.alternativeLinks.map((item) => (
+            // Note: use a instead? (for external links)
             <NavLink
               key={item.label}
               to={item.url}
-              className="flex items-center justify-center gap-x-2.5 p-3 font-semibold hover:bg-popover-foreground/20"
+              className="flex items-center justify-center gap-x-2.5 p-3 font-semibold hover:bg-popover-foreground/20 ring-ring rounded-md focus:outline-none focus:ring-2"
             >
               <item.icon
                 className="h-5 w-5 flex-none opacity-80"
@@ -267,10 +294,12 @@ export const DropdownContent = ({
 export default Navbar;
 
 const MobileNav = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <nav className="relative flex items-center gap-x-2 lg:hidden">
       <ThemePicker />
-      <Sheet>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <div>
             <Button
@@ -297,7 +326,12 @@ const MobileNav = () => {
 
             <div className="grid w-full grid-cols-1 place-items-center gap-4 pb-6 md:grid-cols-2">
               {navItems.map((item) => (
-                <NavItem key={item.label} item={item} className="text-center" />
+                <NavItem
+                  key={item.label}
+                  item={item}
+                  className="text-center"
+                  onClick={() => setIsOpen(false)}
+                />
               ))}
             </div>
           </div>

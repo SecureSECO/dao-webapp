@@ -23,6 +23,7 @@ export type UseProposalsData = {
   error: string | null;
   proposals: Proposal[];
   proposalCount: number;
+  filteredProposalCount: number | null;
   countLoading: boolean;
 };
 
@@ -32,6 +33,7 @@ export type UseProposalsProps = {
   sorting?: ProposalSorting | undefined;
   order?: SortingOrder | undefined;
   limit?: number | undefined;
+  fromIndex?: number | undefined;
 };
 
 const defaultProps: UseProposalsProps = {
@@ -40,6 +42,7 @@ const defaultProps: UseProposalsProps = {
   sorting: ProposalSorting.Creation,
   order: SortingOrder.Desc,
   limit: undefined,
+  fromIndex: undefined,
 };
 
 const dummyProposals: Proposal[] = [
@@ -53,13 +56,14 @@ const dummyProposals: Proposal[] = [
 ];
 
 export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
-  const { useDummyData, status, sorting, order, limit } = Object.assign(
-    defaultProps,
-    props
-  );
+  const { useDummyData, status, sorting, order, limit, fromIndex } =
+    Object.assign(defaultProps, props);
 
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [proposalCount, setProposalCount] = useState<number>(0);
+  const [filteredProposalCount, setFilteredProposalCount] = useState<
+    number | null
+  >(null);
   const [proposalsLoading, setProposalsLoading] = useState<boolean>(true);
   const [countLoading, setCountLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -77,13 +81,27 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
     }
   };
 
+  const fetchFilteredProposalCount = async (
+    client: DiamondGovernanceClient
+  ) => {
+    try {
+      const proposalCount = await client.sugar.GetFilteredProposalCount(
+        status ? [status] : undefined
+      );
+      setFilteredProposalCount(proposalCount);
+    } catch (e) {
+      console.error(e);
+      setFilteredProposalCount(0);
+    }
+  };
+
   const fetchProposals = async (client: DiamondGovernanceClient) => {
     try {
       const daoProposals: Proposal[] | null = await client.sugar.GetProposals(
         status ? [status] : undefined,
         sorting,
         order,
-        undefined,
+        fromIndex,
         limit
       );
 
@@ -118,7 +136,13 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
     if (!anonClient) return;
     setProposalsLoading(true);
     fetchProposals(anonClient);
-  }, [anonClient, status, sorting, order]);
+  }, [anonClient, status, sorting, order, fromIndex, limit]);
+
+  useEffect(() => {
+    if (useDummyData) return;
+    if (!anonClient) return;
+    fetchFilteredProposalCount(anonClient);
+  }, [anonClient, status]);
 
   // Only refetch proposal count if the client changes
   useEffect(() => {
@@ -132,6 +156,7 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
     error,
     proposals,
     proposalCount,
+    filteredProposalCount,
     countLoading,
   };
 };

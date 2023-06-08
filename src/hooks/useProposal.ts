@@ -26,6 +26,8 @@ import {
 import { BigNumber, ContractTransaction } from 'ethers';
 import { useAccount } from 'wagmi';
 
+import { ProposalWhitelistAction } from '../components/proposal/actions/WhitelistAction';
+
 export type CanVote = {
   Yes: boolean;
   No: boolean;
@@ -133,6 +135,17 @@ export const dummyChangeParamsAction: ProposalChangeParamAction = {
   interface: 'IPartialVotingProposalFacet',
   params: {
     _maxSingleWalletPower: 100000,
+  },
+};
+
+/**
+ * Dummy mint tokens action
+ */
+export const dummyWhitelistMemberAction: ProposalWhitelistAction = {
+  method: 'whitelist(address)',
+  interface: 'IMembershipWhitelisting',
+  params: {
+    _address: '0x123456789009876543211234567890',
   },
 };
 

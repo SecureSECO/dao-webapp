@@ -138,11 +138,15 @@ export const AddActionButton = ({
               onClick={() => append(action.emptyInputData)}
               className="gap-x-2 hover:cursor-pointer"
               disabled={
-                action.maxPerProposal !== undefined &&
-                actions &&
-                actions.actions &&
-                actions.actions.filter((x) => x.name === name).length >=
-                  action.maxPerProposal
+                !actions ||
+                (action.maxPerProposal !== undefined &&
+                  actions.actions &&
+                  actions.actions.filter((x) => x.name === name).length >=
+                    action.maxPerProposal) ||
+                // There's a limit of 256 actions per proposals
+                // This is because AragonOSx uses a uint256 to store a failure map
+                // for actions, and each bit represents an action (so max 256 actions)
+                (actions.actions && actions.actions.length >= 256)
               }
             >
               <action.icon className="h-5 w-5 shrink-0" />
