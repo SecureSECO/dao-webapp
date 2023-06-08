@@ -103,7 +103,7 @@ const ViewProposal = () => {
                       ] as ProposalStatusString
                     }
                   />
-                  <div className="flex flex-row items-center gap-x-2 text-highlight-foreground/60">
+                  <div className="flex flex-row items-center gap-x-2 text-highlight-foreground/60 leading-4">
                     <HiOutlineClock className="h-5 w-5 shrink-0" />
                     {statusText(proposal?.status ?? ProposalStatus.Pending)}
                   </div>

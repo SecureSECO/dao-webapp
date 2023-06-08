@@ -23,6 +23,7 @@ export type UseProposalsData = {
   error: string | null;
   proposals: Proposal[];
   proposalCount: number;
+  filteredProposalCount: number | null;
   countLoading: boolean;
 };
 
@@ -60,6 +61,9 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
 
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [proposalCount, setProposalCount] = useState<number>(0);
+  const [filteredProposalCount, setFilteredProposalCount] = useState<
+    number | null
+  >(null);
   const [proposalsLoading, setProposalsLoading] = useState<boolean>(true);
   const [countLoading, setCountLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -74,6 +78,20 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
       console.error(e);
       setProposalCount(0);
       setCountLoading(false);
+    }
+  };
+
+  const fetchFilteredProposalCount = async (
+    client: DiamondGovernanceClient
+  ) => {
+    try {
+      const proposalCount = await client.sugar.GetFilteredProposalCount(
+        status ? [status] : undefined
+      );
+      setFilteredProposalCount(proposalCount);
+    } catch (e) {
+      console.error(e);
+      setFilteredProposalCount(0);
     }
   };
 
@@ -120,6 +138,12 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
     fetchProposals(anonClient);
   }, [anonClient, status, sorting, order, fromIndex, limit]);
 
+  useEffect(() => {
+    if (useDummyData) return;
+    if (!anonClient) return;
+    fetchFilteredProposalCount(anonClient);
+  }, [anonClient, status]);
+
   // Only refetch proposal count if the client changes
   useEffect(() => {
     if (useDummyData || !anonClient) return;
@@ -132,6 +156,7 @@ export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
     error,
     proposals,
     proposalCount,
+    filteredProposalCount,
     countLoading,
   };
 };

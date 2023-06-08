@@ -62,7 +62,7 @@ const Dashboard = () => {
       {/* Card showing metadata about the DAO */}
       <Card
         size="lg"
-        className="relative col-span-full flex shrink flex-row justify-between"
+        className="relative col-span-full flex shrink flex-col gap-y-6 sm:flex-row justify-between"
       >
         <div className="flex flex-col justify-between gap-y-6">
           <div className="space-y-4">
@@ -83,9 +83,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="hidden flex-col items-end gap-y-6 sm:flex">
-          <Logo className="h-28 w-28" />
-          <div className="flex flex-col gap-y-2">
+        <div className="flex-col sm:items-end gap-y-6 flex">
+          <Logo className="h-28 w-28 hidden sm:block" />
+          <div className="flex flex-col">
             {DAO_METADATA.links.map((link, i) => (
               <a
                 key={i}

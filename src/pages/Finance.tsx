@@ -302,7 +302,7 @@ const Finance = () => {
             {daoTransfers && transferLimit < daoTransfers.length && (
               <Button
                 variant="outline"
-                label="Show more tokens"
+                label="Show more transfers"
                 icon={HiArrowSmallRight}
                 onClick={() =>
                   setTransferLimit(transferLimit + Math.min(transferLimit, 25))
