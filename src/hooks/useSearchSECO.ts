@@ -32,6 +32,7 @@ type UseSearchSECOData = {
   hashes: string[];
   cost: number | null;
   session: SessionData | null;
+  miningData: MiningData[] | null;
   runQuery: (url: string, token: string) => Promise<QueryResponse>;
   resetQuery: (clearQueryResult?: boolean) => void;
   startSession: () => Promise<SessionData>;
@@ -50,6 +51,12 @@ type SessionData = {
   timestamp?: number;
   data?: any;
   error?: string;
+};
+
+type MiningData = {
+  minerId: string;
+  claimableHashes: number;
+  status: string;
 };
 
 interface ResultData {
@@ -197,6 +204,8 @@ export const useSearchSECO = (
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [doPoll, setDoPoll] = useState<boolean>(true);
 
+  const [miningData, setMiningData] = useState<MiningData[] | null>(null);
+
   const API_URL = CONFIG.SEARCHSECO_API_URL;
 
   // Continuously poll for session data
@@ -221,6 +230,12 @@ export const useSearchSECO = (
       setCost(session.cost);
     }
   }, [session]);
+
+  useEffect(() => {
+    if (client) {
+      getMiningData();
+    }
+  }, [client]);
 
   /**
    * Runs the query and checks the cost of retrieving data about those hashes
@@ -436,11 +451,49 @@ export const useSearchSECO = (
     setDoPoll(true);
   };
 
+  /**
+   * Retrieves data about your mining performance
+   */
+  const getMiningData = async () => {
+    if (!client) {
+      return;
+    }
+
+    const address = await client.pure.signer.getAddress();
+
+    const res = await fetch(
+      `${API_URL}/rewarding/miningData?address=${address}`
+    );
+    if (!res.ok) {
+      throw new Error(`API request failed with status ${res.status}`);
+    }
+
+    const json = await res.json();
+
+    if (json.status !== 'ok') {
+      console.log(json);
+      throw new Error(`API request failed, please try again.`);
+    }
+
+    const rows = json.data;
+
+    const data: MiningData[] = rows.map((row: any) => {
+      return {
+        minerId: row.id as string,
+        claimableHashes: parseInt(row.claimable_hashes as string),
+        status: row.status as string,
+      } as MiningData;
+    });
+
+    setMiningData(data);
+  };
+
   return {
     queryResult,
     hashes,
     cost,
     session,
+    miningData,
     runQuery,
     resetQuery,
     startSession,
