@@ -12,7 +12,7 @@ import { CONFIG } from '@/src/lib/constants/config';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { getErrorMessage } from '@/src/lib/utils';
 import { parseTokenAmount } from '@/src/lib/utils/token';
-import { ContractTransaction, ethers } from 'ethers';
+import { BigNumber, ContractTransaction, ethers } from 'ethers';
 
 import { useLocalStorage } from './useLocalStorage';
 
@@ -33,10 +33,15 @@ type UseSearchSECOData = {
   cost: number | null;
   session: SessionData | null;
   miningData: MiningData[] | null;
+  hashReward: BigNumber | null;
   runQuery: (url: string, token: string) => Promise<QueryResponse>;
   resetQuery: (clearQueryResult?: boolean) => void;
   startSession: () => Promise<SessionData>;
   payForSession: (session: SessionData) => Promise<ContractTransaction>;
+  claimReward: (
+    hashCount: BigNumber,
+    repFrac: BigNumber
+  ) => Promise<ContractTransaction>;
 };
 
 /**
@@ -205,6 +210,8 @@ export const useSearchSECO = (
   const [doPoll, setDoPoll] = useState<boolean>(true);
 
   const [miningData, setMiningData] = useState<MiningData[] | null>(null);
+  // SECOIN reward per hash, in 18 decimal precision
+  const [hashReward, setHashReward] = useState<BigNumber | null>(null);
 
   const API_URL = CONFIG.SEARCHSECO_API_URL;
 
@@ -452,7 +459,7 @@ export const useSearchSECO = (
   };
 
   /**
-   * Retrieves data about your mining performance
+   * Retrieves data about your mining performance & hash reward
    */
   const getMiningData = async () => {
     if (!client) {
@@ -486,6 +493,60 @@ export const useSearchSECO = (
     });
 
     setMiningData(data);
+
+    const rewarding = await client.pure.ISearchSECORewardingFacet();
+    const hashReward = await rewarding.getHashReward();
+
+    // setHashReward(hashReward);
+    setHashReward(BigNumber.from(1000000000000000)); // FIXME: remove this
+  };
+
+  /**
+   * Claims the mining rewards from all miners
+   * @param hashCount Number of hashes to claim
+   * @param repFrac Fraction which should be paid in rep, rest is paid in coin
+   */
+  const claimReward = async (
+    hashCount: BigNumber,
+    repFrac: BigNumber
+  ): Promise<ContractTransaction> => {
+    if (!client) {
+      throw new Error('No client found');
+    }
+
+    const address = await client.pure.signer.getAddress();
+
+    const res = await fetch(`${API_URL}/rewarding/reward`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        address,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`API request failed with status ${res.status}`);
+    }
+
+    const json = await res.json();
+
+    if (json.status !== 'ok') {
+      console.error(json);
+      throw new Error(`API request failed, please try again.`);
+    }
+
+    const { proof, nonce } = json;
+
+    const rewarding = await client.pure.ISearchSECORewardingFacet();
+    return await rewarding.rewardMinerForHashes(
+      address,
+      hashCount,
+      nonce,
+      repFrac,
+      proof.sig
+    );
   };
 
   return {
@@ -494,9 +555,11 @@ export const useSearchSECO = (
     cost,
     session,
     miningData,
+    hashReward,
     runQuery,
     resetQuery,
     startSession,
     payForSession,
+    claimReward,
   };
 };
