@@ -10,10 +10,19 @@ import {
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/src/components/ui/Popover';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { useForm } from 'react-hook-form';
-import { HiArrowsRightLeft, HiOutlineArrowsUpDown } from 'react-icons/hi2';
+import {
+  HiArrowsRightLeft,
+  HiCog6Tooth,
+  HiOutlineArrowsUpDown,
+} from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
 
 const abcTokens = [
@@ -67,6 +76,7 @@ const Swap = () => {
         header="Swap"
         icon={HiArrowsRightLeft}
         className="max-w-[40rem] relative" // Add relative here
+        aside={<SwapSettings />}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
           {/* From token */}
@@ -156,5 +166,66 @@ const MaxButton = ({
         Max
       </button>
     </div>
+  );
+};
+
+export const SwapSettings = () => {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          className="w-10 rounded-full p-0"
+          type="button"
+        >
+          <span className="sr-only">Swap settings</span>
+          <HiCog6Tooth className="h-5 w-5 shrink-0" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80">
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="font-medium leading-none">Dimensions</h4>
+            <p className="text-sm text-muted-foreground">
+              Set the dimensions for the layer.
+            </p>
+          </div>
+          <div className="grid gap-2">
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="width">Width</Label>
+              <Input
+                id="width"
+                defaultValue="100%"
+                className="col-span-2 h-8"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="maxWidth">Max. width</Label>
+              <Input
+                id="maxWidth"
+                defaultValue="300px"
+                className="col-span-2 h-8"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="height">Height</Label>
+              <Input
+                id="height"
+                defaultValue="25px"
+                className="col-span-2 h-8"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="maxHeight">Max. height</Label>
+              <Input
+                id="maxHeight"
+                defaultValue="none"
+                className="col-span-2 h-8"
+              />
+            </div>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
