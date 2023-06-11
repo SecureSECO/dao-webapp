@@ -462,6 +462,19 @@ export const useSearchSECO = (
    * Retrieves data about your mining performance & hash reward
    */
   const getMiningData = async () => {
+    if (useDummyData) {
+      setMiningData([
+        // FIXME: dummy
+        {
+          minerId: '2d8416f9-181c-4df9-8d45-16d10b604bf0',
+          claimableHashes: 749,
+          status: 'idle',
+        },
+      ]);
+      setHashReward(BigNumber.from(1000000000000000)); // FIXME: remove this
+      return;
+    }
+
     if (!client) {
       return;
     }
@@ -497,8 +510,7 @@ export const useSearchSECO = (
     const rewarding = await client.pure.ISearchSECORewardingFacet();
     const hashReward = await rewarding.getHashReward();
 
-    // setHashReward(hashReward);
-    setHashReward(BigNumber.from(1000000000000000)); // FIXME: remove this
+    setHashReward(hashReward);
   };
 
   /**

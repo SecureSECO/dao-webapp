@@ -79,7 +79,9 @@ export const ClaimReward = ({
     defaultValues: { distribution: 100 },
   });
 
-  const { miningData, hashReward, claimReward } = useSearchSECO();
+  const { miningData, hashReward, claimReward } = useSearchSECO({
+    useDummyData: true,
+  });
 
   const [isBusy, setIsBusy] = useState(false);
 
