@@ -13,6 +13,7 @@ import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { getErrorMessage } from '@/src/lib/utils';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber, ContractTransaction, ethers } from 'ethers';
+import { useAccount } from 'wagmi';
 
 import { useLocalStorage } from './useLocalStorage';
 
@@ -196,7 +197,7 @@ export const useSearchSECO = (
   props?: UseSearchSECOProps
 ): UseSearchSECOData => {
   const { client } = useDiamondSDKContext();
-
+  const { address } = useAccount();
   const { useDummyData } = Object.assign(defaultProps, props);
   const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
   const [hashes, setHashes] = useState<string[]>([]);
@@ -239,9 +240,7 @@ export const useSearchSECO = (
   }, [session]);
 
   useEffect(() => {
-    if (client) {
-      getMiningData();
-    }
+    if (client) getMiningData();
   }, [client]);
 
   /**
@@ -478,8 +477,6 @@ export const useSearchSECO = (
     if (!client) {
       return;
     }
-
-    const address = await client.pure.signer.getAddress();
 
     const res = await fetch(
       `${API_URL}/rewarding/miningData?address=${address}`

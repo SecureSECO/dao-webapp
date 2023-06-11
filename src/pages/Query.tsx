@@ -100,6 +100,9 @@ const displayQueryColumns: ColumnDef<DisplayQueryResult>[] = [
   },
 ];
 
+/**
+ * Page for querying the SearchSECO database.
+ */
 const Query = () => {
   const {
     register,
