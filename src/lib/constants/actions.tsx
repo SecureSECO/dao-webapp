@@ -310,10 +310,10 @@ export const ACTIONS: Actions = {
     }),
   },
   diamond_cut: {
-    method: 'diamondCut((address,uint8,bytes4[],bytes)[])',
+    method: 'diamondCut(tuple[])',
     interface: 'IDiamondCut',
-    label: 'Cut',
-    longLabel: 'Diamond Cut',
+    label: 'Diamond cut',
+    longLabel: 'Diamond cut',
     icon: Diamond,
     view: DiamondCutAction,
     // There is not support for adding diamond cut actions through the webapp
