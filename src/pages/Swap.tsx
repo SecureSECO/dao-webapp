@@ -15,9 +15,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/src/components/ui/Popover';
+import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { TOKENS } from '@/src/lib/constants/tokens';
-import { useForm } from 'react-hook-form';
+import { Control, Controller, UseFormRegister, useForm } from 'react-hook-form';
 import {
   HiArrowsRightLeft,
   HiCog6Tooth,
@@ -48,10 +49,15 @@ const Icon = ({ name }: { name: string }) => {
 
 interface IFormInputs {
   fromToken: number;
+  slippage: string;
 }
-
 const Swap = () => {
-  const { register, handleSubmit, setValue } = useForm<IFormInputs>();
+  const { register, control, handleSubmit, setValue } = useForm<IFormInputs>({
+    defaultValues: {
+      slippage: '1', // 1% as default
+    },
+    shouldUnregister: false,
+  });
 
   const onSubmit = (data: IFormInputs) => {
     console.log(data);
@@ -76,7 +82,7 @@ const Swap = () => {
         header="Swap"
         icon={HiArrowsRightLeft}
         className="max-w-[40rem] relative" // Add relative here
-        aside={<SwapSettings />}
+        aside={<SwapSettings control={control} register={register} />}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
           {/* From token */}
@@ -99,7 +105,7 @@ const Swap = () => {
             </div>
           </div>
           {/* Swap button */}
-          <div className="absolute top-1/2 left-1/2 -translate-y-2 -translate-x-1/2">
+          <div className="absolute left-1/2 -translate-y-5 -translate-x-1/2">
             <Button
               onClick={() => {
                 setSwap(!swap);
@@ -169,61 +175,58 @@ const MaxButton = ({
   );
 };
 
-export const SwapSettings = () => {
+export const SwapSettings = ({
+  control,
+  register,
+}: {
+  control: Control<IFormInputs, any>;
+  register: UseFormRegister<IFormInputs>;
+}) => {
+  const slippageOptions = ['0.5', '1', '2'];
+
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className="w-10 rounded-full p-0"
-          type="button"
-        >
+        <Button variant="outline" className="w-10 p-0" type="button">
           <span className="sr-only">Swap settings</span>
           <HiCog6Tooth className="h-5 w-5 shrink-0" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80">
+      <PopoverContent className="w-fit">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium leading-none">Dimensions</h4>
+            <h4 className="font-medium leading-none">Slippage Tolerance</h4>
             <p className="text-sm text-muted-foreground">
-              Set the dimensions for the layer.
+              Set the slippage tolerance for the swap.
             </p>
           </div>
-          <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="width">Width</Label>
-              <Input
-                id="width"
-                defaultValue="100%"
-                className="col-span-2 h-8"
-              />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxWidth">Max. width</Label>
-              <Input
-                id="maxWidth"
-                defaultValue="300px"
-                className="col-span-2 h-8"
-              />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="height">Height</Label>
-              <Input
-                id="height"
-                defaultValue="25px"
-                className="col-span-2 h-8"
-              />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxHeight">Max. height</Label>
-              <Input
-                id="maxHeight"
-                defaultValue="none"
-                className="col-span-2 h-8"
-              />
-            </div>
-          </div>
+          <Controller
+            control={control}
+            name="slippage"
+            render={({ field: { onChange, value, name } }) => (
+              <RadioGroup onChange={onChange} defaultValue={value} name={name}>
+                {slippageOptions.map((option) => (
+                  <div key={option} className="flex items-center space-x-2">
+                    <RadioGroupItem value={option} id={`s-${option}`} />
+                    <Label htmlFor={`s-${option}`}>{option}%</Label>
+                  </div>
+                ))}
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="0" id="s-custom" />
+                  <Label htmlFor="s-custom">
+                    <Input
+                      type="number"
+                      className="h-8"
+                      min={0}
+                      max={100}
+                      step={0.1}
+                      onChange={(e) => onChange(e.target.value)}
+                    />
+                  </Label>
+                </div>
+              </RadioGroup>
+            )}
+          />
         </div>
       </PopoverContent>
     </Popover>
