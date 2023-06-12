@@ -56,7 +56,7 @@ export const MergePRInput = () => {
     const debounced = setTimeout(async () => {
       if (!url) return;
 
-      // Fetch sha from verification server
+      // Fetch sha from pr-merger server
       const res = await fetch(
         `${CONFIG.PR_MERGER_API_URL}/latestCommit?url=${url}`
       );
