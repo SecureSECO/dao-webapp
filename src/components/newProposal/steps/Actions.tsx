@@ -62,21 +62,25 @@ export const Actions = () => {
   const onSubmit = async (data: ProposalFormActions) => {
     setIsLoading(true);
 
+    // Loop over every action
     const actionPromises = data.actions.map(async (action, index) => {
+      // If it's the merge action, fetch the latest commit hash
       if (action.name === 'merge_pr') {
         try {
-          // Fetch sha from pr-merger server
+          // Fetch (encrypted) commit hash from the pr-merger server
           const res = await fetch(
             `${CONFIG.PR_MERGER_API_URL}/latestCommit?url=${action.url}`
           );
 
           const json = await res.json();
 
+          // Validate response
           if (json.status !== 'ok' || json.data?.sha == null) {
             console.log(json);
             throw new Error('Could not fetch latest commit hash');
           }
 
+          // Return new action object with latest commit hash
           return {
             ...action,
             sha: json.data.sha,
@@ -84,6 +88,7 @@ export const Actions = () => {
         } catch (error) {
           console.log(error);
 
+          // If it fails, show error message under appropriate field and throw error
           methods.setError(`actions.${index}.url`, {
             type: 'manual',
             message: 'Could not fetch latest commit hash',
@@ -96,6 +101,7 @@ export const Actions = () => {
 
     Promise.all(actionPromises)
       .then(() => {
+        // If everything went OK, go to next step
         setDataStep3(data);
         setStep(4);
       })
