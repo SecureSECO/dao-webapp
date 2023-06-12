@@ -53,7 +53,15 @@ export const Actions = () => {
     control: methods.control,
   });
 
-  const onSubmit = (data: ProposalFormActions) => {
+  const onSubmit = async (data: ProposalFormActions) => {
+    data.actions.map((action) => {
+      if (action.name === 'merge_pr')
+        return {
+          ...action,
+          sha: '', // fetch sha
+        };
+    });
+
     setDataStep3(data);
     setStep(4);
   };
