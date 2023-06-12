@@ -18,6 +18,7 @@ export interface ProposalMergeAction extends Action {
     _owner: string;
     _repo: string;
     _pull_number: string;
+    _sha: string;
   };
 }
 
