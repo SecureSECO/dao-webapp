@@ -92,7 +92,7 @@ const Dashboard = () => {
 
         <div className="flex-col sm:items-end gap-y-6 flex">
           <Logo className="h-28 w-28 hidden sm:block" />
-          <div className="flex flex-col">
+          <div className="flex flex-col items-end">
             {DAO_METADATA.links.map((link, i) => (
               <a
                 key={i}
