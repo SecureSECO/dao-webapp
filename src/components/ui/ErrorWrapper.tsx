@@ -10,6 +10,23 @@ import React from 'react';
 import { cn } from '@/src/lib/utils';
 import { FieldError } from 'react-hook-form';
 
+export const ErrorText = ({ error, name }: ErrorWrapperProps) =>
+  error ? (
+    <span className="text-destructive first-letter:capitalize">
+      {error?.type == 'required'
+        ? `${name} is required`
+        : error?.type == 'minLength'
+        ? `${name} is too short`
+        : error?.type == 'maxLength'
+        ? `${name} is too long`
+        : error?.type == 'pattern'
+        ? error?.message ?? `${name} is invalid`
+        : error?.message ?? `${name} is invalid`}
+    </span>
+  ) : (
+    <></>
+  );
+
 /**
  * ErrorWrapperProps interface represents the props for the ErrorWrapper component.
  * @property {FieldError | undefined} error - An optional error object from 'react-hook-form' to manage input validation.
@@ -36,19 +53,7 @@ export const ErrorWrapper = React.forwardRef<HTMLDivElement, ErrorWrapperProps>(
         ref={ref}
       >
         {children}
-        {error && (
-          <span className="text-destructive first-letter:capitalize">
-            {error?.type == 'required'
-              ? `${name} is required`
-              : error?.type == 'minLength'
-              ? `${name} is too short`
-              : error?.type == 'maxLength'
-              ? `${name} is too long`
-              : error?.type == 'pattern'
-              ? error?.message ?? `${name} is invalid`
-              : error?.message ?? `${name} is invalid`}
-          </span>
-        )}
+        <ErrorText name={name} error={error} />
       </div>
     );
   }
