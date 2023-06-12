@@ -61,7 +61,7 @@ export const useTotalVotingWeight = ({
   const setDummyData = () => {
     setLoading(false);
     setError(null);
-    setTotalVotingWeight(BigNumber.from(100000));
+    setTotalVotingWeight(BigNumber.from('0x4563918244F40000'));
   };
 
   useEffect(() => {

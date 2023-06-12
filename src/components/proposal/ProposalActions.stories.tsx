@@ -9,6 +9,7 @@
 import ProposalActions from '@/src/components/proposal/ProposalActions';
 import {
   dummyChangeParamsAction,
+  dummyDiamondCutAction,
   dummyMergeAction,
   dummyMintAction,
   dummyWhitelistMemberAction,
@@ -45,6 +46,7 @@ export const Primary: Story = {
       dummyMergeAction,
       dummyChangeParamsAction,
       dummyWhitelistMemberAction,
+      dummyDiamondCutAction,
       dummyUnknownAction,
     ],
   },
@@ -64,6 +66,7 @@ export const Loading: Story = {
       dummyMergeAction,
       dummyChangeParamsAction,
       dummyWhitelistMemberAction,
+      dummyDiamondCutAction,
       dummyUnknownAction,
     ],
     loading: true,

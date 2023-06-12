@@ -210,7 +210,7 @@ export const StartTime = ({
           )}
         />
         {startTimeType === 'custom' && (
-          <Card variant="light" className="flex gap-2">
+          <Card variant="light" className="flex flex-col sm:flex-row gap-2">
             <LabelledInput
               id="custom_start_date"
               type="date"
@@ -229,7 +229,7 @@ export const StartTime = ({
               } //the minimum time is now (+10 minutes, so you have some more time to fill in the form, get), cannot start in the past
               error={errors.custom_start_time}
             />
-            <div className="w-full">
+            <div className="w-full space-y-1">
               <Label htmlFor="custom_start_timezone">Timezone</Label>
               <TimezoneSelector
                 id="custom_start_timezone"
@@ -385,7 +385,7 @@ export const EndTime = ({
               <Card
                 variant="light"
                 className={cn(
-                  'flex gap-2',
+                  'flex flex-col sm:flex-row gap-2',
                   errors?.root?.durationTooLow &&
                     'border-2 border-destructive focus:ring-destructive'
                 )}
@@ -413,7 +413,7 @@ export const EndTime = ({
                   label="Time"
                   error={errors.custom_end_time}
                 />
-                <div className="w-full">
+                <div className="w-full space-y-1">
                   <Label htmlFor="custom_end_timezone">Timezone</Label>
                   <TimezoneSelector
                     id={'custom_end_timezone'}

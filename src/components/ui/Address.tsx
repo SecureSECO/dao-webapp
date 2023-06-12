@@ -17,7 +17,7 @@ import {
 } from '@/src/components/ui/Tooltip';
 import { toast } from '@/src/hooks/useToast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { copyToClipboard, truncateMiddle } from '@/src/lib/utils';
+import { cn, copyToClipboard, truncateMiddle } from '@/src/lib/utils';
 import { HiCheck, HiDocumentDuplicate } from 'react-icons/hi2';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useAccount } from 'wagmi';
@@ -43,6 +43,7 @@ type AddressProps = {
   showCopy?: boolean;
   replaceYou?: boolean;
   jazziconSize?: keyof typeof jazziconVariants | number;
+  className?: string;
 };
 
 /**
@@ -67,6 +68,7 @@ export const Address: React.FC<AddressProps> = ({
   showCopy = false,
   replaceYou = false,
   jazziconSize = 'none',
+  className,
 }) => {
   const [status, setStatus] = useState<'idle' | 'copied'>('idle');
   const { address: currentUser } = useAccount();
@@ -93,7 +95,7 @@ export const Address: React.FC<AddressProps> = ({
   };
 
   return (
-    <div className="flex flex-row items-center gap-x-2">
+    <div className={cn('flex flex-row items-center gap-x-2', className)}>
       {jazziconSize !== 'none' && (
         <Jazzicon
           diameter={
