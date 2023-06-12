@@ -203,28 +203,29 @@ export const SwapSettings = ({
           <Controller
             control={control}
             name="slippage"
-            render={({ field: { onChange, value, name } }) => (
-              <RadioGroup onChange={onChange} defaultValue={value} name={name}>
+            render={({ field: { onChange, value } }) => (
+              <div className="flex gap-x-1 items-center justify-center">
                 {slippageOptions.map((option) => (
-                  <div key={option} className="flex items-center space-x-2">
-                    <RadioGroupItem value={option} id={`s-${option}`} />
-                    <Label htmlFor={`s-${option}`}>{option}%</Label>
-                  </div>
+                  <Button
+                    key={option}
+                    onClick={() => onChange(option)}
+                    type="button"
+                    size="xs"
+                  >
+                    {option}%
+                  </Button>
                 ))}
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="0" id="s-custom" />
-                  <Label htmlFor="s-custom">
-                    <Input
-                      type="number"
-                      className="h-8"
-                      min={0}
-                      max={100}
-                      step={0.1}
-                      onChange={(e) => onChange(e.target.value)}
-                    />
-                  </Label>
-                </div>
-              </RadioGroup>
+                <Input
+                  className="h-8"
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={0.1}
+                  value={value}
+                  onChange={(e) => onChange(e.target.value)}
+                />
+                <Label>%</Label>
+              </div>
             )}
           />
         </div>
