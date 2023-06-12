@@ -227,7 +227,7 @@ export const parseTokenAmount = (
   let num;
   try {
     // Check if num is a string
-    if (typeof value == 'string') {
+    if (typeof value === 'string') {
       // If the amount of decimals in the value is larger than decimals, it is cut off.
       if (value.includes('.')) {
         const values = value.split('.');
@@ -235,7 +235,7 @@ export const parseTokenAmount = (
           value = `${values[0]}.${values[1].slice(0, tokenDecimals)}`;
         }
       }
-    } else if (typeof value == 'number') {
+    } else if (typeof value === 'number') {
       value = value.toFixed(tokenDecimals);
     }
 
