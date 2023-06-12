@@ -58,7 +58,7 @@ export const UserBalance = ({
 }) => {
   return (
     <Tooltip>
-      <TooltipTrigger className="hover:cursor-help">
+      <TooltipTrigger className="hover:cursor-help rounded-sm">
         <div className="flex items-center justify-end">
           <TokenAmount
             amount={bal}

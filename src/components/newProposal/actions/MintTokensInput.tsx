@@ -82,11 +82,7 @@ export const MintTokensInput = () => {
         />
       }
     >
-      <div className="grid grid-cols-2 justify-start gap-1">
-        <Label tooltip="Address of the wallet to receive the tokens">
-          Address
-        </Label>
-        <Label tooltip="Amount of tokens to mint">Amount</Label>
+      <div>
         {/* List of wallets mint tokens to */}
         {fields.map((field, index) => (
           <MintListItem
@@ -131,35 +127,50 @@ const MintListItem = ({
 }) => {
   const prefix = `${walletsPrefix}.${index}`;
   return (
-    <>
-      <ErrorWrapper name="Address" error={errors?.address}>
-        <Input
-          {...register(`${prefix}.address`, {
-            required: true,
-            pattern: {
-              value: AddressPattern,
-              message:
-                'Please enter an address starting with 0x, followed by 40 address characters',
-            },
-            // Custom validation function to prevent duplicate addresses
-            validate: (value: string) => {
-              let anyDuplicates = someUntil(
-                getValues(walletsPrefix),
-                (a) => a.address === value,
-                index
-              );
-              return !anyDuplicates || 'Duplicate address';
-            },
-          })}
-          type="text"
-          id="address"
-          error={errors?.address}
-          className="w-full basis-2/5"
-          placeholder="0x..."
-        />
-      </ErrorWrapper>
-      <div className="flex w-full flex-row gap-2">
+    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-1">
+      <div>
+        <ErrorWrapper name="Address" error={errors?.address}>
+          <Label
+            tooltip="Address of the wallet to receive the tokens"
+            htmlFor="address"
+          >
+            Address
+          </Label>
+          <Input
+            {...register(`${prefix}.address`, {
+              required: true,
+              pattern: {
+                value: AddressPattern,
+                message:
+                  'Please enter an address starting with 0x, followed by 40 address characters',
+              },
+              // Custom validation function to prevent duplicate addresses
+              validate: (value: string) => {
+                let anyDuplicates = someUntil(
+                  getValues(walletsPrefix),
+                  (a) => a.address === value,
+                  index
+                );
+                return !anyDuplicates || 'Duplicate address';
+              },
+            })}
+            type="text"
+            id="address"
+            error={errors?.address}
+            className="w-full basis-2/5"
+            placeholder="0x..."
+          />
+        </ErrorWrapper>
+      </div>
+      <div className="flex w-full flex-row items-end gap-2">
         <ErrorWrapper name="Amount" error={errors?.amount}>
+          <Label
+            tooltip="Amount of tokens to mint"
+            className="sr-only sm:not-sr-only"
+            htmlFor="tokens"
+          >
+            Amount
+          </Label>
           <Input
             {...register(`${prefix}.amount`, {
               required: true,
@@ -178,11 +189,13 @@ const MintListItem = ({
             required
           />
         </ErrorWrapper>
-        <HiXMark
-          className="h-5 w-5 cursor-pointer self-center"
+        <Button
+          variant="ghost"
+          icon={HiXMark}
+          className="mb-1 p-0 w-8 h-8"
           onClick={onRemove}
         />
       </div>
-    </>
+    </div>
   );
 };

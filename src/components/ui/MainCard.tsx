@@ -113,9 +113,9 @@ const MainCard = React.forwardRef<HTMLDivElement, MainCardProps>(
           </div>
           <>{aside && aside}</>
         </div>
-        {aside && <div className="xs:hidden">{header}</div>}
+        {aside && <div className="xs:hidden text-xl font-medium">{header}</div>}
 
-        <div className="space-y-3">{props.children}</div>
+        <div className="space-y-2 sm:space-y-3">{props.children}</div>
       </Card>
     );
   }

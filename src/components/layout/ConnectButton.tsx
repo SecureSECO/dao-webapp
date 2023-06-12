@@ -68,7 +68,7 @@ const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
   return address ? (
     <div className="flex items-center">
       <DropdownMenu>
-        <DropdownMenuTrigger className="relative flex rounded-full text-sm focus:outline-none">
+        <DropdownMenuTrigger className="relative flex rounded-full text-sm focus:outline-none ring-ring ring-offset-2 ring-offset-background focus:ring-2">
           <span className="sr-only">Open wallet menu</span>
           <Jazzicon diameter={40} seed={jazznumber} />
           {chain?.id !== PREFERRED_NETWORK_METADATA.id && (
