@@ -24,6 +24,7 @@ import { TOKENS } from '@/src/lib/constants/tokens';
 import { cn } from '@/src/lib/utils';
 import { IconType } from 'react-icons';
 import { FaDiscord } from 'react-icons/fa';
+import { HiOutlineTerminal } from 'react-icons/hi';
 import {
   HiArrowsRightLeft,
   HiBars3,
@@ -84,13 +85,13 @@ const navItems: NavItemData[] = [
         label: 'Docs',
         url: 'https://docs.secureseco.org/',
         icon: HiOutlineBookOpen,
-        description: `Visit the user documentation site.`,
+        description: `Read the user documentation`,
       },
       {
         label: 'Swap',
         url: '/swap',
         icon: HiArrowsRightLeft,
-        description: `Swap your SECOIN tokens for DAI.`,
+        description: `Swap SECOIN tokens for DAI`,
       },
     ],
     categories: [
@@ -101,7 +102,13 @@ const navItems: NavItemData[] = [
             label: 'Query',
             url: '/query',
             icon: HiOutlineDocumentMagnifyingGlass,
-            description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol}.`,
+            description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol}`,
+          },
+          {
+            label: 'Mining',
+            url: '/mining',
+            icon: HiOutlineTerminal,
+            description: `Claim rewards for running SearchSECO miners`,
           },
         ],
       },

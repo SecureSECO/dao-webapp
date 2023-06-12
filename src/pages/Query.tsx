@@ -38,7 +38,6 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
 import { toast } from '@/src/hooks/useToast';
 import { UrlPattern } from '@/src/lib/constants/patterns';
@@ -100,6 +99,9 @@ const displayQueryColumns: ColumnDef<DisplayQueryResult>[] = [
   },
 ];
 
+/**
+ * Page for querying the SearchSECO database.
+ */
 const Query = () => {
   const {
     register,
@@ -115,15 +117,11 @@ const Query = () => {
     session,
     resetQuery,
     payForSession,
-  } = useSearchSECO({
-    useDummyData: false,
-  });
+  } = useSearchSECO();
 
   const { isConnected } = useAccount();
   const [isQuerying, setIsQuerying] = useState<boolean>(true);
   const [isPaying, setIsPaying] = useState<boolean>(false);
-
-  const [paymentSent, setPaymentSent] = useState<boolean>(false);
 
   /**
    * Downloads the results of the query as a JSON file.
@@ -266,9 +264,6 @@ const Query = () => {
                         // Reset session
                         resetQuery(false);
                       },
-                      onSuccess() {
-                        setPaymentSent(true);
-                      },
                       onFinish() {
                         setIsPaying(false);
                       },
@@ -297,10 +292,7 @@ const Query = () => {
                           >
                             Download as JSON
                           </Button>
-                          <CancelButton
-                            resetQuery={resetQuery}
-                            setPaymentSent={setPaymentSent}
-                          />
+                          <CancelButton resetQuery={resetQuery} />
                         </div>
                       </>
                     )}
@@ -326,10 +318,7 @@ const Query = () => {
                   )}
 
                   {session.fetch_status !== 'success' && (
-                    <CancelButton
-                      resetQuery={resetQuery}
-                      setPaymentSent={setPaymentSent}
-                    />
+                    <CancelButton resetQuery={resetQuery} />
                   )}
                 </>
               )}
@@ -351,11 +340,8 @@ const Query = () => {
  */
 export const CancelButton = ({
   resetQuery,
-  setPaymentSent,
 }: {
   resetQuery: (clearQueryResult?: boolean) => void;
-  // eslint-disable-next-line no-unused-vars
-  setPaymentSent: (value: boolean) => void;
 }) => {
   return (
     <AlertDialog>
@@ -375,7 +361,6 @@ export const CancelButton = ({
           <AlertDialogAction
             onClick={() => {
               resetQuery();
-              setPaymentSent(false);
             }}
           >
             Continue
