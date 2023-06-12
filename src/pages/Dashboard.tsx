@@ -72,9 +72,9 @@ const Dashboard = () => {
         className="relative col-span-full flex shrink flex-col gap-y-6 sm:flex-row justify-between"
       >
         <div className="flex flex-col justify-between gap-y-6">
-          <div className="space-y-4">
+          <div className="space-y-8">
             <Header>{DAO_METADATA.name}</Header>
-            <p className="text-base font-normal text-highlight-foreground/80">
+            <p className="text-lg font-normal text-highlight-foreground/80">
               {DAO_METADATA.description}
             </p>
           </div>
