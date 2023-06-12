@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import {
   ActionFormContext,
   ActionFormError,
@@ -18,17 +18,19 @@ import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
 import { GithubPullRequestPattern } from '@/src/lib/constants/patterns';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { HiCircleStack, HiXMark } from 'react-icons/hi2';
 
 export interface ProposalFormMergeData {
   name: 'merge_pr';
   url: string;
+  sha: string;
 }
 
 export const emptyMergeData: ProposalFormMergeData = {
   name: 'merge_pr',
   url: '',
+  sha: '',
 };
 
 /**
@@ -38,6 +40,7 @@ export const MergePRInput = () => {
   const {
     register,
     formState: { errors: formErrors },
+    setValue,
   } = useFormContext<ProposalFormActions>();
 
   const { prefix, index, onRemove } = useContext(ActionFormContext);
@@ -45,6 +48,17 @@ export const MergePRInput = () => {
   const errors: ActionFormError<ProposalFormMergeData> = formErrors.actions
     ? formErrors.actions[index]
     : undefined;
+
+  const url = useWatch({ name: `${prefix}.url` });
+
+  useEffect(() => {
+    const fetchSha = async () => {
+      // Fetch sha from verification server
+      setValue(`${prefix}.sha`, '<insert sha here>');
+    };
+
+    if (url) fetchSha();
+  }, [url]);
 
   return (
     <MainCard
