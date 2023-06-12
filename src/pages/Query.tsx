@@ -38,7 +38,6 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
-import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
 import { toast } from '@/src/hooks/useToast';
 import { UrlPattern } from '@/src/lib/constants/patterns';
@@ -57,7 +56,7 @@ import { DataTable, HeaderSortableDecorator } from '../components/ui/DataTable';
 
 interface QueryFormData {
   searchUrl: string;
-  token: string;
+  branch?: string;
 }
 
 type DisplayQueryResult = {
@@ -124,13 +123,6 @@ const Query = () => {
   const [isQuerying, setIsQuerying] = useState<boolean>(true);
   const [isPaying, setIsPaying] = useState<boolean>(false);
 
-  const [storedToken, setStoredToken] = useLocalStorage<string>(
-    'githubAccessToken',
-    ''
-  );
-
-  const [paymentSent, setPaymentSent] = useState<boolean>(false);
-
   /**
    * Downloads the results of the query as a JSON file.
    */
@@ -149,13 +141,9 @@ const Query = () => {
     setIsQuerying(false);
 
     toast.promise(
-      runQuery(data.searchUrl, data.token)
-        .then(() => {
-          setStoredToken(data.token);
-        })
-        .finally(() => {
-          setIsQuerying(true);
-        }),
+      runQuery(data.searchUrl, data.branch).finally(() => {
+        setIsQuerying(true);
+      }),
       {
         loading: 'Querying SearchSECO database...',
         success: 'Query successful!',
@@ -206,26 +194,21 @@ const Query = () => {
             </div>
             <div className="space-y-1">
               <Label
-                htmlFor="token"
-                tooltip="Your Github access token will be used to download the repository to know what to fetch from the SearchSECO database. Only read access is required for the access token."
+                htmlFor="branch"
+                tooltip="The branch to query the SearchSECO database for"
               >
-                Github access token
+                Branch
               </Label>
-              <ErrorWrapper name="Token" error={errors.token}>
+              <ErrorWrapper name="Branch" error={errors.branch}>
                 <Input
-                  {...register('token', {
-                    required: true,
-                    pattern: {
-                      value: /^[\w\d-]+$/, //placeholder
-                      message: 'Invalid token',
-                    },
+                  {...register('branch', {
+                    required: false,
                   })}
                   type="text"
-                  placeholder="Your Github token"
-                  id="token"
-                  aria-invalid={errors.token ? 'true' : 'false'}
-                  error={errors.token}
-                  defaultValue={storedToken}
+                  placeholder="main"
+                  id="branch"
+                  aria-invalid={errors.branch ? 'true' : 'false'}
+                  error={errors.branch}
                 />
               </ErrorWrapper>
             </div>
@@ -281,9 +264,6 @@ const Query = () => {
                         // Reset session
                         resetQuery(false);
                       },
-                      onSuccess() {
-                        setPaymentSent(true);
-                      },
                       onFinish() {
                         setIsPaying(false);
                       },
@@ -312,10 +292,7 @@ const Query = () => {
                           >
                             Download as JSON
                           </Button>
-                          <CancelButton
-                            resetQuery={resetQuery}
-                            setPaymentSent={setPaymentSent}
-                          />
+                          <CancelButton resetQuery={resetQuery} />
                         </div>
                       </>
                     )}
@@ -341,10 +318,7 @@ const Query = () => {
                   )}
 
                   {session.fetch_status !== 'success' && (
-                    <CancelButton
-                      resetQuery={resetQuery}
-                      setPaymentSent={setPaymentSent}
-                    />
+                    <CancelButton resetQuery={resetQuery} />
                   )}
                 </>
               )}
@@ -366,11 +340,8 @@ const Query = () => {
  */
 export const CancelButton = ({
   resetQuery,
-  setPaymentSent,
 }: {
   resetQuery: (clearQueryResult?: boolean) => void;
-  // eslint-disable-next-line no-unused-vars
-  setPaymentSent: (value: boolean) => void;
 }) => {
   return (
     <AlertDialog>
@@ -390,7 +361,6 @@ export const CancelButton = ({
           <AlertDialogAction
             onClick={() => {
               resetQuery();
-              setPaymentSent(false);
             }}
           >
             Continue
@@ -423,10 +393,9 @@ const ExplanationButton = () => {
               </p>
               <ol className="list-decimal pl-5">
                 <li>
-                  Enter the URL of the GitHub repository you want to query. You
-                  also need to enter your GitHub token to be able to query the
-                  database. This token will be used to download the repository.
-                  Only read access is required.
+                  Enter the URL of the GitHub repository you want to query.
+                  Optionally, you may specify the branch of the repository to
+                  query. By default, the main branch is queried
                 </li>
                 <li>
                   After submitting the form, the repository will be downloaded

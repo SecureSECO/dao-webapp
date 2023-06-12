@@ -35,7 +35,7 @@ type UseSearchSECOData = {
   session: SessionData | null;
   miningData: MiningData[] | null;
   hashReward: BigNumber | null;
-  runQuery: (url: string, token: string) => Promise<QueryResponse>;
+  runQuery: (url: string, branch?: string) => Promise<QueryResponse>;
   resetQuery: (clearQueryResult?: boolean) => void;
   startSession: () => Promise<SessionData>;
   payForSession: (session: SessionData) => Promise<ContractTransaction>;
@@ -251,10 +251,10 @@ export const useSearchSECO = (
   /**
    * Runs the query and checks the cost of retrieving data about those hashes
    * @param url Github URL repository
-   * @param token Github access token
+   * @param branch Branch of the repository to query
    * @returns Promise that resolves when the query is complete
    */
-  const runQuery = async (url: string, token: string): Promise<void> => {
+  const runQuery = async (url: string, branch?: string): Promise<void> => {
     if (useDummyData) {
       setQueryResult(dummyQueryResult);
       const session = {
@@ -280,7 +280,7 @@ export const useSearchSECO = (
         },
         body: JSON.stringify({
           url,
-          token,
+          ...(branch ? { branch } : {}),
         }),
       });
 
