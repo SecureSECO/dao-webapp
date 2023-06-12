@@ -5,7 +5,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import DAI from '@/src/components/icons/DAI';
 import Secoin from '@/src/components/icons/Secoin';
 import { Button } from '@/src/components/ui/Button';
@@ -23,23 +23,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/src/components/ui/Popover';
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/RadioGroup';
-import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 import { TOKENS } from '@/src/lib/constants/tokens';
-import { abc } from '@plopmenz/diamond-governance-sdk/dist/typechain-types/contracts/facets/token/ERC20/monetary-token';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import {
-  Control,
-  Controller,
   FieldErrors,
   UseFormRegister,
-  UseFormSetError,
-  UseFormSetFocus,
   UseFormSetValue,
   useForm,
-  useFormState,
   useWatch,
 } from 'react-hook-form';
 import {
@@ -55,6 +47,7 @@ import {
   usePrepareContractWrite,
 } from 'wagmi';
 
+import Check from '../components/icons/Check';
 import Loading from '../components/icons/Loading';
 import {
   Accordion,
@@ -63,7 +56,7 @@ import {
   AccordionTrigger,
 } from '../components/ui/Accordion';
 import CategoryList from '../components/ui/CategoryList';
-import { ErrorText, ErrorWrapper } from '../components/ui/ErrorWrapper';
+import { ErrorText } from '../components/ui/ErrorWrapper';
 import TokenAmount from '../components/ui/TokenAmount';
 import { applySlippage, useMarketMaker } from '../hooks/useMarketMaker';
 import { toast } from '../hooks/useToast';
@@ -71,7 +64,6 @@ import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
 import { NumberPattern } from '../lib/constants/patterns';
 import { cn, isNullOrUndefined } from '../lib/utils';
 import { parseTokenAmount } from '../lib/utils/token';
-import Check from '../components/icons/Check';
 
 const abcTokens = [
   {
@@ -114,10 +106,6 @@ const Swap = () => {
     shouldUnregister: false,
     mode: 'onChange',
   });
-
-  const onSubmit = (data: IFormInputs) => {
-    console.log(data);
-  };
 
   const [isApproved, setIsApproved] = useState<boolean>(false);
 
@@ -172,6 +160,13 @@ const Swap = () => {
     estimatedGas !== null && nativeBalance !== undefined
       ? nativeBalance.value.lte(estimatedGas)
       : true;
+
+  const onSubmit = (_: IFormInputs) => {
+    toast.contractTransaction(() => performSwap(), {
+      success: 'Swap succeeded',
+      error: 'Swap failed',
+    });
+  };
 
   return (
     <div className="w-full min-h-full flex items-center justify-center">
@@ -273,7 +268,13 @@ const Swap = () => {
               })
             }
           >
-            {isApproved ? <>Approved <Check className='w-5 h-5'/></> : "Approve"}
+            {isApproved ? (
+              <>
+                Approved <Check className="w-5 h-5" />
+              </>
+            ) : (
+              'Approve'
+            )}
           </ConditionalButton>
           {/* Submit button */}
           <ConditionalButton
@@ -302,8 +303,8 @@ const Swap = () => {
               },
               {
                 when: !isApproved,
-                content: <Warning>Approve first before swapping</Warning>
-              }
+                content: <Warning>Approve first before swapping</Warning>,
+              },
             ]}
             type="submit"
           >
@@ -352,7 +353,7 @@ const Swap = () => {
                           <TokenAmount
                             amount={
                               isNullOrUndefined(expectedReturn) ||
-                                isNaN(slippage)
+                              isNaN(slippage)
                                 ? null
                                 : applySlippage(expectedReturn, slippage)
                             }
