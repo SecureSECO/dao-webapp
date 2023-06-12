@@ -207,11 +207,10 @@ const Query = () => {
                     required: false,
                   })}
                   type="text"
-                  placeholder="master"
+                  placeholder="main"
                   id="branch"
                   aria-invalid={errors.branch ? 'true' : 'false'}
                   error={errors.branch}
-                  defaultValue="master"
                 />
               </ErrorWrapper>
             </div>
@@ -409,8 +408,9 @@ const ExplanationButton = () => {
               </p>
               <ol className="list-decimal pl-5">
                 <li>
-                  Enter the URL of the GitHub repository you want to query. You
-                  can also specify the branch.
+                  Enter the URL of the GitHub repository you want to query.
+                  Optionally, you may specify the branch of the repository to
+                  query. By default, the main branch is queried
                 </li>
                 <li>
                   After submitting the form, the repository will be downloaded

@@ -254,7 +254,7 @@ export const useSearchSECO = (
         },
         body: JSON.stringify({
           url,
-          branch,
+          ...(branch ? { branch } : {}),
         }),
       });
 
