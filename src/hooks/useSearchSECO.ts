@@ -240,7 +240,12 @@ export const useSearchSECO = (
   }, [session]);
 
   useEffect(() => {
-    if (client) getMiningData();
+    getMiningData();
+    const miningDataInterval = setInterval(async () => {
+      if (client) getMiningData();
+    }, 10000);
+
+    return () => clearInterval(miningDataInterval);
   }, [client]);
 
   /**
@@ -463,7 +468,6 @@ export const useSearchSECO = (
   const getMiningData = async () => {
     if (useDummyData) {
       setMiningData([
-        // FIXME: dummy
         {
           minerId: '2d8416f9-181c-4df9-8d45-16d10b604bf0',
           claimableHashes: 749,

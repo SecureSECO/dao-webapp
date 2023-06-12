@@ -118,9 +118,7 @@ const Query = () => {
     session,
     resetQuery,
     payForSession,
-  } = useSearchSECO({
-    useDummyData: true,
-  });
+  } = useSearchSECO();
 
   const { isConnected } = useAccount();
   const [isQuerying, setIsQuerying] = useState<boolean>(true);

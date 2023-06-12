@@ -79,9 +79,7 @@ export const Mining = () => {
   });
   const { isConnected } = useAccount();
 
-  const { miningData, hashReward, claimReward } = useSearchSECO({
-    useDummyData: true,
-  });
+  const { miningData, hashReward, claimReward } = useSearchSECO();
 
   const [isBusy, setIsBusy] = useState(false);
 
