@@ -28,7 +28,7 @@ import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { abc } from '@plopmenz/diamond-governance-sdk/dist/typechain-types/contracts/facets/token/ERC20/monetary-token';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import {
   Control,
@@ -47,8 +47,15 @@ import {
   HiCog6Tooth,
   HiOutlineArrowsUpDown,
 } from 'react-icons/hi2';
-import { useAccount, useBalance } from 'wagmi';
+import {
+  erc20ABI,
+  useAccount,
+  useBalance,
+  useContractWrite,
+  usePrepareContractWrite,
+} from 'wagmi';
 
+import Loading from '../components/icons/Loading';
 import {
   Accordion,
   AccordionContent,
@@ -58,10 +65,13 @@ import {
 import CategoryList from '../components/ui/CategoryList';
 import { ErrorText, ErrorWrapper } from '../components/ui/ErrorWrapper';
 import TokenAmount from '../components/ui/TokenAmount';
+import { applySlippage, useMarketMaker } from '../hooks/useMarketMaker';
+import { toast } from '../hooks/useToast';
 import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
 import { NumberPattern } from '../lib/constants/patterns';
-import { cn } from '../lib/utils';
+import { cn, isNullOrUndefined } from '../lib/utils';
 import { parseTokenAmount } from '../lib/utils/token';
+import Check from '../components/icons/Check';
 
 const abcTokens = [
   {
@@ -109,29 +119,59 @@ const Swap = () => {
     console.log(data);
   };
 
-  const { secoinAddress } = useDiamondSDKContext();
-  const { address, isConnected } = useAccount();
+  const [isApproved, setIsApproved] = useState<boolean>(false);
 
+  // BALANCES
+  const { address, isConnected } = useAccount();
   const { secoinBalance } = useSecoinBalance({ address });
   const { data: daiBalance } = useBalance({
     address,
     token: abcTokens[0].contractAddress as any,
   });
+  const { data: nativeBalance } = useBalance({ address: address });
+
+  const slippageWatch = useWatch({ control, name: 'slippage' });
+  const slippage = parseFloat(slippageWatch);
+  const fromAmountWatch = useWatch({ control, name: 'fromToken' });
+  const fromAmount = parseTokenAmount(fromAmountWatch, decimals);
 
   const [swap, setSwap] = useState<'Mint' | 'Burn'>('Mint');
   const from = swap === 'Mint' ? abcTokens[0] : abcTokens[1];
   const to = swap === 'Mint' ? abcTokens[1] : abcTokens[0];
 
-  const max = swap === 'Mint' ? daiBalance?.value : secoinBalance;
+  const maxFrom = swap === 'Mint' ? daiBalance?.value : secoinBalance;
 
   const setMaxValue = () => {
-    if (max !== undefined) {
-      setValue('fromToken', formatUnits(max, decimals));
+    if (maxFrom !== undefined) {
+      setValue('fromToken', formatUnits(maxFrom, decimals));
     }
   };
-  const amount = 0;
-  const enoughGas = true;
-  const slippageWatch = useWatch({ control, name: 'slippage' });
+
+  const {
+    isLoading,
+    error,
+    estimatedGas,
+    expectedReturn,
+    performSwap,
+    contractAddress: swapContractAddress,
+  } = useMarketMaker({
+    amount: fromAmount,
+    swapKind: swap,
+    slippage: slippage,
+  });
+
+  const { config: approveConfig } = usePrepareContractWrite({
+    address: abcTokens[0].contractAddress as any, //always use DAI contract for this.
+    abi: erc20ABI,
+    functionName: 'approve',
+    args: [swapContractAddress as any, ethers.constants.MaxUint256],
+  });
+  const { writeAsync: writeAproveAsync } = useContractWrite(approveConfig);
+
+  const enoughGas =
+    estimatedGas !== null && nativeBalance !== undefined
+      ? nativeBalance.value.lte(estimatedGas)
+      : true;
 
   return (
     <div className="w-full min-h-full flex items-center justify-center">
@@ -159,8 +199,10 @@ const Swap = () => {
                 },
                 validate: {
                   max: (v) =>
-                    max === undefined ||
-                    (parseTokenAmount(v, decimals) ?? 0) <= max ||
+                    maxFrom === undefined ||
+                    (parseTokenAmount(v, decimals) ?? BigNumber.from(0)).lte(
+                      maxFrom
+                    ) ||
                     'Token amount too high',
                 },
               })}
@@ -174,8 +216,8 @@ const Swap = () => {
                 <Icon name={from.name} />
                 {from.name}
               </div>
-              {max === undefined || (
-                <MaxButton max={max} setMaxValue={setMaxValue} />
+              {maxFrom === undefined || (
+                <MaxButton max={maxFrom} setMaxValue={setMaxValue} />
               )}
             </div>
           </div>
@@ -195,7 +237,7 @@ const Swap = () => {
           {/* To token */}
           <div className="flex p-4 h-24 bg-popover text-popover-foreground rounded-md border border-input">
             <span className="text-2xl text-popover-foreground/70 w-full px-3">
-              {amount}
+              <TokenAmount amount={expectedReturn} tokenDecimals={decimals} />
             </span>
             <div className="flex flex-col gap-1 items-end">
               <div className="rounded-full bg-primary w-fit h-fit px-2 py-0.5 flex gap-x-2 items-center justify-center text-primary-foreground">
@@ -205,6 +247,34 @@ const Swap = () => {
             </div>
           </div>
           <ErrorText name="Token amount" error={errors.fromToken} />
+          {/* Approve button */}
+          <ConditionalButton
+            className="leading-4 w-full mb-1"
+            flex="flex-col"
+            conditions={[
+              {
+                when: !isConnected,
+                content: <ConnectWalletWarning action="to approve" />,
+              },
+              {
+                when: writeAproveAsync === undefined,
+                content: <Warning>Could not approve</Warning>,
+              },
+            ]}
+            type="button"
+            disabled={isApproved}
+            onClick={() =>
+              toast.contractTransaction(() => writeAproveAsync!(), {
+                success: 'Approved!',
+                error: 'Approving failed',
+                onFinish: () => {
+                  setIsApproved(true);
+                },
+              })
+            }
+          >
+            {isApproved ? <>Approved <Check className='w-5 h-5'/></> : "Approve"}
+          </ConditionalButton>
           {/* Submit button */}
           <ConditionalButton
             className="leading-4 w-full mb-1"
@@ -222,6 +292,18 @@ const Swap = () => {
                 when: !isValid,
                 content: <Warning>Form input is invalid</Warning>,
               },
+              {
+                when: isLoading,
+                content: <Loading className="w-5 h-5" />,
+              },
+              {
+                when: error !== null,
+                content: <p>{error!}</p>,
+              },
+              {
+                when: !isApproved,
+                content: <Warning>Approve first before swapping</Warning>
+              }
             ]}
             type="submit"
           >
@@ -246,10 +328,10 @@ const Swap = () => {
                     title: 'GAS',
                     items: [
                       {
-                        label: 'GAS fee',
+                        label: 'Estimated GAS fee',
                         value: (
                           <TokenAmount
-                            amountFloat={0.01}
+                            amount={estimatedGas}
                             tokenDecimals={
                               PREFERRED_NETWORK_METADATA.nativeCurrency.decimals
                             }
@@ -265,10 +347,15 @@ const Swap = () => {
                     title: 'Value to be received',
                     items: [
                       {
-                        label: `minimum (slippage ${slippageWatch}%)`,
+                        label: `Minimum (slippage ${slippageWatch}%)`,
                         value: (
                           <TokenAmount
-                            amountFloat={0.01}
+                            amount={
+                              isNullOrUndefined(expectedReturn) ||
+                                isNaN(slippage)
+                                ? null
+                                : applySlippage(expectedReturn, slippage)
+                            }
                             tokenDecimals={decimals}
                             symbol={to.name}
                           />
@@ -278,7 +365,7 @@ const Swap = () => {
                         label: 'expected',
                         value: (
                           <TokenAmount
-                            amountFloat={0.02}
+                            amount={expectedReturn}
                             tokenDecimals={decimals}
                             symbol={to.name}
                           />
