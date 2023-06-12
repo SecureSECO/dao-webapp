@@ -10,6 +10,7 @@ export const CONFIG = {
   VERIFICATION_API_URL:
     'https://securesecodao-api.herokuapp.com/verification_api',
   SEARCHSECO_API_URL: 'https://searchseco-api.herokuapp.com/api',
+  PR_MERGER_API_URL: 'https://securesecodao-pr-merger.herokuapp.com',
   DIAMOND_ADDRESS: '0xA62efe22F905025bA607A6B57a5285ac9e1a6797',
   PREFERRED_NETWORK_ID: 80001,
 } as const;

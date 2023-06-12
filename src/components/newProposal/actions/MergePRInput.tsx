@@ -17,6 +17,7 @@ import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
+import { CONFIG } from '@/src/lib/constants/config';
 import { GithubPullRequestPattern } from '@/src/lib/constants/patterns';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { HiCircleStack, HiXMark } from 'react-icons/hi2';
@@ -52,12 +53,25 @@ export const MergePRInput = () => {
   const url = useWatch({ name: `${prefix}.url` });
 
   useEffect(() => {
-    const fetchSha = async () => {
-      // Fetch sha from verification server
-      setValue(`${prefix}.sha`, '<insert sha here>');
-    };
+    const debounced = setTimeout(async () => {
+      if (!url) return;
 
-    if (url) fetchSha();
+      // Fetch sha from verification server
+      const res = await fetch(
+        `${CONFIG.PR_MERGER_API_URL}/latestCommit?url=${url}`
+      );
+
+      const json = await res.json();
+
+      if (json.status !== 'ok' || json.data?.sha == null) {
+        console.log(json);
+        throw new Error('Could not fetch latest commit hash');
+      }
+
+      setValue(`${prefix}.sha`, json.data.sha);
+    }, 1000);
+
+    return () => clearTimeout(debounced);
   }, [url]);
 
   return (

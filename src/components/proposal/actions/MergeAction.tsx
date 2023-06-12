@@ -67,7 +67,9 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
             </a>
           </Card>
           <Card variant="outline" size="sm">
-            <p className="text-xs text-popover-foreground/80">Commit hash</p>
+            <p className="text-xs text-popover-foreground/80">
+              Commit hash (encrypted)
+            </p>
             <Address
               className="font-medium"
               address={action.params._sha}
