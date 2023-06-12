@@ -12,7 +12,8 @@ import { CONFIG } from '@/src/lib/constants/config';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { getErrorMessage } from '@/src/lib/utils';
 import { parseTokenAmount } from '@/src/lib/utils/token';
-import { ContractTransaction, ethers } from 'ethers';
+import { BigNumber, ContractTransaction, ethers } from 'ethers';
+import { useAccount } from 'wagmi';
 
 import { useLocalStorage } from './useLocalStorage';
 
@@ -32,10 +33,16 @@ type UseSearchSECOData = {
   hashes: string[];
   cost: number | null;
   session: SessionData | null;
-  runQuery: (url: string, token: string) => Promise<QueryResponse>;
+  miningData: MiningData[] | null;
+  hashReward: BigNumber | null;
+  runQuery: (url: string, branch?: string) => Promise<QueryResponse>;
   resetQuery: (clearQueryResult?: boolean) => void;
   startSession: () => Promise<SessionData>;
   payForSession: (session: SessionData) => Promise<ContractTransaction>;
+  claimReward: (
+    hashCount: BigNumber,
+    repFrac: BigNumber
+  ) => Promise<ContractTransaction>;
 };
 
 /**
@@ -50,6 +57,12 @@ type SessionData = {
   timestamp?: number;
   data?: any;
   error?: string;
+};
+
+type MiningData = {
+  minerId: string;
+  claimableHashes: number;
+  status: string;
 };
 
 interface ResultData {
@@ -184,7 +197,7 @@ export const useSearchSECO = (
   props?: UseSearchSECOProps
 ): UseSearchSECOData => {
   const { client } = useDiamondSDKContext();
-
+  const { address } = useAccount();
   const { useDummyData } = Object.assign(defaultProps, props);
   const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
   const [hashes, setHashes] = useState<string[]>([]);
@@ -196,6 +209,10 @@ export const useSearchSECO = (
   );
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [doPoll, setDoPoll] = useState<boolean>(true);
+
+  const [miningData, setMiningData] = useState<MiningData[] | null>(null);
+  // SECOIN reward per hash, in 18 decimal precision
+  const [hashReward, setHashReward] = useState<BigNumber | null>(null);
 
   const API_URL = CONFIG.SEARCHSECO_API_URL;
 
@@ -222,13 +239,22 @@ export const useSearchSECO = (
     }
   }, [session]);
 
+  useEffect(() => {
+    getMiningData();
+    const miningDataInterval = setInterval(async () => {
+      if (client) getMiningData();
+    }, 10000);
+
+    return () => clearInterval(miningDataInterval);
+  }, [client]);
+
   /**
    * Runs the query and checks the cost of retrieving data about those hashes
    * @param url Github URL repository
-   * @param token Github access token
+   * @param branch Branch of the repository to query
    * @returns Promise that resolves when the query is complete
    */
-  const runQuery = async (url: string, token: string): Promise<void> => {
+  const runQuery = async (url: string, branch?: string): Promise<void> => {
     if (useDummyData) {
       setQueryResult(dummyQueryResult);
       const session = {
@@ -254,7 +280,7 @@ export const useSearchSECO = (
         },
         body: JSON.stringify({
           url,
-          token,
+          ...(branch ? { branch } : {}),
         }),
       });
 
@@ -436,14 +462,117 @@ export const useSearchSECO = (
     setDoPoll(true);
   };
 
+  /**
+   * Retrieves data about your mining performance & hash reward
+   */
+  const getMiningData = async () => {
+    if (useDummyData) {
+      setMiningData([
+        {
+          minerId: '2d8416f9-181c-4df9-8d45-16d10b604bf0',
+          claimableHashes: 749,
+          status: 'idle',
+        },
+      ]);
+      setHashReward(BigNumber.from(1000000000000000)); // FIXME: remove this
+      return;
+    }
+
+    if (!client) {
+      return;
+    }
+
+    const res = await fetch(
+      `${API_URL}/rewarding/miningData?address=${address}`
+    );
+    if (!res.ok) {
+      throw new Error(`API request failed with status ${res.status}`);
+    }
+
+    const json = await res.json();
+
+    if (json.status !== 'ok') {
+      console.log(json);
+      throw new Error(`API request failed, please try again.`);
+    }
+
+    const rows = json.data;
+
+    const data: MiningData[] = rows.map((row: any) => {
+      return {
+        minerId: row.id as string,
+        claimableHashes: parseInt(row.claimable_hashes as string),
+        status: row.status as string,
+      } as MiningData;
+    });
+
+    setMiningData(data);
+
+    const rewarding = await client.pure.ISearchSECORewardingFacet();
+    const hashReward = await rewarding.getHashReward();
+
+    setHashReward(hashReward);
+  };
+
+  /**
+   * Claims the mining rewards from all miners
+   * @param hashCount Number of hashes to claim
+   * @param repFrac Fraction which should be paid in rep, rest is paid in coin
+   */
+  const claimReward = async (
+    hashCount: BigNumber,
+    repFrac: BigNumber
+  ): Promise<ContractTransaction> => {
+    if (!client) {
+      throw new Error('No client found');
+    }
+
+    const address = await client.pure.signer.getAddress();
+
+    const res = await fetch(`${API_URL}/rewarding/reward`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        address,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`API request failed with status ${res.status}`);
+    }
+
+    const json = await res.json();
+
+    if (json.status !== 'ok') {
+      console.error(json);
+      throw new Error(`API request failed, please try again.`);
+    }
+
+    const { proof, nonce } = json;
+
+    const rewarding = await client.pure.ISearchSECORewardingFacet();
+    return await rewarding.rewardMinerForHashes(
+      address,
+      hashCount,
+      nonce,
+      repFrac,
+      proof.sig
+    );
+  };
+
   return {
     queryResult,
     hashes,
     cost,
     session,
+    miningData,
+    hashReward,
     runQuery,
     resetQuery,
     startSession,
     payForSession,
+    claimReward,
   };
 };

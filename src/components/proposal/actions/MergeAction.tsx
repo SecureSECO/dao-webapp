@@ -7,6 +7,7 @@
  */
 
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
+import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
@@ -18,6 +19,7 @@ export interface ProposalMergeAction extends Action {
     _owner: string;
     _repo: string;
     _pull_number: string;
+    _sha: string;
   };
 }
 
@@ -39,7 +41,7 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
       {...props}
     >
       <div className="space-y-2">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Card variant="outline" size="sm">
             <p className="text-xs text-popover-foreground/80">Owner</p>
             <p className="font-medium">{action.params._owner}</p>
@@ -49,20 +51,32 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
             <p className="font-medium">{action.params._repo}</p>
           </Card>
         </div>
-        <Card variant="outline" size="sm">
-          <p className="text-xs text-popover-foreground/80">
-            Pull request #{action.params._pull_number}
-          </p>
-          <a
-            className="w-fit flex flex-row items-center gap-x-2 text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
-            href={`https://github.com/${action.params._owner}/${action.params._repo}/pull/${action.params._pull_number}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            View on GitHub
-            <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
-          </a>
-        </Card>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Card variant="outline" size="sm">
+            <p className="text-xs text-popover-foreground/80">
+              Pull request #{action.params._pull_number}
+            </p>
+            <a
+              className="w-fit flex flex-row items-center gap-x-2 text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
+              href={`https://github.com/${action.params._owner}/${action.params._repo}/pull/${action.params._pull_number}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View on GitHub
+              <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
+            </a>
+          </Card>
+          <Card variant="outline" size="sm">
+            <p className="text-xs text-popover-foreground/80">
+              Commit hash (encrypted)
+            </p>
+            <Address
+              className="font-medium"
+              address={action.params._sha}
+              showCopy
+            />
+          </Card>
+        </div>
       </div>
     </ActionWrapper>
   );

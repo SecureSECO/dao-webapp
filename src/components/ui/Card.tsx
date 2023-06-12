@@ -27,7 +27,7 @@ const cardVariants = cva(
       size: {
         default: 'px-5 py-4',
         sm: 'px-4 py-2',
-        lg: 'px-6 sm:px-10 py-4 sm:py-8',
+        lg: 'sm:px-10 p-6 sm:py-8',
       },
     },
     defaultVariants: {

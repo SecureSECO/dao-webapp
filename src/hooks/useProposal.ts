@@ -128,6 +128,7 @@ export const dummyMergeAction: ProposalMergeAction = {
     _owner: 'githubtraining',
     _repo: 'hellogitworld',
     _pull_number: '174',
+    _sha: '6dcb09b5b57875f334f61aebed695e2e4193db5e',
   },
 };
 
