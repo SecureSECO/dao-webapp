@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import {
   ActionFormContext,
   ActionFormError,
@@ -17,18 +17,21 @@ import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
+import { CONFIG } from '@/src/lib/constants/config';
 import { GithubPullRequestPattern } from '@/src/lib/constants/patterns';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { HiCircleStack, HiXMark } from 'react-icons/hi2';
 
 export interface ProposalFormMergeData {
   name: 'merge_pr';
   url: string;
+  sha: string;
 }
 
 export const emptyMergeData: ProposalFormMergeData = {
   name: 'merge_pr',
   url: '',
+  sha: '',
 };
 
 /**
@@ -38,6 +41,7 @@ export const MergePRInput = () => {
   const {
     register,
     formState: { errors: formErrors },
+    setValue,
   } = useFormContext<ProposalFormActions>();
 
   const { prefix, index, onRemove } = useContext(ActionFormContext);
@@ -45,6 +49,30 @@ export const MergePRInput = () => {
   const errors: ActionFormError<ProposalFormMergeData> = formErrors.actions
     ? formErrors.actions[index]
     : undefined;
+
+  const url = useWatch({ name: `${prefix}.url` });
+
+  useEffect(() => {
+    const debounced = setTimeout(async () => {
+      if (!url) return;
+
+      // Fetch sha from pr-merger server
+      const res = await fetch(
+        `${CONFIG.PR_MERGER_API_URL}/latestCommit?url=${url}`
+      );
+
+      const json = await res.json();
+
+      if (json.status !== 'ok' || json.data?.sha == null) {
+        console.log(json);
+        throw new Error('Could not fetch latest commit hash');
+      }
+
+      setValue(`${prefix}.sha`, json.data.sha);
+    }, 1000);
+
+    return () => clearTimeout(debounced);
+  }, [url]);
 
   return (
     <MainCard

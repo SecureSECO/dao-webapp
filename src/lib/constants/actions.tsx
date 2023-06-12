@@ -166,6 +166,7 @@ export const ACTIONS: Actions = {
           _owner: owner,
           _repo: repo,
           _pull_number: pullNumber,
+          _sha: input.sha,
         },
       };
     },
