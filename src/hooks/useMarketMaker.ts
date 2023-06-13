@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
+import { useProvider } from 'wagmi';
 
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
 import {
@@ -58,6 +59,7 @@ export const useMarketMaker = ({
   const [contractAddress, setContractAddress] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const provider = useProvider();
 
   const fetchData = async (client: DiamondGovernanceClient) => {
     try {
@@ -67,7 +69,7 @@ export const useMarketMaker = ({
       const marketMaker = await client.sugar.GetABCMarketMaker();
       setContractAddress(marketMaker.address);
 
-      if (isNullOrUndefined(amount))
+      if (isNullOrUndefined(amount) || amount.isZero())
         throw new ValidationError('Amount is not valid');
       if (isNullOrUndefined(slippage) || isNaN(slippage))
         throw new ValidationError('Slippage is not valid');
@@ -76,8 +78,9 @@ export const useMarketMaker = ({
         const mintAmount = await marketMaker.calculateMint(amount);
         const minAmount = applySlippage(mintAmount, slippage);
         const gas = await marketMaker.estimateGas.mint(amount, minAmount);
+        const gasPrice = await provider.getGasPrice();
 
-        setEstimatedGas(gas);
+        setEstimatedGas(gas.mul(gasPrice));
         setExpectedReturn(mintAmount);
       }
 
@@ -88,8 +91,9 @@ export const useMarketMaker = ({
           gas: marketMaker.estimateGas.burn(amount, minAmount),
           exitFee: marketMaker.calculateExitFee(amount),
         });
+        const gasPrice = await provider.getGasPrice();
 
-        setEstimatedGas(values.gas);
+        setEstimatedGas(values.gas.mul(gasPrice));
         setExpectedReturn(burnAmount.sub(values.exitFee));
       }
     } catch (e) {
@@ -125,9 +129,10 @@ export const useMarketMaker = ({
   };
 
   useEffect(() => {
-    if (!enabled) return;
-    if (!client) return;
+    if (!enabled || !client) return;
     fetchData(client);
+    const id = setInterval(() => fetchData(client), 10000);
+    return () => clearInterval(id);
   }, [client, amount?._hex, slippage, swapKind, enabled]);
 
   return {

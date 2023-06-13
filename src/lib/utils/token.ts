@@ -113,13 +113,16 @@ export const bigIntToFloat = (
  * decimals is applied if necessary.
  *
  * @param amount [string] token amount. May include token symbol.
+ * @param displayDecimals [number] number of decimals to display.
+ * @param showSmallAmounts [boolean] whether to show all decimals, else it gets rounded to <0.01 if it is below that.
  * @returns [string] abbreviated token amount. Any decimal digits get discarded. For
  * thousands, millions and billions letters are used. E.g. 10'123'456.78 SYM becomes 10M.
  * Everything greater gets expressed as power of tens.
  */
 export function abbreviateTokenAmount(
   amount: string,
-  displayDecimals: number
+  displayDecimals: number,
+  showSmallAmounts: boolean = false
 ): string {
   if (!amount) return 'N/A';
 
@@ -159,14 +162,20 @@ export function abbreviateTokenAmount(
     const intNumber = Number.parseInt(integers);
     const totalNumber = intNumber + fractionNumber;
 
-    if (totalNumber < 0.01 && totalNumber > 0) {
+    if (!showSmallAmounts && totalNumber < 0.01 && totalNumber > 0) {
       return ` < 0.01${symbol && ' ' + symbol}`;
     }
 
-    return `${totalNumber.toFixed(displayDecimals)}${symbol && ' ' + symbol}`;
+    return `${removeTrailingZeros(
+      totalNumber.toFixed(displayDecimals).toString()
+    )}${symbol && ' ' + symbol}`;
   }
 
   return `${Number.parseInt(integers)}${symbol && ' ' + symbol}`;
+}
+
+function removeTrailingZeros(value: string): string {
+  return value.replace(/\.0+$/, '').replace(/(\.\d+?)0+$/, '$1');
 }
 
 type AbbreviatedTokenAmountProps = {
@@ -174,6 +183,7 @@ type AbbreviatedTokenAmountProps = {
   tokenDecimals?: number | null;
   displayDecimals?: number;
   valueAsFloat?: number;
+  showSmallAmounts?: boolean;
 };
 
 /**
@@ -188,6 +198,7 @@ export const toAbbreviatedTokenAmount = ({
   value,
   tokenDecimals,
   displayDecimals = 2,
+  showSmallAmounts,
   valueAsFloat = undefined,
 }: AbbreviatedTokenAmountProps): string => {
   if (anyNullOrUndefined(value, tokenDecimals)) {
@@ -200,7 +211,11 @@ export const toAbbreviatedTokenAmount = ({
 
   // Theoretically 'bigIntToFloat' never returns NaN, guaranteed by its type's preconditions. In practice, this might still happen.
   if (isNaN(valueAsFloat!)) return 'N/A';
-  return abbreviateTokenAmount(valueAsFloat!.toFixed(20), displayDecimals);
+  return abbreviateTokenAmount(
+    valueAsFloat!.toFixed(20),
+    displayDecimals,
+    showSmallAmounts
+  );
 };
 
 /**

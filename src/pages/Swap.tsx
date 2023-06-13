@@ -5,7 +5,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DAI from '@/src/components/icons/DAI';
 import Secoin from '@/src/components/icons/Secoin';
 import { Button } from '@/src/components/ui/Button';
@@ -48,7 +48,6 @@ import {
   usePrepareContractWrite,
 } from 'wagmi';
 
-import Check from '../components/icons/Check';
 import Loading from '../components/icons/Loading';
 import {
   Accordion,
@@ -111,11 +110,15 @@ const Swap = () => {
 
   // BALANCES
   const { address, isConnected } = useAccount();
-  const { secoinBalance } = useSecoinBalance({ address });
+  const { secoinBalance } = useSecoinBalance({ address, watch: true });
   const { data: daiBalance } = useBalance({
     address,
     token: abcTokens[0].contractAddress as any,
+    watch: true,
   });
+
+  const [isSwapping, setIsSwapping] = useState(false);
+
   const { data: nativeBalance } = useBalance({ address: address });
 
   const slippageWatch = useWatch({ control, name: 'slippage' });
@@ -127,7 +130,13 @@ const Swap = () => {
   const from = swap === 'Mint' ? abcTokens[0] : abcTokens[1];
   const to = swap === 'Mint' ? abcTokens[1] : abcTokens[0];
 
-  const maxFrom = swap === 'Mint' ? daiBalance?.value : secoinBalance;
+  let maxFrom = swap === 'Mint' ? daiBalance?.value : secoinBalance;
+  let maxTo = swap === 'Mint' ? secoinBalance : daiBalance?.value;
+
+  useEffect(() => {
+    maxFrom = swap === 'Mint' ? daiBalance?.value : secoinBalance;
+    maxTo = swap === 'Mint' ? secoinBalance : daiBalance?.value;
+  }, [daiBalance, secoinBalance]);
 
   const setMaxValue = () => {
     if (maxFrom !== undefined) {
@@ -174,8 +183,11 @@ const Swap = () => {
     args: [swapContractAddress as any, ethers.constants.MaxUint256],
     enabled: swap === 'Mint' && swapContractAddress !== null,
   });
-  const { writeAsync: writeAproveAsync, error: approveError } =
-    useContractWrite(approveConfig);
+  const {
+    writeAsync: writeAproveAsync,
+    error: approveError,
+    isLoading: isLoadingAprove,
+  } = useContractWrite(approveConfig);
 
   const enoughGas =
     estimatedGas !== null && nativeBalance !== undefined
@@ -183,10 +195,15 @@ const Swap = () => {
       : true;
 
   const onSubmit = (_: IFormInputs) => {
+    setIsSwapping(true);
     toast.contractTransaction(() => performSwap(), {
-      success: 'Swap succeeded',
+      success: 'Swap successful',
       error: 'Swap failed',
       onError: (e) => console.error(e as any),
+      onFinish() {
+        setIsSwapping(false);
+        setValue('fromToken', '0.0');
+      },
     });
   };
 
@@ -243,6 +260,7 @@ const Swap = () => {
             <Button
               onClick={() => {
                 setSwap(swap === 'Burn' ? 'Mint' : 'Burn');
+                setValue('fromToken', '0.0');
               }}
               className="h-8 px-0 w-8"
               type="button"
@@ -254,13 +272,19 @@ const Swap = () => {
           {/* To token */}
           <div className="flex p-4 h-24 bg-popover text-popover-foreground rounded-md border border-input">
             <span className="text-2xl text-popover-foreground/70 w-full px-3">
-              <TokenAmount amount={expectedReturn} tokenDecimals={decimals} />
+              <TokenAmount
+                amount={expectedReturn}
+                tokenDecimals={decimals}
+                displayDecimals={decimals}
+                showSmallAmounts
+              />
             </span>
             <div className="flex flex-col gap-1 items-end">
               <div className="rounded-full bg-primary w-fit h-fit px-2 py-0.5 flex gap-x-2 items-center justify-center text-primary-foreground">
                 <Icon name={to.name} />
                 {to.name}
               </div>
+              <TokenAmount amount={maxTo} tokenDecimals={decimals} />
             </div>
           </div>
           <ErrorText name="Token amount" error={errors.fromToken} />
@@ -279,7 +303,7 @@ const Swap = () => {
                   content: <Warning>Could not approve</Warning>,
                 },
                 {
-                  when: writeAproveAsync === undefined,
+                  when: writeAproveAsync === undefined || isLoadingAprove,
                   content: <Loading className="w-5 h-5" />,
                 },
               ]}
@@ -314,12 +338,12 @@ const Swap = () => {
                 content: <Warning>Form input is invalid</Warning>,
               },
               {
-                when: isLoading,
+                when: isLoading || isSwapping,
                 content: <Loading className="w-5 h-5" />,
               },
               {
                 when: fromAmount !== null && fromAmount.eq(constants.Zero),
-                content: <Warning>From amount is zero</Warning>,
+                content: <Warning>{from.name} amount is zero</Warning>,
               },
               {
                 when: error !== null,
@@ -350,10 +374,10 @@ const Swap = () => {
               <CategoryList
                 categories={[
                   {
-                    title: 'GAS',
+                    title: 'Gas',
                     items: [
                       {
-                        label: 'Estimated GAS fee',
+                        label: 'Estimated gas fee',
                         value: (
                           <TokenAmount
                             amount={estimatedGas}
@@ -363,6 +387,8 @@ const Swap = () => {
                             symbol={
                               PREFERRED_NETWORK_METADATA.nativeCurrency.symbol
                             }
+                            showSmallAmounts
+                            displayDecimals={8}
                           />
                         ),
                       },
@@ -383,16 +409,20 @@ const Swap = () => {
                             }
                             tokenDecimals={decimals}
                             symbol={to.name}
+                            showSmallAmounts
+                            displayDecimals={decimals}
                           />
                         ),
                       },
                       {
-                        label: 'expected',
+                        label: 'Expected',
                         value: (
                           <TokenAmount
                             amount={expectedReturn}
                             tokenDecimals={decimals}
                             symbol={to.name}
+                            showSmallAmounts
+                            displayDecimals={decimals}
                           />
                         ),
                       },
@@ -421,6 +451,7 @@ const MaxButton = ({
       <TokenAmount
         amount={max}
         tokenDecimals={decimals}
+        displayDecimals={6}
         className="whitespace-nowrap"
       />
       <button
