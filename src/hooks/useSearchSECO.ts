@@ -6,6 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* eslint-disable no-unused-vars */
+
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { CONFIG } from '@/src/lib/constants/config';
@@ -13,7 +15,6 @@ import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { getErrorMessage } from '@/src/lib/utils';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber, ContractTransaction, ethers } from 'ethers';
-import { useAccount } from 'wagmi';
 
 import { useLocalStorage } from './useLocalStorage';
 
@@ -297,11 +298,9 @@ export const useSearchSECO = (
 
       const res = await response.json();
       if (res.status !== 'ok') {
-        console.log(res);
         throw new Error(`API request failed, please try again`);
       }
 
-      console.log(res);
       setCost(res.cost);
       setHashes(res.hashes);
     } catch (e) {
@@ -355,7 +354,6 @@ export const useSearchSECO = (
     const sessionRes = await sessionResponse.json();
 
     if (sessionRes.status !== 'ok') {
-      console.log(sessionRes);
       throw new Error(`API request failed, please try again.`);
     }
 
@@ -444,7 +442,6 @@ export const useSearchSECO = (
       }
     } else {
       console.error(sessionRes.error);
-      console.log(sessionRes);
 
       setSession({
         ...session,
@@ -500,7 +497,6 @@ export const useSearchSECO = (
     const json = await res.json();
 
     if (json.status !== 'ok') {
-      console.log(json);
       throw new Error(`API request failed, please try again.`);
     }
 

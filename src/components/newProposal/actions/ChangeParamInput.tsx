@@ -80,7 +80,7 @@ const addressValidator: Validator = {
 };
 
 const stringValidator: Validator = {
-  validate: (_) => true,
+  validate: () => true,
 };
 
 const boolValidator: Validator = {

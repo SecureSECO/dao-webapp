@@ -5,10 +5,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 /**
  * This is a Card component that supports various variants and padding options.
  * It also provides a loading state with a pulse animation.
  */
+
 import * as React from 'react';
 import { cn } from '@/src/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';

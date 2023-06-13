@@ -69,7 +69,7 @@ export const useDaoVariable = ({
       );
       setValue(_value);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       setError('Variable value could not be retrieved');
     } finally {
       setLoading(false);

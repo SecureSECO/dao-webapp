@@ -7,7 +7,7 @@
  */
 
 /**
- * @file Custom Tooltip Component
+ * @fileoverview Custom Tooltip Component
  * This file defines a custom tooltip component that wraps the Radix UI tooltip primitive.
  * It applies custom styling to the TooltipContent and exports Tooltip, TooltipTrigger, TooltipContent, and TooltipProvider components.
  * @see https://www.radix-ui.com/docs/primitives/components/tooltip - Radix UI Tooltip Primitive

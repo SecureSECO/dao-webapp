@@ -288,7 +288,7 @@ export const ACTIONS: Actions = {
           },
         };
       } catch (e) {
-        console.log(e);
+        console.error(e);
         return null;
       }
     },

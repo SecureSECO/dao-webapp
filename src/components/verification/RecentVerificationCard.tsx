@@ -7,7 +7,7 @@
  */
 
 /**
- * @file RecentVerificationCard - Component that displays information about a past verification
+ * @fileoverview RecentVerificationCard - Component that displays information about a past verification
  * It shows the stamp that was verified, and the time of the verification
  */
 

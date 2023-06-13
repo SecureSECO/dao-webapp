@@ -9,7 +9,6 @@
 import { useEffect, useState } from 'react';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils.js';
 import { useProvider } from 'wagmi';
 
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';

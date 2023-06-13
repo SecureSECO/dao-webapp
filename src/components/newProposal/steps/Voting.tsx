@@ -269,7 +269,6 @@ export const EndTime = ({
 
   //initialize minEndDate and minEndTime
   let minEndDate = undefined;
-  let minEndTime = undefined;
 
   if (startDate && startTime && startTimezone && endTimezone) {
     //if the user has selected a custom start time, calculate the minimum end time. If they don't they get a required error.
@@ -299,8 +298,6 @@ export const EndTime = ({
     });
 
     minEndDate = format(minEndDateTimeWithOffset, 'yyyy-MM-dd');
-
-    minEndTime = format(minEndDateTimeWithOffset, 'HH:mm');
   }
 
   return (

@@ -7,7 +7,7 @@
  */
 
 /**
- * @see https://github.com/SecureSECODAO/diamond-governance/tree/dev/sdk - Diamond Governance SDK Context setup
+ * @see https://github.com/SecureSECODAO/diamond-governance/tree/main/sdk - Diamond Governance SDK Context setup
  * Exports a React Context that provides a client for the Diamond Governance SDK.
  * This context is used by the useDiamondSDKContext hook.
  */

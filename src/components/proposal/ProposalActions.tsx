@@ -7,7 +7,7 @@
  */
 
 /**
- * @file ProposalActions.tsx - Display a proposal's actions in a MainCard, with a button to execute where applicable
+ * @fileoverview ProposalActions.tsx - Display a proposal's actions in a MainCard, with a button to execute where applicable
  */
 
 import CheckList from '@/src/components/icons/CheckList';

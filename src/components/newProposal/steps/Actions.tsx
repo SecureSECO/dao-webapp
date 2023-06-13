@@ -17,7 +17,6 @@ import {
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
 import { Label } from '@/src/components/ui/Label';
-import { toast } from '@/src/hooks/useToast';
 import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import { CONFIG } from '@/src/lib/constants/config';
 import {
@@ -32,7 +31,6 @@ import {
   Merge,
   useFieldArray,
   useForm,
-  useFormContext,
 } from 'react-hook-form';
 import { HiPlus } from 'react-icons/hi2';
 
@@ -76,7 +74,6 @@ export const Actions = () => {
 
           // Validate response
           if (json.status !== 'ok' || json.data?.sha == null) {
-            console.log(json);
             throw new Error('Could not fetch latest commit hash');
           }
 
@@ -86,7 +83,7 @@ export const Actions = () => {
             sha: json.data.sha,
           };
         } catch (error) {
-          console.log(error);
+          console.error(error);
 
           // If it fails, show error message under appropriate field and throw error
           methods.setError(`actions.${index}.url`, {
@@ -106,7 +103,7 @@ export const Actions = () => {
         setStep(4);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       })
       .finally(() => {
         setIsLoading(false);

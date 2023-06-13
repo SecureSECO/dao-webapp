@@ -5,6 +5,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 import * as React from 'react';
 import { cn } from '@/src/lib/utils';
 import * as SliderPrimitive from '@radix-ui/react-slider';

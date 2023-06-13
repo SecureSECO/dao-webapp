@@ -136,8 +136,6 @@ const Query = () => {
   };
 
   const onSubmit = async (data: QueryFormData) => {
-    console.log('Valid URL:', data.searchUrl);
-
     setIsQuerying(false);
 
     toast.promise(

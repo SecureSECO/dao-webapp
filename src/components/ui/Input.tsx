@@ -11,6 +11,7 @@
  * It supports various styles and can be used to capture user input.
  * Inspired by https://ui.shadcn.com/docs/primitives/input
  */
+
 import * as React from 'react';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import { Label } from '@/src/components/ui/Label';

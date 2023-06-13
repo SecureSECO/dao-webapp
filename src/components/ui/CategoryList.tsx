@@ -5,8 +5,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 /**
- * @file CategoryList.tsx
+ * @fileoverview CategoryList.tsx
  * Component that displays a list of the specified catgories, separated by horizontal lines.
  */
 
