@@ -353,7 +353,6 @@ export const useSearchSECO = (
     const sessionRes = await sessionResponse.json();
 
     if (sessionRes.status !== 'ok') {
-      console.log(sessionRes);
       throw new Error(`API request failed, please try again.`);
     }
 
@@ -442,7 +441,6 @@ export const useSearchSECO = (
       }
     } else {
       console.error(sessionRes.error);
-      console.log(sessionRes);
 
       setSession({
         ...session,
@@ -498,7 +496,6 @@ export const useSearchSECO = (
     const json = await res.json();
 
     if (json.status !== 'ok') {
-      console.log(json);
       throw new Error(`API request failed, please try again.`);
     }
 
