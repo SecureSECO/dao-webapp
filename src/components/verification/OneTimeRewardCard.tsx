@@ -16,6 +16,8 @@ import { TOKENS } from '@/src/lib/constants/tokens';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { HiGift } from 'react-icons/hi2';
 
+import { Label } from '../ui/Label';
+
 /**
  * @returns A card that allows the users to claim their reward for verifying
  */
@@ -24,7 +26,7 @@ const OneTimeRewardCard = ({
   claimReward,
   refetch,
 }: {
-  reward: BigNumber | null;
+  reward: [BigNumber, BigNumber];
   claimReward: () => Promise<ContractTransaction>;
   refetch: () => void;
 }) => {
@@ -54,17 +56,25 @@ const OneTimeRewardCard = ({
         You are eligible to claim a onetime verification reward for verifying
         your wallet with one or more providers.
       </p>
-      <Card variant="outline" className="flex flex-row items-center gap-x-2">
-        Claimable amount:
-        <strong>
+      <Label>Claimable amount</Label>
+      <div className="flex items-center gap-2">
+        <Card variant="outline" className="flex flex-row items-center gap-x-2">
           <TokenAmount
-            amount={reward}
+            amount={reward[0]}
             tokenDecimals={TOKENS.rep.decimals}
             symbol={TOKENS.rep.symbol}
             displayDecimals={0}
           />
-        </strong>
-      </Card>
+        </Card>
+        <Card variant="outline" className="flex flex-row items-center gap-x-2">
+          <TokenAmount
+            amount={reward[1]}
+            tokenDecimals={TOKENS.secoin.decimals}
+            symbol={TOKENS.secoin.symbol}
+            displayDecimals={0}
+          />
+        </Card>
+      </div>
       <Button
         label="Claim reward"
         onClick={handleClaimReward}

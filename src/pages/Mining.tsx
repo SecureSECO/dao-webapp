@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card } from '@/src/components/ui/Card';
 import {
   ConditionalButton,
@@ -71,9 +71,6 @@ const columns: ColumnDef<DisplayMining>[] = [
  * Page for claiming rewards for and viewing your SearchSECO miners
  */
 export const Mining = () => {
-  //TODO: implement with SDK
-  const repToMonetaryFactor = 0.3;
-
   const { control, handleSubmit } = useForm<ClaimRewardData>({
     defaultValues: { distribution: 100 },
   });
@@ -81,10 +78,10 @@ export const Mining = () => {
 
   const {
     miningData,
-    hashReward,
     claimReward,
     totalClaimedHashes,
     getMiningData,
+    estimateRewardSplit,
   } = useSearchSECO();
 
   const [isBusy, setIsBusy] = useState(false);
@@ -99,11 +96,6 @@ export const Mining = () => {
       ? totalMinedHashes - totalClaimedHashes?.toNumber()
       : 0;
 
-  const claimableRep: BigNumber =
-    miningData != null && hashReward != null && claimableHashes != null
-      ? hashReward.mul(claimableHashes)
-      : BigNumber.from(0);
-
   const name_distribution = 'distribution';
 
   const _distribution = useWatch({
@@ -115,12 +107,26 @@ export const Mining = () => {
     ? _distribution[0]
     : _distribution;
 
-  const reputation = claimableRep.mul(BigNumber.from(distribution)).div(100);
-  const monetary = claimableRep
-    .mul(BigNumber.from(100 - distribution))
-    .div(100)
-    .mul(BigNumber.from(Math.round(repToMonetaryFactor * 100)))
-    .div(100);
+  const [reputation, setReputation] = useState<BigNumber | null>(null);
+  const [monetary, setMonetary] = useState<BigNumber | null>(null);
+
+  useEffect(() => {
+    const updateEstimate = setTimeout(async () => {
+      if (!claimableHashes) return;
+
+      const [repEst, monEst] = await estimateRewardSplit(
+        BigNumber.from(claimableHashes),
+        BigNumber.from(Math.round(mapRange(distribution, 0, 100, 0, 1000000)))
+      );
+      setReputation(repEst);
+      setMonetary(monEst);
+
+      console.log('repEst', repEst.toString());
+      console.log('monEst', monEst.toString());
+    }, 500);
+
+    return () => clearTimeout(updateEstimate);
+  }, [distribution, claimableHashes]);
 
   const onSubmit = (data: ClaimRewardData) => {
     if (isBusy) return;
@@ -229,7 +235,7 @@ export const Mining = () => {
                   content: <ConnectWalletWarning action="to claim" />,
                 },
                 {
-                  when: claimableRep.lte(0),
+                  when: claimableHashes <= 0,
                   content: <Warning>You have no reward to claim</Warning>,
                 },
               ]}

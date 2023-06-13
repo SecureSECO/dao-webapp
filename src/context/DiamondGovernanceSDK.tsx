@@ -103,10 +103,10 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
 
     const getSecoinAddress = async () => {
       if (!anonClient) return;
-      const IChangeableTokenContract =
-        await anonClient.pure.IChangeableTokenContract();
+      const IMonetaryTokenFacetContract =
+        await anonClient.pure.IMonetaryTokenFacet();
       const monetaryTokenContractAddress =
-        await IChangeableTokenContract.getTokenContractAddress();
+        await IMonetaryTokenFacetContract.getTokenContractAddress();
       setSecoinAddress(monetaryTokenContractAddress);
     };
 
