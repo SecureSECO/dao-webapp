@@ -346,7 +346,7 @@ const Swap = () => {
             <AccordionTrigger className="flex w-full flex-col">
               <p className="lowercase first-letter:capitalize">Summary</p>
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className='mt-1'>
               <CategoryList
                 categories={[
                   {
