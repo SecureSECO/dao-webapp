@@ -46,43 +46,43 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
       type: 'Percentage',
     },
     MinDuration: {
-      description: 'Minimum duration of a proposal in seconds.',
+      description:
+        'Minimum duration of the voting period of a proposal in seconds.',
       type: 'Seconds',
     },
     MinParticipation: {
       description:
-        'Minimum percentage of voting power supply needed for a quorum.',
+        'Minimum percentage of voting power supply needed for a quorum (minimum participation).',
       type: 'Percentage',
     },
     MinProposerVotingPower: {
-      description: `Minimum ${TOKENS.rep.symbol} needed to create a proposal.`,
+      description: `Minimum ${TOKENS.rep.symbol} a wallet needs to won to be able to create a proposal.`,
       type: 'SECOREP',
     },
     SupportThreshold: {
       description:
-        'Percentage of yes/no votes that need to be yes for a proposal to pass.',
+        'Percentage of yes/no votes that need to be yes for a proposal to pass (abstain is solely to reach the quorum).',
       type: 'Percentage',
     },
     VotingMode: {
       description:
-        '0: Single vote - vote once with all voting power, 1: Single partial vote - vote once with possibly a part of your voting power , 2: Multiple partial vote - vote multiple times with a part of your voting power.',
+        '0: Single vote - vote once with all voting power, 1: Single partial vote - vote once with any part of your voting power , 2: Multiple partial vote - vote multiple times with a part of your voting power.',
     },
   },
   IBurnVotingProposalFacet: {
     ProposalCreationCost: {
-      description: `How much ${TOKENS.rep.symbol} it costs to create a proposal. This ${TOKENS.rep.symbol} is burned.`,
+      description: `How much ${TOKENS.rep.symbol} it costs to create a proposal. This ${TOKENS.rep.symbol} is burned, never to see the light of day again.`,
       type: 'SECOREP',
     },
   },
   IERC20TimeClaimableFacet: {
     ClaimPeriodInterval: {
-      description:
-        'Interval in seconds between increase in claim reward amount.',
+      description: 'Interval in seconds between subsequent daily rewards.',
       type: 'Seconds',
     },
     ClaimPeriodMax: {
       description:
-        'Amount of seconds after which claim reward will no longer increase.',
+        'Time period in seconds after which claim reward will no longer increase.',
       type: 'Seconds',
     },
   },
@@ -112,8 +112,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
   },
   IChangeableTokenContract: {
     TokenContractAddress: {
-      description:
-        'Address of the ERC20 contract of the monetary token of the DAO (SECOIN).',
+      description: `Address of the ERC20 contract of the monetary token of the DAO (${TOKENS.secoin.symbol}).`,
     },
   },
   IABCConfigureFacet: {
@@ -122,11 +121,12 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
         'Address of the contract that defines the formula describing the Augmented Bonding Curve (ABC).',
     },
     FrictionABC: {
-      description: 'Fee charged to holders when withdrawing SECOIN. ',
+      description:
+        'Fee charged to holders when burning SECOIN in exchange for collateral token, using the ABC.',
     },
     Hatcher: {
       description:
-        'ICO address, when this contract receives enough funds the market maker will start swapping funds',
+        'Address of the contract that receives initial contributions. When enough funds are received within time limit, contributions will be disabled and market maker will activate to allow swapping of SECION.',
     },
     MarketMaker: {
       description:
