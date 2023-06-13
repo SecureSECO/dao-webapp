@@ -111,7 +111,7 @@
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    @apply shadow-[inset_0_0_0_30px] shadow-background dark:shadow-destructive;
+    @apply shadow-[inset_0_0_0_30px] shadow-background;
     -webkit-text-fill-color: #aaa !important;
   }
 }

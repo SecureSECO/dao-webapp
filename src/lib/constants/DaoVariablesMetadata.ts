@@ -110,7 +110,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
         'The percentage of the mining reward pool that is paid out when the HashDevaluationFactor is reached.',
     },
   },
-  IChangeableTokenContract: {
+  IMonetaryTokenFacet: {
     TokenContractAddress: {
       description: `Address of the ERC20 contract of the monetary token of the DAO (${TOKENS.secoin.symbol}).`,
     },

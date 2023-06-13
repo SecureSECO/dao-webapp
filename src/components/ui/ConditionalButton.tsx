@@ -9,6 +9,7 @@
 import React from 'react';
 import { Button, ButtonProps } from '@/src/components/ui/Button';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { cn } from '@/src/lib/utils';
 import { useWeb3Modal } from '@web3modal/react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 
@@ -19,16 +20,17 @@ export type ConditionalWarning = {
 
 export interface ConditionalButtonProps extends ButtonProps {
   conditions: ConditionalWarning[];
+  flex?: 'flex-row' | 'flex-col' | 'flex-row-reverse' | 'flex-col-reverse';
 }
 
 export const ConditionalButton = React.forwardRef<
   HTMLButtonElement,
   ConditionalButtonProps
->(({ conditions, disabled, ...props }, ref) => {
+>(({ conditions, disabled, flex = 'flex-row', ...props }, ref) => {
   const condition = conditions.find((x) => x.when);
   const someConditional = condition !== undefined;
   return (
-    <div className="flex flex-row items-center gap-x-2">
+    <div className={cn('flex  items-center gap-x-2', flex)}>
       <Button ref={ref} disabled={disabled || someConditional} {...props} />
       {someConditional && condition.content}
     </div>
@@ -83,4 +85,8 @@ export const ConnectWalletWarning = ({ action }: WarningWithActionProps) => {
  */
 export const InsufficientRepWarning = ({ action }: WarningWithActionProps) => (
   <Warning> {`Insufficient ${TOKENS.rep.symbol} ${action}`} </Warning>
+);
+
+export const InsufficientGasWarning = () => (
+  <Warning> {'Insufficient gas'} </Warning>
 );

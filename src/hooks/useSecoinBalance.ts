@@ -18,21 +18,25 @@ export type UseVotingPowerData = {
 
 export type UseVotingPowerProps = {
   address: string | undefined;
+  watch?: boolean;
 };
 
 /**
  * Hook to fetch the secoin balance of a given wallet
  * @param props.address Address of the wallet to fetch the secoin balance for
+ * @param props.watch Whether to watch the balance for changes
  * @returns Object containing the secoin balance, as well as loading and error states
  */
 export const useSecoinBalance = ({
   address,
+  watch = false,
 }: UseVotingPowerProps): UseVotingPowerData => {
   const { secoinAddress } = useDiamondSDKContext();
 
   const { data, error, isLoading } = useBalance({
     address: address as `0x${string}` | undefined,
     token: secoinAddress as `0x${string}` | undefined,
+    watch,
   });
 
   return {
