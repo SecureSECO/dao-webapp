@@ -421,7 +421,11 @@ const MaxButton = ({
 }) => {
   return (
     <div className="inline-flex items-center justify-center gap-x-1">
-      <TokenAmount amount={max} tokenDecimals={decimals} />
+      <TokenAmount
+        amount={max}
+        tokenDecimals={decimals}
+        className="whitespace-nowrap"
+      />
       <button
         type="button"
         onClick={setMaxValue}

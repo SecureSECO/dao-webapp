@@ -106,13 +106,14 @@ export const useMarketMaker = ({
 
   const performSwap = async () => {
     if (!client) throw new Error('Client is not set');
-    if (isNullOrUndefined(amount)) throw new Error('Amount is not valid');
+    if (isNullOrUndefined(amount) || isNullOrUndefined(expectedReturn))
+      throw new Error('Amount is not valid');
     if (isNullOrUndefined(slippage) || isNaN(slippage))
       throw new Error('Slippage is not valid');
 
     const marketMaker = await client.sugar.GetABCMarketMaker();
 
-    const minAmount = applySlippage(amount, slippage);
+    const minAmount = applySlippage(expectedReturn, slippage);
     if (swapKind === 'Mint') {
       return marketMaker.mint(amount, minAmount);
     }
