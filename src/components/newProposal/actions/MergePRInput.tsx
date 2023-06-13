@@ -64,7 +64,6 @@ export const MergePRInput = () => {
       const json = await res.json();
 
       if (json.status !== 'ok' || json.data?.sha == null) {
-        console.log(json);
         throw new Error('Could not fetch latest commit hash');
       }
 

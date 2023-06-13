@@ -28,7 +28,7 @@ import { TOKENS } from '@/src/lib/constants/tokens';
 import { mapRange } from '@/src/lib/utils';
 import { ColumnDef } from '@tanstack/react-table';
 import { BigNumber } from 'ethers';
-import { Controller, get, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiOutlineCommandLine, HiOutlineCurrencyDollar } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
 
@@ -167,9 +167,9 @@ export const Mining = () => {
               >
                 Claimable hashes
               </Label>
-              <Card variant="outline">{claimableHashes} Hashes</Card>
+              <Card variant="outline">{claimableHashes} hashes</Card>
             </div>
-            <div className="flex flex-col gap-y-2">
+            <div className="flex flex-col gap-y-1">
               <Label
                 htmlFor="distribution"
                 tooltip={`How much of your reward you wish to receive in ${TOKENS.rep.symbol}, and how much in ${TOKENS.secoin.symbol}`}
@@ -245,7 +245,7 @@ export const Mining = () => {
           header="Miners"
           className="col-span-4"
         >
-          {miningData ? (
+          {miningData && miningData.length > 0 ? (
             <div className="space-y-1">
               <Label
                 tooltip={`This table shows the miners connected to your wallet`}

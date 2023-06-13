@@ -183,7 +183,6 @@ const Verification = () => {
 
     if (lengthBefore !== filteredPendingVerifications.length) {
       setPendingVerifications(filteredPendingVerifications);
-      console.log('filtered');
     }
   }, [pendingVerifications]);
 
@@ -235,7 +234,7 @@ const Verification = () => {
         message: `SecureSECO DAO Verification \nN:${nonce}`,
       });
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       toast.error({
         title: error.message.substring(0, 100),
       });

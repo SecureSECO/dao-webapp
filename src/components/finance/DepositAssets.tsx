@@ -187,7 +187,7 @@ export const DepositAssets = () => {
           type: 'custom',
           message: 'Could not create transaction',
         });
-        console.log(error);
+        console.error(error);
         return;
       }
 
@@ -208,7 +208,7 @@ export const DepositAssets = () => {
           type: 'custom',
           message: 'Could not create transaction',
         });
-        console.log(error);
+        console.error(error);
         return;
       }
 

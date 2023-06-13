@@ -144,9 +144,10 @@ export const MembershipStatusView = ({
       const { timeLeftUntilExpiration, verified } = isVerified(stamp);
 
       // Retrieve threshold for timestamp
-      let threshold = getThresholdForTimestamp(
-        stamp[2].reverse()[0].toNumber()
-      ).toNumber();
+      // let threshold = getThresholdForTimestamp(
+      //   stamp[2].reverse()[0].toNumber()
+      // ).toNumber();
+      let threshold = 0;
 
       threshold = threshold != null && threshold > 0 ? threshold / 2 : 30;
 

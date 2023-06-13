@@ -297,11 +297,9 @@ export const useSearchSECO = (
 
       const res = await response.json();
       if (res.status !== 'ok') {
-        console.log(res);
         throw new Error(`API request failed, please try again`);
       }
 
-      console.log(res);
       setCost(res.cost);
       setHashes(res.hashes);
     } catch (e) {
