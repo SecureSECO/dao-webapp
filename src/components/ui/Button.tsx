@@ -5,6 +5,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 /**
  * This component uses the `class-variance-authority` package to generate dynamic class names based on the provided props.
  * Inspired by https://ui.shadcn.com/docs/primitives/button.

@@ -7,7 +7,7 @@
  */
 
 /**
- * @file PendingVerificationCard - Component that displays information about an ongoing verification
+ * @fileoverview PendingVerificationCard - Component that displays information about an ongoing verification
  * Contains a button to verify, and additional information about the verification
  */
 
@@ -25,7 +25,7 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/Dialog';
 import Header from '@/src/components/ui/Header';
-import { toast, useToast } from '@/src/hooks/useToast';
+import { toast } from '@/src/hooks/useToast';
 import {
   PendingVerification,
   StampInfo,

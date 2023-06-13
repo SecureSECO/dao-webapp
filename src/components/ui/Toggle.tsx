@@ -7,7 +7,7 @@
  */
 
 /**
- * @file Custom Toggle Component
+ * @fileoverview Custom Toggle Component
  * This file defines a custom toggle component that extends the functionality of the Radix UI toggle primitive.
  * It includes the ability to use custom variants and sizes, and applies custom styling using the `class-variance-authority` package.
  * @see https://www.radix-ui.com/docs/primitives/components/toggle - Radix UI Toggle Primitive

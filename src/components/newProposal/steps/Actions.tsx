@@ -17,7 +17,6 @@ import {
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
 import { Label } from '@/src/components/ui/Label';
-import { toast } from '@/src/hooks/useToast';
 import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
 import { CONFIG } from '@/src/lib/constants/config';
 import {
@@ -32,7 +31,6 @@ import {
   Merge,
   useFieldArray,
   useForm,
-  useFormContext,
 } from 'react-hook-form';
 import { HiPlus } from 'react-icons/hi2';
 

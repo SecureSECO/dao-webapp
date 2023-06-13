@@ -9,7 +9,7 @@
 import * as React from 'react';
 import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { ContractReceipt, ContractTransaction } from 'ethers';
+import { ContractReceipt } from 'ethers';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
 
 const TOAST_LIMIT = 5;

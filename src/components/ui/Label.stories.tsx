@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React from 'react';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import type { Meta, StoryObj } from '@storybook/react';

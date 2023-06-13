@@ -7,7 +7,7 @@
  */
 
 /**
- * @file Logo Full Component
+ * @fileoverview Logo Full Component
  * This file defines the Logo component (full icon + name) for SecureSecoDAO.
  */
 

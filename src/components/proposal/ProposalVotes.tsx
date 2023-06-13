@@ -5,8 +5,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 /**
- * @file ProposalVotes.tsx
+ * @fileoverview ProposalVotes.tsx
  * MainCard component that will show the votes for a proposal, including which addresses voted for specific option in an accordion
  * and allow the user to submit their own vote if the proposal is active (and they are eligible to vote).
  */

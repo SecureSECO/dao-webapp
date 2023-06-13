@@ -8,13 +8,9 @@
 
 import { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
-import { useAccount, useBlockNumber } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
-import {
-  CHAIN_METADATA,
-  PREFERRED_NETWORK_METADATA,
-} from '../lib/constants/chains';
 import { getErrorMessage } from '../lib/utils';
 
 /*
