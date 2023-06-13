@@ -146,7 +146,7 @@ const Swap = () => {
     amount: fromAmount,
     swapKind: swap,
     slippage: slippage,
-    enabled: true,
+    enabled: fromAmount !== null && !isNaN(slippage) && slippage !== 0,
   });
 
   const { data: approvedAmount } = useContractRead({
@@ -154,7 +154,7 @@ const Swap = () => {
     abi: erc20ABI,
     functionName: 'allowance',
     args: [address as any, swapContractAddress as any],
-    enabled: swap === 'Mint',
+    enabled: swap === 'Mint' && swapContractAddress !== null,
     watch: true,
   });
 
@@ -172,11 +172,10 @@ const Swap = () => {
     abi: erc20ABI,
     functionName: 'approve',
     args: [swapContractAddress as any, ethers.constants.MaxUint256],
+    enabled: swap === 'Mint' && swapContractAddress !== null,
   });
   const { writeAsync: writeAproveAsync, error: approveError } =
     useContractWrite(approveConfig);
-
-  //ERC20 allowance opvragen alleen voor DAI
 
   const enoughGas =
     estimatedGas !== null && nativeBalance !== undefined
@@ -322,6 +321,10 @@ const Swap = () => {
                 content: <Loading className="w-5 h-5" />,
               },
               {
+                when: fromAmount !== null && fromAmount.eq(constants.Zero),
+                content: <Warning>From amount is zero</Warning>,
+              },
+              {
                 when: error !== null,
                 content: <Warning>{error!}</Warning>,
               },
@@ -346,7 +349,7 @@ const Swap = () => {
             <AccordionTrigger className="flex w-full flex-col">
               <p className="lowercase first-letter:capitalize">Summary</p>
             </AccordionTrigger>
-            <AccordionContent className='mt-1'>
+            <AccordionContent className="mt-1">
               <CategoryList
                 categories={[
                   {
