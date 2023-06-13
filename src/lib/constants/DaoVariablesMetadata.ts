@@ -101,11 +101,43 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
       description:
         'Address of the wallet that verifies if claimed hash rewards are actually claimable.',
     },
+    HashDevaluationFactor: {
+      description:
+        'How many hashes need to be submitted to pay out the MiningRewardPoolPayoutRatio',
+    },
+    MiningRewardPoolPayoutRatio: {
+      description:
+        'The percentage of the mining reward pool that is paid out when the HashDevaluationFactor is reached.',
+    },
   },
   IChangeableTokenContract: {
     TokenContractAddress: {
       description:
         'Address of the ERC20 contract of the monetary token of the DAO (SECOIN).',
+    },
+  },
+  IABCConfigureFacet: {
+    FormulaABC: {
+      description:
+        'Address of the contract that defines the formula describing the Augmented Bonding Curve (ABC).',
+    },
+    FrictionABC: {
+      description: 'Fee charged to holders when withdrawing SECOIN. ',
+    },
+    Hatcher: {
+      description:
+        'ICO address, when this contract receives enough funds the market maker will start swapping funds',
+    },
+    MarketMaker: {
+      description:
+        'Address of the contract that acts as the market maker for the ABC.',
+    },
+    ReserveRatioABC: {
+      description: 'The ratio for the reserve in the BancorBondingCurve.',
+    },
+    ThetaABC: {
+      description:
+        'What percentage of DAI is sent to the DAO when minting SECOIN.',
     },
   },
 };
