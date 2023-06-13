@@ -19,10 +19,11 @@ export const DAO_METADATA = {
   name: 'SecureSECO DAO',
   description:
     'Distributed Autonomous Organization for the SecureSECO project.',
+  discord: 'https://discord.gg/2naUnwE9Y2',
   links: [
     {
       name: 'Discord Server',
-      url: 'https://discord.gg/',
+      url: 'https://discord.gg/2naUnwE9Y2',
     },
     {
       name: 'User Documentation',
@@ -33,4 +34,4 @@ export const DAO_METADATA = {
       url: 'https://secureseco.org/',
     },
   ],
-};
+} as const;
