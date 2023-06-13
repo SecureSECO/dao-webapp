@@ -271,8 +271,8 @@ const Swap = () => {
             </Button>
           </div>
           {/* To token */}
-          <div className="flex p-4 h-24 bg-popover text-popover-foreground rounded-md border border-input">
-            <span className="text-2xl text-popover-foreground/70 w-full px-3">
+          <div className="flex p-4 h-24 w-full bg-popover text-popover-foreground rounded-md border border-input">
+            <span className="text-2xl text-popover-foreground/70 w-full shrink truncate px-3">
               <TokenAmount
                 amount={expectedReturn}
                 tokenDecimals={decimals}
