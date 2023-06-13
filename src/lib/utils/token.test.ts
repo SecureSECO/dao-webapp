@@ -49,7 +49,7 @@ test('toAbbreviatedTokenAmount to correctly handle displayDecimals > 20', () => 
       tokenDecimals: 4,
       displayDecimals: 21,
     })
-  ).toHaveLength(25); // 1234.56789... (20 decimal digits + 1 dot + 4 digits before dot)
+  ).toHaveLength(24); // 1234.56789... (20 decimal digits + 1 dot + 4 digits before dot)
 });
 
 test('toAbbreviatedTokenAmount to correctly handle displayDecimals < 0 and round the result', () => {

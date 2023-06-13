@@ -25,6 +25,7 @@ import Finance from '@/src/pages/Finance';
 import { Mining } from '@/src/pages/Mining';
 import NewProposal from '@/src/pages/NewProposal';
 import Settings from '@/src/pages/Settings';
+import Swap from '@/src/pages/Swap';
 import Verification from '@/src/pages/Verification';
 import ViewProposal from '@/src/pages/ViewProposal';
 import {
@@ -122,6 +123,10 @@ const router = createBrowserRouter([
       {
         path: '/settings',
         element: <Settings />,
+      },
+      {
+        path: '/swap',
+        element: <Swap />,
       },
     ],
   },

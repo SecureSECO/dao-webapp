@@ -17,6 +17,7 @@ interface TokenAmountProps extends React.HTMLAttributes<HTMLSpanElement> {
   symbol?: string;
   sign?: string;
   displayDecimals?: number;
+  showSmallAmounts?: boolean;
 }
 
 /**
@@ -37,6 +38,7 @@ const TokenAmount = ({
   displayDecimals,
   symbol = '',
   sign = '',
+  showSmallAmounts,
   ...props
 }: TokenAmountProps) => {
   return (
@@ -47,6 +49,7 @@ const TokenAmount = ({
         tokenDecimals,
         displayDecimals,
         valueAsFloat: amountFloat,
+        showSmallAmounts,
       })}
       &nbsp;
       {symbol}
