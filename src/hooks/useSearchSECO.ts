@@ -565,14 +565,6 @@ export const useSearchSECO = (
 
     const { proof } = json;
 
-    console.log(
-      address,
-      hashCount.toNumber(),
-      nonce.toNumber(),
-      repFrac.toNumber(),
-      proof.sig
-    );
-
     return await rewarding.rewardMinerForHashes(
       address,
       hashCount,

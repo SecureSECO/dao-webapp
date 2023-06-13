@@ -120,9 +120,6 @@ export const Mining = () => {
       );
       setReputation(repEst);
       setMonetary(monEst);
-
-      console.log('repEst', repEst.toString());
-      console.log('monEst', monEst.toString());
     }, 500);
 
     return () => clearTimeout(updateEstimate);
