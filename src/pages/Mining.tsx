@@ -28,7 +28,7 @@ import { TOKENS } from '@/src/lib/constants/tokens';
 import { mapRange } from '@/src/lib/utils';
 import { ColumnDef } from '@tanstack/react-table';
 import { BigNumber } from 'ethers';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, get, useForm, useWatch } from 'react-hook-form';
 import { HiOutlineCommandLine, HiOutlineCurrencyDollar } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
 
@@ -55,7 +55,7 @@ const columns: ColumnDef<DisplayMining>[] = [
     accessorKey: 'claimableHashes',
     header: ({ column }) => (
       <HeaderSortableDecorator column={column}>
-        Claimable Hashes
+        Total Hashes
       </HeaderSortableDecorator>
     ),
   },
@@ -79,18 +79,29 @@ export const Mining = () => {
   });
   const { isConnected } = useAccount();
 
-  const { miningData, hashReward, claimReward } = useSearchSECO();
+  const {
+    miningData,
+    hashReward,
+    claimReward,
+    totalClaimedHashes,
+    getMiningData,
+  } = useSearchSECO();
 
   const [isBusy, setIsBusy] = useState(false);
 
-  const totalHashes = miningData?.reduce(
+  const totalMinedHashes = miningData?.reduce(
     (acc, miner) => acc + miner.claimableHashes,
     0
   );
 
+  const claimableHashes =
+    miningData && totalMinedHashes && totalClaimedHashes
+      ? totalMinedHashes - totalClaimedHashes?.toNumber()
+      : 0;
+
   const claimableRep: BigNumber =
-    miningData != null && hashReward != null && totalHashes != null
-      ? hashReward.mul(totalHashes)
+    miningData != null && hashReward != null && claimableHashes != null
+      ? hashReward.mul(claimableHashes)
       : BigNumber.from(0);
 
   const name_distribution = 'distribution';
@@ -122,12 +133,13 @@ export const Mining = () => {
     );
 
     toast.contractTransaction(
-      () => claimReward(BigNumber.from(totalHashes), repFrac),
+      () => claimReward(BigNumber.from(totalMinedHashes), repFrac),
       {
         success: `Successfully claimed reward!`,
         error: `Failed to claim reward`,
         onFinish() {
           setIsBusy(false);
+          getMiningData();
         },
       }
     );
@@ -144,59 +156,69 @@ export const Mining = () => {
         >
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-1"
+            className="flex flex-col gap-2"
           >
-            <Label
-              htmlFor="distribution"
-              tooltip={`How much of your reward you wish to receive in ${TOKENS.rep.symbol}, and how much in ${TOKENS.secoin.symbol}`}
-            >
-              Reward distribution
-            </Label>
-            <Card
-              variant="outline"
-              className="grid w-full grid-cols-8 gap-4 text-center md:flex md:flex-row"
-            >
-              <div className="col-span-4 flex flex-col">
-                {TOKENS.rep.symbol}
-                <span>{distribution}%</span>
-              </div>
-              <div className="col-span-4 flex flex-col md:order-last">
-                {TOKENS.secoin.symbol}
-                <span>{100 - distribution}%</span>
-              </div>
-              <div className="col-span-8 flex flex-col justify-center gap-y-2 md:w-full">
-                <Controller
-                  control={control}
-                  name={name_distribution}
-                  render={({ field: { onChange, name, value } }) => (
-                    <Slider
-                      defaultValue={[value]}
-                      max={100}
-                      step={1}
-                      onValueChange={onChange}
-                      name={name}
-                    />
-                  )}
-                />
-              </div>
-            </Card>
-            <div className="mt-1 flex w-full flex-col gap-2 md:flex-row">
-              <Card variant="outline">
-                <TokenAmount
-                  amount={reputation}
-                  tokenDecimals={18}
-                  symbol={TOKENS.rep.symbol}
-                  displayDecimals={3}
-                />
+            <div className="flex flex-col gap-y-1">
+              <Label
+                tooltip={`The total amount of hashes you can claim your reward for`}
+              >
+                Claimable hashes
+              </Label>
+              <Card variant="outline">{claimableHashes} Hashes</Card>
+            </div>
+            <div className="flex flex-col gap-y-2">
+              <Label
+                htmlFor="distribution"
+                tooltip={`How much of your reward you wish to receive in ${TOKENS.rep.symbol}, and how much in ${TOKENS.secoin.symbol}`}
+              >
+                Reward distribution
+              </Label>
+              <Card
+                variant="outline"
+                className="grid w-full grid-cols-8 gap-4 text-center md:flex md:flex-row"
+              >
+                <div className="col-span-4 flex flex-col">
+                  {TOKENS.rep.symbol}
+                  <span>{distribution}%</span>
+                </div>
+                <div className="col-span-4 flex flex-col md:order-last">
+                  {TOKENS.secoin.symbol}
+                  <span>{100 - distribution}%</span>
+                </div>
+                <div className="col-span-8 flex flex-col justify-center gap-y-2 md:w-full">
+                  <Controller
+                    control={control}
+                    name={name_distribution}
+                    render={({ field: { onChange, name, value } }) => (
+                      <Slider
+                        defaultValue={[value]}
+                        max={100}
+                        step={1}
+                        onValueChange={onChange}
+                        name={name}
+                      />
+                    )}
+                  />
+                </div>
               </Card>
-              <Card variant="outline">
-                <TokenAmount
-                  amount={monetary}
-                  tokenDecimals={18}
-                  symbol={TOKENS.secoin.symbol}
-                  displayDecimals={3}
-                />
-              </Card>
+              <div className="mt-1 flex w-full flex-col gap-2 md:flex-row">
+                <Card variant="outline">
+                  <TokenAmount
+                    amount={reputation}
+                    tokenDecimals={18}
+                    symbol={TOKENS.rep.symbol}
+                    displayDecimals={3}
+                  />
+                </Card>
+                <Card variant="outline">
+                  <TokenAmount
+                    amount={monetary}
+                    tokenDecimals={18}
+                    symbol={TOKENS.secoin.symbol}
+                    displayDecimals={3}
+                  />
+                </Card>
+              </div>
             </div>
             <ConditionalButton
               label="Claim reward"

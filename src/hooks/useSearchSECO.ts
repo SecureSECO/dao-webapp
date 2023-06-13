@@ -35,6 +35,7 @@ type UseSearchSECOData = {
   session: SessionData | null;
   miningData: MiningData[] | null;
   hashReward: BigNumber | null;
+  totalClaimedHashes: BigNumber | null;
   runQuery: (url: string, branch?: string) => Promise<QueryResponse>;
   resetQuery: (clearQueryResult?: boolean) => void;
   startSession: () => Promise<SessionData>;
@@ -43,6 +44,7 @@ type UseSearchSECOData = {
     hashCount: BigNumber,
     repFrac: BigNumber
   ) => Promise<ContractTransaction>;
+  getMiningData: () => Promise<void>;
 };
 
 /**
@@ -211,6 +213,9 @@ export const useSearchSECO = (
   const [doPoll, setDoPoll] = useState<boolean>(true);
 
   const [miningData, setMiningData] = useState<MiningData[] | null>(null);
+  // Total hashes claimed by the user
+  const [totalClaimedHashes, setTotalClaimedHashes] =
+    useState<BigNumber | null>(null);
   // SECOIN reward per hash, in 18 decimal precision
   const [hashReward, setHashReward] = useState<BigNumber | null>(null);
 
@@ -482,6 +487,8 @@ export const useSearchSECO = (
       return;
     }
 
+    const address = await client.pure.signer.getAddress();
+
     const res = await fetch(
       `${API_URL}/rewarding/miningData?address=${address}`
     );
@@ -512,6 +519,9 @@ export const useSearchSECO = (
     const hashReward = await rewarding.getHashReward();
 
     setHashReward(hashReward);
+
+    const nonce = await rewarding.getHashCount(address);
+    setTotalClaimedHashes(nonce);
   };
 
   /**
@@ -528,6 +538,10 @@ export const useSearchSECO = (
     }
 
     const address = await client.pure.signer.getAddress();
+    const rewarding = await client.pure.ISearchSECORewardingFacet();
+
+    // Get nonce
+    const nonce = await rewarding.getHashCount(address);
 
     const res = await fetch(`${API_URL}/rewarding/reward`, {
       method: 'POST',
@@ -536,6 +550,7 @@ export const useSearchSECO = (
       },
       body: JSON.stringify({
         address,
+        nonce: nonce.toNumber(),
       }),
     });
 
@@ -550,9 +565,16 @@ export const useSearchSECO = (
       throw new Error(`API request failed, please try again.`);
     }
 
-    const { proof, nonce } = json;
+    const { proof } = json;
 
-    const rewarding = await client.pure.ISearchSECORewardingFacet();
+    console.log(
+      address,
+      hashCount.toNumber(),
+      nonce.toNumber(),
+      repFrac.toNumber(),
+      proof.sig
+    );
+
     return await rewarding.rewardMinerForHashes(
       address,
       hashCount,
@@ -569,10 +591,12 @@ export const useSearchSECO = (
     session,
     miningData,
     hashReward,
+    totalClaimedHashes,
     runQuery,
     resetQuery,
     startSession,
     payForSession,
     claimReward,
+    getMiningData,
   };
 };
