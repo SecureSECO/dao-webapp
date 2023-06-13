@@ -276,13 +276,15 @@ const Verification = () => {
         </MainCard>
 
         <div className="col-span-full flex flex-col gap-y-6 lg:col-span-3">
-          {isConnected && reward !== null && reward.gt(0) && (
-            <OneTimeRewardCard
-              reward={reward}
-              claimReward={claimReward}
-              refetch={refetch}
-            />
-          )}
+          {isConnected &&
+            reward !== null &&
+            (reward[0].gt(0) || reward[1].gt(1)) && (
+              <OneTimeRewardCard
+                reward={reward}
+                claimReward={claimReward}
+                refetch={refetch}
+              />
+            )}
           <MainCard
             loading={false}
             icon={HiOutlineClock}
