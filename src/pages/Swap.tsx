@@ -265,40 +265,37 @@ const Swap = () => {
           </div>
           <ErrorText name="Token amount" error={errors.fromToken} />
           {/* Approve button */}
-          <ConditionalButton
-            className="leading-4 w-full mb-1"
-            flex="flex-col"
-            conditions={[
-              {
-                when: !isConnected,
-                content: <ConnectWalletWarning action="to approve" />,
-              },
-              {
-                when: approveError !== null,
-                content: <Warning>Could not approve</Warning>,
-              },
-              {
-                when: writeAproveAsync === undefined,
-                content: <Loading className="w-5 h-5" />,
-              },
-            ]}
-            type="button"
-            disabled={isApproved}
-            onClick={() =>
-              toast.contractTransaction(() => writeAproveAsync!(), {
-                success: 'Approved!',
-                error: 'Approving failed',
-              })
-            }
-          >
-            {isApproved ? (
-              <>
-                Approved <Check className="w-5 h-5" />
-              </>
-            ) : (
-              'Approve'
-            )}
-          </ConditionalButton>
+          {isConnected && !isApproved && (
+            <ConditionalButton
+              className="leading-4 w-full mb-1"
+              flex="flex-col"
+              conditions={[
+                {
+                  when: !isConnected,
+                  content: <ConnectWalletWarning action="to approve" />,
+                },
+                {
+                  when: approveError !== null,
+                  content: <Warning>Could not approve</Warning>,
+                },
+                {
+                  when: writeAproveAsync === undefined,
+                  content: <Loading className="w-5 h-5" />,
+                },
+              ]}
+              type="button"
+              disabled={isApproved}
+              onClick={() =>
+                toast.contractTransaction(() => writeAproveAsync!(), {
+                  success: 'Approved!',
+                  error: 'Approving failed',
+                })
+              }
+            >
+              Approve
+            </ConditionalButton>
+          )}
+
           {/* Submit button */}
           <ConditionalButton
             className="leading-4 w-full mb-1"
