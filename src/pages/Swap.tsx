@@ -25,7 +25,7 @@ import {
 } from '@/src/components/ui/Popover';
 import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 import { TOKENS } from '@/src/lib/constants/tokens';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, constants, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import {
   FieldErrors,
@@ -43,6 +43,7 @@ import {
   erc20ABI,
   useAccount,
   useBalance,
+  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
 } from 'wagmi';
@@ -102,12 +103,11 @@ const Swap = () => {
   } = useForm<IFormInputs>({
     defaultValues: {
       slippage: '1', // 1% as default
+      fromToken: '0.0',
     },
     shouldUnregister: false,
     mode: 'onChange',
   });
-
-  const [isApproved, setIsApproved] = useState<boolean>(false);
 
   // BALANCES
   const { address, isConnected } = useAccount();
@@ -146,7 +146,26 @@ const Swap = () => {
     amount: fromAmount,
     swapKind: swap,
     slippage: slippage,
+    enabled: true,
   });
+
+  const { data: approvedAmount } = useContractRead({
+    address: abcTokens[0].contractAddress as any, // DAI address
+    abi: erc20ABI,
+    functionName: 'allowance',
+    args: [address as any, swapContractAddress as any],
+    enabled: swap === 'Mint',
+    watch: true,
+  });
+
+  const isApproved =
+    swap === 'Burn' ||
+    (approvedAmount !== undefined &&
+      fromAmount !== null &&
+      approvedAmount.gte(fromAmount)) ||
+    (approvedAmount !== undefined && // In case the input is invalid.
+      fromAmount === null &&
+      approvedAmount.gte(constants.Zero));
 
   const { config: approveConfig } = usePrepareContractWrite({
     address: abcTokens[0].contractAddress as any, //always use DAI contract for this.
@@ -154,17 +173,21 @@ const Swap = () => {
     functionName: 'approve',
     args: [swapContractAddress as any, ethers.constants.MaxUint256],
   });
-  const { writeAsync: writeAproveAsync } = useContractWrite(approveConfig);
+  const { writeAsync: writeAproveAsync, error: approveError } =
+    useContractWrite(approveConfig);
+
+  //ERC20 allowance opvragen alleen voor DAI
 
   const enoughGas =
     estimatedGas !== null && nativeBalance !== undefined
-      ? nativeBalance.value.lte(estimatedGas)
+      ? nativeBalance.value.gte(estimatedGas)
       : true;
 
   const onSubmit = (_: IFormInputs) => {
     toast.contractTransaction(() => performSwap(), {
       success: 'Swap succeeded',
       error: 'Swap failed',
+      onError: (e) => console.error(e as any),
     });
   };
 
@@ -252,8 +275,12 @@ const Swap = () => {
                 content: <ConnectWalletWarning action="to approve" />,
               },
               {
-                when: writeAproveAsync === undefined,
+                when: approveError !== null,
                 content: <Warning>Could not approve</Warning>,
+              },
+              {
+                when: writeAproveAsync === undefined,
+                content: <Loading className="w-5 h-5" />,
               },
             ]}
             type="button"
@@ -262,9 +289,6 @@ const Swap = () => {
               toast.contractTransaction(() => writeAproveAsync!(), {
                 success: 'Approved!',
                 error: 'Approving failed',
-                onFinish: () => {
-                  setIsApproved(true);
-                },
               })
             }
           >
@@ -299,7 +323,7 @@ const Swap = () => {
               },
               {
                 when: error !== null,
-                content: <p>{error!}</p>,
+                content: <Warning>{error!}</Warning>,
               },
               {
                 when: !isApproved,

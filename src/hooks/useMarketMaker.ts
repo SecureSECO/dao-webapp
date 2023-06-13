@@ -9,6 +9,7 @@
 import { useEffect, useState } from 'react';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils.js';
 
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
 import {
@@ -25,6 +26,7 @@ export interface useSwapProps {
   amount: BigNumber | undefined | null;
   //number between 0 and 100
   slippage: number | undefined | null;
+  enabled?: boolean;
 }
 
 class ValidationError extends Error {
@@ -40,13 +42,15 @@ class ValidationError extends Error {
  */
 export const applySlippage = (amount: BigNumber, slippage: number) => {
   const slippageBN = BigNumber.from((slippage * 10).toFixed(0)); // e.g.: 12.3456% becomes 123 (essentially per mille)
-  return amount.mul(slippageBN).div(1000); // times slippageBN, divide by 1000 to correct for per mille
+  const slippageFactor = BigNumber.from(1000).sub(slippageBN); // e.g. 123 becomes 877
+  return amount.mul(slippageFactor).div(1000); // times slippageFactor, divide by 1000 to correct for per mille
 };
 
 export const useMarketMaker = ({
   swapKind,
   amount,
   slippage,
+  enabled = true,
 }: useSwapProps) => {
   const { client } = useDiamondSDKContext();
   const [estimatedGas, setEstimatedGas] = useState<null | BigNumber>(null);
@@ -58,6 +62,7 @@ export const useMarketMaker = ({
   const fetchData = async (client: DiamondGovernanceClient) => {
     try {
       setIsLoading(true);
+      setError(null);
       // Try to set contract address as soon as possible.
       const marketMaker = await client.sugar.GetABCMarketMaker();
       setContractAddress(marketMaker.address);
@@ -67,27 +72,25 @@ export const useMarketMaker = ({
       if (isNullOrUndefined(slippage) || isNaN(slippage))
         throw new ValidationError('Slippage is not valid');
 
-      const minAmount = applySlippage(amount, slippage);
-
       if (swapKind === 'Mint') {
-        const values = await promiseObjectAll({
-          gas: marketMaker.estimateGas.mint(amount, minAmount),
-          mintAmount: marketMaker.calculateMint(amount),
-        });
+        const mintAmount = await marketMaker.calculateMint(amount);
+        const minAmount = applySlippage(mintAmount, slippage);
+        const gas = await marketMaker.estimateGas.mint(amount, minAmount);
 
-        setEstimatedGas(values.gas);
-        setExpectedReturn(values.mintAmount);
+        setEstimatedGas(gas);
+        setExpectedReturn(mintAmount);
       }
 
       if (swapKind === 'Burn') {
+        const burnAmount = await marketMaker.calculateBurn(amount);
+        const minAmount = applySlippage(burnAmount, slippage);
         const values = await promiseObjectAll({
           gas: marketMaker.estimateGas.burn(amount, minAmount),
-          burnAmount: marketMaker.calculateBurn(amount),
           exitFee: marketMaker.calculateExitFee(amount),
         });
 
         setEstimatedGas(values.gas);
-        setExpectedReturn(values.burnAmount.sub(values.exitFee));
+        setExpectedReturn(burnAmount.sub(values.exitFee));
       }
     } catch (e) {
       if (e instanceof ValidationError) {
@@ -121,9 +124,10 @@ export const useMarketMaker = ({
   };
 
   useEffect(() => {
+    if (!enabled) return;
     if (!client) return;
     fetchData(client);
-  }, [client, amount?._hex, slippage, swapKind]);
+  }, [client, amount?._hex, slippage, swapKind, enabled]);
 
   return {
     isLoading,
