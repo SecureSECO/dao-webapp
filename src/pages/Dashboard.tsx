@@ -36,13 +36,20 @@ import { useAccount } from 'wagmi';
 const Dashboard = () => {
   const { isConnected } = useAccount();
   const { daoAddress } = useDiamondSDKContext();
+  // UseProposals is passed the default parameters, to ensure switching between pages will not use params from Governange page
   const {
     proposals,
     proposalCount,
     loading: proposalsLoading,
     error: proposalsError,
     countLoading,
-  } = useProposals({ limit: 5 });
+  } = useProposals({
+    limit: 5,
+    status: undefined,
+    fromIndex: 0,
+    order: undefined,
+    sorting: undefined,
+  });
   const {
     daoTransfers,
     loading: daoTransfersLoading,
@@ -65,9 +72,9 @@ const Dashboard = () => {
         className="relative col-span-full flex shrink flex-col gap-y-6 sm:flex-row justify-between"
       >
         <div className="flex flex-col justify-between gap-y-6">
-          <div className="space-y-4">
+          <div className="space-y-8">
             <Header>{DAO_METADATA.name}</Header>
-            <p className="text-base font-normal text-highlight-foreground/80">
+            <p className="text-lg font-normal text-highlight-foreground/80">
               {DAO_METADATA.description}
             </p>
           </div>
@@ -85,7 +92,7 @@ const Dashboard = () => {
 
         <div className="flex-col sm:items-end gap-y-6 flex">
           <Logo className="h-28 w-28 hidden sm:block" />
-          <div className="flex flex-col">
+          <div className="flex flex-col items-end">
             {DAO_METADATA.links.map((link, i) => (
               <a
                 key={i}

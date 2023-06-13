@@ -6,12 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* eslint-disable no-unused-vars */
+
 /**
  * @fileoverview This file contains logic to generalize proposal actions.
  * It contains a list of all actions that can be performed on a proposal and serves
  * as the starting point to add new proposal actions.
  */
 
+import Diamond from '@/src/components/icons/Diamond';
 import {
   ChangeParamInput,
   ProposalFormChangeParamData,
@@ -41,6 +44,10 @@ import {
   ChangeParamAction,
   ProposalChangeParamAction,
 } from '@/src/components/proposal/actions/ChangeParamAction';
+import {
+  DiamondCutAction,
+  ProposalDiamondCutAction,
+} from '@/src/components/proposal/actions/DiamondCutAction';
 import MergeAction, {
   ProposalMergeAction,
 } from '@/src/components/proposal/actions/MergeAction';
@@ -98,6 +105,7 @@ type Actions = {
     ProposalWhitelistAction,
     ProposalFormWhitelistData
   >;
+  diamond_cut: ActionData<ProposalDiamondCutAction, null>;
 
   // Add new proposal actions here
   // ...
@@ -158,6 +166,7 @@ export const ACTIONS: Actions = {
           _owner: owner,
           _repo: repo,
           _pull_number: pullNumber,
+          _sha: input.sha,
         },
       };
     },
@@ -249,7 +258,7 @@ export const ACTIONS: Actions = {
     method: 'ChangeParam',
     interface: 'DAO',
     label: 'Change param',
-    longLabel: 'Change plugin parameters',
+    longLabel: 'Change plugin param',
     icon: HiOutlineCog,
     view: ChangeParamAction,
     input: ChangeParamInput,
@@ -300,6 +309,19 @@ export const ACTIONS: Actions = {
         _address: input.address,
       },
     }),
+  },
+  diamond_cut: {
+    method: 'diamondCut(tuple[])',
+    interface: 'IDiamondCut',
+    label: 'Diamond cut',
+    longLabel: 'Diamond cut',
+    icon: Diamond,
+    view: DiamondCutAction,
+    // There is not support for adding diamond cut actions through the webapp
+    // Any diamond cut action will have been created through other means, but can be viewed in the webapp to a certain extent
+    input: null,
+    emptyInputData: null,
+    parseInput: () => null,
   },
   // Add new proposal actions here:
   // ...
@@ -354,10 +376,12 @@ type ActionData<TAction, TFormData, TMethod extends string | void = void> = {
   view: (props: ViewActionProps<TAction>) => JSX.Element;
   /**
    * @returns Component to be used inside a form to input data for the action
+   * If it is null, this action is view only and thus can not be created
    */
-  input: () => JSX.Element;
+  input: (() => JSX.Element) | null;
   /**
    * Data to be used as initial values for the input form for this action.
+   * May only be null if input is also null
    */
   emptyInputData: TFormData;
   /**

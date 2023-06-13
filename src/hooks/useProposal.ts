@@ -26,6 +26,10 @@ import {
 import { BigNumber, ContractTransaction } from 'ethers';
 import { useAccount } from 'wagmi';
 
+import {
+  FacetCutAction,
+  ProposalDiamondCutAction,
+} from '../components/proposal/actions/DiamondCutAction';
 import { ProposalWhitelistAction } from '../components/proposal/actions/WhitelistAction';
 
 export type CanVote = {
@@ -124,11 +128,12 @@ export const dummyMergeAction: ProposalMergeAction = {
     _owner: 'githubtraining',
     _repo: 'hellogitworld',
     _pull_number: '174',
+    _sha: '6dcb09b5b57875f334f61aebed695e2e4193db5e',
   },
 };
 
 /**
- * Dummy mint tokens action
+ * Dummy change params action
  */
 export const dummyChangeParamsAction: ProposalChangeParamAction = {
   method: 'setMaxSingleWalletPower(uint32)',
@@ -139,13 +144,43 @@ export const dummyChangeParamsAction: ProposalChangeParamAction = {
 };
 
 /**
- * Dummy mint tokens action
+ * Dummy whitelist member action
  */
 export const dummyWhitelistMemberAction: ProposalWhitelistAction = {
   method: 'whitelist(address)',
   interface: 'IMembershipWhitelisting',
   params: {
     _address: '0x123456789009876543211234567890',
+  },
+};
+
+/**
+ * Dummy Diamond cut action
+ */
+export const dummyDiamondCutAction: ProposalDiamondCutAction = {
+  method: 'diamondCut((address,uint8,bytes4[],bytes)[])',
+  interface: 'IDiamondCut',
+  params: {
+    _diamondCut: [
+      {
+        facetAddress: '0x11111678900987654321234567890987654321',
+        action: FacetCutAction.Add,
+        functionSelectors: null!,
+        initCalldata: null!,
+      },
+      {
+        facetAddress: '0x22222678900987654321234567890987654321',
+        action: FacetCutAction.Remove,
+        functionSelectors: null!,
+        initCalldata: null!,
+      },
+      {
+        facetAddress: '0x33333378900987654321234567890987654321',
+        action: FacetCutAction.Replace,
+        functionSelectors: null!,
+        initCalldata: null!,
+      },
+    ],
   },
 };
 
@@ -165,7 +200,7 @@ export const dummyProposal: Proposal = {
   data: {
     allowFailureMap: BigNumber.from('0x00'),
     actions: [],
-    executed: false,
+    executed: BigNumber.from('0x21B5D8F'),
     open: true,
     metadata:
       '0x697066733a2f2f516d51766d38383964544231315452516e37664b4a356545586e624d76376b5437574a4a62677a686472377a3166',
@@ -195,7 +230,7 @@ export const dummyProposal: Proposal = {
     body: '<p>This is the body</p>',
   },
   status: ProposalStatus.Active,
-  actions: [],
+  actions: [dummyDiamondCutAction],
   startDate: new Date('2023-05-08T18:19:09.000Z'),
   endDate: new Date('2023-05-10T18:19:09.000Z'),
   creationDate: new Date('2023-05-08T18:09:09.000Z'),
@@ -340,7 +375,7 @@ export const useProposal = ({
   };
 
   useEffect(() => {
-    if (!proposal) return;
+    if (!proposal || useDummyData) return;
     checkCanExecute(proposal);
     checkCanVote(proposal);
   }, [proposalVotingPower]);
@@ -354,7 +389,7 @@ export const useProposal = ({
     votes,
     // Only allow refetching if not using dummy data
     refetch: () => {
-      if (proposal) {
+      if (proposal && !useDummyData) {
         proposal.Refresh();
         checkCanExecute(proposal);
         checkCanVote(proposal);

@@ -20,13 +20,17 @@ import {
 } from '@/src/components/ui/Dropdown';
 import Header from '@/src/components/ui/Header';
 import { Sheet, SheetContent, SheetTrigger } from '@/src/components/ui/Sheet';
+import { DAO_METADATA } from '@/src/lib/constants/config';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { cn } from '@/src/lib/utils';
 import { IconType } from 'react-icons';
 import { FaDiscord } from 'react-icons/fa';
+import { HiOutlineTerminal } from 'react-icons/hi';
 import {
+  HiArrowsRightLeft,
   HiBars3,
   HiChevronDown,
+  HiOutlineBookOpen,
   HiOutlineDocumentMagnifyingGlass,
   HiOutlineGlobeAlt,
 } from 'react-icons/hi2';
@@ -37,10 +41,19 @@ type NavItemPageWithIcon = NavItemPageData & {
   icon: IconType;
   description?: string;
 };
-type NavItemCollectionData = {
+
+type NavItemCollectionCategory = {
   label: string;
   pages: NavItemPageWithIcon[];
-  alternativeLinks?: NavItemPageWithIcon[];
+};
+
+type NavItemCollectionData = {
+  label: string;
+  // Categories are named groups of pages
+  categories: NavItemCollectionCategory[];
+  // Pages are rendered above the categories, without a collective label
+  pages: NavItemPageWithIcon[];
+  externalLinks?: NavItemPageWithIcon[];
 };
 
 type NavItemData = NavItemPageData | NavItemCollectionData;
@@ -67,22 +80,47 @@ const navItems: NavItemData[] = [
     url: '/settings',
   },
   {
-    label: 'SearchSECO',
+    label: 'SecureSECO',
     pages: [
       {
-        label: 'Query',
-        url: '/query',
-        icon: HiOutlineDocumentMagnifyingGlass,
-        description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol} tokens.`,
+        label: 'Docs',
+        url: 'https://docs.secureseco.org/',
+        icon: HiOutlineBookOpen,
+        description: `Read the user documentation`,
+      },
+      {
+        label: 'Swap',
+        url: '/swap',
+        icon: HiArrowsRightLeft,
+        description: `Swap SECOIN tokens for DAI`,
       },
     ],
-    alternativeLinks: [
+    categories: [
+      {
+        label: 'SearchSECO',
+        pages: [
+          {
+            label: 'Query',
+            url: '/query',
+            icon: HiOutlineDocumentMagnifyingGlass,
+            description: `Query the SearchSECO database using your ${TOKENS.secoin.symbol}`,
+          },
+          {
+            label: 'Mining',
+            url: '/mining',
+            icon: HiOutlineTerminal,
+            description: `Claim rewards for running SearchSECO miners`,
+          },
+        ],
+      },
+    ],
+    externalLinks: [
       {
         label: 'Website',
         url: 'https://secureseco.org/',
         icon: HiOutlineGlobeAlt,
       },
-      { label: 'Discord', url: '#', icon: FaDiscord },
+      { label: 'Discord', url: DAO_METADATA.discord, icon: FaDiscord },
     ],
   },
 ];
@@ -128,7 +166,9 @@ const NavItemCollection = ({
   ...props
 }: NavItemCollectionProps) => {
   const location = useLocation();
-  const isActive = item.pages.some((x) => x.url === location.pathname);
+  const isActive = item.categories.some((c) =>
+    c.pages.some((x) => x.url === location.pathname)
+  );
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -166,7 +206,7 @@ const NavItem = ({ item, className, ...props }: NavItemProps) => {
         className={className}
       />
     );
-  if ((item as any).pages)
+  if ((item as any).categories)
     return (
       <>
         <NavItemCollection
@@ -236,43 +276,26 @@ export const NavItemCollectionContent = ({
           {title}
         </Header>
       )}
-      <div className="p-2">
+      <div className="px-3 py-2 space-y-1">
         {item.pages.map((page) => (
-          <div
-            key={page.label}
-            className={cn(
-              location.pathname == page.url
-                ? 'text-primary dark:text-primary-highlight'
-                : '',
-              'group relative flex gap-x-6 rounded-lg p-4 transition-colors hover:bg-popover-foreground/5'
-            )}
-          >
-            <div
-              className={cn(
-                location.pathname == page.url
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-popover-foreground/5 group-hover:bg-popover group-hover:text-primary',
-                'mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg'
-              )}
-            >
-              <page.icon className="h-6 w-6" aria-hidden="true" />
+          <NavItemCollectionPage key={page.label} page={page} {...props} />
+        ))}
+        {item.categories.map((cat) => (
+          <div key={cat.label}>
+            <div className="flex items-center gap-x-2 px-2 justify-between">
+              <div className="bg-popover-foreground/60 h-[0.1rem] grow" />
+              <p className="w-fit text-base font-medium">{cat.label}</p>
+              <div className="bg-popover-foreground/60 h-[0.1rem] grow" />
             </div>
-            <div className="flex flex-col gap-0.5">
-              <NavLink
-                {...props}
-                to={page.url}
-                className="ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2 rounded-md"
-              >
-                <span className=" font-semibold">{page.label}</span>
-                <p className="opacity-80">{page.description}</p>
-              </NavLink>
-            </div>
+            {cat.pages.map((page) => (
+              <NavItemCollectionPage key={page.label} page={page} {...props} />
+            ))}
           </div>
         ))}
       </div>
       <div className="grid h-full w-full grid-cols-2 divide-x divide-popover-foreground/10 bg-popover-foreground/5">
-        {item.alternativeLinks &&
-          item.alternativeLinks.map((item) => (
+        {item.externalLinks &&
+          item.externalLinks.map((item) => (
             // Note: use a instead? (for external links)
             <NavLink
               key={item.label}
@@ -288,6 +311,47 @@ export const NavItemCollectionContent = ({
           ))}
       </div>
     </div>
+  );
+};
+
+interface NavItemCollectionPageProps extends Omit<NavLinkProps, 'to'> {
+  page: NavItemPageWithIcon;
+}
+
+const NavItemCollectionPage = ({
+  page,
+  className,
+  ...props
+}: NavItemCollectionPageProps) => {
+  return (
+    <NavLink
+      {...props}
+      to={page.url}
+      key={page.label}
+      className={cn(
+        className,
+        'ring-ring ring-offset-2 ring-offset-popover focus:outline-none focus:ring-2 rounded-md transition-colors duration-200',
+        location.pathname == page.url
+          ? 'text-primary dark:text-primary-highlight'
+          : '',
+        'group relative flex gap-x-6 rounded-lg px-4 py-2 transition-colors hover:bg-popover-foreground/5'
+      )}
+    >
+      <div
+        className={cn(
+          location.pathname == page.url
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-popover-foreground/5 group-hover:bg-popover group-hover:text-primary',
+          'mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg transition-colors duration-200'
+        )}
+      >
+        <page.icon className="h-6 w-6" aria-hidden="true" />
+      </div>
+      <div className="flex flex-col gap-0.5">
+        <span className=" font-semibold">{page.label}</span>
+        <p className="opacity-80 leading-5">{page.description}</p>
+      </div>
+    </NavLink>
   );
 };
 

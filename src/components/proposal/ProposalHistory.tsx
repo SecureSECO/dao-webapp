@@ -91,7 +91,7 @@ const getProposalMilestones = (proposal: Proposal) => {
           label: 'Executed',
           variant: 'executed',
           date: proposal.executionDate,
-          blockNumber: proposal.data.parameters.snapshotBlock.toNumber(),
+          blockNumber: proposal.data.executed.toNumber(),
         }
       );
       break;

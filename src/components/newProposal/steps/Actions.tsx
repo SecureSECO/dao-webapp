@@ -6,7 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { createContext } from 'react';
+import { createContext, useState } from 'react';
+import Loading from '@/src/components/icons/Loading';
 import { Button } from '@/src/components/ui/Button';
 import {
   DropdownMenu,
@@ -16,7 +17,9 @@ import {
   DropdownMenuTrigger,
 } from '@/src/components/ui/Dropdown';
 import { Label } from '@/src/components/ui/Label';
+import { toast } from '@/src/hooks/useToast';
 import { ACTIONS, ProposalFormActionData } from '@/src/lib/constants/actions';
+import { CONFIG } from '@/src/lib/constants/config';
 import {
   StepNavigator,
   useNewProposalFormContext,
@@ -29,6 +32,7 @@ import {
   Merge,
   useFieldArray,
   useForm,
+  useFormContext,
 } from 'react-hook-form';
 import { HiPlus } from 'react-icons/hi2';
 
@@ -53,9 +57,60 @@ export const Actions = () => {
     control: methods.control,
   });
 
-  const onSubmit = (data: ProposalFormActions) => {
-    setDataStep3(data);
-    setStep(4);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit = async (data: ProposalFormActions) => {
+    setIsLoading(true);
+
+    // Loop over every action
+    const actionPromises = data.actions.map(async (action, index) => {
+      // If it's the merge action, fetch the latest commit hash
+      if (action.name === 'merge_pr') {
+        try {
+          // Fetch (encrypted) commit hash from the pr-merger server
+          const res = await fetch(
+            `${CONFIG.PR_MERGER_API_URL}/latestCommit?url=${action.url}`
+          );
+
+          const json = await res.json();
+
+          // Validate response
+          if (json.status !== 'ok' || json.data?.sha == null) {
+            console.log(json);
+            throw new Error('Could not fetch latest commit hash');
+          }
+
+          // Return new action object with latest commit hash
+          return {
+            ...action,
+            sha: json.data.sha,
+          };
+        } catch (error) {
+          console.log(error);
+
+          // If it fails, show error message under appropriate field and throw error
+          methods.setError(`actions.${index}.url`, {
+            type: 'manual',
+            message: 'Could not fetch latest commit hash',
+          });
+
+          throw error;
+        }
+      }
+    });
+
+    Promise.all(actionPromises)
+      .then(() => {
+        // If everything went OK, go to next step
+        setDataStep3(data);
+        setStep(4);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleBack = () => {
@@ -91,6 +146,14 @@ export const Actions = () => {
                       methods.getValues(prefix);
                     const { input: ActionInput } = ACTIONS[action.name];
 
+                    //This should not happen
+                    if (ActionInput === null) {
+                      console.error(
+                        'Action to be rendered does not have an action input'
+                      );
+                      return <></>;
+                    }
+
                     return (
                       <ActionFormContext.Provider value={context} key={index}>
                         <ActionInput />
@@ -104,7 +167,15 @@ export const Actions = () => {
         </div>
         <AddActionButton append={append} actions={methods.getValues()} />
       </div>
-      <StepNavigator onBack={handleBack} />
+      <StepNavigator
+        onBack={handleBack}
+        nextStepConditions={[
+          {
+            when: isLoading,
+            content: <Loading className="h-5 w-5 shrink-0" />,
+          },
+        ]}
+      />
     </form>
   );
 };
@@ -132,27 +203,39 @@ export const AddActionButton = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          {Object.entries(ACTIONS).map(([name, action], i) => (
-            <DropdownMenuItem
-              key={i}
-              onClick={() => append(action.emptyInputData)}
-              className="gap-x-2 hover:cursor-pointer"
-              disabled={
-                !actions ||
-                (action.maxPerProposal !== undefined &&
-                  actions.actions &&
-                  actions.actions.filter((x) => x.name === name).length >=
-                    action.maxPerProposal) ||
-                // There's a limit of 256 actions per proposals
-                // This is because AragonOSx uses a uint256 to store a failure map
-                // for actions, and each bit represents an action (so max 256 actions)
-                (actions.actions && actions.actions.length >= 256)
-              }
-            >
-              <action.icon className="h-5 w-5 shrink-0" />
-              <span>{action.longLabel}</span>
-            </DropdownMenuItem>
-          ))}
+          {Object.entries(ACTIONS)
+            .filter(
+              // eslint-disable-next-line no-unused-vars
+              ([name, action]) =>
+                action.input !== null && action.emptyInputData !== null
+            )
+            .map(([name, action], i) => (
+              <DropdownMenuItem
+                key={i}
+                onClick={() =>
+                  // action.emptyInputData will never be null here due to filter above
+                  append(
+                    action.emptyInputData ??
+                      ({} as unknown as ProposalFormActionData)
+                  )
+                }
+                className="gap-x-2 hover:cursor-pointer"
+                disabled={
+                  !actions ||
+                  (action.maxPerProposal !== undefined &&
+                    actions.actions &&
+                    actions.actions.filter((x) => x.name === name).length >=
+                      action.maxPerProposal) ||
+                  // There's a limit of 256 actions per proposals
+                  // This is because AragonOSx uses a uint256 to store a failure map
+                  // for actions, and each bit represents an action (so max 256 actions)
+                  (actions.actions && actions.actions.length >= 256)
+                }
+              >
+                <action.icon className="h-5 w-5 shrink-0" />
+                <span>{action.longLabel}</span>
+              </DropdownMenuItem>
+            ))}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -75,4 +75,4 @@ jobs:
         # Sleep for 60 seconds after the storybook instance is running to give it time to set up properly
         run: |
           npm i concurrently wait-on
-          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" "npm run storybook" "npx wait-on tcp:6006 && sleep 60 && npm run test-storybook --maxWorkers=2"
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" "npm run storybook" "npx wait-on tcp:6006 && sleep 60 && npm run test-storybook --maxWorkers=10"

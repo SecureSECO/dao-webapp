@@ -10,7 +10,8 @@ export const CONFIG = {
   VERIFICATION_API_URL:
     'https://securesecodao-api.herokuapp.com/verification_api',
   SEARCHSECO_API_URL: 'https://searchseco-api.herokuapp.com/api',
-  DIAMOND_ADDRESS: '0xAF0A837d2c709d33eDfd1439E3E0BBc9AC18606B',
+  PR_MERGER_API_URL: 'https://securesecodao-pr-merger.herokuapp.com',
+  DIAMOND_ADDRESS: '0xa8326b1c6b2595e51e59Ea98A3995866D7b3E299',
   PREFERRED_NETWORK_ID: 80001,
 } as const;
 
@@ -18,10 +19,19 @@ export const DAO_METADATA = {
   name: 'SecureSECO DAO',
   description:
     'Distributed Autonomous Organization for the SecureSECO project.',
+  discord: 'https://discord.gg/2naUnwE9Y2',
   links: [
+    {
+      name: 'Discord Server',
+      url: 'https://discord.gg/2naUnwE9Y2',
+    },
+    {
+      name: 'User Documentation',
+      url: 'https://docs.secureseco.org/',
+    },
     {
       name: 'SecureSECO Website',
       url: 'https://secureseco.org/',
     },
   ],
-};
+} as const;
