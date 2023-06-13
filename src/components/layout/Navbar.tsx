@@ -342,7 +342,7 @@ const NavItemCollectionPage = ({
           location.pathname == page.url
             ? 'bg-primary text-primary-foreground'
             : 'bg-popover-foreground/5 group-hover:bg-popover group-hover:text-primary',
-          'mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg transition-colors duration-200'
+          'flex h-11 w-11 flex-none items-center justify-center rounded-lg transition-colors duration-200'
         )}
       >
         <page.icon className="h-6 w-6" aria-hidden="true" />
