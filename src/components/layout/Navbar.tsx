@@ -20,6 +20,7 @@ import {
 } from '@/src/components/ui/Dropdown';
 import Header from '@/src/components/ui/Header';
 import { Sheet, SheetContent, SheetTrigger } from '@/src/components/ui/Sheet';
+import { DAO_METADATA } from '@/src/lib/constants/config';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { cn } from '@/src/lib/utils';
 import { IconType } from 'react-icons';
@@ -119,7 +120,7 @@ const navItems: NavItemData[] = [
         url: 'https://secureseco.org/',
         icon: HiOutlineGlobeAlt,
       },
-      { label: 'Discord', url: '#', icon: FaDiscord },
+      { label: 'Discord', url: DAO_METADATA.discord, icon: FaDiscord },
     ],
   },
 ];
