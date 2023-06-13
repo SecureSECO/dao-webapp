@@ -264,6 +264,7 @@ const Swap = () => {
               }}
               className="h-8 px-0 w-8"
               type="button"
+              disabled={isSwapping}
             >
               <span className="sr-only">Swap order</span>
               <HiOutlineArrowsUpDown className="h-5 w-5" />
