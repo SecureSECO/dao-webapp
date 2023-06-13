@@ -55,7 +55,9 @@ export const useVerification = () => {
   const [verificationHistory, setVerificationHistory] = useState<
     VerificationHistory[]
   >([]);
-  const [reward, setReward] = useState<BigNumber | null>(null);
+
+  // REP & COIN reward for verifying
+  const [reward, setReward] = useState<[BigNumber, BigNumber] | null>(null);
 
   const { client } = useDiamondSDKContext();
   const { address } = useAccount();

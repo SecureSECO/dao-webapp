@@ -34,7 +34,7 @@ type UseSearchSECOData = {
   cost: number | null;
   session: SessionData | null;
   miningData: MiningData[] | null;
-  hashReward: BigNumber | null;
+  totalClaimedHashes: BigNumber | null;
   runQuery: (url: string, branch?: string) => Promise<QueryResponse>;
   resetQuery: (clearQueryResult?: boolean) => void;
   startSession: () => Promise<SessionData>;
@@ -43,6 +43,11 @@ type UseSearchSECOData = {
     hashCount: BigNumber,
     repFrac: BigNumber
   ) => Promise<ContractTransaction>;
+  getMiningData: () => Promise<void>;
+  estimateRewardSplit: (
+    hashCount: BigNumber,
+    repFrac: BigNumber
+  ) => Promise<[BigNumber, BigNumber]>;
 };
 
 /**
@@ -197,7 +202,6 @@ export const useSearchSECO = (
   props?: UseSearchSECOProps
 ): UseSearchSECOData => {
   const { client } = useDiamondSDKContext();
-  const { address } = useAccount();
   const { useDummyData } = Object.assign(defaultProps, props);
   const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
   const [hashes, setHashes] = useState<string[]>([]);
@@ -211,6 +215,9 @@ export const useSearchSECO = (
   const [doPoll, setDoPoll] = useState<boolean>(true);
 
   const [miningData, setMiningData] = useState<MiningData[] | null>(null);
+  // Total hashes claimed by the user
+  const [totalClaimedHashes, setTotalClaimedHashes] =
+    useState<BigNumber | null>(null);
   // SECOIN reward per hash, in 18 decimal precision
   const [hashReward, setHashReward] = useState<BigNumber | null>(null);
 
@@ -384,10 +391,9 @@ export const useSearchSECO = (
 
     const { id, hashes } = session;
 
-    const IChangeableTokenContract =
-      await client.pure.IChangeableTokenContract();
+    const IMonetaryTokenFacetContract = await client.pure.IMonetaryTokenFacet();
     const ERC20Contract = new ethers.Contract(
-      await IChangeableTokenContract.getTokenContractAddress(),
+      await IMonetaryTokenFacetContract.getTokenContractAddress(),
       erc20ABI,
       client.pure.signer
     );
@@ -482,6 +488,8 @@ export const useSearchSECO = (
       return;
     }
 
+    const address = await client.pure.signer.getAddress();
+
     const res = await fetch(
       `${API_URL}/rewarding/miningData?address=${address}`
     );
@@ -509,9 +517,9 @@ export const useSearchSECO = (
     setMiningData(data);
 
     const rewarding = await client.pure.ISearchSECORewardingFacet();
-    const hashReward = await rewarding.getHashReward();
 
-    setHashReward(hashReward);
+    const nonce = await rewarding.getHashCount(address);
+    setTotalClaimedHashes(nonce ?? 0); // If uninitialized, set to 0
   };
 
   /**
@@ -528,6 +536,10 @@ export const useSearchSECO = (
     }
 
     const address = await client.pure.signer.getAddress();
+    const rewarding = await client.pure.ISearchSECORewardingFacet();
+
+    // Get nonce
+    const nonce = await rewarding.getHashCount(address);
 
     const res = await fetch(`${API_URL}/rewarding/reward`, {
       method: 'POST',
@@ -536,6 +548,7 @@ export const useSearchSECO = (
       },
       body: JSON.stringify({
         address,
+        nonce: nonce.toNumber(),
       }),
     });
 
@@ -550,9 +563,8 @@ export const useSearchSECO = (
       throw new Error(`API request failed, please try again.`);
     }
 
-    const { proof, nonce } = json;
+    const { proof } = json;
 
-    const rewarding = await client.pure.ISearchSECORewardingFacet();
     return await rewarding.rewardMinerForHashes(
       address,
       hashCount,
@@ -562,17 +574,32 @@ export const useSearchSECO = (
     );
   };
 
+  /**
+   * Estimates the rep / coin reward split for a given number of hashes
+   */
+  const estimateRewardSplit = async (
+    hashCount: BigNumber,
+    repFrac: BigNumber
+  ): Promise<[BigNumber, BigNumber]> => {
+    if (!client) throw new Error('No client found');
+
+    const rewarding = await client.pure.ISearchSECORewardingFacet();
+    return await rewarding.calculateMiningRewardPayout(repFrac, hashCount);
+  };
+
   return {
     queryResult,
     hashes,
     cost,
     session,
     miningData,
-    hashReward,
+    totalClaimedHashes,
     runQuery,
     resetQuery,
     startSession,
     payForSession,
     claimReward,
+    getMiningData,
+    estimateRewardSplit,
   };
 };

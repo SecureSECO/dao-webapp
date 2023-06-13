@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    reward: BigNumber.from('0x4563918244F40000'),
+    reward: [BigNumber.from('0x4563918244F40000'), BigNumber.from(5).pow(18)],
     claimReward() {
       return Promise.resolve({} as any);
     },
