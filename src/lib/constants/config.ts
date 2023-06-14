@@ -6,12 +6,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/** Address of the diamond to be used in production */
+const PROD_DIAMOND_ADDRESS = '0xA51994FA9cE33EC75FdAB6Be3B53fB63A157cB80';
+/** Address of the diamond to be used in development (on Mumbai) */
+const DEV_DIAMOND_ADDRESS = '0xA51994FA9cE33EC75FdAB6Be3B53fB63A157cB80';
+
 export const CONFIG = {
   VERIFICATION_API_URL:
     'https://securesecodao-api.herokuapp.com/verification_api',
   SEARCHSECO_API_URL: 'https://searchseco-api.herokuapp.com/api',
   PR_MERGER_API_URL: 'https://securesecodao-pr-merger.herokuapp.com',
-  DIAMOND_ADDRESS: '0xA51994FA9cE33EC75FdAB6Be3B53fB63A157cB80',
+  DIAMOND_ADDRESS: import.meta.env.DEV
+    ? DEV_DIAMOND_ADDRESS
+    : PROD_DIAMOND_ADDRESS,
   PREFERRED_NETWORK_ID: 80001,
 } as const;
 
