@@ -156,7 +156,7 @@ const StampCard = ({
             <a
               href={stampInfo.url}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="mx-1 rounded-sm text-primary-highlight outline-ring transition-colors duration-200 hover:text-primary-highlight/80"
             >
               {stampInfo.url}

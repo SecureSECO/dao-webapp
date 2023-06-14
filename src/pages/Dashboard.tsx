@@ -208,7 +208,7 @@ const Dashboard = () => {
             variant="outline"
             className="flex flex-row items-center gap-x-2"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             to={`${PREFERRED_NETWORK_METADATA.explorer}/token/tokenholderchart/${CONFIG.DIAMOND_ADDRESS}`}
           >
             <p>View all members</p>

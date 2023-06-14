@@ -60,7 +60,7 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
               className="w-fit flex flex-row items-center gap-x-2 text-primary-highlight transition-colors duration-200 hover:text-primary-highlight/80"
               href={`https://github.com/${action.params._owner}/${action.params._repo}/pull/${action.params._pull_number}`}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               View on GitHub
               <HiArrowTopRightOnSquare className="h-4 w-4 shrink-0" />
