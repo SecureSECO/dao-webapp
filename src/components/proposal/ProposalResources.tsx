@@ -72,7 +72,7 @@ export const ProposalResources = ({
               <Card size="sm" variant="light">
                 <a
                   href={sanitizeHref(resource.url)}
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   target="_blank"
                   className="flex flex-row items-center gap-x-2 font-medium text-primary transition-colors duration-200 hover:text-primary/80"
                 >

@@ -120,7 +120,11 @@ const navItems: NavItemData[] = [
         url: 'https://secureseco.org/',
         icon: HiOutlineGlobeAlt,
       },
-      { label: 'Discord', url: DAO_METADATA.discord, icon: FaDiscord },
+      {
+        label: 'Discord',
+        url: DAO_METADATA.links.discord.url,
+        icon: FaDiscord,
+      },
     ],
   },
 ];
@@ -296,10 +300,11 @@ export const NavItemCollectionContent = ({
       <div className="grid h-full w-full grid-cols-2 divide-x divide-popover-foreground/10 bg-popover-foreground/5">
         {item.externalLinks &&
           item.externalLinks.map((item) => (
-            // Note: use a instead? (for external links)
-            <NavLink
+            <a
               key={item.label}
-              to={item.url}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center gap-x-2.5 p-3 font-semibold hover:bg-popover-foreground/20 ring-ring rounded-md focus:outline-none focus:ring-2"
             >
               <item.icon
@@ -307,7 +312,7 @@ export const NavItemCollectionContent = ({
                 aria-hidden="true"
               />
               {item.label}
-            </NavLink>
+            </a>
           ))}
       </div>
     </div>
