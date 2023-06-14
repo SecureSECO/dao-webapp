@@ -12,7 +12,7 @@ import { CONFIG } from '@/src/lib/constants/config';
 
 /* SUPPORTED NETWORK TYPES ================================================== */
 
-export const SUPPORTED_CHAIN_ID = [1, 137, 80001] as const;
+export const SUPPORTED_CHAIN_ID = [-1, 137, 80001] as const;
 export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 
 export function isSupportedChainId(
@@ -121,7 +121,7 @@ export const CHAIN_METADATA: ChainList = {
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
   },
   unsupported: {
-    id: 1,
+    id: -1,
     name: 'Unsupported',
     domain: 'L1 Blockchain',
     logo: '',
