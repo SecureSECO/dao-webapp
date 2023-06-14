@@ -9,11 +9,13 @@
 import Logo from '@/src/components/Logo';
 import { ClaimDailyRewardCard } from '@/src/components/dashboard/ClaimDailyRewardCard';
 import MembersList from '@/src/components/dashboard/MembersList';
+import Diamond from '@/src/components/icons/Diamond';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { Link } from '@/src/components/ui/Link';
 import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
+import { Tooltip, TooltipContent } from '@/src/components/ui/Tooltip';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useDaoTransfers } from '@/src/hooks/useDaoTransfers';
 import { useMembers } from '@/src/hooks/useMembers';
@@ -22,6 +24,7 @@ import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG, DAO_METADATA } from '@/src/lib/constants/config';
 import { DaoTransfersList, NewTransferDropdown } from '@/src/pages/Finance';
 import { ProposalCardList } from '@/src/pages/Governance';
+import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import {
   HiArrowRight,
   HiArrowTopRightOnSquare,
@@ -72,20 +75,43 @@ const Dashboard = () => {
         className="relative col-span-full flex shrink flex-col gap-y-6 sm:flex-row justify-between"
       >
         <div className="flex flex-col justify-between gap-y-6">
-          <div className="space-y-8">
-            <Header>{DAO_METADATA.name}</Header>
-            <p className="text-lg font-normal text-highlight-foreground/80">
+          <div className="space-y-4 xs:space-y-8">
+            <Header className="text-4xl xs:text-5xl">
+              {DAO_METADATA.name}
+            </Header>
+            <p className="text-base xs:text-lg font-normal text-highlight-foreground/80">
               {DAO_METADATA.description}
             </p>
           </div>
           <div className="flex flex-col gap-x-6 gap-y-2 text-sm font-normal text-highlight-foreground/80 lg:flex-row lg:items-center">
+            <Tooltip>
+              <TooltipTrigger className="hover:cursor-help flex flex-row items-center gap-x-1">
+                <HiCube className="h-5 w-5 shrink-0 text-primary" />
+                <p>{import.meta.env.DEV ? 'Mumbai' : 'Polygon'}</p>
+              </TooltipTrigger>
+              <TooltipContent>
+                Deployed on {import.meta.env.DEV ? 'Mumbai' : 'Polygon'} network
+              </TooltipContent>
+            </Tooltip>
             <div className="flex flex-row items-center gap-x-1">
-              <HiCube className="h-5 w-5 shrink-0 text-primary" />
-              <p>{import.meta.env.DEV ? 'Mumbai' : 'Polygon'}</p>
+              <Tooltip>
+                <TooltipTrigger className="hover:cursor-help">
+                  <HiHome className="h-5 w-5 shrink-0 text-primary" />
+                </TooltipTrigger>
+                <TooltipContent>DAO address</TooltipContent>
+              </Tooltip>
+              <Address address={daoAddress ?? '...'} showCopy />
             </div>
             <div className="flex flex-row items-center gap-x-1">
-              <HiHome className="h-5 w-5 shrink-0 text-primary" />
-              <Address address={daoAddress ?? '...'} showCopy />
+              <Tooltip>
+                <TooltipTrigger className="hover:cursor-help">
+                  <Diamond className="h-5 w-5 shrink-0 text-primary" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  Diamond Governance plugin address
+                </TooltipContent>
+              </Tooltip>
+              <Address address={CONFIG.DIAMOND_ADDRESS} showCopy />
             </div>
           </div>
         </div>
