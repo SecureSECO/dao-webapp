@@ -32,7 +32,7 @@ const defaultProps: UseSearchSECOProps = {
 type UseSearchSECOData = {
   queryResult: QueryResponse;
   hashes: string[];
-  cost: number | null;
+  cost: BigNumber | null;
   session: SessionData | null;
   miningData: MiningData[] | null;
   totalClaimedHashes: BigNumber | null;
@@ -58,7 +58,7 @@ type SessionData = {
   id: string;
   secret: string;
   hashes: string[];
-  cost: number;
+  cost: BigNumber;
   fetch_status: 'idle' | 'pending' | 'success' | 'error';
   timestamp?: number;
   data?: any;
@@ -206,7 +206,7 @@ export const useSearchSECO = (
   const { useDummyData } = Object.assign(defaultProps, props);
   const [queryResult, setQueryResult] = useState<CheckResponse | null>(null);
   const [hashes, setHashes] = useState<string[]>([]);
-  const [cost, setCost] = useState<number | null>(null);
+  const [cost, setCost] = useState<BigNumber | null>(null);
 
   const [session, setSession] = useLocalStorage<SessionData | null>(
     'searchSECOSession',
@@ -262,7 +262,7 @@ export const useSearchSECO = (
    * @param branch Branch of the repository to query
    * @returns Promise that resolves when the query is complete
    */
-  const runQuery = async (url: string, branch?: string): Promise<void> => {
+  const runQuery = async (url: string, branch?: string): Promise<string[]> => {
     if (useDummyData) {
       setQueryResult(dummyQueryResult);
       const session = {
@@ -271,13 +271,13 @@ export const useSearchSECO = (
         fetch_status: 'success',
         hashes: ['dummyHash'],
         data: null,
-        cost: 0,
+        cost: BigNumber.from(0),
       } as SessionData;
       setSession(session);
       setHashes(session.hashes);
       setCost(session.cost);
       setDoPoll(false);
-      return Promise.resolve();
+      return session.hashes;
     }
 
     try {
@@ -301,8 +301,11 @@ export const useSearchSECO = (
         throw new Error(`API request failed, please try again`);
       }
 
-      setCost(res.cost);
+      const bnCost = BigNumber.from('0x' + res.cost);
+      setCost(bnCost);
       setHashes(res.hashes);
+
+      return res.hashes;
     } catch (e) {
       console.error(e);
       throw getErrorMessage(e);
@@ -323,7 +326,7 @@ export const useSearchSECO = (
         fetch_status: 'success',
         hashes: ['dummyHash'],
         data: null,
-        cost: 0,
+        cost: BigNumber.from(0),
       } as SessionData;
       setSession(session);
       setHashes(session.hashes);
@@ -364,7 +367,7 @@ export const useSearchSECO = (
       fetch_status: 'idle',
       hashes,
       data: null,
-      cost: cost || 0,
+      cost: cost || BigNumber.from(0),
     };
     setSession(session);
 
@@ -397,7 +400,7 @@ export const useSearchSECO = (
     );
 
     // Approve the dao to spend the cost of the session
-    const allowanceAmount = parseTokenAmount(session.cost, 18);
+    const allowanceAmount = session.cost;
     const tx = await ERC20Contract.approve(
       client.pure.pluginAddress,
       allowanceAmount
