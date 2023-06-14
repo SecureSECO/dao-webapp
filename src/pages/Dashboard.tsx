@@ -65,8 +65,6 @@ const Dashboard = () => {
     memberCount,
   } = useMembers({ limit: 5 });
 
-  const etherscanURL = PREFERRED_NETWORK_METADATA.explorer;
-
   return (
     <div className="grid grid-cols-7 gap-6">
       {/* Card showing metadata about the DAO */}
@@ -87,10 +85,10 @@ const Dashboard = () => {
             <Tooltip>
               <TooltipTrigger className="hover:cursor-help flex flex-row items-center gap-x-1">
                 <HiCube className="h-5 w-5 shrink-0 text-primary" />
-                <p>{import.meta.env.DEV ? 'Mumbai' : 'Polygon'}</p>
+                <p>{PREFERRED_NETWORK_METADATA.name}</p>
               </TooltipTrigger>
               <TooltipContent>
-                Deployed on {import.meta.env.DEV ? 'Mumbai' : 'Polygon'} network
+                Deployed on {PREFERRED_NETWORK_METADATA.name} network
               </TooltipContent>
             </Tooltip>
             <div className="flex flex-row items-center gap-x-1">
@@ -211,7 +209,7 @@ const Dashboard = () => {
             className="flex flex-row items-center gap-x-2"
             target="_blank"
             rel="noreferrer"
-            to={`${etherscanURL}/token/tokenholderchart/${CONFIG.DIAMOND_ADDRESS}`}
+            to={`${PREFERRED_NETWORK_METADATA.explorer}/token/tokenholderchart/${CONFIG.DIAMOND_ADDRESS}`}
           >
             <p>View all members</p>
             <HiArrowRight className="h-5 w-5 shrink-0" />

@@ -12,9 +12,7 @@ import { CONFIG } from '@/src/lib/constants/config';
 
 /* SUPPORTED NETWORK TYPES ================================================== */
 
-export const SUPPORTED_CHAIN_ID = [
-  1, 5, 137, 80001, 42161, 421613, 1337,
-] as const;
+export const SUPPORTED_CHAIN_ID = [1, 137, 80001] as const;
 export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 
 export function isSupportedChainId(
