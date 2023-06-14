@@ -73,6 +73,7 @@ const MergeAction = ({ action, ...props }: MergeActionProps) => {
             <Address
               className="font-medium"
               address={action.params._sha}
+              copyTooltip="Copy commit hash"
               showCopy
             />
           </Card>

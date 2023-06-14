@@ -45,6 +45,7 @@ type AddressProps = {
   replaceYou?: boolean;
   jazziconSize?: keyof typeof jazziconVariants | number;
   className?: string;
+  copyTooltip?: string;
 };
 
 /**
@@ -69,6 +70,7 @@ export const Address: React.FC<AddressProps> = ({
   showCopy = false,
   replaceYou = false,
   jazziconSize = 'none',
+  copyTooltip = 'Copy address',
   className,
 }) => {
   const [status, setStatus] = useState<'idle' | 'copied'>('idle');
@@ -124,7 +126,13 @@ export const Address: React.FC<AddressProps> = ({
             )}
           </TooltipTrigger>
           <TooltipContent>
-            {hasLink ? <p>Open in block explorer</p> : <p>{address}</p>}
+            {hasLink ? (
+              <p>Open in block explorer</p>
+            ) : (
+              <p>
+                {address.length > 50 ? truncateMiddle(address, 50) : address}
+              </p>
+            )}
           </TooltipContent>
         </Tooltip>
 
@@ -143,7 +151,7 @@ export const Address: React.FC<AddressProps> = ({
               </button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Copy address</p>
+              <p>{copyTooltip}</p>
             </TooltipContent>
           </Tooltip>
         )}
