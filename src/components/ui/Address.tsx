@@ -51,12 +51,13 @@ type AddressProps = {
 /**
  * A component for displaying Ethereum addresses, optionally with a link to Etherscan and a copy-to-clipboard button.
  * @param props - Props for the `Address` component.
- * @param props.address - The Ethereum address to display.
- * @param props.maxLength - The maximum length of the displayed address. If the address is longer than this, it will be truncated in the middle with an ellipsis. A negative value means no truncation.
- * @param props.hasLink - Whether the displayed address should be linked to its corresponding page on Etherscan.
- * @param props.showCopy - Whether to display a copy-to-clipboard button next to the address.
- * @param props.jazziconSize - The size of the Jazzicon to display next to the address (0 to show no Jazzicon)
- * @param [props.replaceYou=true] - Whether to replace the user's own Ethereum address with "you" in the displayed text.
+ * @param props.length - The length of the displayed address. Can be one of `sm`, `md`, `lg`, `full`, or a number. Defaults to `md`.
+ * @param props.hasLink - Whether to display a link to block explorer. Defaults to `false`.
+ * @param props.showCopy - Whether to display a copy-to-clipboard button. Defaults to `false`.
+ * @param props.replaceYou - Whether to replace the given with the string "you" if connected wallet is equal to given address. Defaults to `false`.
+ * @param props.jazziconSize - The size of the Jazzicon. Can be one of `none`, `sm`, `md`, `lg`, or a number. Defaults to `none`.
+ * @param props.copyTooltip - The tooltip text for the copy-to-clipboard button. Defaults to "Copy address".
+ * @param props.className - Class names to pass to the root div of this component.
  * @returns - A React element representing the `Address` component.
  * @remarks
  * This component uses the `useAccount` hook from the `wagmi` package to check the current user's Ethereum address.
