@@ -120,7 +120,11 @@ const navItems: NavItemData[] = [
         url: 'https://secureseco.org/',
         icon: HiOutlineGlobeAlt,
       },
-      { label: 'Discord', url: DAO_METADATA.discord, icon: FaDiscord },
+      {
+        label: 'Discord',
+        url: DAO_METADATA.links.discord.url,
+        icon: FaDiscord,
+      },
     ],
   },
 ];
