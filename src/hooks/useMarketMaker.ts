@@ -74,25 +74,30 @@ export const useMarketMaker = ({
         throw new ValidationError('Slippage is not valid');
 
       if (swapKind === 'Mint') {
+        const gasPricePromise = provider.getGasPrice();
         const mintAmount = await marketMaker.calculateMint(amount);
         const minAmount = applySlippage(mintAmount, slippage);
         const gas = await marketMaker.estimateGas.mint(amount, minAmount);
-        const gasPrice = await provider.getGasPrice();
+        const gasPrice = await gasPricePromise;
 
         setEstimatedGas(gas.mul(gasPrice));
         setExpectedReturn(mintAmount);
       }
 
       if (swapKind === 'Burn') {
+        const exitFeePromise = marketMaker.calculateExitFee(amount);
+        const gasPricePromise = provider.getGasPrice();
+  
+
         const burnAmount = await marketMaker.calculateBurn(amount);
         const minAmount = applySlippage(burnAmount, slippage);
         const values = await promiseObjectAll({
           gas: marketMaker.estimateGas.burn(amount, minAmount),
-          exitFee: marketMaker.calculateExitFee(amount),
+          exitFee: exitFeePromise,
+          gasPrice: gasPricePromise,
         });
-        const gasPrice = await provider.getGasPrice();
 
-        setEstimatedGas(values.gas.mul(gasPrice));
+        setEstimatedGas(values.gas.mul(values.gasPrice));
         setExpectedReturn(burnAmount.sub(values.exitFee));
       }
     } catch (e) {

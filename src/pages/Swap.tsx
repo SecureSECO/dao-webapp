@@ -156,7 +156,7 @@ const Swap = () => {
     amount: fromAmount,
     swapKind: swap,
     slippage: slippage,
-    enabled: fromAmount !== null && !isNaN(slippage) && slippage !== 0,
+    enabled: fromAmount !== null && !isNaN(slippage),
   });
 
   const { data: approvedAmount } = useContractRead({
