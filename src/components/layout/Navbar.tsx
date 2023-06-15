@@ -174,6 +174,7 @@ const NavItemCollection = ({
     item.categories.some((c) =>
       c.pages.some((x) => x.url === location.pathname)
     ) || item.pages.some((x) => x.url === location.pathname);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger

@@ -56,7 +56,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
       type: 'Percentage',
     },
     MinProposerVotingPower: {
-      description: `Minimum ${TOKENS.rep.symbol} a wallet needs to won to be able to create a proposal.`,
+      description: `Minimum ${TOKENS.rep.symbol} a wallet needs to own to gain the ability to create a proposal.`,
       type: 'SECOREP',
     },
     SupportThreshold: {
@@ -71,7 +71,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
   },
   IBurnVotingProposalFacet: {
     ProposalCreationCost: {
-      description: `How much ${TOKENS.rep.symbol} it costs to create a proposal. This ${TOKENS.rep.symbol} is burned, never to see the light of day again.`,
+      description: `Amount of ${TOKENS.rep.symbol} (in wei) it costs to create a proposal. This ${TOKENS.rep.symbol} is burned, never to see the light of day again.`,
       type: 'SECOREP',
     },
   },
@@ -82,19 +82,19 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     ClaimPeriodMax: {
       description:
-        'Time period in seconds after which claim reward will no longer increase.',
+        'Time period in seconds after which claim reward will no longer increase. After this period, the claim reward will thus have reached the maximum claim reward.',
       type: 'Seconds',
     },
   },
   ISearchSECOMonetizationFacet: {
     HashCost: {
-      description: `${TOKENS.secoin.symbol} cost per hash retrieved.`,
+      description: `${TOKENS.secoin.symbol} cost (in wei) per hash retrieved.`,
       type: 'SECOIN',
     },
   },
   ISearchSECORewardingFacet: {
     HashReward: {
-      description: `${TOKENS.secoin.symbol} rewarded per hash mined.`,
+      description: `Amount of ${TOKENS.secoin.symbol} (in wei) rewarded per hash mined.`,
       type: 'SECOIN',
     },
     RewardingSigner: {
