@@ -61,7 +61,10 @@ import { ErrorText } from '../components/ui/ErrorWrapper';
 import TokenAmount from '../components/ui/TokenAmount';
 import { applySlippage, useMarketMaker } from '../hooks/useMarketMaker';
 import { toast } from '../hooks/useToast';
-import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
+import {
+  PREFERRED_NETWORK,
+  PREFERRED_NETWORK_METADATA,
+} from '../lib/constants/chains';
 import { NumberPattern } from '../lib/constants/patterns';
 import { cn, isNullOrUndefined } from '../lib/utils';
 import { parseTokenAmount } from '../lib/utils/token';
@@ -223,7 +226,7 @@ const Swap = () => {
         }
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-1">
-          {import.meta.env.DEV && (
+          {PREFERRED_NETWORK === 'mumbai' && (
             <p className="text-destructive">
               You are on the {PREFERRED_NETWORK_METADATA.name} testnet, where
               DAI does not exist. Use{' '}
