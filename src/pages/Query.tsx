@@ -25,6 +25,10 @@ import {
   ConnectWalletWarning,
 } from '@/src/components/ui/ConditionalButton';
 import {
+  DataTable,
+  HeaderSortableDecorator,
+} from '@/src/components/ui/DataTable';
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -38,6 +42,7 @@ import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useSearchSECO } from '@/src/hooks/useSearchSECO';
 import { toast } from '@/src/hooks/useToast';
 import { UrlPattern } from '@/src/lib/constants/patterns';
@@ -51,8 +56,6 @@ import {
   HiOutlineDocumentMagnifyingGlass,
 } from 'react-icons/hi2';
 import { useAccount } from 'wagmi';
-
-import { DataTable, HeaderSortableDecorator } from '../components/ui/DataTable';
 
 interface QueryFormData {
   searchUrl: string;
@@ -144,7 +147,10 @@ const Query = () => {
       }),
       {
         loading: 'Querying SearchSECO database...',
-        success: 'Query successful!',
+        success: (res: any) => ({
+          title: 'Query successful',
+          description: `Found ${res.length} results`,
+        }),
         error: () => ({
           title: 'Query failed',
         }),
@@ -242,7 +248,11 @@ const Query = () => {
               <p>
                 Cost:{' '}
                 <strong>
-                  {cost} {TOKENS.secoin.symbol}
+                  <TokenAmount
+                    amount={cost}
+                    tokenDecimals={TOKENS.secoin.decimals}
+                  />{' '}
+                  {TOKENS.secoin.symbol}
                 </strong>
               </p>
               {session == null ? (
@@ -303,9 +313,16 @@ const Query = () => {
 
                   {session.fetch_status === 'error' && (
                     <>
-                      <p className="text-base font-normal text-destructive">
-                        An error occurred, please try again.
-                      </p>
+                      {session.error === 'SESSION_NOT_FOUND' ? (
+                        <p className="text-base font-normal text-destructive">
+                          Your session has expired, you can start a new one by
+                          pressing the Cancel button below.
+                        </p>
+                      ) : (
+                        <p className="text-base font-normal text-destructive">
+                          An error occurred, please try again.
+                        </p>
+                      )}
                     </>
                   )}
 

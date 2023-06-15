@@ -156,7 +156,7 @@ const Swap = () => {
     amount: fromAmount,
     swapKind: swap,
     slippage: slippage,
-    enabled: fromAmount !== null && !isNaN(slippage) && slippage !== 0,
+    enabled: fromAmount !== null && !isNaN(slippage),
   });
 
   const { data: approvedAmount } = useContractRead({
@@ -195,7 +195,7 @@ const Swap = () => {
       ? nativeBalance.value.gte(estimatedGas)
       : true;
 
-  const onSubmit = (_: IFormInputs) => {
+  const onSubmit = () => {
     setIsSwapping(true);
     toast.contractTransaction(() => performSwap(), {
       success: 'Swap successful',
@@ -222,7 +222,22 @@ const Swap = () => {
           />
         }
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-1">
+          {import.meta.env.DEV && (
+            <p className="text-destructive">
+              You are on the {PREFERRED_NETWORK_METADATA.name} testnet, where
+              DAI does not exist. Use{' '}
+              <a
+                className="underline"
+                rel="noopener noreferrer"
+                target="_blank"
+                href="https://app.uniswap.org/#/swap"
+              >
+                WMATIC
+              </a>{' '}
+              instead.
+            </p>
+          )}
           {/* From token */}
           <Label>From:</Label>
           <div className="flex p-4 h-24 bg-popover text-popover-foreground rounded-md border border-input">

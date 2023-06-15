@@ -304,7 +304,7 @@ toast.contractTransaction = async (
         <a
           href={`${explorerURL}/tx/${transaction.hash}`}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="flex flex-row items-center gap-x-1 text-xs text-primary"
         >
           View on block explorer

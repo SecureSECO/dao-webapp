@@ -12,9 +12,7 @@ import { CONFIG } from '@/src/lib/constants/config';
 
 /* SUPPORTED NETWORK TYPES ================================================== */
 
-export const SUPPORTED_CHAIN_ID = [
-  1, 5, 137, 80001, 42161, 421613, 1337,
-] as const;
+export const SUPPORTED_CHAIN_ID = [137, 80001] as const;
 export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 
 export function isSupportedChainId(
@@ -24,9 +22,7 @@ export function isSupportedChainId(
 }
 
 const SUPPORTED_NETWORKS = ['polygon', 'mumbai'] as const;
-export type SupportedNetworks =
-  | (typeof SUPPORTED_NETWORKS)[number]
-  | 'unsupported';
+export type SupportedNetworks = (typeof SUPPORTED_NETWORKS)[number];
 
 export function isSupportedNetwork(
   network: string
@@ -34,10 +30,17 @@ export function isSupportedNetwork(
   return SUPPORTED_NETWORKS.some((n) => n === network);
 }
 
-export function toSupportedNetwork(network: string): SupportedNetworks {
+/**
+ * Check if the given network is supported and return the network name if so
+ * @param network Network name (e.g. 'polygon' or 'mumbai')
+ * @returns the name of the supported network or undefined if network is unsupported
+ */
+export function toSupportedNetwork(
+  network: string
+): SupportedNetworks | undefined {
   return SUPPORTED_NETWORKS.some((n) => n === network)
     ? (network as SupportedNetworks)
-    : 'unsupported';
+    : undefined;
 }
 
 /**
@@ -122,24 +125,12 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
   },
-  unsupported: {
-    id: 1,
-    name: 'Unsupported',
-    domain: 'L1 Blockchain',
-    logo: '',
-    explorer: '',
-    testnet: false,
-    rpc: '',
-    nativeCurrency: {
-      name: '',
-      symbol: '',
-      decimals: 18,
-    },
-    etherscanApi: '',
-  },
 };
 
-export const PREFERRED_NETWORK: SupportedNetworks =
-  getSupportedNetworkByChainId(CONFIG.PREFERRED_NETWORK_ID) ?? 'unsupported';
+/** Name of the preferred network (e.g. 'polygon' or 'mumbai') */
+export const PREFERRED_NETWORK: SupportedNetworks | undefined =
+  getSupportedNetworkByChainId(CONFIG.PREFERRED_NETWORK_ID);
 
-export const PREFERRED_NETWORK_METADATA = CHAIN_METADATA[PREFERRED_NETWORK];
+/** Chain data of the preferred network */
+export const PREFERRED_NETWORK_METADATA =
+  CHAIN_METADATA[PREFERRED_NETWORK ?? 'polygon'];

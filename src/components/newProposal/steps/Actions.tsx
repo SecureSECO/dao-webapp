@@ -93,13 +93,16 @@ export const Actions = () => {
 
           throw error;
         }
-      }
+      } else return action;
     });
 
     Promise.all(actionPromises)
-      .then(() => {
+      .then((mappedActions) => {
         // If everything went OK, go to next step
-        setDataStep3(data);
+        setDataStep3({
+          ...data,
+          actions: mappedActions,
+        });
         setStep(4);
       })
       .catch((error) => {
