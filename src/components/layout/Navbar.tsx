@@ -170,9 +170,10 @@ const NavItemCollection = ({
   ...props
 }: NavItemCollectionProps) => {
   const location = useLocation();
-  const isActive = item.categories.some((c) =>
-    c.pages.some((x) => x.url === location.pathname)
-  );
+  const isActive =
+    item.categories.some((c) =>
+      c.pages.some((x) => x.url === location.pathname)
+    ) || item.pages.some((x) => x.url === location.pathname);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
