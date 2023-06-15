@@ -420,7 +420,7 @@ const Swap = () => {
                           <TokenAmount
                             amount={
                               isNullOrUndefined(expectedReturn) ||
-                              isNaN(slippage)
+                                isNaN(slippage)
                                 ? null
                                 : applySlippage(expectedReturn, slippage)
                             }
