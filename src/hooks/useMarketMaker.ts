@@ -186,7 +186,7 @@ export const useMarketMaker = ({
     if (!enabled || !client) return;
     fetchData(client);
 
-    //Set interval such that data is refetched
+    //Set interval such that data is fetched every 10 seconds
     const id = setInterval(() => fetchData(client), 10000);
     return () => clearInterval(id);
   }, [client, amount?._hex, slippage, swapKind, enabled]);
