@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber } from 'ethers';
+import { BigNumber, constants } from 'ethers';
 import { useProvider } from 'wagmi';
 
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
@@ -108,8 +108,12 @@ export const useMarketMaker = ({
       // Start promise as soon as possible/needed
       const gasPricePromise = provider.getGasPrice();
 
-      if (isNullOrUndefined(amount) || amount.isZero())
+      if (isNullOrUndefined(amount))
         throw new ValidationError('Amount is not valid');
+      if (amount.isZero()) {
+        setExpectedReturn(constants.Zero);
+        throw new ValidationError('Amount is zero');
+      }
       if (isNullOrUndefined(slippage) || isNaN(slippage))
         throw new ValidationError('Slippage is not valid');
 
