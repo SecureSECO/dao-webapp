@@ -128,15 +128,14 @@ export const useMarketMaker = ({
       }
 
       if (swapKind === 'Burn') {
-        // Get and set expected Return
-        const burnValues = await promiseObjectAll({
-          exitFee: marketMaker.calculateExitFee(amount),
-          burnAmount: marketMaker.calculateBurn(amount),
-        });
-        setExpectedReturn(burnValues.burnAmount.sub(burnValues.exitFee));
+        // Get and set expected return
+        const burnWithoutFee = await marketMaker.calculateBurn(amount);
+        const exitFee = await marketMaker.calculateExitFee(burnWithoutFee);
+        const burnAmount = burnWithoutFee.sub(exitFee);
+        setExpectedReturn(burnAmount);
 
         // Get and set estimated gas
-        const minAmount = applySlippage(burnValues.burnAmount, slippage);
+        const minAmount = applySlippage(burnAmount, slippage);
         const gasValues = await promiseObjectAll({
           gas: marketMaker.estimateGas.burn(amount, minAmount),
           gasPrice: gasPricePromise,
