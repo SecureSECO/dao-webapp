@@ -52,7 +52,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     MinParticipation: {
       description:
-        'Minimum percentage of voting power supply needed for a quorum (minimum participation), in parts per million.',
+        'Minimum percentage of the total voting power supply needed for a quorum (minimum participation), in parts per million.',
       type: 'Percentage',
     },
     MinProposerVotingPower: {
