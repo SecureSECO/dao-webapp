@@ -42,7 +42,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
   IPartialVotingProposalFacet: {
     MaxSingleWalletPower: {
       description:
-        'Percentage of voting power supply that a single wallet may use to vote.',
+        'Maximum ercentage of the total voting power supply that a single wallet may use to vote, in parts per million.',
       type: 'Percentage',
     },
     MinDuration: {
@@ -52,16 +52,16 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     MinParticipation: {
       description:
-        'Minimum percentage of voting power supply needed for a quorum (minimum participation).',
+        'Minimum percentage of voting power supply needed for a quorum (minimum participation), in parts per million.',
       type: 'Percentage',
     },
     MinProposerVotingPower: {
-      description: `Minimum ${TOKENS.rep.symbol} a wallet needs to own to gain the ability to create a proposal.`,
+      description: `Minimum ${TOKENS.rep.symbol} (in wei) a wallet needs to own to gain the ability to create a proposal.`,
       type: 'SECOREP',
     },
     SupportThreshold: {
       description:
-        'Percentage of yes/no votes that need to be yes for a proposal to pass (abstain is solely to reach the quorum).',
+        'Percentage of yes/no votes that need to be yes for a proposal to pass (abstain is solely to reach the quorum), in parts per million.',
       type: 'Percentage',
     },
     VotingMode: {
@@ -88,13 +88,22 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
   },
   ISearchSECOMonetizationFacet: {
     HashCost: {
-      description: `${TOKENS.secoin.symbol} cost (in wei) per hash retrieved.`,
+      description: `${TOKENS.secoin.symbol} cost (in wei) per hash retrieved to calculate query price.`,
       type: 'SECOIN',
+    },
+    QueryMiningRewardPoolRatio: {
+      description:
+        'Percentage of the query price that goes to the Mining Reward Pool, the rest goes to the general treasury, in parts per million.',
+      type: 'Percentage',
     },
   },
   ISearchSECORewardingFacet: {
-    HashReward: {
-      description: `Amount of ${TOKENS.secoin.symbol} (in wei) rewarded per hash mined.`,
+    HashRepReward: {
+      description: `Amount of ${TOKENS.rep.symbol} (in wei) rewarded per hash mined.`,
+      type: 'SECOREP',
+    },
+    HashCoinReward: {
+      description: `Amount of ${TOKENS.secoin.symbol} (in wei) rewarded per hash mined, also depends on the amount of ${TOKENS.secoin.symbol} in the treasury, the HashDevaluationFactor, and MiningRewardPoolPayoutRatio.`,
       type: 'SECOIN',
     },
     RewardingSigner: {
@@ -103,11 +112,11 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     HashDevaluationFactor: {
       description:
-        'How many hashes need to be submitted to pay out the MiningRewardPoolPayoutRatio',
+        'How many hashes need to be submitted to pay out the MiningRewardPoolPayoutRatio, ',
     },
     MiningRewardPoolPayoutRatio: {
       description:
-        'The percentage of the mining reward pool that is paid out when the HashDevaluationFactor is reached.',
+        'The percentage of the mining reward pool that is paid out when the HashDevaluationFactor is reached, in 18 decimals.',
     },
   },
   IMonetaryTokenFacet: {
@@ -122,7 +131,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     FrictionABC: {
       description:
-        'Fee charged to holders when burning SECOIN in exchange for collateral token, using the ABC.',
+        'Percentage fee charged to holders when burning SECOIN in exchange for collateral token, using the ABC (parts per million).',
     },
     Hatcher: {
       description:
@@ -137,7 +146,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     ThetaABC: {
       description:
-        'What percentage of DAI is sent to the DAO when minting SECOIN.',
+        'What percentage of DAI is sent to the DAO when minting SECOIN, in parts per million.',
     },
   },
 };
