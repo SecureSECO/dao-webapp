@@ -149,4 +149,18 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
         'What percentage of DAI is sent to the DAO when minting SECOIN, in parts per million.',
     },
   },
+  IRewardMultiplierFacet: {
+    InflationStartTimestamp: {
+      description:
+        'Timestamp at which the inflation starts, must be in the past.',
+    },
+    InflationBase: {
+      description:
+        'The base of the inflation amount, so the amount of inflation there is today is InflationBase^x + InflationInitialAmount, where x is the number of days since the InflationStartTimestamp.',
+    },
+    InflationInitialAmount: {
+      description:
+        'Gets added to the InflationBase^x + InflationInitialAmount, where x is the number of days since the InflationStartTimestamp.',
+    },
+  },
 };
