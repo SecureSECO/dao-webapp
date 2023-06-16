@@ -112,11 +112,11 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     HashDevaluationFactor: {
       description:
-        'How many hashes need to be submitted to pay out the MiningRewardPoolPayoutRatio, ',
+        'How many hashes need to be submitted to pay out the MiningRewardPoolPayoutRatio, so if the MiningRewardPoolPayoutRatio corresponds to 0.5, then 50% of the mining reward pool is paid out for HashDevaluationFactor amount of hashes. ',
     },
     MiningRewardPoolPayoutRatio: {
       description:
-        'The percentage of the mining reward pool that is paid out when the HashDevaluationFactor is reached, in 18 decimals.',
+        'The percentage of the mining reward pool that is paid out when the HashDevaluationFactor is reached, in 18 decimals. So if the MiningRewardPoolPayoutRatio corresponds to 0.5, then 50% of the mining reward pool is paid out for HashDevaluationFactor amount of hashes.',
     },
   },
   IMonetaryTokenFacet: {
@@ -135,14 +135,15 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     Hatcher: {
       description:
-        'Address of the contract that receives initial contributions. When enough funds are received within time limit, contributions will be disabled and market maker will activate to allow swapping of SECION.',
+        'Address of the contract that receives initial contributions of the ICO period of the ABC. When enough funds are received within time limit, contributions will be disabled and market maker will activate to allow swapping of SECION.',
     },
     MarketMaker: {
       description:
         'Address of the contract that acts as the market maker for the ABC.',
     },
     ReserveRatioABC: {
-      description: 'The ratio for the reserve in the BancorBondingCurve.',
+      description:
+        'The ratio for the reserve in the BancorBondingCurve used in the ABC MarketMaker.',
     },
     ThetaABC: {
       description:
