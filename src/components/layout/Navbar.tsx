@@ -178,7 +178,7 @@ const NavItemCollection = ({
       <DropdownMenuTrigger
         className={cn(
           'flex w-full select-none items-center justify-center gap-x-1 rounded-md px-4 py-2 text-lg font-semibold leading-4 ring-ring ring-offset-2 ring-offset-background hover:cursor-pointer hover:bg-highlight/50 focus:outline-none focus:ring-2 data-[state=open]:bg-highlight/50',
-          isActive && 'bg-highlight text-primary shadow-md ',
+          isActive && 'bg-highlight text-primary shadow-md',
           className
         )}
       >
@@ -237,7 +237,7 @@ const Navbar = () => {
         to="/"
         className="rounded-md ring-ring ring-offset-2 ring-offset-background focus:outline-none focus:ring-2"
       >
-        <LogoFull className="h-fit w-32 lg:w-40" />
+        <LogoFull className="h-12 md:h-14 w-32 lg:w-40" />
       </NavLink>
 
       {/* Mobile nav */}
