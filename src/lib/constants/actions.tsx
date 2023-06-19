@@ -146,7 +146,7 @@ export const ACTIONS: Actions = {
     },
   },
   merge_pr: {
-    method: 'merge(string,string,string)',
+    method: 'merge(string,string,string,string)',
     interface: 'IGithubPullRequestFacet',
     label: 'Merge PR',
     longLabel: 'Merge pull request',
