@@ -12,8 +12,8 @@ export type InterfaceName = string;
 export type VariableName = string;
 export type DaoVariableMetadataType =
   | 'Percentage' // Percentage, where 1,000,000 corresponds to 100%
-  | `SECOREP`
-  | 'SECOIN'
+  | typeof TOKENS.rep.symbol
+  | typeof TOKENS.secoin.symbol
   | 'Seconds';
 
 export type VariableMetadata = {
@@ -33,8 +33,8 @@ export type DaoVariablesTypeMetadataDescriptions = Record<
 export const DAO_VARIABLES_TYPES_METADATA: DaoVariablesTypeMetadataDescriptions =
   {
     Percentage: '1,000,000 corresponds to 100%',
-    SECOREP: 'SECOREP includes decimals, thus 10^18 corresponds to 1.0 SECOREP',
-    SECOIN: 'SECOIN includes decimals, thus 10^18 corresponds to 1.0 SECOREP',
+    SECOREP: `${TOKENS.rep.symbol} includes decimals, meaning 10^18 corresponds to 1.0 ${TOKENS.rep.symbol}`,
+    SECOIN: `${TOKENS.secoin.symbol} includes decimals, meaning 10^18 corresponds to 1.0 ${TOKENS.secoin.symbol}`,
     Seconds: 'Seconds, decimals are not supported',
   };
 
@@ -57,7 +57,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     },
     MinProposerVotingPower: {
       description: `Minimum ${TOKENS.rep.symbol} (in wei) a wallet needs to own to gain the ability to create a proposal.`,
-      type: 'SECOREP',
+      type: TOKENS.rep.symbol,
     },
     SupportThreshold: {
       description:
@@ -72,7 +72,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
   IBurnVotingProposalFacet: {
     ProposalCreationCost: {
       description: `Amount of ${TOKENS.rep.symbol} (in wei) it costs to create a proposal. This ${TOKENS.rep.symbol} is burned, never to see the light of day again.`,
-      type: 'SECOREP',
+      type: TOKENS.rep.symbol,
     },
   },
   IERC20TimeClaimableFacet: {
@@ -89,7 +89,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
   ISearchSECOMonetizationFacet: {
     HashCost: {
       description: `${TOKENS.secoin.symbol} cost (in wei) per hash retrieved to calculate query price.`,
-      type: 'SECOIN',
+      type: TOKENS.secoin.symbol,
     },
     QueryMiningRewardPoolRatio: {
       description:
@@ -100,11 +100,11 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
   ISearchSECORewardingFacet: {
     HashRepReward: {
       description: `Amount of ${TOKENS.rep.symbol} (in wei) rewarded per hash mined.`,
-      type: 'SECOREP',
+      type: TOKENS.rep.symbol,
     },
     HashCoinReward: {
       description: `Amount of ${TOKENS.secoin.symbol} (in wei) rewarded per hash mined, also depends on the amount of ${TOKENS.secoin.symbol} in the treasury, the HashDevaluationFactor, and MiningRewardPoolPayoutRatio.`,
-      type: 'SECOIN',
+      type: TOKENS.secoin.symbol,
     },
     RewardingSigner: {
       description:
@@ -130,12 +130,10 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
         'Address of the contract that defines the formula describing the Augmented Bonding Curve (ABC).',
     },
     FrictionABC: {
-      description:
-        'Percentage fee charged to holders when burning SECOIN in exchange for collateral token, using the ABC (parts per million).',
+      description: `Percentage fee charged to holders when burning ${TOKENS.secoin.symbol} in exchange for collateral token, using the ABC (parts per million).`,
     },
     Hatcher: {
-      description:
-        'Address of the contract that receives initial contributions of the ICO period of the ABC. When enough funds are received within time limit, contributions will be disabled and market maker will activate to allow swapping of SECION.',
+      description: `Address of the contract that receives initial contributions of the ICO period of the ABC. When enough funds are received within time limit, contributions will be disabled and market maker will activate to allow swapping of ${TOKENS.secoin.symbol}.`,
     },
     MarketMaker: {
       description:
@@ -146,8 +144,7 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
         'The ratio for the reserve in the BancorBondingCurve used in the ABC MarketMaker.',
     },
     ThetaABC: {
-      description:
-        'What percentage of DAI is sent to the DAO when minting SECOIN, in parts per million.',
+      description: `What percentage of DAI is sent to the DAO when minting ${TOKENS.secoin.symbol}, in parts per million.`,
     },
   },
   IRewardMultiplierFacet: {
