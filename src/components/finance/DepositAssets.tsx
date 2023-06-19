@@ -30,6 +30,12 @@ import {
   SelectValue,
 } from '@/src/components/ui/Select';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import {
+  Pools,
+  TokenData,
+  pools,
+  useDepositAssets,
+} from '@/src/hooks/useDepositAssets';
 import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 import { ContractTransactionToast, toast } from '@/src/hooks/useToast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
@@ -39,29 +45,15 @@ import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiChevronLeft } from 'react-icons/hi2';
-import {
-  erc20ABI,
-  useAccount,
-  useBalance,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-  usePrepareSendTransaction,
-  useSendTransaction,
-} from 'wagmi';
+import { useAccount, useBalance, useNetwork, Address as wAddress } from 'wagmi';
+
+import { Button } from '../ui/Button';
 
 type DepositAssetsData = {
   token: Token;
+  pool: Pools;
   amount?: string;
 };
-type AddressString = `0x${string}`;
-type TokenData =
-  | {
-      address: AddressString;
-      isNativeToken: boolean;
-      decimals: number;
-    }
-  | undefined;
 
 type Token = (typeof Tokens)[number];
 // All tokens (including native tokens)
@@ -75,6 +67,7 @@ export const DepositAssets = () => {
     handleSubmit,
     formState: { errors },
     setError,
+    setValue,
   } = useForm<DepositAssetsData>({});
   // Context
   const { daoAddress, secoinAddress } = useDiamondSDKContext();
@@ -84,14 +77,14 @@ export const DepositAssets = () => {
   const { chain } = useNetwork();
 
   // Creating 'tokens', the object displaying known tokens that can be deposited through this component, using ERC20 contract writes or native token transaction.
-  const secoin: TokenData = secoinAddress
+  const secoin: TokenData | undefined = secoinAddress
     ? {
-        address: secoinAddress as AddressString,
+        address: secoinAddress as wAddress,
         isNativeToken: false,
         decimals: TOKENS.secoin.decimals,
       }
     : undefined;
-  const tokens: Record<Token, TokenData> = {
+  const tokens: Record<Token, TokenData | undefined> = {
     Matic: {
       address: '0x0000000000000000000000000000000000001010',
       isNativeToken: true,
@@ -109,30 +102,14 @@ export const DepositAssets = () => {
   const watchAmount = useWatch({ control: control, name: 'amount' });
   const amount = parseTokenAmount(watchAmount, token?.decimals);
 
-  // Hooks for non native tokens
-  const debouncedTokenId = useDebounce(
-    [amount ?? BigNumber.from(0), token?.address],
-    500
-  );
-  const { config, error } = usePrepareContractWrite({
-    address: token?.address,
-    abi: erc20ABI,
-    functionName: 'transfer',
-    args: [daoAddress as AddressString, amount ?? BigNumber.from(0)],
-    enabled: Boolean(debouncedTokenId) && !token?.isNativeToken,
-  });
+  const pool = useWatch({ control, name: 'pool' });
 
-  const { writeAsync } = useContractWrite(config);
-
-  // Hooks for native tokens
-  const { config: configNative, error: errorNative } =
-    usePrepareSendTransaction({
-      request: { to: daoAddress as string, value: amount ?? BigNumber.from(0) },
-      chainId: PREFERRED_NETWORK_METADATA.id,
-      enabled: Boolean(debouncedTokenId) && token?.isNativeToken,
+  const { isLoading, error, isApproved, approve, depositAssets } =
+    useDepositAssets({
+      token,
+      pool,
+      amount: amount ?? undefined,
     });
-
-  const { sendTransactionAsync } = useSendTransaction(configNative);
 
   // State for loading symbol during transaction
   const [isSendingTransaction, setIsSendingTransaction] =
@@ -152,7 +129,7 @@ export const DepositAssets = () => {
     if (token === undefined) {
       setError('root.deposit', {
         type: 'custom',
-        message: 'You cannnot deposit this type of token',
+        message: 'You can not deposit this type of token',
       });
       return;
     }
@@ -173,56 +150,41 @@ export const DepositAssets = () => {
       return;
     }
 
+    if (pool !== 'General' && watchToken !== 'SECOIN') {
+      setError('root.deposit', {
+        type: 'custom',
+        message:`Only ${'SECOIN'} can be send to the ${pool} pool`,
+      });
+      return;
+    }
+
+    if (isLoading) {
+      setError('root.deposit', {
+        type: 'custom',
+        message: 'Loading',
+      });
+      return;
+    }
+
+    if (error !== null) {
+      setError('root.deposit', {
+        type: 'custom',
+        message: error,
+      });
+      return;
+    }
+
     const toasterConfig: ContractTransactionToast = {
       success: 'Deposit successful!',
       error: 'Deposit failed',
       onFinish: () => {
         setIsSendingTransaction(false);
+        setValue('amount', '0');
       },
     };
 
-    if (token.isNativeToken) {
-      if (errorNative !== null) {
-        setError('root.deposit', {
-          type: 'custom',
-          message: 'Could not create transaction',
-        });
-        console.error(error);
-        return;
-      }
-
-      if (!sendTransactionAsync) {
-        setError('root.deposit', {
-          type: 'custom',
-          message: 'Could not create transaction',
-        });
-        return;
-      }
-
-      // send transaction (Note that the toast will set the loading state to false)
-      setIsSendingTransaction(true);
-      toast.contractTransaction(() => sendTransactionAsync(), toasterConfig);
-    } else {
-      if (error !== null) {
-        setError('root.deposit', {
-          type: 'custom',
-          message: 'Could not create transaction',
-        });
-        console.error(error);
-        return;
-      }
-
-      if (!writeAsync) {
-        setError('root.deposit', {
-          type: 'custom',
-          message: 'Could not create transaction',
-        });
-        return;
-      }
-      // send transaction (Note that the toast will set the loading state to false)
-      setIsSendingTransaction(true);
-      toast.contractTransaction(() => writeAsync(), toasterConfig);
-    }
+    setIsSendingTransaction(true);
+    toast.contractTransaction(() => depositAssets(), toasterConfig);
   };
 
   return (
@@ -274,6 +236,40 @@ export const DepositAssets = () => {
                   />
                 </ErrorWrapper>
               </div>
+              <div className="flex flex-col gap-y-1">
+                <Label tooltip="Asset to deposit" htmlFor="token">
+                  Pool
+                </Label>
+                <ErrorWrapper name="Pool" error={errors?.pool}>
+                  <Controller
+                    control={control}
+                    name="pool"
+                    rules={{ required: true }}
+                    render={({ field: { onChange, name, value } }) => (
+                      <Select
+                        defaultValue={value}
+                        onValueChange={onChange}
+                        name={name}
+                        disabled={isSendingTransaction}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a pool" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Pools</SelectLabel>
+                            {pools.map((pool) => (
+                              <SelectItem key={pool} value={pool}>
+                                {pool}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </ErrorWrapper>
+              </div>
               {watchToken !== 'Other' && (
                 <LabelledInput
                   {...register('amount', {
@@ -316,9 +312,23 @@ export const DepositAssets = () => {
             ) : (
               <ErrorWrapper name="deposit" error={errors?.root?.deposit as any}>
                 <div className="flex flex-row gap-x-2">
+                  {!isApproved && (
+                    <Button
+                      label="Approve"
+                      type="button"
+                      onClick={() =>
+                        toast.contractTransaction(() => approve(), {
+                          success: 'Approved!',
+                          error: 'Could not approve',
+                        })
+                      }
+                    />
+                  )}
                   <ConditionalButton
                     label="Deposit assets"
-                    disabled={!isKnownToken || isSendingTransaction}
+                    disabled={
+                      !isKnownToken || isSendingTransaction || !isApproved
+                    }
                     icon={isSendingTransaction ? Loading : null}
                     conditions={[
                       {
@@ -330,6 +340,10 @@ export const DepositAssets = () => {
                         content: (
                           <Warning> Switch network to deposit assets </Warning>
                         ),
+                      },
+                      {
+                        when: isLoading,
+                        content: <Loading className="w-5 h-5" />,
                       },
                       {
                         when:
@@ -346,10 +360,10 @@ export const DepositAssets = () => {
                       },
                       {
                         when:
-                          !secoinBalance ||
-                          (watchToken === 'SECOIN' &&
-                            amount !== null &&
-                            amount.gt(secoinBalance)),
+                          watchToken === 'SECOIN' &&
+                          secoinBalance !== undefined &&
+                          amount !== null &&
+                          amount.gt(secoinBalance),
                         content: (
                           <Warning>
                             You do not have enough {TOKENS.secoin.symbol} to
@@ -368,17 +382,3 @@ export const DepositAssets = () => {
     </div>
   );
 };
-
-function useDebounce<T>(value: T, delay?: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay || 500);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
