@@ -159,7 +159,7 @@ export const dummyWhitelistMemberAction: ProposalWhitelistAction = {
  * Dummy Diamond cut action
  */
 export const dummyDiamondCutAction: ProposalDiamondCutAction = {
-  method: 'diamondCut((address,uint8,bytes4[],bytes)[])',
+  method: 'diamondCut(tuple[])',
   interface: 'IDiamondCut',
   params: {
     _diamondCut: [
