@@ -57,7 +57,6 @@ type DepositAssetsData = {
 
 type Token = (typeof Tokens)[number];
 // All tokens (including native tokens)
-// NOTE: Currently, only tokens with exactly 18 decimals are supported
 const Tokens = ['Matic', 'SECOIN', 'Other'] as const;
 
 export const DepositAssets = () => {
@@ -68,6 +67,7 @@ export const DepositAssets = () => {
     formState: { errors },
     setError,
     setValue,
+    getValues,
   } = useForm<DepositAssetsData>({});
   // Context
   const { daoAddress, secoinAddress } = useDiamondSDKContext();
@@ -76,7 +76,8 @@ export const DepositAssets = () => {
   const { data: maticData } = useBalance({ address });
   const { chain } = useNetwork();
 
-  // Creating 'tokens', the object displaying known tokens that can be deposited through this component, using ERC20 contract writes or native token transaction.
+  // Creating 'tokens', the object displaying known tokens that can be deposited through this component,
+  // using ERC20 contract writes or native token transaction.
   const secoin: TokenData | undefined = secoinAddress
     ? {
         address: secoinAddress as wAddress,
@@ -153,7 +154,7 @@ export const DepositAssets = () => {
     if (pool !== 'General' && watchToken !== 'SECOIN') {
       setError('root.deposit', {
         type: 'custom',
-        message:`Only ${'SECOIN'} can be send to the ${pool} pool`,
+        message: `Only ${'SECOIN'} can be send to the ${pool} pool`,
       });
       return;
     }
@@ -203,41 +204,10 @@ export const DepositAssets = () => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-y-2">
               <div className="flex flex-col gap-y-1">
-                <Label tooltip="Asset to deposit" htmlFor="token">
-                  Token
-                </Label>
-                <ErrorWrapper name="token" error={errors?.token}>
-                  <Controller
-                    control={control}
-                    name="token"
-                    rules={{ required: true }}
-                    render={({ field: { onChange, name, value } }) => (
-                      <Select
-                        defaultValue={value}
-                        onValueChange={onChange}
-                        name={name}
-                        disabled={isSendingTransaction}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a token" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Tokens</SelectLabel>
-                            {Tokens.map((token) => (
-                              <SelectItem key={token} value={token}>
-                                {token}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </ErrorWrapper>
-              </div>
-              <div className="flex flex-col gap-y-1">
-                <Label tooltip="Asset to deposit" htmlFor="token">
+                <Label
+                  tooltip="Pool to send assets to. Pools other than 'general' can only receive SECOIN"
+                  htmlFor="token"
+                >
                   Pool
                 </Label>
                 <ErrorWrapper name="Pool" error={errors?.pool}>
@@ -247,8 +217,14 @@ export const DepositAssets = () => {
                     rules={{ required: true }}
                     render={({ field: { onChange, name, value } }) => (
                       <Select
-                        defaultValue={value}
-                        onValueChange={onChange}
+                        defaultValue={undefined}
+                        value={value}
+                        onValueChange={(v) => {
+                          if (v !== 'General') {
+                            setValue('token', 'SECOIN');
+                          }
+                          onChange(v);
+                        }}
                         name={name}
                         disabled={isSendingTransaction}
                       >
@@ -261,6 +237,49 @@ export const DepositAssets = () => {
                             {pools.map((pool) => (
                               <SelectItem key={pool} value={pool}>
                                 {pool}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </ErrorWrapper>
+              </div>
+              <div className="flex flex-col gap-y-1">
+                <Label tooltip="Asset to deposit" htmlFor="token">
+                  Token
+                </Label>
+                <ErrorWrapper name="token" error={errors?.token}>
+                  <Controller
+                    control={control}
+                    name="token"
+                    rules={{ required: true }}
+                    render={({ field: { onChange, name, value } }) => (
+                      <Select
+                        defaultValue={undefined}
+                        value={value}
+                        onValueChange={(v) => {
+                          if (v !== 'SECOIN') {
+                            setValue('pool', 'General');
+                          }
+                          onChange(v);
+                        }}
+                        name={name}
+                        disabled={
+                          isSendingTransaction ||
+                          (pool !== undefined && pool !== 'General')
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a token" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Tokens</SelectLabel>
+                            {Tokens.map((token) => (
+                              <SelectItem key={token} value={token}>
+                                {token}
                               </SelectItem>
                             ))}
                           </SelectGroup>
@@ -290,7 +309,7 @@ export const DepositAssets = () => {
                     },
                   })}
                   id="amount"
-                  tooltip={`Amount of ${watchToken} to deposit`}
+                  tooltip={`Amount of ${watchToken ?? 'token'} to deposit`}
                   label="Amount"
                   error={errors.amount}
                   disabled={!isKnownToken || isSendingTransaction}
