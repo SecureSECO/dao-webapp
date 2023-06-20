@@ -48,7 +48,9 @@ export const ApproveSpendingAction = ({
       icon={ACTIONS.approve_spending.icon}
       title="Approve ERC20 spending"
       description={`
-Approve a spender to spend an amount of ERC20 token.
+Approve a spender to spend an amount of ${
+        tokenInfo === null ? 'ERC20 token' : tokenInfo.name
+      }.
       `}
       {...props}
     >
