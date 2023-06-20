@@ -259,6 +259,7 @@ export const ChangeParamInput = () => {
                 <Select
                   disabled={isNullOrUndefined(variables)}
                   defaultValue={value}
+                  value={value}
                   onValueChange={onChange}
                   name={name}
                 >
@@ -296,6 +297,7 @@ export const ChangeParamInput = () => {
                 <Select
                   disabled={isNullOrUndefined(watchPlugin)}
                   defaultValue={value}
+                  value={value}
                   onValueChange={onChange}
                   name={name}
                 >

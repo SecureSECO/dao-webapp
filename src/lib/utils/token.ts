@@ -130,6 +130,10 @@ export function abbreviateTokenAmount(
   if (displayDecimals > 20) displayDecimals = 20;
   else if (displayDecimals < 0) displayDecimals = 0;
 
+  if (amount.includes('e+')) {
+    return ' > 1 exa ';
+  }
+
   const TOKEN_AMOUNT_REGEX =
     /(?<integers>[\d*]*)[.]*(?<decimals>[\d]*)\s*(?<symbol>[A-Za-z]*)/;
   const regexp_res = amount.match(TOKEN_AMOUNT_REGEX);
@@ -201,6 +205,7 @@ export const toAbbreviatedTokenAmount = ({
   showSmallAmounts,
   valueAsFloat = undefined,
 }: AbbreviatedTokenAmountProps): string => {
+  // NOTE: Float values are used as this is also used by abbreviateTokenAmount.
   if (anyNullOrUndefined(value, tokenDecimals)) {
     if (isNullOrUndefined(valueAsFloat)) {
       return 'N/A';
@@ -211,6 +216,7 @@ export const toAbbreviatedTokenAmount = ({
 
   // Theoretically 'bigIntToFloat' never returns NaN, guaranteed by its type's preconditions. In practice, this might still happen.
   if (isNaN(valueAsFloat!)) return 'N/A';
+  if (!Number.isFinite(valueAsFloat!)) return '&infin;';
   return abbreviateTokenAmount(
     valueAsFloat!.toFixed(20),
     displayDecimals,

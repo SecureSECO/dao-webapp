@@ -41,6 +41,10 @@ import {
   emptyWithdrawData,
 } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import {
+  ApproveSpendingAction,
+  ProposalApproveSpendingAction,
+} from '@/src/components/proposal/actions/ApproveSpendingAction';
+import {
   ChangeParamAction,
   ProposalChangeParamAction,
 } from '@/src/components/proposal/actions/ChangeParamAction';
@@ -72,6 +76,7 @@ import { IconType } from 'react-icons';
 import { FaGithub } from 'react-icons/fa';
 import {
   HiBanknotes,
+  HiOutlineCheckCircle,
   HiOutlineCircleStack,
   HiOutlineCog,
   HiUserPlus,
@@ -106,6 +111,7 @@ type Actions = {
     ProposalFormWhitelistData
   >;
   diamond_cut: ActionData<ProposalDiamondCutAction, null>;
+  approve_spending: ActionData<ProposalApproveSpendingAction, null>;
 
   // Add new proposal actions here
   // ...
@@ -319,6 +325,17 @@ export const ACTIONS: Actions = {
     view: DiamondCutAction,
     // There is not support for adding diamond cut actions through the webapp
     // Any diamond cut action will have been created through other means, but can be viewed in the webapp to a certain extent
+    input: null,
+    emptyInputData: null,
+    parseInput: () => null,
+  },
+  approve_spending: {
+    method: 'ApproveERC20',
+    interface: 'DAO',
+    label: 'Approve spending',
+    longLabel: 'Approve ERC20 spending',
+    icon: HiOutlineCheckCircle,
+    view: ApproveSpendingAction,
     input: null,
     emptyInputData: null,
     parseInput: () => null,

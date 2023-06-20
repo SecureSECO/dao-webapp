@@ -25,9 +25,11 @@ const UserBalances = () => {
   const { address, isConnected } = useAccount();
   const { votingPower, loading: repLoading } = useVotingPower({
     address,
+    watch: true,
   });
   const { secoinBalance, loading: secoinLoading } = useSecoinBalance({
     address,
+    watch: true,
   });
 
   const showBalances =

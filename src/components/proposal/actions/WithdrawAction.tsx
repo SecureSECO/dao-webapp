@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
+import { useTokenInfo } from '@/src/hooks/useTokenInfo';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
 import {
@@ -49,30 +50,14 @@ interface WithdrawActionProps extends AccordionItemProps {
  * @returns Details of a withdraw assets action wrapped in a GeneralAction component
  */
 const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
-  const [tokenInfo, setTokenInfo] = useState<TokenInfo>();
-
-  const provider = useProvider({
-    chainId: CONFIG.PREFERRED_NETWORK_ID,
-  });
-
   // If _value is present in params, the token being withdrawn is the native token
   const isNative = !!action.params._value;
 
-  useEffect(() => {
-    async function fetchTokenInfo() {
-      const fetchedTokenInfo = await getTokenInfo(
-        action.params._contractAddress,
-        provider,
-        PREFERRED_NETWORK_METADATA.nativeCurrency,
-        action.params._tokenId ? 'erc721' : 'erc20'
-      );
-      setTokenInfo(fetchedTokenInfo);
-    }
-
-    if (provider && !isNative) {
-      fetchTokenInfo();
-    }
-  }, [action]);
+  const { tokenInfo } = useTokenInfo({
+    address: action.params._contractAddress ?? '',
+    tokenType: action.params._tokenId ? 'erc721' : 'erc20',
+    enabled: !isNative,
+  });
 
   return (
     <ActionWrapper
