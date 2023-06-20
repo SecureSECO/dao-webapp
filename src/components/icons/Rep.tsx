@@ -20,10 +20,10 @@ const Rep = ({ className, ...props }: React.BaseHTMLAttributes<SVGElement>) => {
       <g fill="none" fillRule="evenodd">
         <circle cx="16" cy="16" fill="currentColor" fillRule="nonzero" r="16" />
         <svg
-          width="65%"
-          height="65%"
-          x="18.5%"
-          y="18.5%"
+          width="60%"
+          height="60%"
+          x="20%"
+          y="20%"
           viewBox="0 0 301 363.752"
           xmlns="http://www.w3.org/2000/svg"
         >
