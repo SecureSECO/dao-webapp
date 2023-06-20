@@ -192,12 +192,16 @@ export const useDepositAssets = ({
 
   // Keep approval state updated
   useEffect(() => {
-    const whenAmountUnkown =
+    const approvalNotNeeded = pool === 'General' || pool === undefined;
+    const amountUnkownButApprovedMoreThanZero =
       isNullOrUndefined(amount) && approvedAmount?.gt(constants.Zero);
     const approvedMoreThanAmount =
       amount !== undefined && approvedAmount?.gte(amount);
     const approved =
-      pool === 'General' || whenAmountUnkown || approvedMoreThanAmount || false;
+      approvalNotNeeded ||
+      amountUnkownButApprovedMoreThanZero ||
+      approvedMoreThanAmount ||
+      false;
 
     setIsApproved(approved);
   }, [pool, amount, approvedAmount]);
