@@ -57,7 +57,7 @@ type DepositAssetsData = {
 
 type Token = (typeof Tokens)[number];
 // All tokens (including native tokens)
-const Tokens = ['Matic', 'SECOIN', 'Other'] as const;
+const Tokens = ['Matic', 'SECOIN', 'DAI', 'Other'] as const;
 
 export const DepositAssets = () => {
   const {
@@ -92,6 +92,11 @@ export const DepositAssets = () => {
       decimals: PREFERRED_NETWORK_METADATA.nativeCurrency.decimals,
     },
     SECOIN: secoin,
+    DAI: {
+      address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
+      isNativeToken: false,
+      decimals: 18,
+    },
     Other: undefined,
   };
 
@@ -115,6 +120,9 @@ export const DepositAssets = () => {
   // State for loading symbol during transaction
   const [isSendingTransaction, setIsSendingTransaction] =
     useState<boolean>(false);
+
+  // State for loading symbol during approval
+  const [isSendingApproval, setIsSendingApproval] = useState<boolean>(false);
 
   // OnSubmit: First validate data, then send the transaction
   const onSubmit = (data: DepositAssetsData) => {
@@ -199,7 +207,7 @@ export const DepositAssets = () => {
         className="text-lg"
       />
       <Card className="space-y-4">
-        <Header className="">Deposit assets</Header>
+        <Header className="">Deposit</Header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-y-2">
@@ -335,16 +343,20 @@ export const DepositAssets = () => {
                     <Button
                       label="Approve"
                       type="button"
-                      onClick={() =>
+                      icon={isSendingApproval ? Loading : null}
+                      disabled={isSendingApproval}
+                      onClick={() => {
+                        setIsSendingApproval(true);
                         toast.contractTransaction(() => approve(), {
                           success: 'Approved!',
                           error: 'Could not approve',
-                        })
-                      }
+                          onFinish: () => setIsSendingApproval(false),
+                        });
+                      }}
                     />
                   )}
                   <ConditionalButton
-                    label="Deposit assets"
+                    label="Deposit"
                     disabled={
                       !isKnownToken || isSendingTransaction || !isApproved
                     }
