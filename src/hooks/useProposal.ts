@@ -26,6 +26,7 @@ import {
 import { BigNumber, ContractTransaction } from 'ethers';
 import { useAccount } from 'wagmi';
 
+import { ProposalApproveSpendingAction } from '../components/proposal/actions/ApproveSpendingAction';
 import {
   FacetCutAction,
   ProposalDiamondCutAction,
@@ -181,6 +182,19 @@ export const dummyDiamondCutAction: ProposalDiamondCutAction = {
         initCalldata: null!,
       },
     ],
+  },
+};
+
+/**
+ * Dummy Approve spending action
+ */
+export const dummyApproveSpendingAction: ProposalApproveSpendingAction = {
+  interface: 'DAO',
+  method: 'ApproveERC20',
+  params: {
+    spender: '0x1eF2db73AfFdd73D4e219638b5ffB62a564f17ea',
+    amount: BigNumber.from(1000),
+    _contractAddress: '0xA5E81f58AF7ab276c1B86f12E882B2Dfe4e0b095',
   },
 };
 
