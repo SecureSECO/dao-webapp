@@ -63,7 +63,12 @@ export const TimezoneSelector = ({
       control={control}
       name={name}
       render={({ field: { onChange, name, value } }) => (
-        <Select defaultValue={value} value={value} onValueChange={onChange} name={name}>
+        <Select
+          defaultValue={value}
+          value={value}
+          onValueChange={onChange}
+          name={name}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Timezone" />
           </SelectTrigger>
