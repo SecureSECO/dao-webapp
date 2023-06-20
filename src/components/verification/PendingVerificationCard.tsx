@@ -12,6 +12,7 @@
  */
 
 import { useState } from 'react';
+import Loading from '@/src/components/icons/Loading';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import CategoryList, { Category } from '@/src/components/ui/CategoryList';
@@ -177,7 +178,8 @@ const PendingVerificationCard = ({
             });
           }}
           disabled={isBusy}
-          label={isBusy ? 'Verifying...' : isSuccess ? 'Success' : 'Finish'}
+          icon={isBusy ? Loading : undefined}
+          label={isSuccess ? 'Success' : 'Finish'}
         />
         <Dialog>
           <DialogTrigger asChild>
