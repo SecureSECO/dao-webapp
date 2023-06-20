@@ -11,8 +11,10 @@
 import { useEffect, useState } from 'react';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
+import { useTokenInfo } from '@/src/hooks/useTokenInfo';
 import { ACTIONS } from '@/src/lib/constants/actions';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { CONFIG } from '@/src/lib/constants/config';
 import { TokenInfo, getTokenInfo } from '@/src/lib/utils/token';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
@@ -38,7 +40,9 @@ export const ApproveSpendingAction = ({
   action,
   ...props
 }: DiamondCutActionProps) => {
-  const { loading, tokenInfo } = useTokenInfo(action.params._contractAddress);
+  const { loading, tokenInfo } = useTokenInfo({
+    address: action.params._contractAddress,
+  });
 
   const isUnlimited = action.params.amount.eq(constants.MaxUint256);
   const showTokenAmount = !loading && tokenInfo !== null;
@@ -47,11 +51,9 @@ export const ApproveSpendingAction = ({
     <ActionWrapper
       icon={ACTIONS.approve_spending.icon}
       title="Approve ERC20 spending"
-      description={`
-Approve a spender to spend an amount of ${
+      description={`Approve a spender to spend an amount of ${
         tokenInfo === null ? 'ERC20 token' : tokenInfo.name
-      }.
-      `}
+      }.`}
       {...props}
     >
       <div className="space-y-2 flex flex-col">
@@ -81,33 +83,4 @@ Approve a spender to spend an amount of ${
       </div>
     </ActionWrapper>
   );
-};
-
-const useTokenInfo = (contractAddress: string) => {
-  const provider = useProvider();
-
-  const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const fetchTokenInfo = async () => {
-    setLoading(true);
-    try {
-      const info = await getTokenInfo(
-        contractAddress,
-        provider,
-        PREFERRED_NETWORK_METADATA.nativeCurrency
-      );
-      setTokenInfo(info);
-    } catch {
-      setTokenInfo(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTokenInfo();
-  }, [contractAddress]);
-
-  return { tokenInfo, loading };
 };
