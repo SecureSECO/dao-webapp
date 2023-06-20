@@ -55,6 +55,7 @@ export type UseProposalProps = {
   useDummyData?: boolean;
 };
 
+// #region Dummy data
 /**
  * Dummy mint tokens action
  */
@@ -261,7 +262,16 @@ export const dummyVotes: AddressVotes[] = [
     ],
   },
 ];
+// #endregion
 
+/**
+ * Hook to fetch a proposal from the DAO that the current Diamond Governance client has been instantiated with.
+ * @param props The properties to configure the hook.
+ * @param props.id The id of the proposal to fetch.
+ * @param props.address The address of the currently connected wallet.
+ * @param props.useDummyData Whether to use dummy data instead of fetching the proposal from the DAO.
+ * @returns An object containing the proposal, loading state, error state, whether the proposal can be executed, whether the user can vote on the proposal, the votes on the proposal and a method to refetch the proposal.
+ */
 export const useProposal = ({
   id,
   address,

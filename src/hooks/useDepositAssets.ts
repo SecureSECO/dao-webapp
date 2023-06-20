@@ -43,6 +43,15 @@ export type useDepositAssetsProps = {
   amount?: BigNumber;
 };
 
+/**
+ * Hook to deposit assets to the DAO that the current Diamond Governance client has been instantiated with.
+ * @param props The properties to configure the hook.
+ * @param props.token The token to deposit.
+ * @param props.pool The pool to deposit to.
+ * @param props.amount The amount to deposit.
+ * @returns An object containing the loading state, error state, approval state and a method to deposit assets.
+ * @see useDiamondSDKContext
+ */
 export const useDepositAssets = ({
   token,
   pool,

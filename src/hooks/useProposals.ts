@@ -55,6 +55,18 @@ const dummyProposals: Proposal[] = [
   } as unknown as Proposal,
 ];
 
+/**
+ * Hook to fetch the proposals of the DAO that the current Diamond Governance client has been instantiated with.
+ * @param props The properties to configure the hook.
+ * @param props.useDummyData Whether to use dummy data instead of fetching the proposals from the DAO.
+ * @param props.status The status of the proposals to fetch.
+ * @param props.sorting The sorting method to use for the proposals.
+ * @param props.order The order to sort the proposals in.
+ * @param props.limit The maximum number of proposals to return.
+ * @param props.fromIndex The index of the first proposal to return.
+ * @returns An object containing the proposals, the total number of proposals, the number of proposals when applying the
+ * given filters, loading state, error state and a separate loading state for the proposal count.
+ */
 export const useProposals = (props?: UseProposalsProps): UseProposalsData => {
   const { useDummyData, status, sorting, order, limit, fromIndex } =
     Object.assign(defaultProps, props);

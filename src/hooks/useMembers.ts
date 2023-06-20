@@ -36,6 +36,15 @@ export type Member = { address: string; bal: BigNumber | null };
 
 const dummyMembers: Member[] = [];
 
+/**
+ * Hook to fetch the members of the DAO that the current Diamond Governance client has been instantiated with.
+ * @param props The properties to configure the hook.
+ * @param props.useDummyData Whether to use dummy data instead of fetching the members from the DAO.
+ * @param props.includeBalances Whether to include the balances of the members in the result.
+ * @param props.limit The maximum number of members to return.
+ * @returns An object containing the members, the total number of DAO members, loading state, error state and a method to check if an address is a member.
+ * @see Member for the type of object returned in the members list
+ */
 export const useMembers = (props?: UseMembersProps): UseMembersData => {
   const { useDummyData, includeBalances, limit } = Object.assign(
     defaultProps,

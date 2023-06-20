@@ -31,6 +31,13 @@ export type FetchVariableResult =
   | null
   | undefined;
 
+/**
+ * Fetches the value of a variable from the DAO.
+ * @param interfaceName The name of the interface to fetch the variable from.
+ * @param variableName The name of the variable to fetch.
+ * @param client The DiamondGovernanceClient to use for fetching the variable.
+ * @returns The value of the variable.
+ */
 export const fetchVariableValue = async (
   interfaceName: string,
   variableName: string,
@@ -41,6 +48,14 @@ export const fetchVariableValue = async (
   return value as FetchVariableResult;
 };
 
+/**
+ * Hook to fetch a variable from the DAO that the current Diamond Governance client has been instantiated with.
+ * @param props The properties to configure the hook.
+ * @param props.interfaceName The name of the interface to fetch the variable from.
+ * @param props.variableName The name of the variable to fetch.
+ * @param props.useDummyData Whether to use dummy data instead of fetching the variable from the DAO.
+ * @returns An object containing the variable value, loading state and error state.
+ */
 export const useDaoVariable = ({
   interfaceName,
   variableName,

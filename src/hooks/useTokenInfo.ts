@@ -19,6 +19,14 @@ export type useTokenInfoProps = {
   enabled?: boolean;
 };
 
+/**
+ * Hook to fetch token info for a given address using the `getTokenInfo` function.
+ * @param address The address of the token.
+ * @param tokenType The type of token to fetch info for (either erc20 or erc721). Defaults to erc20.
+ * @param enabled Whether to enable the hook or not (will not fetch when disabled).
+ * @returns An object containing the token info, loading state and error state.
+ * @see getTokenInfo
+ */
 export const useTokenInfo = ({
   address,
   enabled = true,
