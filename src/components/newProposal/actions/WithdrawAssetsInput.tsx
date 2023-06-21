@@ -105,12 +105,12 @@ export const WithdrawAssetsInput = () => {
     error || loading || !daoBalances
       ? []
       : daoBalances.filter(
-          (token) =>
+          (bal) =>
             !anyNullOrUndefined(
-              token.name,
-              token.symbol,
-              token.address,
-              token.balance
+              bal.token?.name,
+              bal.token?.symbol,
+              bal.token?.address,
+              bal.balance
             )
         );
 
@@ -200,10 +200,12 @@ export const WithdrawAssetsInput = () => {
               <Select
                 onValueChange={(v) => {
                   onChange(v);
-                  let token = undefined;
+                  let bal = undefined;
                   if (v && v !== 'custom') {
-                    token = filteredDaoBalances.find((x) => x.address === v);
-                    if (token) setValue(`${prefix}.tokenType`, token.type);
+                    bal = filteredDaoBalances.find(
+                      (x) => x.token?.address === v
+                    );
+                    if (bal) setValue(`${prefix}.tokenType`, bal.type);
                   }
 
                   // Set the token decimals
@@ -220,11 +222,11 @@ export const WithdrawAssetsInput = () => {
                       );
                       break;
                     case TokenType.ERC20:
-                      if (token?.decimals) {
+                      if (bal?.token?.decimals) {
                         setIsManualDecimalEntry(false);
                         setValue(
                           `${prefix}.tokenDecimals`,
-                          token.decimals.toString()
+                          bal.token.decimals.toString()
                         );
                       } else {
                         getERC20Decimals();
@@ -245,19 +247,19 @@ export const WithdrawAssetsInput = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>DAO treasury</SelectLabel>
-                    {filteredDaoBalances.map((token, i) => (
-                      <SelectItem key={i} value={token.address ?? ''}>
+                    {filteredDaoBalances.map((bal, i) => (
+                      <SelectItem key={i} value={bal.token?.address ?? ''}>
                         <div className="flex flex-row items-center gap-x-1">
                           <p>
-                            {!token.name || token.name === ''
+                            {!bal.token?.name || bal.token.name === ''
                               ? 'Unknown'
-                              : token.name}{' '}
+                              : bal.token.name}{' '}
                             -{' '}
                           </p>
                           <TokenAmount
-                            amount={token.balance}
-                            tokenDecimals={token.decimals}
-                            symbol={token.symbol ?? undefined}
+                            amount={bal.balance}
+                            tokenDecimals={bal.token?.decimals}
+                            symbol={bal.token?.symbol ?? undefined}
                           />
                         </div>
                       </SelectItem>
