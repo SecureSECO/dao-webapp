@@ -10,13 +10,11 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { CONFIG } from '@/src/lib/constants/config';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { getErrorMessage } from '@/src/lib/utils';
-import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber, ContractTransaction, ethers } from 'ethers';
-
-import { useLocalStorage } from './useLocalStorage';
 
 type QueryResponse = any;
 type CheckResponse = any;

@@ -9,11 +9,13 @@
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import {
+  FetchVariableResult,
+  fetchVariableValue,
+} from '@/src/hooks/useDaoVariable';
+import {
   DiamondGovernanceClient,
   InterfaceVariables,
 } from '@plopmenz/diamond-governance-sdk';
-
-import { FetchVariableResult, fetchVariableValue } from './useDaoVariable';
 
 export type UseDaoVariablesValuesData = Record<
   string,

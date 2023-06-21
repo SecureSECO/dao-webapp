@@ -7,21 +7,20 @@
  */
 
 import { useEffect } from 'react';
-import {
-  HiChevronDoubleLeft,
-  HiChevronDoubleRight,
-  HiChevronLeft,
-  HiChevronRight,
-} from 'react-icons/hi2';
-
-import { Button } from './Button';
+import { Button } from '@/src/components/ui/Button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from './Select';
+} from '@/src/components/ui/Select';
+import {
+  HiChevronDoubleLeft,
+  HiChevronDoubleRight,
+  HiChevronLeft,
+  HiChevronRight,
+} from 'react-icons/hi2';
 
 export type PaginationControlsProps = {
   getPageSize: () => number;
