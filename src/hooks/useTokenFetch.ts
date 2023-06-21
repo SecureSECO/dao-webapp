@@ -42,12 +42,7 @@ export const useTokenFetch = () => {
     if (!AddressPattern.test(cleanAddress)) return null;
 
     // Check address against the cache
-    if (cache.has(cleanAddress)) {
-      console.log('Cache hit for token info', cleanAddress);
-
-      return cache.get(cleanAddress) as TokenInfo;
-    }
-    console.log('Cache miss for token info', cleanAddress);
+    if (cache.has(cleanAddress)) return cache.get(cleanAddress) as TokenInfo;
 
     try {
       const info = await fetchTokenInfo(cleanAddress, provider, tokenType);

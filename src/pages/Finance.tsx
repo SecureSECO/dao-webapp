@@ -89,28 +89,25 @@ const DaoTokensList = ({
       </p>
     );
 
-  const balances = daoBalances
-    .slice() //Copies array
-    .sort((a, b) => (a.updateDate < b.updateDate ? 1 : -1))
-    .slice(0, limit);
+  const balances = daoBalances.slice(0, limit);
 
   return (
     <div className="space-y-4">
       {balances.map((balance: DaoBalance, i) => (
         <Card key={i} size="sm" variant="light">
           <p className="font-bold capitalize">
-            {balance.name != '' && balance.name ? balance.name : 'Unkown Token'}
+            {balance.token?.name ? balance.token.name : 'Unkown Token'}
           </p>
           <div className="flex flex-row items-center">
             <TokenAmount
               amount={balance.balance}
-              tokenDecimals={balance.decimals}
-              symbol={balance.symbol ?? undefined}
+              tokenDecimals={balance.token?.decimals}
+              symbol={balance.token?.symbol ?? undefined}
             />
             <span className="px-2">•</span>
             <span className="text-popover-foreground/80">
               <Address
-                address={balance.address ?? '-'}
+                address={balance.token?.address ?? '-'}
                 length="sm"
                 hasLink
                 showCopy

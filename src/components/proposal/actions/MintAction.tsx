@@ -114,7 +114,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
       setSummary({
         newTokens,
         newHolders,
-        totalTokens: tokenInfo.totalSupply?.add(newTokens) ?? newTokens,
+        totalTokens: tokenInfo?.totalSupply?.add(newTokens) ?? newTokens,
         totalHolders: memberCount + newHolders,
       });
     }

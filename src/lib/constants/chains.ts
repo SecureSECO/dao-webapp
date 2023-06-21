@@ -79,6 +79,7 @@ export type NativeTokenData = {
   name: string;
   symbol: string;
   decimals: number;
+  address: `0x${string}`;
 };
 
 export type ChainData = {
@@ -108,6 +109,7 @@ export const CHAIN_METADATA: ChainList = {
       name: 'MATIC',
       symbol: 'MATIC',
       decimals: 18,
+      address: '0x0000000000000000000000000000000000001010',
     },
     etherscanApi: 'https://api.polygonscan.com/api',
     alchemyName: 'polygon-mainnet',
@@ -124,6 +126,7 @@ export const CHAIN_METADATA: ChainList = {
       name: 'MATIC',
       symbol: 'MATIC',
       decimals: 18,
+      address: '0x0000000000000000000000000000000000001010',
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
     alchemyName: 'polygon-mumbai',

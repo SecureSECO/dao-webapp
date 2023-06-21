@@ -195,7 +195,33 @@ export const useDaoTransfers = (
       // },
     ];
 
-    // setDaoTransfers(data.map(transferToDaoTransfer));
+    setDaoTransfers([
+      {
+        type: TransferType.DEPOSIT,
+        tokenType: TokenType.ERC20,
+        creationDate: new Date(),
+        transferId: '1',
+        to: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+        from: '0xc8541aae19c5069482239735ad64fac3dcc52ca2',
+        amount: BigNumber.from('0x4563918244F40000'),
+        token: {
+          address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
+          name: 'Dai Stablecoin',
+          symbol: 'DAI',
+          decimals: 18,
+        },
+      },
+      {
+        type: TransferType.DEPOSIT,
+        tokenType: TokenType.NATIVE,
+        creationDate: new Date(),
+        transferId: '2',
+        to: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+        from: '0xc8541aae19c5069482239735ad64fac3dcc52ca2',
+        amount: BigNumber.from('0x4563918244F40000'),
+        token: PREFERRED_NETWORK_METADATA.nativeCurrency,
+      },
+    ]);
   };
 
   useEffect(() => {

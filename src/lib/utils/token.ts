@@ -17,6 +17,7 @@ export type TokenInfo = {
   decimals?: number;
   name?: string;
   symbol?: string;
+  address: string;
   totalSupply?: BigNumber;
 };
 
@@ -32,8 +33,8 @@ export async function fetchTokenInfo(
   address: string | undefined,
   provider: providers.Provider,
   tokenType: TokenType = TokenType.ERC20
-): Promise<TokenInfo> {
-  if (!address) return {};
+): Promise<TokenInfo | null> {
+  if (!address) return null;
   if (isNativeToken(address) || tokenType === TokenType.NATIVE)
     return PREFERRED_NETWORK_METADATA.nativeCurrency;
 
@@ -53,6 +54,7 @@ export async function fetchTokenInfo(
         name: values[1],
         symbol: values[2],
         totalSupply: values[3],
+        address,
       };
     } else if (tokenType === TokenType.ERC721) {
       // erc721 can be used for both ERC721 and ERC1155 tokens, since we're only trying to get the name here
@@ -67,13 +69,14 @@ export async function fetchTokenInfo(
       return {
         name,
         decimals: 0, // ERC721 tokens do not have decimals
+        address,
       };
     }
   } catch (error) {
     console.error('Error getting token info from contract: ', error);
   }
 
-  return {};
+  return null;
 }
 
 /**
