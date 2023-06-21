@@ -239,6 +239,7 @@ export const WithdrawAssetsInput = () => {
                   }
                 }}
                 defaultValue={value}
+                value={value}
                 name={name}
                 required
               >
@@ -319,6 +320,7 @@ export const WithdrawAssetsInput = () => {
                   }
                 }}
                 defaultValue={value}
+                value={value}
                 name={name}
                 required
               >

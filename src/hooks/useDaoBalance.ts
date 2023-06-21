@@ -39,6 +39,11 @@ const defaultProps: UseDaoBalanceProps = {
   useDummyData: false,
 };
 
+/**
+ * Hook to fetch the DAO balances for the DAO that the current Diamond Governance client has been instantiated with.
+ * @param props The properties to configure the hook.
+ * @returns An object containing the DAO balances, loading state and error state.
+ */
 export const useDaoBalance = (
   props?: UseDaoBalanceProps
 ): UseDaoBalanceData => {

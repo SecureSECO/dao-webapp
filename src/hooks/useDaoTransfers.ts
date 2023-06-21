@@ -63,6 +63,11 @@ const defaultProps: UseDaoTransfersProps = {
   limit: 10,
 };
 
+/**
+ * Hook to fetch the DAO transfers for the DAO that the current Diamond Governance client has been instantiated with.
+ * @param props The properties to configure the hook.
+ * @returns An object containing the DAO transfers, loading state and error state.
+ */
 export const useDaoTransfers = (
   props?: UseDaoTransfersProps
 ): UseDaoTransfersData => {

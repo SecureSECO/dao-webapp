@@ -1,10 +1,9 @@
 /**
  * Used to access the active toasts and create new ones.
  *
- * inspired by https://ui.shadcn.com/docs/primitives/toast
+ * adapted from https://ui.shadcn.com/docs/primitives/toast
+ * changes were made to make it more similar to the react-hot-toast library
  */
-
-// Inspired by react-hot-toast library
 
 import * as React from 'react';
 import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
