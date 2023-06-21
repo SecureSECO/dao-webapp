@@ -91,6 +91,7 @@ export type ChainData = {
   rpc: string;
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
+  alchemyName: string;
 };
 
 export type ChainList = Record<SupportedNetworks, ChainData>;
@@ -109,6 +110,7 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api.polygonscan.com/api',
+    alchemyName: 'polygon-mainnet',
   },
   mumbai: {
     id: 80001,
@@ -124,6 +126,7 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
+    alchemyName: 'polygon-mumbai',
   },
 };
 

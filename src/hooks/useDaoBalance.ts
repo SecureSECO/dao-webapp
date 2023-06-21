@@ -7,11 +7,11 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useAlchemySDKContext } from '@/src/context/AlchemySDK';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
-import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
+import { Alchemy } from 'alchemy-sdk';
 import { constants } from 'ethers';
 
 export type UseDaoBalanceData = {
@@ -46,19 +46,21 @@ export const useDaoBalance = (
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { client } = useAragonSDKContext();
+  const client = useAlchemySDKContext();
   const { daoAddress } = useDiamondSDKContext();
 
-  const fetchDaoBalance = async (client: Client) => {
+  const fetchDaoBalance = async (client: Alchemy) => {
     if (!daoAddress) return;
 
     try {
-      const daoBal: AssetBalance[] | null = await client.methods.getDaoBalances(
-        { daoAddressOrEns: daoAddress }
-      );
+      const nativeBal = await client.core.getBalance(daoAddress);
+      const daoBal = await client.core.getTokenBalances(daoAddress);
+
       let balances: DaoBalance[] = [];
       if (daoBal != null) {
-        balances = daoBal.map((dBal) => assetBalanceToDaoBalance(dBal));
+        balances = daoBal.tokenBalances.map((dBal) =>
+          assetBalanceToDaoBalance(dBal)
+        );
       }
       setDaoBalances(balances);
 

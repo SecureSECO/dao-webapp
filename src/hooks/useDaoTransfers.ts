@@ -7,19 +7,16 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useAlchemySDKContext } from '@/src/context/AlchemySDK';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { getErrorMessage } from '@/src/lib/utils';
 import {
-  Client,
-  ITransferQueryParams,
-  SortDirection,
-  TokenType,
-  Transfer,
-  TransferSortBy,
-  TransferType,
-} from '@aragon/sdk-client';
+  Alchemy,
+  AssetTransfersCategory,
+  AssetTransfersParams,
+  SortingOrder,
+} from 'alchemy-sdk';
 
 export type UseDaoTransfersData = {
   daoTransfers: DaoTransfer[] | null;
@@ -60,26 +57,28 @@ export const useDaoTransfers = (
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { client } = useAragonSDKContext();
+  const client = useAlchemySDKContext();
   const { daoAddress } = useDiamondSDKContext();
 
-  const fetchDaoTransfers = async (client: Client) => {
+  const fetchDaoTransfers = async (client: Alchemy) => {
     if (!daoAddress) return;
 
     try {
-      const params: ITransferQueryParams = {
-        daoAddressOrEns: daoAddress,
-        sortBy: TransferSortBy.CREATED_AT, // optional
-        limit, // optional
-        skip: 0, // optional
-        direction: SortDirection.DESC, // optional, options: DESC or ASC
+      const params: AssetTransfersParams = {
+        toAddress: daoAddress,
+        maxCount: limit,
+        order: SortingOrder.DESCENDING,
+        category: [
+          AssetTransfersCategory.EXTERNAL,
+          AssetTransfersCategory.INTERNAL,
+          AssetTransfersCategory.ERC20,
+        ],
       };
 
-      const transfers: Transfer[] | null = await client.methods.getDaoTransfers(
-        params
-      );
+      const transfers = await client.core.getAssetTransfers(params);
 
-      const daoTransfers = transfers?.map(transferToDaoTransfer) ?? null;
+      const daoTransfers =
+        transfers.transfers.map(transferToDaoTransfer) ?? null;
       setDaoTransfers(daoTransfers);
       setLoading(false);
       setError(null);

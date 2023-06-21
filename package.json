@@ -16,7 +16,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@aragon/sdk-client": "^1.4.0",
     "@plopmenz/diamond-governance-sdk": "^0.2.1",
     "@radix-ui/react-accordion": "^1.1.1",
     "@radix-ui/react-alert-dialog": "^1.0.3",
@@ -45,6 +44,7 @@
     "@walletconnect/types": "^2.7.2",
     "@web3modal/ethereum": "^2.3.7",
     "@web3modal/react": "^2.3.7",
+    "alchemy-sdk": "^2.9.0",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
     "date-fns": "^2.30.0",
