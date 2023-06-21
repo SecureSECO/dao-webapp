@@ -135,7 +135,6 @@ export const DaoTransfersList = ({
   loading,
   error,
   daoTransfers,
-  limit = daoTransfers?.length ?? 3,
 }: DaoTransfersListProps): JSX.Element => {
   if (loading)
     return (
@@ -160,11 +159,9 @@ export const DaoTransfersList = ({
       </p>
     );
 
-  const transfers = daoTransfers.slice(0, limit);
-
   return (
     <div className="space-y-4">
-      {transfers.map((transfer: DaoTransfer) => (
+      {daoTransfers.map((transfer: DaoTransfer) => (
         <Card key={transfer.transferId} size="sm" variant="light">
           <div className="flex flex-row justify-between">
             <div className="text-left">
@@ -247,14 +244,17 @@ const Finance = () => {
     loading: tokensLoading,
     error: tokensError,
   } = useDaoBalance();
-  const [tokenLimit, setTokenLimit] = useState(3);
+  const [tokenLimit, setTokenLimit] = useState(4);
 
+  const [transferLimit, setTransferLimit] = useState(4);
   const {
     daoTransfers,
+    recentCount,
     loading: transfersLoading,
     error: trasnfersError,
-  } = useDaoTransfers();
-  const [transferLimit, setTransferLimit] = useState(3);
+  } = useDaoTransfers({
+    limit: transferLimit,
+  });
 
   return (
     <div className="space-y-6">
@@ -283,22 +283,13 @@ const Finance = () => {
                 label="Show more tokens"
                 icon={HiArrowSmallRight}
                 onClick={() =>
-                  setTokenLimit(tokenLimit + Math.min(tokenLimit, 25))
+                  setTokenLimit(tokenLimit + Math.min(tokenLimit, 16))
                 }
               />
             )}
           </div>
         </MainCard>
-        <MainCard
-          header={
-            <DefaultMainCardHeader
-              value={daoTransfers?.length ?? 0}
-              label="transfers completed"
-            />
-          }
-          loading={transfersLoading}
-          icon={HiArrowsRightLeft}
-        >
+        <MainCard header="Transfers" icon={HiArrowsRightLeft}>
           <div className="space-y-4">
             <DaoTransfersList
               daoTransfers={daoTransfers}
@@ -306,13 +297,13 @@ const Finance = () => {
               loading={transfersLoading}
               error={trasnfersError}
             />
-            {daoTransfers && transferLimit < daoTransfers.length && (
+            {daoTransfers && (
               <Button
                 variant="outline"
                 label="Show more transfers"
                 icon={HiArrowSmallRight}
                 onClick={() =>
-                  setTransferLimit(transferLimit + Math.min(transferLimit, 25))
+                  setTransferLimit(transferLimit + Math.min(transferLimit, 16))
                 }
               />
             )}

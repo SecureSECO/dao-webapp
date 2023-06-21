@@ -22,7 +22,7 @@ import {
   AssetTransfersResult,
   SortingOrder,
 } from 'alchemy-sdk';
-import { compareDesc, parse, parseISO } from 'date-fns';
+import { compareDesc, parse, parseISO, sub } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useProvider } from 'wagmi';
 
@@ -30,6 +30,7 @@ export type UseDaoTransfersData = {
   daoTransfers: DaoTransfer[] | null;
   loading: boolean;
   error: string | null;
+  recentCount: number | null;
 };
 
 export enum TransferType {
@@ -73,6 +74,7 @@ export const useDaoTransfers = (
 ): UseDaoTransfersData => {
   const { useDummyData, limit } = Object.assign(defaultProps, props);
   const [daoTransfers, setDaoTransfers] = useState<DaoTransfer[] | null>(null);
+  const [recentCount, setRecentCount] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const provider = useProvider({
@@ -136,8 +138,16 @@ export const useDaoTransfers = (
             a.creationDate ?? Number.MAX_SAFE_INTEGER,
             b.creationDate ?? Number.MAX_SAFE_INTEGER
           )
-        );
+        )
+        .slice(0, limit);
 
+      // Calculate recent transfers count as transfers that happened in the last 24 hours within the given limit
+      const dayAgo = sub(new Date(), { days: 1 });
+      const recentCount = daoTransfers.filter(
+        (t) =>
+          compareDesc(t.creationDate ?? Number.MAX_SAFE_INTEGER, dayAgo) <= 0
+      ).length;
+      setRecentCount(recentCount);
       setDaoTransfers(daoTransfers);
       setLoading(false);
       setError(null);
@@ -211,6 +221,7 @@ export const useDaoTransfers = (
     loading,
     error,
     daoTransfers,
+    recentCount,
   };
 };
 
@@ -245,12 +256,6 @@ const transferToDaoTransfer = async (
   const isNft =
     transfer.category === AssetTransfersCategory.ERC721 ||
     transfer.category === AssetTransfersCategory.ERC1155;
-  console.log(
-    secoinAddress &&
-      secoinAddress.toLowerCase() ===
-        transfer.rawContract.address?.toLowerCase()
-  );
-
   const tokenInfo =
     secoinAddress &&
     transfer.rawContract.address &&
