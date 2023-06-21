@@ -66,7 +66,7 @@ const Dashboard = () => {
     loading: membersLoading,
     error: membersError,
     memberCount,
-  } = useMembers({ limit: 8 });
+  } = useMembers({ limit: 7 });
 
   return (
     <div className="grid grid-cols-7 gap-6">

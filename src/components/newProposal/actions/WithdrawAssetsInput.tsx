@@ -29,6 +29,7 @@ import {
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useDaoBalance } from '@/src/hooks/useDaoBalance';
+import { useTokenFetch } from '@/src/hooks/useTokenFetch';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import {
   AddressPattern,
@@ -37,10 +38,8 @@ import {
 } from '@/src/lib/constants/patterns';
 import { TokenType } from '@/src/lib/constants/tokens';
 import { anyNullOrUndefined, assertUnreachable, cn } from '@/src/lib/utils';
-import { getTokenInfo } from '@/src/lib/utils/token';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
-import { useProvider } from 'wagmi';
 
 export interface ProposalFormWithdrawData {
   name: 'withdraw_assets';
@@ -95,8 +94,6 @@ export const WithdrawAssetsInput = () => {
     getValues,
   } = useFormContext<ProposalFormActions>();
 
-  const provider = useProvider();
-
   const { prefix, index, onRemove } = useContext(ActionFormContext);
 
   const errors: ActionFormError<ProposalFormWithdrawData> = formErrors.actions
@@ -126,6 +123,7 @@ export const WithdrawAssetsInput = () => {
 
   const address = useWatch({ control, name: `${prefix}.tokenAddress` });
   const tokenType = useWatch({ control, name: `${prefix}.tokenType` });
+  const { getTokenInfo } = useTokenFetch();
 
   const [isManualDecimalEntry, setIsManualDecimalEntry] =
     useState<boolean>(false);
@@ -135,9 +133,7 @@ export const WithdrawAssetsInput = () => {
     setValue(`${prefix}.tokenDecimals`, decimalsLoadingText);
 
     const tokenInfo = await getTokenInfo(
-      getValues(`${prefix}.tokenAddressCustom`),
-      provider,
-      PREFERRED_NETWORK_METADATA.nativeCurrency
+      getValues(`${prefix}.tokenAddressCustom`)
     );
     if (tokenInfo?.decimals) {
       setValue(`${prefix}.tokenDecimals`, tokenInfo.decimals.toString());

@@ -8,18 +8,13 @@
 
 /* eslint-disable no-unused-vars */
 
-import { useEffect, useState } from 'react';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { useTokenInfo } from '@/src/hooks/useTokenInfo';
 import { ACTIONS } from '@/src/lib/constants/actions';
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { CONFIG } from '@/src/lib/constants/config';
-import { TokenInfo, getTokenInfo } from '@/src/lib/utils/token';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber, constants } from 'ethers';
-import { useProvider } from 'wagmi';
 
 import Loading from '../../icons/Loading';
 import TokenAmount from '../../ui/TokenAmount';

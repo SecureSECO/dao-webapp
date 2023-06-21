@@ -6,8 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { NativeTokenData } from '@/src/lib/constants/chains';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
 import { BigNumber, Contract, constants, providers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
@@ -27,19 +28,19 @@ export type TokenInfo = {
  * @param tokenType Type of token to get info for. Defaults to 'erc20'
  * @returns Decimals, name, symbol and total supply of the token (where possible)
  */
-export async function getTokenInfo(
+export async function fetchTokenInfo(
   address: string | undefined,
   provider: providers.Provider,
-  nativeTokenData: NativeTokenData | undefined,
-  tokenType: 'erc20' | 'erc721' = 'erc20'
+  tokenType: TokenType = TokenType.ERC20
 ): Promise<TokenInfo> {
   if (!address) return {};
-  if (isNativeToken(address)) return { ...nativeTokenData };
+  if (isNativeToken(address) || tokenType === TokenType.NATIVE)
+    return PREFERRED_NETWORK_METADATA.nativeCurrency;
 
   const contract = new Contract(address, erc20ABI, provider);
 
   try {
-    if (tokenType === 'erc20') {
+    if (tokenType === TokenType.ERC20) {
       const values = await Promise.all([
         contract.decimals(),
         contract.name(),
@@ -53,7 +54,7 @@ export async function getTokenInfo(
         symbol: values[2],
         totalSupply: values[3],
       };
-    } else if (tokenType === 'erc721') {
+    } else if (tokenType === TokenType.ERC721) {
       // erc721 can be used for both ERC721 and ERC1155 tokens, since we're only trying to get the name here
 
       // Note that we use the ERC20 ABI here as well, since it contains the name() function

@@ -10,11 +10,11 @@
 import { useEffect, useState } from 'react';
 import { useAlchemySDKContext } from '@/src/context/AlchemySDK';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { TokenFetch, useTokenFetch } from '@/src/hooks/useTokenFetch';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { TOKENS, TokenType } from '@/src/lib/constants/tokens';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { getErrorMessage } from '@/src/lib/utils';
-import { TokenInfo, getTokenInfo } from '@/src/lib/utils/token';
-import { Provider } from '@wagmi/core';
+import { TokenInfo } from '@/src/lib/utils/token';
 import {
   Alchemy,
   AssetTransfersCategory,
@@ -22,9 +22,8 @@ import {
   AssetTransfersResult,
   SortingOrder,
 } from 'alchemy-sdk';
-import { compareDesc, parse, parseISO, sub } from 'date-fns';
+import { compareDesc, parseISO, sub } from 'date-fns';
 import { BigNumber } from 'ethers';
-import { useProvider } from 'wagmi';
 
 export type UseDaoTransfersData = {
   daoTransfers: DaoTransfer[] | null;
@@ -51,7 +50,7 @@ export type DaoTransfer = {
   to: string | null;
   from: string;
   amount: BigNumber | null;
-  token: TokenInfo;
+  token: TokenInfo | null;
 };
 
 export type UseDaoTransfersProps = {
@@ -77,12 +76,10 @@ export const useDaoTransfers = (
   const [recentCount, setRecentCount] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const provider = useProvider({
-    chainId: PREFERRED_NETWORK_METADATA.id,
-  });
+  const { getTokenInfo } = useTokenFetch();
 
   const client = useAlchemySDKContext();
-  const { daoAddress, secoinAddress } = useDiamondSDKContext();
+  const { daoAddress } = useDiamondSDKContext();
 
   const fetchDaoTransfers = async (client: Alchemy) => {
     if (!daoAddress) return;
@@ -106,24 +103,14 @@ export const useDaoTransfers = (
           .getAssetTransfers({ ...params, toAddress: daoAddress })
           .then((res) =>
             res.transfers.map((t) =>
-              transferToDaoTransfer(
-                t,
-                TransferType.DEPOSIT,
-                provider,
-                secoinAddress
-              )
+              transferToDaoTransfer(t, TransferType.DEPOSIT, getTokenInfo)
             )
           ),
         client.core
           .getAssetTransfers({ ...params, fromAddress: daoAddress })
           .then((res) =>
             res.transfers.map((t) =>
-              transferToDaoTransfer(
-                t,
-                TransferType.WITHDRAW,
-                provider,
-                secoinAddress
-              )
+              transferToDaoTransfer(t, TransferType.WITHDRAW, getTokenInfo)
             )
           ),
       ]);
@@ -250,25 +237,17 @@ export const transferCategoryToTokenType = (
 const transferToDaoTransfer = async (
   transfer: AssetTransfersResult,
   type: TransferType = TransferType.DEPOSIT,
-  provider: Provider,
-  secoinAddress?: string
+  getTokenInfo: TokenFetch
 ): Promise<DaoTransfer> => {
   const isNft =
     transfer.category === AssetTransfersCategory.ERC721 ||
     transfer.category === AssetTransfersCategory.ERC1155;
-  const tokenInfo =
-    secoinAddress &&
-    transfer.rawContract.address &&
-    secoinAddress.toLowerCase() === transfer.rawContract.address?.toLowerCase()
-      ? TOKENS.secoin
-      : transfer.rawContract.address
-      ? await getTokenInfo(
-          transfer.rawContract.address,
-          provider,
-          PREFERRED_NETWORK_METADATA.nativeCurrency,
-          isNft ? 'erc721' : 'erc20'
-        )
-      : PREFERRED_NETWORK_METADATA.nativeCurrency;
+  const tokenInfo = transfer.rawContract.address
+    ? await getTokenInfo(
+        transfer.rawContract.address,
+        isNft ? TokenType.ERC721 : TokenType.ERC20
+      )
+    : PREFERRED_NETWORK_METADATA.nativeCurrency;
 
   const creationDate = (transfer as any).metadata.blockTimestamp;
 

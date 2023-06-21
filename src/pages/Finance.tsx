@@ -173,13 +173,17 @@ export const DaoTransfersList = ({
               )}
             </div>
             <div className="flex flex-col items-end text-right">
-              <TokenAmount
-                className="font-bold"
-                amount={transfer.amount}
-                tokenDecimals={transfer.token.decimals}
-                symbol={transfer.token.symbol ?? undefined}
-                sign={transfertypeToSign(transfer.type)}
-              />
+              {transfer.token ? (
+                <TokenAmount
+                  className="font-bold"
+                  amount={transfer.amount}
+                  tokenDecimals={transfer.token.decimals}
+                  symbol={transfer.token.symbol ?? undefined}
+                  sign={transfertypeToSign(transfer.type)}
+                />
+              ) : (
+                <p className="font-bold">?</p>
+              )}
               <div className="text-popover-foreground/80">
                 <Address
                   address={daoTransferAddress(transfer)}
@@ -249,7 +253,6 @@ const Finance = () => {
   const [transferLimit, setTransferLimit] = useState(4);
   const {
     daoTransfers,
-    recentCount,
     loading: transfersLoading,
     error: trasnfersError,
   } = useDaoTransfers({
@@ -297,7 +300,7 @@ const Finance = () => {
               loading={transfersLoading}
               error={trasnfersError}
             />
-            {daoTransfers && (
+            {daoTransfers && transferLimit <= daoTransfers.length && (
               <Button
                 variant="outline"
                 label="Show more transfers"
