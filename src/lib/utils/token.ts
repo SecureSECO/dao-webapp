@@ -24,6 +24,7 @@ export type TokenInfo = {
  * @param address Token contract address. Zero address is the native token.
  * @param provider Eth provider
  * @param nativeTokenData Information about the current native token
+ * @param tokenType Type of token to get info for. Defaults to 'erc20'
  * @returns Decimals, name, symbol and total supply of the token (where possible)
  */
 export async function getTokenInfo(

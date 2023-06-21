@@ -23,9 +23,12 @@ import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { Skeleton } from '@/src/components/ui/Skeleton';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
-import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
+import {
+  DaoTransfer,
+  TransferType,
+  useDaoTransfers,
+} from '@/src/hooks/useDaoTransfers';
 import { ACTIONS } from '@/src/lib/constants/actions';
-import { TransferType } from '@aragon/sdk-client';
 import { format } from 'date-fns';
 import {
   HiArrowSmallRight,
@@ -162,18 +165,22 @@ export const DaoTransfersList = ({
   return (
     <div className="space-y-4">
       {transfers.map((transfer: DaoTransfer) => (
-        <Card key={transfer.transactionId} size="sm" variant="light">
+        <Card key={transfer.transferId} size="sm" variant="light">
           <div className="flex flex-row justify-between">
             <div className="text-left">
-              <p className="font-bold capitalize">{transfer.type}</p>
-              <p className="text-sm">{format(transfer.creationDate, 'Pp')}</p>
+              <p className="font-bold lowercase first-letter:capitalize">
+                {transfer.type}
+              </p>
+              {transfer.creationDate && (
+                <p className="text-sm">{format(transfer.creationDate, 'Pp')}</p>
+              )}
             </div>
             <div className="flex flex-col items-end text-right">
               <TokenAmount
                 className="font-bold"
                 amount={transfer.amount}
-                tokenDecimals={transfer.decimals}
-                symbol={transfer.tokenSymbol ?? undefined}
+                tokenDecimals={transfer.token.decimals}
+                symbol={transfer.token.symbol ?? undefined}
                 sign={transfertypeToSign(transfer.type)}
               />
               <div className="text-popover-foreground/80">
@@ -229,7 +236,7 @@ const daoTransferAddress = (transfer: DaoTransfer): string => {
     return transfer.from;
   }
   if (transfer.type === TransferType.WITHDRAW) {
-    return transfer.to;
+    return transfer.to ?? '-';
   }
   throw new Error('Unreachable exception');
 };

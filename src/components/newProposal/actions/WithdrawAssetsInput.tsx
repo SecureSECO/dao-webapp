@@ -35,9 +35,9 @@ import {
   IntegerPattern,
   NumberPattern,
 } from '@/src/lib/constants/patterns';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { anyNullOrUndefined, assertUnreachable, cn } from '@/src/lib/utils';
 import { getTokenInfo } from '@/src/lib/utils/token';
-import { TokenType } from '@aragon/sdk-client';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';

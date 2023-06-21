@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { useAlchemySDKContext } from '@/src/context/AlchemySDK';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { getErrorMessage } from '@/src/lib/utils';
 import { Alchemy } from 'alchemy-sdk';
 import { constants } from 'ethers';

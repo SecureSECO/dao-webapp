@@ -16,7 +16,7 @@ import { Alchemy, Network } from 'alchemy-sdk';
 
 const AlchemySDKContext = createContext<Alchemy>(
   new Alchemy({
-    apiKey: 'pcs2ZCBzRPKEq6_e-oj8AgSUmhHRtMj3',
+    apiKey: import.meta.env.VITE_ALCHEMY_KEY,
     network: PREFERRED_NETWORK_METADATA.alchemyName as Network,
   })
 );

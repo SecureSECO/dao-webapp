@@ -57,13 +57,15 @@ const Dashboard = () => {
     daoTransfers,
     loading: daoTransfersLoading,
     error: daoTransfersError,
-  } = useDaoTransfers();
+  } = useDaoTransfers({
+    limit: 4,
+  });
   const {
     members,
     loading: membersLoading,
     error: membersError,
     memberCount,
-  } = useMembers({ limit: 5 });
+  } = useMembers({ limit: 8 });
 
   return (
     <div className="grid grid-cols-7 gap-6">
@@ -166,7 +168,6 @@ const Dashboard = () => {
 
         {/* Card containing the latest dao transfers */}
         <MainCard
-          loading={daoTransfersLoading}
           icon={HiCircleStack}
           header={
             <DefaultMainCardHeader
