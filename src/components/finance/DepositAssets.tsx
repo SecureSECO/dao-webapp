@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import Loading from '@/src/components/icons/Loading';
 import { Address } from '@/src/components/ui/Address';
+import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import {
   ConditionalButton,
@@ -46,8 +47,6 @@ import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiChevronLeft } from 'react-icons/hi2';
 import { useAccount, useBalance, useNetwork, Address as wAddress } from 'wagmi';
-
-import { Button } from '../ui/Button';
 
 type DepositAssetsData = {
   token: Token;

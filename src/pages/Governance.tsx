@@ -17,6 +17,7 @@ import {
 } from '@/src/components/ui/Dropdown';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import { Link } from '@/src/components/ui/Link';
+import { PaginationControls } from '@/src/components/ui/PaginationControls';
 import { Skeleton } from '@/src/components/ui/Skeleton';
 import SortSelector from '@/src/components/ui/SortSelector';
 import {
@@ -34,8 +35,6 @@ import {
   SortingOrder,
 } from '@plopmenz/diamond-governance-sdk';
 import { HiChevronDown } from 'react-icons/hi2';
-
-import { PaginationControls } from '../components/ui/PaginationControls';
 
 const Governance = () => {
   return (

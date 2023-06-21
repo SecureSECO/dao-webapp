@@ -7,16 +7,18 @@
  */
 
 import { Card } from '@/src/components/ui/Card';
+import {
+  DataTable,
+  HeaderSortableDecorator,
+} from '@/src/components/ui/DataTable';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
-import { InterfaceVariables } from '@plopmenz/diamond-governance-sdk';
-import { ColumnDef } from '@tanstack/react-table';
-
-import { DataTable, HeaderSortableDecorator } from '../components/ui/DataTable';
 import {
   UseDaoVariablesValuesData,
   useDaoVariables,
-} from '../hooks/useDaoVariables';
-import { DAO_VARIABLES_METADATA } from '../lib/constants/DaoVariablesMetadata';
+} from '@/src/hooks/useDaoVariables';
+import { DAO_VARIABLES_METADATA } from '@/src/lib/constants/DaoVariablesMetadata';
+import { InterfaceVariables } from '@plopmenz/diamond-governance-sdk';
+import { ColumnDef } from '@tanstack/react-table';
 
 type DisplaySetting = {
   interfaceName: string;

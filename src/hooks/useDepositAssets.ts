@@ -7,6 +7,10 @@
  */
 
 import { useEffect, useState } from 'react';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { erc20ABI } from '@/src/lib/constants/erc20ABI';
+import { isNullOrUndefined } from '@/src/lib/utils';
 import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber, constants } from 'ethers';
 import {
@@ -18,11 +22,6 @@ import {
   usePrepareSendTransaction,
   useSendTransaction,
 } from 'wagmi';
-
-import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
-import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
-import { erc20ABI } from '../lib/constants/erc20ABI';
-import { isNullOrUndefined } from '../lib/utils';
 
 export const pools = [
   'General',

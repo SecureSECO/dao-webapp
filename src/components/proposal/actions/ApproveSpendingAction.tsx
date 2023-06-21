@@ -8,17 +8,16 @@
 
 /* eslint-disable no-unused-vars */
 
+import Loading from '@/src/components/icons/Loading';
+import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
+import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useTokenInfo } from '@/src/hooks/useTokenInfo';
 import { ACTIONS } from '@/src/lib/constants/actions';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber, constants } from 'ethers';
-
-import Loading from '../../icons/Loading';
-import TokenAmount from '../../ui/TokenAmount';
-import ActionWrapper from './ActionWrapper';
 
 export interface ProposalApproveSpendingAction extends Action {
   params: {
