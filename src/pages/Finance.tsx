@@ -7,6 +7,7 @@
  */
 
 import { useState } from 'react';
+import Loading from '@/src/components/icons/Loading';
 import { Address } from '@/src/components/ui/Address';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
@@ -245,12 +246,13 @@ const Finance = () => {
     loading: tokensLoading,
     error: tokensError,
   } = useDaoBalance();
-  const [tokenLimit, setTokenLimit] = useState(4);
+  const [tokenLimit, setTokenLimit] = useState(5);
 
-  const [transferLimit, setTransferLimit] = useState(4);
+  const [transferLimit, setTransferLimit] = useState(5);
   const {
     daoTransfers,
     loading: transfersLoading,
+    refetching: transfersRefetching,
     error: trasnfersError,
   } = useDaoTransfers({
     limit: transferLimit,
@@ -283,7 +285,7 @@ const Finance = () => {
                 label="Show more tokens"
                 icon={HiArrowSmallRight}
                 onClick={() =>
-                  setTokenLimit(tokenLimit + Math.min(tokenLimit, 16))
+                  setTokenLimit(tokenLimit + Math.min(tokenLimit, 25))
                 }
               />
             )}
@@ -297,13 +299,15 @@ const Finance = () => {
               loading={transfersLoading}
               error={trasnfersError}
             />
-            {daoTransfers && transferLimit <= daoTransfers.length && (
+            {((daoTransfers && transferLimit <= daoTransfers.length) ||
+              transfersRefetching) && (
               <Button
                 variant="outline"
+                disabled={transfersRefetching}
                 label="Show more transfers"
-                icon={HiArrowSmallRight}
+                icon={transfersRefetching ? Loading : HiArrowSmallRight}
                 onClick={() =>
-                  setTransferLimit(transferLimit + Math.min(transferLimit, 16))
+                  setTransferLimit(transferLimit + Math.min(transferLimit, 25))
                 }
               />
             )}
