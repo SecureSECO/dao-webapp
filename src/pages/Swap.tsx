@@ -401,10 +401,10 @@ const Swap = () => {
                           <TokenAmount
                             amount={estimatedGas}
                             tokenDecimals={
-                              PREFERRED_NETWORK_METADATA.nativeCurrency.decimals
+                              PREFERRED_NETWORK_METADATA.nativeToken.decimals
                             }
                             symbol={
-                              PREFERRED_NETWORK_METADATA.nativeCurrency.symbol
+                              PREFERRED_NETWORK_METADATA.nativeToken.symbol
                             }
                             showSmallAmounts
                             displayDecimals={8}

@@ -85,9 +85,9 @@ export const DepositAssets = () => {
     : undefined;
   const tokens: Record<Token, TokenData | undefined> = {
     Matic: {
-      address: PREFERRED_NETWORK_METADATA.nativeCurrency.address,
+      address: PREFERRED_NETWORK_METADATA.nativeToken.address,
       isNativeToken: true,
-      decimals: PREFERRED_NETWORK_METADATA.nativeCurrency.decimals,
+      decimals: PREFERRED_NETWORK_METADATA.nativeToken.decimals,
     },
     SECOIN: secoin,
     DAI: {

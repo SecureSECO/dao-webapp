@@ -8,6 +8,7 @@
 /* eslint-disable no-unused-vars */
 
 import { useState } from 'react';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
 import { AddressPattern } from '@/src/lib/constants/patterns';
 import { TokenType } from '@/src/lib/constants/tokens';
@@ -45,7 +46,12 @@ export const useTokenFetch = () => {
     if (cache.has(cleanAddress)) return cache.get(cleanAddress) as TokenInfo;
 
     try {
-      const info = await fetchTokenInfo(cleanAddress, provider, tokenType);
+      const info = await fetchTokenInfo(
+        cleanAddress,
+        provider,
+        PREFERRED_NETWORK_METADATA.nativeToken,
+        tokenType
+      );
       setCache(cache.set(cleanAddress, info));
       return info;
     } catch (e) {

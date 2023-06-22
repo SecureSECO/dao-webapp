@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { TokenType } from '@/src/lib/constants/tokens';
 import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
@@ -24,19 +23,20 @@ export type TokenInfo = {
 /**
  * Get the token info for a given token address
  * @param address Token contract address. Zero address is the native token.
- * @param provider Eth provider
- * @param nativeTokenData Information about the current native token
- * @param tokenType Type of token to get info for. Defaults to 'erc20'
+ * @param provider Provider to use for fetching token info.
+ * @param nativeTokenData Data for the native token of the chain.
+ * @param tokenType Type of token to get info for. Defaults to 'erc20'.
  * @returns Decimals, name, symbol and total supply of the token (where possible)
  */
 export async function fetchTokenInfo(
   address: string | undefined,
   provider: providers.Provider,
+  nativeTokenData: TokenInfo,
   tokenType: TokenType = TokenType.ERC20
 ): Promise<TokenInfo | null> {
   if (!address) return null;
   if (isNativeToken(address) || tokenType === TokenType.NATIVE)
-    return PREFERRED_NETWORK_METADATA.nativeCurrency;
+    return nativeTokenData;
 
   const contract = new Contract(address, erc20ABI, provider);
 

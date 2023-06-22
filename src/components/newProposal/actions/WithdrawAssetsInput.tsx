@@ -70,7 +70,7 @@ type TokenTypeInfo = {
 const tokenTypesInfo: TokenTypeInfo[] = [
   {
     type: TokenType.NATIVE,
-    displayName: `Native token: ${PREFERRED_NETWORK_METADATA.nativeCurrency.name}`,
+    displayName: `Native token: ${PREFERRED_NETWORK_METADATA.nativeToken.name}`,
   },
   {
     type: TokenType.ERC20,
@@ -218,7 +218,7 @@ export const WithdrawAssetsInput = () => {
                       setIsManualDecimalEntry(false);
                       setValue(
                         `${prefix}.tokenDecimals`,
-                        PREFERRED_NETWORK_METADATA.nativeCurrency.decimals.toString()
+                        PREFERRED_NETWORK_METADATA.nativeToken.decimals.toString()
                       );
                       break;
                     case TokenType.ERC20:

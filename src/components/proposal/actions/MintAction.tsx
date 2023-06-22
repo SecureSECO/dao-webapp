@@ -15,6 +15,7 @@ import { Card } from '@/src/components/ui/Card';
 import CategoryList, { Category } from '@/src/components/ui/CategoryList';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useMembers } from '@/src/hooks/useMembers';
+import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import {
@@ -102,7 +103,11 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
 
   useEffect(() => {
     async function fetchSummary() {
-      const tokenInfo = await fetchTokenInfo(CONFIG.DIAMOND_ADDRESS, provider);
+      const tokenInfo = await fetchTokenInfo(
+        CONFIG.DIAMOND_ADDRESS,
+        provider,
+        PREFERRED_NETWORK_METADATA.nativeToken
+      );
       const newTokens = action.params._amounts.reduce(
         (acc, curr) => acc.add(curr),
         BigNumber.from(0)

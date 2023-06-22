@@ -76,7 +76,7 @@ export const useDaoBalance = (
         {
           type: TokenType.NATIVE,
           balance: nativeBal,
-          token: PREFERRED_NETWORK_METADATA.nativeCurrency,
+          token: PREFERRED_NETWORK_METADATA.nativeToken,
         },
       ]);
 
@@ -96,7 +96,7 @@ export const useDaoBalance = (
     const nativeBal: DaoBalance = {
       type: TokenType.NATIVE,
       balance: BigNumber.from('0x4563918244F40000'),
-      token: PREFERRED_NETWORK_METADATA.nativeCurrency,
+      token: PREFERRED_NETWORK_METADATA.nativeToken,
     };
     const erc20Bal: DaoBalance = {
       type: TokenType.ERC20,

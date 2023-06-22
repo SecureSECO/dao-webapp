@@ -219,7 +219,7 @@ export const useDaoTransfers = (
         to: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
         from: '0xc8541aae19c5069482239735ad64fac3dcc52ca2',
         amount: BigNumber.from('0x4563918244F40000'),
-        token: PREFERRED_NETWORK_METADATA.nativeCurrency,
+        token: PREFERRED_NETWORK_METADATA.nativeToken,
       },
     ]);
   };
@@ -273,7 +273,7 @@ const transferToDaoTransfer = async (
         transfer.rawContract.address,
         isNft ? TokenType.ERC721 : TokenType.ERC20
       )
-    : PREFERRED_NETWORK_METADATA.nativeCurrency;
+    : PREFERRED_NETWORK_METADATA.nativeToken;
 
   const creationDate = (transfer as any).metadata.blockTimestamp;
 
