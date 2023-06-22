@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Loading from '@/src/components/icons/Loading';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
@@ -17,9 +17,10 @@ import {
 } from '@/src/components/ui/ConditionalButton';
 import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
 import Header from '@/src/components/ui/Header';
-import { LabelledInput } from '@/src/components/ui/Input';
+import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { Link } from '@/src/components/ui/Link';
+import { MaxButton } from '@/src/components/ui/MaxButton';
 import {
   Select,
   SelectContent,
@@ -36,13 +37,13 @@ import {
   pools,
   useDepositAssets,
 } from '@/src/hooks/useDepositAssets';
-import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
 import { ContractTransactionToast, toast } from '@/src/hooks/useToast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { NumberPattern } from '@/src/lib/constants/patterns';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils.js';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiChevronLeft } from 'react-icons/hi2';
 import { useAccount, useBalance, useNetwork, Address as wAddress } from 'wagmi';
@@ -51,7 +52,7 @@ import { Button } from '../ui/Button';
 
 type DepositAssetsData = {
   token: Token;
-  pool: Pools;
+  pool?: Pools;
   amount?: string;
 };
 
@@ -67,12 +68,14 @@ export const DepositAssets = () => {
     formState: { errors },
     setError,
     setValue,
-    getValues,
-  } = useForm<DepositAssetsData>({});
+  } = useForm<DepositAssetsData>({
+    defaultValues: {
+      pool: 'General',
+    },
+  });
   // Context
   const { daoAddress, secoinAddress } = useDiamondSDKContext();
   const { isConnected, address } = useAccount();
-  const { secoinBalance } = useSecoinBalance({ address });
   const { data: maticData } = useBalance({ address });
   const { chain } = useNetwork();
 
@@ -110,7 +113,7 @@ export const DepositAssets = () => {
 
   const pool = useWatch({ control, name: 'pool' });
 
-  const { isLoading, error, isApproved, approve, depositAssets } =
+  const { isLoading, error, isApproved, balance, approve, depositAssets } =
     useDepositAssets({
       token,
       pool,
@@ -211,117 +214,145 @@ export const DepositAssets = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-y-2">
-              <div className="flex flex-col gap-y-1">
-                <Label
-                  tooltip="Pool to send assets to. Pools other than 'general' can only receive SECOIN"
-                  htmlFor="token"
-                >
-                  Pool
-                </Label>
-                <ErrorWrapper name="Pool" error={errors?.pool}>
-                  <Controller
-                    control={control}
-                    name="pool"
-                    rules={{ required: true }}
-                    render={({ field: { onChange, name, value } }) => (
-                      <Select
-                        defaultValue={undefined}
-                        value={value}
-                        onValueChange={(v) => {
-                          if (v !== 'General') {
-                            setValue('token', 'SECOIN');
+              <div className="flex flex-col md:flex-row gap-2">
+                <div className="flex w-full flex-col gap-y-1">
+                  <Label
+                    tooltip="Pool to send assets to. Pools other than 'general' can only receive SECOIN"
+                    htmlFor="token"
+                  >
+                    Pool
+                  </Label>
+                  <ErrorWrapper name="Pool" error={errors?.pool}>
+                    <Controller
+                      control={control}
+                      name="pool"
+                      rules={{ required: true }}
+                      render={({ field: { onChange, name, value } }) => (
+                        <Select
+                          defaultValue={undefined}
+                          value={value}
+                          onValueChange={(v) => {
+                            if (v !== 'General') {
+                              setValue('token', 'SECOIN');
+                            }
+                            onChange(v);
+                          }}
+                          name={name}
+                          disabled={isSendingTransaction}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a pool" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Pools</SelectLabel>
+                              {pools.map((pool) => (
+                                <SelectItem key={pool} value={pool}>
+                                  {pool}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </ErrorWrapper>
+                </div>
+                <div className="flex w-full flex-col gap-y-1">
+                  <Label tooltip="Asset to deposit" htmlFor="token">
+                    Token
+                  </Label>
+                  <ErrorWrapper name="token" error={errors?.token}>
+                    <Controller
+                      control={control}
+                      name="token"
+                      rules={{ required: true }}
+                      render={({ field: { onChange, name, value } }) => (
+                        <Select
+                          defaultValue={undefined}
+                          value={value}
+                          onValueChange={(v) => {
+                            if (v !== 'SECOIN') {
+                              setValue('pool', 'General');
+                            }
+                            onChange(v);
+                          }}
+                          name={name}
+                          disabled={
+                            isSendingTransaction ||
+                            (pool !== undefined && pool !== 'General')
                           }
-                          onChange(v);
-                        }}
-                        name={name}
-                        disabled={isSendingTransaction}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a pool" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Pools</SelectLabel>
-                            {pools.map((pool) => (
-                              <SelectItem key={pool} value={pool}>
-                                {pool}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </ErrorWrapper>
-              </div>
-              <div className="flex flex-col gap-y-1">
-                <Label tooltip="Asset to deposit" htmlFor="token">
-                  Token
-                </Label>
-                <ErrorWrapper name="token" error={errors?.token}>
-                  <Controller
-                    control={control}
-                    name="token"
-                    rules={{ required: true }}
-                    render={({ field: { onChange, name, value } }) => (
-                      <Select
-                        defaultValue={undefined}
-                        value={value}
-                        onValueChange={(v) => {
-                          if (v !== 'SECOIN') {
-                            setValue('pool', 'General');
-                          }
-                          onChange(v);
-                        }}
-                        name={name}
-                        disabled={
-                          isSendingTransaction ||
-                          (pool !== undefined && pool !== 'General')
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a token" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Tokens</SelectLabel>
-                            {Tokens.map((token) => (
-                              <SelectItem key={token} value={token}>
-                                {token}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </ErrorWrapper>
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a token" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Tokens</SelectLabel>
+                              {Tokens.map((token) => (
+                                <SelectItem key={token} value={token}>
+                                  {token}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </ErrorWrapper>
+                </div>
               </div>
               {watchToken !== 'Other' && (
-                <LabelledInput
-                  {...register('amount', {
-                    validate: (v) => {
-                      // only Validate if this is active
-                      if (!isKnownToken) return true;
+                <>
+                  <Label
+                    tooltip={`Amount of ${watchToken ?? 'token'} to deposit`}
+                  >
+                    Amount
+                  </Label>
+                  <div className="flex p-4 h-24 bg-popover text-popover-foreground rounded-md border border-input">
+                    <Input
+                      {...register('amount', {
+                        validate: (v) => {
+                          // only Validate if this is active
+                          if (!isKnownToken) return true;
 
-                      // Required
-                      if (v === undefined || v === '')
-                        return 'Please enter an amount';
+                          // Required
+                          if (v === undefined || v === '')
+                            return 'Please enter an amount';
 
-                      // Number Pattern
-                      if (!NumberPattern.test(v))
-                        return 'Please enter a number, e.g. 3.141';
+                          // Number Pattern
+                          if (!NumberPattern.test(v))
+                            return 'Please enter a number, e.g. 3.141';
 
-                      // Otherwise this is valid
-                      return true;
-                    },
-                  })}
-                  id="amount"
-                  tooltip={`Amount of ${watchToken ?? 'token'} to deposit`}
-                  label="Amount"
-                  error={errors.amount}
-                  disabled={!isKnownToken || isSendingTransaction}
-                />
+                          // Otherwise this is valid
+                          return true;
+                        },
+                      })}
+                      id="amount"
+                      className="border-none text-2xl [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [appearance:textfield] focus:ring-0 focus:ring-offset-0"
+                      placeholder={'0.0'}
+                      error={errors.amount}
+                      disabled={!isKnownToken || isSendingTransaction}
+                    />
+                    {balance !== undefined && (
+                      <div className="flex flex-col gap-1 items-end">
+                        <div className="rounded-full bg-primary w-fit h-fit px-2 py-0.5 flex gap-x-2 items-center justify-center text-primary-foreground">
+                          {balance.symbol}
+                        </div>
+                        <MaxButton
+                          decimals={balance.decimals}
+                          max={balance.value}
+                          setMaxValue={() => {
+                            setValue(
+                              'amount',
+                              formatUnits(balance.value, balance.decimals)
+                            );
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
             {watchToken === 'Other' ? (
@@ -391,14 +422,13 @@ export const DepositAssets = () => {
                       },
                       {
                         when:
-                          watchToken === 'SECOIN' &&
-                          secoinBalance !== undefined &&
+                          balance !== undefined &&
                           amount !== null &&
-                          amount.gt(secoinBalance),
+                          amount.gt(balance.value),
                         content: (
                           <Warning>
-                            You do not have enough {TOKENS.secoin.symbol} to
-                            deposit
+                            You do not have enough {balance?.symbol ?? 'tokens'}{' '}
+                            to deposit
                           </Warning>
                         ),
                       },
