@@ -28,6 +28,7 @@ import { ErrorText } from '@/src/components/ui/ErrorWrapper';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
+import { MaxButton } from '@/src/components/ui/MaxButton';
 import {
   Popover,
   PopoverContent,
@@ -269,7 +270,11 @@ const Swap = () => {
                 {from.name}
               </div>
               {maxFrom === undefined || (
-                <MaxButton max={maxFrom} setMaxValue={setMaxValue} />
+                <MaxButton
+                  max={maxFrom}
+                  decimals={decimals}
+                  setMaxValue={setMaxValue}
+                />
               )}
             </div>
           </div>
@@ -457,32 +462,6 @@ const Swap = () => {
   );
 };
 export default Swap;
-
-const MaxButton = ({
-  max,
-  setMaxValue,
-}: {
-  max: BigNumber;
-  setMaxValue: () => void;
-}) => {
-  return (
-    <div className="inline-flex items-center justify-center gap-x-1">
-      <TokenAmount
-        amount={max}
-        tokenDecimals={decimals}
-        displayDecimals={6}
-        className="whitespace-nowrap"
-      />
-      <button
-        type="button"
-        onClick={setMaxValue}
-        className="w-full p-1 h-fit text-blue-500 underline underline-offset-2 active:scale-95 hover:text-blue-300"
-      >
-        Max
-      </button>
-    </div>
-  );
-};
 
 export const SwapSettings = ({
   register,
