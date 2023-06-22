@@ -7,6 +7,7 @@
  */
 
 import { useState } from 'react';
+import Loading from '@/src/components/icons/Loading';
 import { Address } from '@/src/components/ui/Address';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
@@ -23,9 +24,12 @@ import { DefaultMainCardHeader, MainCard } from '@/src/components/ui/MainCard';
 import { Skeleton } from '@/src/components/ui/Skeleton';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { DaoBalance, useDaoBalance } from '@/src/hooks/useDaoBalance';
-import { DaoTransfer, useDaoTransfers } from '@/src/hooks/useDaoTransfers';
+import {
+  DaoTransfer,
+  TransferType,
+  useDaoTransfers,
+} from '@/src/hooks/useDaoTransfers';
 import { ACTIONS } from '@/src/lib/constants/actions';
-import { TransferType } from '@aragon/sdk-client';
 import { format } from 'date-fns';
 import {
   HiArrowSmallRight,
@@ -86,28 +90,25 @@ const DaoTokensList = ({
       </p>
     );
 
-  const balances = daoBalances
-    .slice() //Copies array
-    .sort((a, b) => (a.updateDate < b.updateDate ? 1 : -1))
-    .slice(0, limit);
+  const balances = daoBalances.slice(0, limit);
 
   return (
     <div className="space-y-4">
       {balances.map((balance: DaoBalance, i) => (
         <Card key={i} size="sm" variant="light">
           <p className="font-bold capitalize">
-            {balance.name != '' && balance.name ? balance.name : 'Unkown Token'}
+            {balance.token?.name ? balance.token.name : 'Unkown Token'}
           </p>
           <div className="flex flex-row items-center">
             <TokenAmount
               amount={balance.balance}
-              tokenDecimals={balance.decimals}
-              symbol={balance.symbol ?? undefined}
+              tokenDecimals={balance.token?.decimals}
+              symbol={balance.token?.symbol ?? undefined}
             />
             <span className="px-2">•</span>
             <span className="text-popover-foreground/80">
               <Address
-                address={balance.address ?? '-'}
+                address={balance.token?.address ?? '-'}
                 length="sm"
                 hasLink
                 showCopy
@@ -132,7 +133,6 @@ export const DaoTransfersList = ({
   loading,
   error,
   daoTransfers,
-  limit = daoTransfers?.length ?? 3,
 }: DaoTransfersListProps): JSX.Element => {
   if (loading)
     return (
@@ -157,25 +157,31 @@ export const DaoTransfersList = ({
       </p>
     );
 
-  const transfers = daoTransfers.slice(0, limit);
-
   return (
     <div className="space-y-4">
-      {transfers.map((transfer: DaoTransfer) => (
-        <Card key={transfer.transactionId} size="sm" variant="light">
+      {daoTransfers.map((transfer: DaoTransfer) => (
+        <Card key={transfer.transferId} size="sm" variant="light">
           <div className="flex flex-row justify-between">
             <div className="text-left">
-              <p className="font-bold capitalize">{transfer.type}</p>
-              <p className="text-sm">{format(transfer.creationDate, 'Pp')}</p>
+              <p className="font-bold lowercase first-letter:capitalize">
+                {transfer.type}
+              </p>
+              {transfer.creationDate && (
+                <p className="text-sm">{format(transfer.creationDate, 'Pp')}</p>
+              )}
             </div>
             <div className="flex flex-col items-end text-right">
-              <TokenAmount
-                className="font-bold"
-                amount={transfer.amount}
-                tokenDecimals={transfer.decimals}
-                symbol={transfer.tokenSymbol ?? undefined}
-                sign={transfertypeToSign(transfer.type)}
-              />
+              {transfer.token ? (
+                <TokenAmount
+                  className="font-bold"
+                  amount={transfer.amount}
+                  tokenDecimals={transfer.token.decimals}
+                  symbol={transfer.token.symbol ?? undefined}
+                  sign={transfertypeToSign(transfer.type)}
+                />
+              ) : (
+                <p className="font-bold">?</p>
+              )}
               <div className="text-popover-foreground/80">
                 <Address
                   address={daoTransferAddress(transfer)}
@@ -229,7 +235,7 @@ const daoTransferAddress = (transfer: DaoTransfer): string => {
     return transfer.from;
   }
   if (transfer.type === TransferType.WITHDRAW) {
-    return transfer.to;
+    return transfer.to ?? '-';
   }
   throw new Error('Unreachable exception');
 };
@@ -240,14 +246,17 @@ const Finance = () => {
     loading: tokensLoading,
     error: tokensError,
   } = useDaoBalance();
-  const [tokenLimit, setTokenLimit] = useState(3);
+  const [tokenLimit, setTokenLimit] = useState(5);
 
+  const [transferLimit, setTransferLimit] = useState(5);
   const {
     daoTransfers,
     loading: transfersLoading,
+    refetching: transfersRefetching,
     error: trasnfersError,
-  } = useDaoTransfers();
-  const [transferLimit, setTransferLimit] = useState(3);
+  } = useDaoTransfers({
+    limit: transferLimit,
+  });
 
   return (
     <div className="space-y-6">
@@ -282,16 +291,7 @@ const Finance = () => {
             )}
           </div>
         </MainCard>
-        <MainCard
-          header={
-            <DefaultMainCardHeader
-              value={daoTransfers?.length ?? 0}
-              label="transfers completed"
-            />
-          }
-          loading={transfersLoading}
-          icon={HiArrowsRightLeft}
-        >
+        <MainCard header="Transfers" icon={HiArrowsRightLeft}>
           <div className="space-y-4">
             <DaoTransfersList
               daoTransfers={daoTransfers}
@@ -299,11 +299,13 @@ const Finance = () => {
               loading={transfersLoading}
               error={trasnfersError}
             />
-            {daoTransfers && transferLimit < daoTransfers.length && (
+            {((daoTransfers && transferLimit <= daoTransfers.length) ||
+              transfersRefetching) && (
               <Button
                 variant="outline"
+                disabled={transfersRefetching}
                 label="Show more transfers"
-                icon={HiArrowSmallRight}
+                icon={transfersRefetching ? Loading : HiArrowSmallRight}
                 onClick={() =>
                   setTransferLimit(transferLimit + Math.min(transferLimit, 25))
                 }

@@ -8,6 +8,8 @@
 
 import * as React from 'react';
 import { useState } from 'react';
+import { Button } from '@/src/components/ui/Button';
+import { PaginationControls } from '@/src/components/ui/PaginationControls';
 import { cn } from '@/src/lib/utils';
 import {
   Column,
@@ -23,9 +25,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { HiArrowDown, HiArrowUp, HiChevronUpDown } from 'react-icons/hi2';
-
-import { Button } from './Button';
-import { PaginationControls } from './PaginationControls';
 
 // Decorators: similair to storybook decorators.
 export const HeaderSortableDecorator = ({

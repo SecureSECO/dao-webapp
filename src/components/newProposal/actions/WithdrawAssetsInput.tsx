@@ -29,18 +29,17 @@ import {
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useDaoBalance } from '@/src/hooks/useDaoBalance';
+import { useTokenFetch } from '@/src/hooks/useTokenFetch';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import {
   AddressPattern,
   IntegerPattern,
   NumberPattern,
 } from '@/src/lib/constants/patterns';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { anyNullOrUndefined, assertUnreachable, cn } from '@/src/lib/utils';
-import { getTokenInfo } from '@/src/lib/utils/token';
-import { TokenType } from '@aragon/sdk-client';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiBanknotes, HiXMark } from 'react-icons/hi2';
-import { useProvider } from 'wagmi';
 
 export interface ProposalFormWithdrawData {
   name: 'withdraw_assets';
@@ -71,7 +70,7 @@ type TokenTypeInfo = {
 const tokenTypesInfo: TokenTypeInfo[] = [
   {
     type: TokenType.NATIVE,
-    displayName: `Native token: ${PREFERRED_NETWORK_METADATA.nativeCurrency.name}`,
+    displayName: `Native token: ${PREFERRED_NETWORK_METADATA.nativeToken.name}`,
   },
   {
     type: TokenType.ERC20,
@@ -95,8 +94,6 @@ export const WithdrawAssetsInput = () => {
     getValues,
   } = useFormContext<ProposalFormActions>();
 
-  const provider = useProvider();
-
   const { prefix, index, onRemove } = useContext(ActionFormContext);
 
   const errors: ActionFormError<ProposalFormWithdrawData> = formErrors.actions
@@ -108,12 +105,12 @@ export const WithdrawAssetsInput = () => {
     error || loading || !daoBalances
       ? []
       : daoBalances.filter(
-          (token) =>
+          (bal) =>
             !anyNullOrUndefined(
-              token.name,
-              token.symbol,
-              token.address,
-              token.balance
+              bal.token?.name,
+              bal.token?.symbol,
+              bal.token?.address,
+              bal.balance
             )
         );
 
@@ -126,6 +123,7 @@ export const WithdrawAssetsInput = () => {
 
   const address = useWatch({ control, name: `${prefix}.tokenAddress` });
   const tokenType = useWatch({ control, name: `${prefix}.tokenType` });
+  const { getTokenInfo } = useTokenFetch();
 
   const [isManualDecimalEntry, setIsManualDecimalEntry] =
     useState<boolean>(false);
@@ -135,9 +133,7 @@ export const WithdrawAssetsInput = () => {
     setValue(`${prefix}.tokenDecimals`, decimalsLoadingText);
 
     const tokenInfo = await getTokenInfo(
-      getValues(`${prefix}.tokenAddressCustom`),
-      provider,
-      PREFERRED_NETWORK_METADATA.nativeCurrency
+      getValues(`${prefix}.tokenAddressCustom`)
     );
     if (tokenInfo?.decimals) {
       setValue(`${prefix}.tokenDecimals`, tokenInfo.decimals.toString());
@@ -204,10 +200,12 @@ export const WithdrawAssetsInput = () => {
               <Select
                 onValueChange={(v) => {
                   onChange(v);
-                  let token = undefined;
+                  let bal = undefined;
                   if (v && v !== 'custom') {
-                    token = filteredDaoBalances.find((x) => x.address === v);
-                    if (token) setValue(`${prefix}.tokenType`, token.type);
+                    bal = filteredDaoBalances.find(
+                      (x) => x.token?.address === v
+                    );
+                    if (bal) setValue(`${prefix}.tokenType`, bal.type);
                   }
 
                   // Set the token decimals
@@ -220,15 +218,15 @@ export const WithdrawAssetsInput = () => {
                       setIsManualDecimalEntry(false);
                       setValue(
                         `${prefix}.tokenDecimals`,
-                        PREFERRED_NETWORK_METADATA.nativeCurrency.decimals.toString()
+                        PREFERRED_NETWORK_METADATA.nativeToken.decimals.toString()
                       );
                       break;
                     case TokenType.ERC20:
-                      if (token?.decimals) {
+                      if (bal?.token?.decimals) {
                         setIsManualDecimalEntry(false);
                         setValue(
                           `${prefix}.tokenDecimals`,
-                          token.decimals.toString()
+                          bal.token.decimals.toString()
                         );
                       } else {
                         getERC20Decimals();
@@ -249,19 +247,19 @@ export const WithdrawAssetsInput = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>DAO treasury</SelectLabel>
-                    {filteredDaoBalances.map((token, i) => (
-                      <SelectItem key={i} value={token.address ?? ''}>
+                    {filteredDaoBalances.map((bal, i) => (
+                      <SelectItem key={i} value={bal.token?.address ?? ''}>
                         <div className="flex flex-row items-center gap-x-1">
                           <p>
-                            {!token.name || token.name === ''
+                            {!bal.token?.name || bal.token.name === ''
                               ? 'Unknown'
-                              : token.name}{' '}
+                              : bal.token.name}{' '}
                             -{' '}
                           </p>
                           <TokenAmount
-                            amount={token.balance}
-                            tokenDecimals={token.decimals}
-                            symbol={token.symbol ?? undefined}
+                            amount={bal.balance}
+                            tokenDecimals={bal.token?.decimals}
+                            symbol={bal.token?.symbol ?? undefined}
                           />
                         </div>
                       </SelectItem>

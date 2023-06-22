@@ -10,8 +10,8 @@ import { ProposalFormActions } from '@/src/components/newProposal/steps/Actions'
 import { Confirmation } from '@/src/components/newProposal/steps/Confirmation';
 import { ProposalFormMetadata } from '@/src/components/newProposal/steps/Metadata';
 import { ProposalFormVotingSettings } from '@/src/components/newProposal/steps/Voting';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
-import { TokenType } from '@aragon/sdk-client';
 import type { Meta, StoryObj } from '@storybook/react';
 import { constants } from 'ethers';
 

@@ -7,15 +7,13 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useProvider } from 'wagmi';
-
-import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
-import { CONFIG } from '../lib/constants/config';
-import { TokenInfo, getTokenInfo } from '../lib/utils/token';
+import { useTokenFetch } from '@/src/hooks/useTokenFetch';
+import { TokenType } from '@/src/lib/constants/tokens';
+import { TokenInfo } from '@/src/lib/utils/token';
 
 export type useTokenInfoProps = {
   address: string;
-  tokenType?: 'erc20' | 'erc721';
+  tokenType?: TokenType;
   enabled?: boolean;
 };
 
@@ -25,31 +23,24 @@ export type useTokenInfoProps = {
  * @param tokenType The type of token to fetch info for (either erc20 or erc721). Defaults to erc20.
  * @param enabled Whether to enable the hook or not (will not fetch when disabled).
  * @returns An object containing the token info, loading state and error state.
- * @see getTokenInfo
+ * @see fetchTokenInfo
  */
 export const useTokenInfo = ({
   address,
   enabled = true,
   tokenType,
 }: useTokenInfoProps) => {
-  const provider = useProvider({
-    chainId: CONFIG.PREFERRED_NETWORK_ID,
-  });
-
   const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const { getTokenInfo } = useTokenFetch();
 
-  const fetchTokenInfo = async () => {
+  const updateTokenInfo = async () => {
     setError(null);
     setLoading(true);
     try {
-      const info = await getTokenInfo(
-        address,
-        provider,
-        PREFERRED_NETWORK_METADATA.nativeCurrency,
-        tokenType
-      );
+      const info = await getTokenInfo(address, tokenType);
+      if (!info) setError('Could not load token info');
       setTokenInfo(info);
     } catch (e) {
       console.error(e);
@@ -62,7 +53,7 @@ export const useTokenInfo = ({
 
   useEffect(() => {
     if (enabled) {
-      fetchTokenInfo();
+      updateTokenInfo();
     } else {
       setLoading(false);
       setError(null);

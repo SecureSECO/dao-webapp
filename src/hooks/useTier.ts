@@ -7,11 +7,10 @@
  */
 
 import { useEffect, useState } from 'react';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { getErrorMessage } from '@/src/lib/utils';
 import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
-
-import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
-import { getErrorMessage } from '../lib/utils';
 
 /*
  * Hook to retrieve the current tier of the user.

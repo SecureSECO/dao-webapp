@@ -6,9 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Loading from '@/src/components/icons/Loading';
 import { Address } from '@/src/components/ui/Address';
+import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import {
   ConditionalButton,
@@ -47,8 +48,6 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiChevronLeft } from 'react-icons/hi2';
 import { useAccount, useBalance, useNetwork, Address as wAddress } from 'wagmi';
 
-import { Button } from '../ui/Button';
-
 type DepositAssetsData = {
   token: Token;
   pool: Pools;
@@ -67,7 +66,6 @@ export const DepositAssets = () => {
     formState: { errors },
     setError,
     setValue,
-    getValues,
   } = useForm<DepositAssetsData>({});
   // Context
   const { daoAddress, secoinAddress } = useDiamondSDKContext();
@@ -87,9 +85,9 @@ export const DepositAssets = () => {
     : undefined;
   const tokens: Record<Token, TokenData | undefined> = {
     Matic: {
-      address: '0x0000000000000000000000000000000000001010',
+      address: PREFERRED_NETWORK_METADATA.nativeToken.address,
       isNativeToken: true,
-      decimals: PREFERRED_NETWORK_METADATA.nativeCurrency.decimals,
+      decimals: PREFERRED_NETWORK_METADATA.nativeToken.decimals,
     },
     SECOIN: secoin,
     DAI: {

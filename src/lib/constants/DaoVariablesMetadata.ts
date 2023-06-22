@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { TOKENS } from './tokens';
+import { TOKENS } from '@/src/lib/constants/tokens';
 
 export type InterfaceName = string;
 export type VariableName = string;
