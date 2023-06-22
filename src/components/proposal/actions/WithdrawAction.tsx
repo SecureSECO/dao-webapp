@@ -6,23 +6,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useEffect, useState } from 'react';
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { useTokenInfo } from '@/src/hooks/useTokenInfo';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
-import { CONFIG } from '@/src/lib/constants/config';
-import {
-  TokenInfo,
-  getTokenInfo,
-  toAbbreviatedTokenAmount,
-} from '@/src/lib/utils/token';
+import { TokenType } from '@/src/lib/constants/tokens';
+import { toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';
 import { HiArrowRight, HiBanknotes } from 'react-icons/hi2';
-import { useProvider } from 'wagmi';
 
 /**
  * Interface for a withdraw assets action.
@@ -55,7 +49,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
 
   const { tokenInfo } = useTokenInfo({
     address: action.params._contractAddress ?? '',
-    tokenType: action.params._tokenId ? 'erc721' : 'erc20',
+    tokenType: action.params._tokenId ? TokenType.ERC721 : TokenType.ERC20,
     enabled: !isNative,
   });
 
@@ -74,7 +68,7 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
         >
           <p className="text-xl font-medium leading-9">
             {isNative
-              ? PREFERRED_NETWORK_METADATA.nativeCurrency.name
+              ? PREFERRED_NETWORK_METADATA.nativeToken.name
               : tokenInfo?.name ?? 'Unknown token'}
           </p>
           <p className="text-base text-popover-foreground/80">
@@ -85,12 +79,12 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
                     : action.params._amount ?? BigNumber.from(1),
                   tokenDecimals:
                     tokenInfo?.decimals ??
-                    PREFERRED_NETWORK_METADATA.nativeCurrency.decimals,
+                    PREFERRED_NETWORK_METADATA.nativeToken.decimals,
                   displayDecimals: action.params._tokenId ? 0 : 2, // Round to integer for ERC721/ERC1155
                 })
               : '?'}{' '}
             {isNative
-              ? PREFERRED_NETWORK_METADATA.nativeCurrency.symbol
+              ? PREFERRED_NETWORK_METADATA.nativeToken.symbol
               : tokenInfo?.symbol}
           </p>
         </Card>

@@ -28,6 +28,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/Select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/src/components/ui/Tooltip';
 import { useDaoVariable } from '@/src/hooks/useDaoVariable';
 import { useDaoVariables } from '@/src/hooks/useDaoVariables';
 import {
@@ -42,8 +47,6 @@ import {
 import { indexObject, isNullOrUndefined } from '@/src/lib/utils';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { HiCog, HiQuestionMarkCircle, HiXMark } from 'react-icons/hi2';
-
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/Tooltip';
 
 export interface ProposalFormChangeParamData {
   name: 'change_param';

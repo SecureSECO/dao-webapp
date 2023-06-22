@@ -7,9 +7,15 @@
  */
 
 import { useEffect, useState } from 'react';
+import { ProposalApproveSpendingAction } from '@/src/components/proposal/actions/ApproveSpendingAction';
 import { ProposalChangeParamAction } from '@/src/components/proposal/actions/ChangeParamAction';
+import {
+  FacetCutAction,
+  ProposalDiamondCutAction,
+} from '@/src/components/proposal/actions/DiamondCutAction';
 import { ProposalMergeAction } from '@/src/components/proposal/actions/MergeAction';
 import { ProposalMintAction } from '@/src/components/proposal/actions/MintAction';
+import { ProposalWhitelistAction } from '@/src/components/proposal/actions/WhitelistAction';
 import { ProposalWithdrawAction } from '@/src/components/proposal/actions/WithdrawAction';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
@@ -25,13 +31,6 @@ import {
 } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { useAccount } from 'wagmi';
-
-import { ProposalApproveSpendingAction } from '../components/proposal/actions/ApproveSpendingAction';
-import {
-  FacetCutAction,
-  ProposalDiamondCutAction,
-} from '../components/proposal/actions/DiamondCutAction';
-import { ProposalWhitelistAction } from '../components/proposal/actions/WhitelistAction';
 
 export type CanVote = {
   Yes: boolean;

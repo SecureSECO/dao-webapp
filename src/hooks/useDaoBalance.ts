@@ -7,12 +7,15 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useAlchemySDKContext } from '@/src/context/AlchemySDK';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { useTokenFetch } from '@/src/hooks/useTokenFetch';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { getErrorMessage } from '@/src/lib/utils';
-import { AssetBalance, Client, TokenType } from '@aragon/sdk-client';
-import { constants } from 'ethers';
+import { TokenInfo } from '@/src/lib/utils/token';
+import { Alchemy } from 'alchemy-sdk';
+import { BigNumber } from 'ethers';
 
 export type UseDaoBalanceData = {
   daoBalances: DaoBalance[] | null;
@@ -22,12 +25,8 @@ export type UseDaoBalanceData = {
 
 export type DaoBalance = {
   type: TokenType;
-  updateDate: Date;
-  balance: bigint | null;
-  decimals: number | null;
-  address: string | null;
-  name: string | null;
-  symbol: string | null;
+  balance: BigNumber | null;
+  token: TokenInfo | null;
 };
 
 export type UseDaoBalanceProps = {
@@ -50,22 +49,36 @@ export const useDaoBalance = (
   const [daoBalances, setDaoBalances] = useState<DaoBalance[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { getTokenInfo } = useTokenFetch();
 
-  const { client } = useAragonSDKContext();
+  const client = useAlchemySDKContext();
   const { daoAddress } = useDiamondSDKContext();
 
-  const fetchDaoBalance = async (client: Client) => {
+  const fetchDaoBalance = async (client: Alchemy) => {
     if (!daoAddress) return;
 
     try {
-      const daoBal: AssetBalance[] | null = await client.methods.getDaoBalances(
-        { daoAddressOrEns: daoAddress }
+      const nativeBal = await client.core.getBalance(daoAddress);
+      const daoBal = await client.core.getTokenBalances(daoAddress);
+
+      let balances: DaoBalance[] = await Promise.all(
+        daoBal.tokenBalances.map(async (b) => {
+          const tokenInfo = await getTokenInfo(b.contractAddress);
+          return {
+            type: TokenType.ERC20,
+            balance: BigNumber.from(b.tokenBalance),
+            token: tokenInfo,
+          };
+        })
       );
-      let balances: DaoBalance[] = [];
-      if (daoBal != null) {
-        balances = daoBal.map((dBal) => assetBalanceToDaoBalance(dBal));
-      }
-      setDaoBalances(balances);
+      setDaoBalances([
+        ...balances,
+        {
+          type: TokenType.NATIVE,
+          balance: nativeBal,
+          token: PREFERRED_NETWORK_METADATA.nativeToken,
+        },
+      ]);
 
       setLoading(false);
       setError(null);
@@ -80,33 +93,23 @@ export const useDaoBalance = (
     setLoading(false);
     setError(null);
 
-    const nativeBal: AssetBalance = {
+    const nativeBal: DaoBalance = {
       type: TokenType.NATIVE,
-      balance: 100000n,
-      updateDate: new Date(2023, 2, 10),
+      balance: BigNumber.from('0x4563918244F40000'),
+      token: PREFERRED_NETWORK_METADATA.nativeToken,
     };
-    const erc20Bal: AssetBalance = {
+    const erc20Bal: DaoBalance = {
       type: TokenType.ERC20,
-      address: '0x1234567890123456789012345678901234567890',
-      name: 'The Token',
-      symbol: 'TOK',
-      decimals: 18,
-      balance: 200000n,
-      updateDate: new Date(2023, 2, 10),
-    };
-    const erc721Bal: AssetBalance = {
-      type: TokenType.ERC721,
-      address: '0x2222567890123456789012345678901234567890',
-      name: 'The ERC 721 token',
-      symbol: 'TOK2',
-      updateDate: new Date(2023, 2, 10),
+      token: {
+        address: '0x1234567890123456789012345678901234567890',
+        name: 'The Token',
+        symbol: 'TOK',
+        decimals: 18,
+      },
+      balance: BigNumber.from('0x4563918244F40000'),
     };
 
-    setDaoBalances([
-      assetBalanceToDaoBalance(nativeBal),
-      assetBalanceToDaoBalance(erc20Bal),
-      assetBalanceToDaoBalance(erc721Bal),
-    ]);
+    setDaoBalances([nativeBal, erc20Bal]);
   };
 
   useEffect(() => {
@@ -121,39 +124,3 @@ export const useDaoBalance = (
     daoBalances,
   };
 };
-
-function assetBalanceToDaoBalance(assetBalance: AssetBalance): DaoBalance {
-  const x = assetBalance as any;
-  let result = {
-    type: assetBalance.type,
-    updateDate: assetBalance.updateDate,
-    balance: x.balance ?? null,
-    decimals: x.decimals ?? null,
-    address: x.address ?? null,
-    name: x.name ?? null,
-    symbol: x.symbol ?? null,
-  };
-  switch (assetBalance.type) {
-    case TokenType.NATIVE:
-      // eslint-disable-next-line no-case-declarations
-      const metadata = PREFERRED_NETWORK_METADATA;
-      result.decimals = metadata.nativeCurrency.decimals;
-      result.address = constants.AddressZero;
-      result.name = metadata.nativeCurrency.name;
-      result.symbol = metadata.nativeCurrency.symbol;
-      break;
-    case TokenType.ERC721:
-      result.balance = x.balance ?? 1;
-      result.decimals = x.decimals ?? 0;
-      break;
-    case TokenType.ERC20:
-      break;
-    default:
-      console.error(
-        'useDaoBalance.ts ~ assetBalanceToDaoBalance: Unexpected tokentype'
-      );
-      break;
-  }
-
-  return result;
-}

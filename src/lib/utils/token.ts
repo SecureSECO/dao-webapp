@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { NativeTokenData } from '@/src/lib/constants/chains';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
 import { BigNumber, Contract, constants, providers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
@@ -16,29 +16,32 @@ export type TokenInfo = {
   decimals?: number;
   name?: string;
   symbol?: string;
+  address: string;
   totalSupply?: BigNumber;
 };
 
 /**
  * Get the token info for a given token address
  * @param address Token contract address. Zero address is the native token.
- * @param provider Eth provider
- * @param nativeTokenData Information about the current native token
+ * @param provider Provider to use for fetching token info.
+ * @param nativeTokenData Data for the native token of the chain.
+ * @param tokenType Type of token to get info for. Defaults to 'erc20'.
  * @returns Decimals, name, symbol and total supply of the token (where possible)
  */
-export async function getTokenInfo(
+export async function fetchTokenInfo(
   address: string | undefined,
   provider: providers.Provider,
-  nativeTokenData: NativeTokenData | undefined,
-  tokenType: 'erc20' | 'erc721' = 'erc20'
-): Promise<TokenInfo> {
-  if (!address) return {};
-  if (isNativeToken(address)) return { ...nativeTokenData };
+  nativeTokenData: TokenInfo,
+  tokenType: TokenType = TokenType.ERC20
+): Promise<TokenInfo | null> {
+  if (!address) return null;
+  if (isNativeToken(address) || tokenType === TokenType.NATIVE)
+    return nativeTokenData;
 
   const contract = new Contract(address, erc20ABI, provider);
 
   try {
-    if (tokenType === 'erc20') {
+    if (tokenType === TokenType.ERC20) {
       const values = await Promise.all([
         contract.decimals(),
         contract.name(),
@@ -51,8 +54,9 @@ export async function getTokenInfo(
         name: values[1],
         symbol: values[2],
         totalSupply: values[3],
+        address,
       };
-    } else if (tokenType === 'erc721') {
+    } else if (tokenType === TokenType.ERC721) {
       // erc721 can be used for both ERC721 and ERC1155 tokens, since we're only trying to get the name here
 
       // Note that we use the ERC20 ABI here as well, since it contains the name() function
@@ -65,13 +69,14 @@ export async function getTokenInfo(
       return {
         name,
         decimals: 0, // ERC721 tokens do not have decimals
+        address,
       };
     }
   } catch (error) {
     console.error('Error getting token info from contract: ', error);
   }
 
-  return {};
+  return null;
 }
 
 /**

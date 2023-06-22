@@ -5,41 +5,53 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+/* eslint-disable no-unused-vars */
 
 import { useEffect, useState } from 'react';
-import { useAragonSDKContext } from '@/src/context/AragonSDK';
+import { useAlchemySDKContext } from '@/src/context/AlchemySDK';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { TokenFetch, useTokenFetch } from '@/src/hooks/useTokenFetch';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { getErrorMessage } from '@/src/lib/utils';
+import { TokenInfo } from '@/src/lib/utils/token';
 import {
-  Client,
-  ITransferQueryParams,
-  SortDirection,
-  TokenType,
-  Transfer,
-  TransferSortBy,
-  TransferType,
-} from '@aragon/sdk-client';
+  Alchemy,
+  AssetTransfersCategory,
+  AssetTransfersParams,
+  AssetTransfersResult,
+  SortingOrder,
+} from 'alchemy-sdk';
+import { compareDesc, parseISO, sub } from 'date-fns';
+import { BigNumber } from 'ethers';
 
 export type UseDaoTransfersData = {
   daoTransfers: DaoTransfer[] | null;
   loading: boolean;
+  refetching: boolean;
   error: string | null;
+  recentCount: number | null;
 };
 
+export enum TransferType {
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAW = 'WITHDRAW',
+}
+
+/**
+ * The type of token that was transferred.
+ * Adapted from AssetTransfersResult.
+ * @see AssetTransfersResult
+ */
 export type DaoTransfer = {
   type: TransferType;
   tokenType: TokenType;
-  creationDate: Date;
-  transactionId: string;
-  to: string;
+  creationDate?: Date;
+  transferId: string;
+  to: string | null;
   from: string;
-  amount: BigInt | null;
-  decimals: number | null;
-  tokenAddress: string | null;
-  tokenName: string | null;
-  tokenSymbol: string | null;
-  proposalId: String | null;
+  amount: BigNumber | null;
+  token: TokenInfo | null;
 };
 
 export type UseDaoTransfersProps = {
@@ -62,36 +74,78 @@ export const useDaoTransfers = (
 ): UseDaoTransfersData => {
   const { useDummyData, limit } = Object.assign(defaultProps, props);
   const [daoTransfers, setDaoTransfers] = useState<DaoTransfer[] | null>(null);
+  const [recentCount, setRecentCount] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [refetching, setRefetching] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { getTokenInfo } = useTokenFetch();
 
-  const { client } = useAragonSDKContext();
+  const client = useAlchemySDKContext();
   const { daoAddress } = useDiamondSDKContext();
 
-  const fetchDaoTransfers = async (client: Client) => {
+  const fetchDaoTransfers = async (client: Alchemy) => {
     if (!daoAddress) return;
+    if (!loading) setRefetching(true);
 
     try {
-      const params: ITransferQueryParams = {
-        daoAddressOrEns: daoAddress,
-        sortBy: TransferSortBy.CREATED_AT, // optional
-        limit, // optional
-        skip: 0, // optional
-        direction: SortDirection.DESC, // optional, options: DESC or ASC
+      const params: AssetTransfersParams = {
+        maxCount: limit,
+        order: SortingOrder.DESCENDING,
+        category: [
+          AssetTransfersCategory.EXTERNAL,
+          AssetTransfersCategory.ERC20,
+          AssetTransfersCategory.ERC721,
+          AssetTransfersCategory.ERC1155,
+          ...(!import.meta.env.DEV ? [AssetTransfersCategory.INTERNAL] : []),
+        ],
+        withMetadata: true,
       };
 
-      const transfers: Transfer[] | null = await client.methods.getDaoTransfers(
-        params
-      );
+      const transfers = await Promise.all([
+        client.core
+          .getAssetTransfers({ ...params, toAddress: daoAddress })
+          .then((res) =>
+            res.transfers.map((t) =>
+              transferToDaoTransfer(t, TransferType.DEPOSIT, getTokenInfo)
+            )
+          ),
+        client.core
+          .getAssetTransfers({ ...params, fromAddress: daoAddress })
+          .then((res) =>
+            res.transfers.map((t) =>
+              transferToDaoTransfer(t, TransferType.WITHDRAW, getTokenInfo)
+            )
+          ),
+      ]);
 
-      const daoTransfers = transfers?.map(transferToDaoTransfer) ?? null;
+      const daoTransfers = [
+        await Promise.all(transfers[0]),
+        await Promise.all(transfers[1]),
+      ]
+        .flat()
+        .sort((a, b) =>
+          compareDesc(
+            a.creationDate ?? Number.MAX_SAFE_INTEGER,
+            b.creationDate ?? Number.MAX_SAFE_INTEGER
+          )
+        )
+        .slice(0, limit);
+
+      // Calculate recent transfers count as transfers that happened in the last 24 hours within the given limit
+      const dayAgo = sub(new Date(), { days: 1 });
+      const recentCount = daoTransfers.filter(
+        (t) =>
+          compareDesc(t.creationDate ?? Number.MAX_SAFE_INTEGER, dayAgo) <= 0
+      ).length;
+      setRecentCount(recentCount);
       setDaoTransfers(daoTransfers);
-      setLoading(false);
       setError(null);
     } catch (e) {
       console.error(e);
-      setLoading(false);
       setError(getErrorMessage(e));
+    } finally {
+      setLoading(false);
+      setRefetching(false);
     }
   };
 
@@ -99,104 +153,99 @@ export const useDaoTransfers = (
     setLoading(false);
     setError(null);
 
-    const data: Transfer[] = [
+    setDaoTransfers([
       {
-        type: TransferType.WITHDRAW,
+        type: TransferType.DEPOSIT,
         tokenType: TokenType.ERC20,
+        creationDate: new Date(),
+        transferId: '1',
+        to: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+        from: '0xc8541aae19c5069482239735ad64fac3dcc52ca2',
+        amount: BigNumber.from('0x4563918244F40000'),
         token: {
           address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
           name: 'Dai Stablecoin',
           symbol: 'DAI',
           decimals: 18,
         },
-        amount: 1000000000000000n,
-        creationDate: new Date(2023, 2, 22),
-        from: '0xdaoaddres',
-        transactionId:
-          '0xdb0f9422b5c3199021481c98a655741ca16119ff8a59571854a94a6f31dad7ba',
-        to: '0xc8541aae19c5069482239735ad64fac3dcc52ca2',
-        proposalId: '0x1234567890123456789012345678901234567890_0x0',
       },
       {
         type: TransferType.DEPOSIT,
         tokenType: TokenType.NATIVE,
-        amount: 1000000000000000n,
-        creationDate: new Date(2023, 2, 21),
-        transactionId:
-          '0xc18b310b2f8cf427d95fa905dc842df2cf999075f18579afbcbdce19f8db0a30',
+        creationDate: new Date(),
+        transferId: '2',
+        to: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
         from: '0xc8541aae19c5069482239735ad64fac3dcc52ca2',
-        to: '0xdaoAddres',
+        amount: BigNumber.from('0x4563918244F40000'),
+        token: PREFERRED_NETWORK_METADATA.nativeToken,
       },
-      {
-        type: TransferType.DEPOSIT,
-        tokenType: TokenType.ERC20,
-        token: {
-          address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4735',
-          name: 'Dai Stablecoin',
-          symbol: 'DAI',
-          decimals: 18,
-        },
-        amount: 1000000000000000n,
-        creationDate: new Date(2023, 2, 20),
-        transactionId:
-          '0xdd8fff77c1f3e819d4224f8d02a00583c7e5d55475b8a9d70867aee0d6d16f07',
-        from: '0xc8541aae19c5069482239735ad64fac3dcc52ca2',
-        to: '0xdaoAddress',
-      },
-    ];
-
-    setDaoTransfers(data.map(transferToDaoTransfer));
+    ]);
   };
 
   useEffect(() => {
     if (useDummyData) return setDummyData();
     if (!client) return;
     fetchDaoTransfers(client);
-  }, [client, daoAddress]);
+  }, [client, daoAddress, limit]);
 
   return {
     loading,
+    refetching,
     error,
     daoTransfers,
+    recentCount,
   };
 };
 
-const transferToDaoTransfer = (transfer: Transfer): DaoTransfer => {
-  const x = transfer as any;
-  let result = {
-    type: transfer.type,
-    tokenType: transfer.tokenType,
-    creationDate: transfer.creationDate,
-    transactionId: transfer.transactionId,
+export const transferCategoryToTokenType = (
+  category: AssetTransfersCategory
+) => {
+  switch (category) {
+    case AssetTransfersCategory.ERC20:
+      return TokenType.ERC20;
+    case AssetTransfersCategory.ERC721:
+    case AssetTransfersCategory.ERC1155:
+      return TokenType.ERC721;
+    default:
+      return TokenType.NATIVE;
+  }
+};
+
+/**
+ * Converts an AssetTransfersResult to a DaoTransfer type.
+ * @param transfer The AssetTransfersResult to convert.
+ * @param type The type of the transfer (DEPOSIT or WITHDRAW). Defaults to DEPOSIT.
+ * @param provider The provider to use for fetching token info.
+ * @param secoinAddress The address of the SECOIN token, to skip the token info fetch when possible.
+ * @returns The converted DaoTransfer.
+ */
+const transferToDaoTransfer = async (
+  transfer: AssetTransfersResult,
+  type: TransferType = TransferType.DEPOSIT,
+  getTokenInfo: TokenFetch
+): Promise<DaoTransfer> => {
+  const isNft =
+    transfer.category === AssetTransfersCategory.ERC721 ||
+    transfer.category === AssetTransfersCategory.ERC1155;
+  const tokenInfo = transfer.rawContract.address
+    ? await getTokenInfo(
+        transfer.rawContract.address,
+        isNft ? TokenType.ERC721 : TokenType.ERC20
+      )
+    : PREFERRED_NETWORK_METADATA.nativeToken;
+
+  const creationDate = (transfer as any).metadata.blockTimestamp;
+
+  return {
+    type,
+    tokenType: transferCategoryToTokenType(transfer.category),
+    creationDate: creationDate ? parseISO(creationDate) : undefined,
+    transferId: transfer.uniqueId,
     to: transfer.to,
     from: transfer.from,
-    amount: x.amount ?? null,
-    decimals: x.token?.decimals ?? null,
-    tokenAddress: x.token?.address ?? null,
-    tokenName: x.token?.name ?? null,
-    tokenSymbol: x.token?.symbol ?? null,
-    proposalId: x.proposalId ?? null,
+    amount: isNft
+      ? BigNumber.from(transfer.value)
+      : BigNumber.from(transfer.rawContract.value),
+    token: tokenInfo,
   };
-  switch (transfer.tokenType) {
-    case TokenType.NATIVE:
-      // eslint-disable-next-line no-case-declarations
-      const meta = PREFERRED_NETWORK_METADATA;
-      result.decimals = meta.nativeCurrency.decimals;
-      result.tokenName = meta.nativeCurrency.name;
-      result.tokenSymbol = meta.nativeCurrency.symbol;
-      break;
-    case TokenType.ERC721:
-      result.amount = x.amount ?? 1;
-      result.decimals = x.token?.decimals ?? 0;
-      break;
-    case TokenType.ERC20:
-      break;
-    default:
-      console.error(
-        'useDaoTransfers.ts ~ transferToDaoTransfer: Unexpected tokentype'
-      );
-      break;
-  }
-
-  return result;
 };

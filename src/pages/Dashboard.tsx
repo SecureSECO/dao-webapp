@@ -55,15 +55,18 @@ const Dashboard = () => {
   });
   const {
     daoTransfers,
+    recentCount,
     loading: daoTransfersLoading,
     error: daoTransfersError,
-  } = useDaoTransfers();
+  } = useDaoTransfers({
+    limit: 4,
+  });
   const {
     members,
     loading: membersLoading,
     error: membersError,
     memberCount,
-  } = useMembers({ limit: 5 });
+  } = useMembers({ limit: 7 });
 
   return (
     <div className="grid grid-cols-7 gap-6">
@@ -164,35 +167,6 @@ const Dashboard = () => {
         {/* Card containing the option to claim daily rewards*/}
         {isConnected && <ClaimDailyRewardCard />}
 
-        {/* Card containing the latest dao transfers */}
-        <MainCard
-          loading={daoTransfersLoading}
-          icon={HiCircleStack}
-          header={
-            <DefaultMainCardHeader
-              value={daoTransfers?.length ?? 0}
-              label="transfers completed"
-              truncateMobile
-            />
-          }
-          aside={<NewTransferDropdown />}
-        >
-          <DaoTransfersList
-            daoTransfers={daoTransfers}
-            limit={3}
-            loading={daoTransfersLoading}
-            error={daoTransfersError}
-          />
-          <Link
-            variant="outline"
-            className="flex flex-row items-center gap-x-2"
-            to="/finance"
-          >
-            <p>View all transfers</p>
-            <HiArrowRight className="h-5 w-5 shrink-0" />
-          </Link>
-        </MainCard>
-
         {/* Card containing DAO members */}
         <MainCard
           icon={HiUserGroup}
@@ -212,6 +186,34 @@ const Dashboard = () => {
             to={`${PREFERRED_NETWORK_METADATA.explorer}/token/tokenholderchart/${CONFIG.DIAMOND_ADDRESS}`}
           >
             <p>View all members</p>
+            <HiArrowRight className="h-5 w-5 shrink-0" />
+          </Link>
+        </MainCard>
+
+        {/* Card containing the latest dao transfers */}
+        <MainCard
+          icon={HiCircleStack}
+          header={
+            <DefaultMainCardHeader
+              value={recentCount ?? 0}
+              label="recent transfers"
+              truncateMobile
+            />
+          }
+          aside={<NewTransferDropdown />}
+        >
+          <DaoTransfersList
+            daoTransfers={daoTransfers}
+            limit={3}
+            loading={daoTransfersLoading}
+            error={daoTransfersError}
+          />
+          <Link
+            variant="outline"
+            className="flex flex-row items-center gap-x-2"
+            to="/finance"
+          >
+            <p>View all transfers</p>
             <HiArrowRight className="h-5 w-5 shrink-0" />
           </Link>
         </MainCard>

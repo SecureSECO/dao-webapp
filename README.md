@@ -285,12 +285,12 @@ It is also worth mentioning that it is highly encouraged to write stories for th
 
 ### Web3 packages
 
-#### Aragon SDK
+#### Alchemy SDK
 
-[Documentation](https://devs.aragon.org/docs/sdk/)
+[Documentation](https://docs.alchemy.com/reference/alchemy-sdk-quickstart)
 
-Primarily used for: interacting with default Aragon smart contracts
-Aragon SDK is used for interacting with the smart contracts from Aragon. We've been extending the base smart contracts with our own plugins, so for those, we use the custom Plopmens SDK to interact with our custom plugins. Because of our own SDK implementation that supports our plugin, the aragon sdk might become unused.
+Used for: fetching DAO transfers and token balances.
+An Alchemy key is expected in the [`.env.`](./.env) file.
 
 #### Ethers
 

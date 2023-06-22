@@ -79,6 +79,7 @@ export type NativeTokenData = {
   name: string;
   symbol: string;
   decimals: number;
+  address: `0x${string}`;
 };
 
 export type ChainData = {
@@ -89,8 +90,9 @@ export type ChainData = {
   explorer: string;
   logo: string;
   rpc: string;
-  nativeCurrency: NativeTokenData;
+  nativeToken: NativeTokenData;
   etherscanApi: string;
+  alchemyName: string;
 };
 
 export type ChainList = Record<SupportedNetworks, ChainData>;
@@ -103,12 +105,14 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://polygonscan.com/',
     testnet: false,
     rpc: 'https://rpc.ankr.com/polygon',
-    nativeCurrency: {
+    nativeToken: {
       name: 'MATIC',
       symbol: 'MATIC',
       decimals: 18,
+      address: '0x0000000000000000000000000000000000000000',
     },
     etherscanApi: 'https://api.polygonscan.com/api',
+    alchemyName: 'polygon-mainnet',
   },
   mumbai: {
     id: 80001,
@@ -118,12 +122,14 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://mumbai.polygonscan.com/',
     testnet: true,
     rpc: 'https://rpc.ankr.com/polygon_mumbai',
-    nativeCurrency: {
+    nativeToken: {
       name: 'MATIC',
       symbol: 'MATIC',
       decimals: 18,
+      address: '0x0000000000000000000000000000000000000000',
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
+    alchemyName: 'polygon-mumbai',
   },
 };
 

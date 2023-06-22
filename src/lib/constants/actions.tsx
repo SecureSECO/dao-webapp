@@ -65,10 +65,9 @@ import {
 import WithdrawAction, {
   ProposalWithdrawAction,
 } from '@/src/components/proposal/actions/WithdrawAction';
-import { TOKENS } from '@/src/lib/constants/tokens';
+import { TOKENS, TokenType } from '@/src/lib/constants/tokens';
 import { lowerCaseFirst } from '@/src/lib/utils';
 import { parseTokenAmount } from '@/src/lib/utils/token';
-import { TokenType } from '@aragon/sdk-client';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';

@@ -6,15 +6,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Preview } from '@storybook/react';
 import { withThemeByClassName } from '@storybook/addon-styling';
+import type { Preview } from '@storybook/react';
+
 import '../src/index.css';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { wagmiClientDecorator } from '../src/lib/decorators/wagmiClientDecorator';
-import { AragonSDKWrapper } from '../src/context/AragonSDK';
-import { DiamondSDKWrapper } from '../src/context/DiamondGovernanceSDK';
+
 import { TooltipProvider } from '../src/components/ui/Tooltip';
+import { DiamondSDKWrapper } from '../src/context/DiamondGovernanceSDK';
+import { wagmiClientDecorator } from '../src/lib/decorators/wagmiClientDecorator';
 
 const preview: Preview = {
   parameters: {
@@ -48,16 +49,14 @@ const globalDecorator = (Story, context) => {
   document.documentElement.style.background = color;
 
   return (
-    <AragonSDKWrapper>
-      <DiamondSDKWrapper>
-        {/* MemoryRouter mimics a BrowserRouter, but without actually changing the URL in the browser, for testing */}
-        <MemoryRouter>
-          <TooltipProvider>
-            <Story />
-          </TooltipProvider>
-        </MemoryRouter>
-      </DiamondSDKWrapper>
-    </AragonSDKWrapper>
+    <DiamondSDKWrapper>
+      {/* MemoryRouter mimics a BrowserRouter, but without actually changing the URL in the browser, for testing */}
+      <MemoryRouter>
+        <TooltipProvider>
+          <Story />
+        </TooltipProvider>
+      </MemoryRouter>
+    </DiamondSDKWrapper>
   );
 };
 

@@ -7,8 +7,8 @@
  */
 
 import { Actions } from '@/src/components/newProposal/steps/Actions';
+import { TokenType } from '@/src/lib/constants/tokens';
 import { NewProposalFormProvider } from '@/src/pages/NewProposal';
-import { TokenType } from '@aragon/sdk-client';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof Actions> = {
