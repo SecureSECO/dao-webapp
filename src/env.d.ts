@@ -12,6 +12,7 @@ interface ImportMetaEnv {
   readonly VITE_APP_PROJECT_ID: string;
   readonly VITE_IPFS_KEY: string;
   readonly VITE_ALCHEMY_KEY: string;
+  readonly VITE_DEV_ALCHEMY_KEY: string;
 }
 
 interface ImportMeta {
