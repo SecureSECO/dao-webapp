@@ -28,7 +28,7 @@ export const CONFIG = {
 export const DAO_METADATA = {
   name: 'SecureSECO DAO',
   description:
-    'Distributed Autonomous Organization for the SecureSECO project.',
+    'Decentralized Autonomous Organization for the SecureSECO project.',
   links: {
     discord: {
       label: 'Discord Server',
