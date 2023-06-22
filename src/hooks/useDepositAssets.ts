@@ -12,6 +12,7 @@ import { BigNumber, constants } from 'ethers';
 import {
   Address,
   useAccount,
+  useBalance,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
@@ -22,7 +23,7 @@ import {
 import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
 import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
 import { erc20ABI } from '../lib/constants/erc20ABI';
-import { isNullOrUndefined } from '../lib/utils';
+import { anyNullOrUndefined, isNullOrUndefined } from '../lib/utils';
 
 export const pools = [
   'General',
@@ -77,8 +78,8 @@ export const useDepositAssets = ({
   // ==================================
   // Hooks for contract interaction
   // ==================================
+  // === Contract interactions to send tokens to a pool ===
   // ERC20 tokens to general
-
   const {
     config: configERC20,
     isLoading: loadingERC20,
@@ -107,6 +108,23 @@ export const useDepositAssets = ({
   });
   const { sendTransactionAsync: sendNative } = useSendTransaction(configNative);
 
+  // SECOIN to specific pool
+  const sendToPool = async (
+    client: DiamondGovernanceClient,
+    amount: BigNumber
+  ) => {
+    if (pool === 'Mining reward') {
+      const miniPool = await client.pure.IMiningRewardPoolFacet();
+      return miniPool.donateToMiningRewardPool(amount!);
+    }
+    if (pool === 'Verification reward') {
+      const veriPool = await client.pure.IVerificationRewardPoolFacet();
+      return veriPool.donateToVerificationRewardPool(amount!);
+    }
+    throw new Error();
+  };
+
+  // === Contract interactions to read and set allowance (in the case of SECOIN to specific pool) ===
   // Read if the allowance is enough
   const { data: approvedAmountU } = useContractRead({
     address: secoinAddress as Address,
@@ -131,28 +149,21 @@ export const useDepositAssets = ({
   });
   const { writeAsync: writeApproveAsync } = useContractWrite(approveConfig);
 
-  const approve = () => {
-    if (!writeApproveAsync) throw new Error();
-    return writeApproveAsync();
-  };
+  // === Contract interactions to get user balance ===
+  const { data: _balance } = useBalance({
+    address: address as `0x${string}` | undefined,
+    // When the provided token address is undefined, the native balance will be fetched.
+    token: token?.isNativeToken
+      ? undefined
+      : (token?.address as `0x${string}` | undefined),
+    chainId: PREFERRED_NETWORK_METADATA.id,
+    enabled: token !== undefined,
+    watch: true,
+  });
 
-  // SECOIN to specific pool
-  const sendToPool = async (
-    client: DiamondGovernanceClient,
-    amount: BigNumber
-  ) => {
-    if (pool === 'Mining reward') {
-      const miniPool = await client.pure.IMiningRewardPoolFacet();
-      return miniPool.donateToMiningRewardPool(amount!);
-    }
-    if (pool === 'Verification reward') {
-      const veriPool = await client.pure.IVerificationRewardPoolFacet();
-      return veriPool.donateToVerificationRewardPool(amount!);
-    }
-    throw new Error();
-  };
-
-  // Exported method to abstract contract call to deposit assets.
+  // ==================================
+  // Exported methods/constants to abstract contract calls
+  // ==================================
   const depositAssets = () => {
     if (!client) throw new Error();
     if (isNullOrUndefined(amount)) throw new Error();
@@ -171,8 +182,15 @@ export const useDepositAssets = ({
     throw new Error();
   };
 
+  const approve = () => {
+    if (!writeApproveAsync) throw new Error();
+    return writeApproveAsync();
+  };
+
+  const balance = anyNullOrUndefined(pool, token) ? undefined : _balance;
+
   // ==================================
-  // Effect to update hook state
+  // Effects to update hook state
   // ==================================
   // Keep error state updated
   useEffect(() => {
@@ -215,7 +233,7 @@ export const useDepositAssets = ({
     setIsApproved(approved);
   }, [pool, amount, approvedAmount]);
 
-  return { isLoading, error, isApproved, depositAssets, approve };
+  return { isLoading, error, balance, isApproved, depositAssets, approve };
 };
 
 function useDebounce<T>(value: T, delay?: number): T {
