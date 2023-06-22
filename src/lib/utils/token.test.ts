@@ -62,6 +62,46 @@ test('toAbbreviatedTokenAmount to correctly handle displayDecimals < 0 and round
   ).toBe('1235');
 });
 
+test('toAbbreviatedTokenAmount to correctly handle kilo', () => {
+  expect(
+    toAbbreviatedTokenAmount({
+      value: 123456n,
+      tokenDecimals: 0,
+      displayDecimals: 3,
+    })
+  ).toBe('123k');
+});
+
+test('toAbbreviatedTokenAmount to correctly handle mega', () => {
+  expect(
+    toAbbreviatedTokenAmount({
+      value: 1234000n,
+      tokenDecimals: 0,
+      displayDecimals: 3,
+    })
+  ).toBe('1M');
+});
+
+test('toAbbreviatedTokenAmount to correctly handle giga', () => {
+  expect(
+    toAbbreviatedTokenAmount({
+      value: 1234000000n,
+      tokenDecimals: 0,
+      displayDecimals: 3,
+    })
+  ).toBe('1G');
+});
+
+test('toAbbreviatedTokenAmount to floor abbreviations', () => {
+  expect(
+    toAbbreviatedTokenAmount({
+      value: 1934000000n,
+      tokenDecimals: 0,
+      displayDecimals: 3,
+    })
+  ).toBe('1G');
+});
+
 test('parseTokenAmount to correctly parse 123456789 and its variations', () => {
   expect(parseTokenAmount('123456789', 0)).toEqual(BigNumber.from('123456789'));
   expect(parseTokenAmount('123456789', 5)).toEqual(
