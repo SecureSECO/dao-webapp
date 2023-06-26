@@ -401,15 +401,14 @@ export const useSearchSECO = (
       client.pure.signer
     );
 
-
     // Retrieve the amount that the user has allowed the plugin to spend
-    const approvedAmount : BigNumber = await ERC20Contract.allowance(
+    const approvedAmount: BigNumber = await ERC20Contract.allowance(
       await addressPromise,
-      client.pure.pluginAddress,
+      client.pure.pluginAddress
     );
 
     // If the allowance is not enough, let the user increase the allowance.
-    if (approvedAmount.lt(session.cost)){
+    if (approvedAmount.lt(session.cost)) {
       // Approve the dao to spend the cost of the session
       const allowanceAmount = constants.MaxUint256;
       const tx = await ERC20Contract.approve(
