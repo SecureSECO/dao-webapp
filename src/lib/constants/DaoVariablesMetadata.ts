@@ -102,10 +102,6 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
       description: `Amount of ${TOKENS.rep.symbol} (in wei) rewarded per hash mined.`,
       type: TOKENS.rep.symbol,
     },
-    HashCoinReward: {
-      description: `Amount of ${TOKENS.secoin.symbol} (in wei) rewarded per hash mined, also depends on the amount of ${TOKENS.secoin.symbol} in the treasury, the HashDevaluationFactor, and MiningRewardPoolPayoutRatio.`,
-      type: TOKENS.secoin.symbol,
-    },
     RewardingSigner: {
       description:
         'Address of the wallet that verifies if claimed hash rewards are actually claimable.',
