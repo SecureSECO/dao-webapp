@@ -41,6 +41,15 @@ export function isNullOrUndefined<T>(
 }
 
 /**
+ * Utility function for removing null or undefined values from a list.
+ */
+export function filterNullOrUndefined<T>(
+  values: (T | undefined | null)[]
+): T[] {
+  return values.filter((x) => !isNullOrUndefined(x)) as T[];
+}
+
+/**
  * Utility function for checking if any value of a array of values is Null or Undefined
  * @param value An array of values to check
  * @returns True iff any of the values is null or undefined
