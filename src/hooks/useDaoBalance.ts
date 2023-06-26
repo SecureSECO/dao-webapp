@@ -23,7 +23,7 @@ export type UseDaoBalanceData = {
   error: string | null;
 };
 
-export type DaoBalance = {
+export interface DaoBalance {
   type: TokenType;
   balance: BigNumber | null;
   token: TokenInfo | null;
