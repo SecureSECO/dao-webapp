@@ -328,7 +328,8 @@ const Query = () => {
 
                   {session.fetch_status === 'pending' && (
                     <p className="text-base font-normal italic text-highlight-foreground/80">
-                      Fetching data from the SearchSECO database...
+                      Fetching data from the SearchSECO database, this might
+                      take a while...
                     </p>
                   )}
 
