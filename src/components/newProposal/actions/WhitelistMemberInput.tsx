@@ -7,21 +7,20 @@
  */
 
 import { useContext } from 'react';
-import { ACTIONS } from '@/src/lib/constants/actions';
-import { AddressPattern } from '@/src/lib/constants/patterns';
-import { useFormContext } from 'react-hook-form';
-import { HiXMark } from 'react-icons/hi2';
-
-import { Button } from '../../ui/Button';
-import { ErrorWrapper } from '../../ui/ErrorWrapper';
-import { Input } from '../../ui/Input';
-import { Label } from '../../ui/Label';
-import { MainCard } from '../../ui/MainCard';
 import {
   ActionFormContext,
   ActionFormError,
   ProposalFormActions,
-} from '../steps/Actions';
+} from '@/src/components/newProposal/steps/Actions';
+import { Button } from '@/src/components/ui/Button';
+import { ErrorWrapper } from '@/src/components/ui/ErrorWrapper';
+import { Input } from '@/src/components/ui/Input';
+import { Label } from '@/src/components/ui/Label';
+import { MainCard } from '@/src/components/ui/MainCard';
+import { ACTIONS } from '@/src/lib/constants/actions';
+import { AddressPattern } from '@/src/lib/constants/patterns';
+import { useFormContext } from 'react-hook-form';
+import { HiXMark } from 'react-icons/hi2';
 
 export interface ProposalFormWhitelistData {
   name: 'whitelist_member';

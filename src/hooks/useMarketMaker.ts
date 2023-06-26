@@ -7,17 +7,16 @@
  */
 
 import { useEffect, useState } from 'react';
-import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
-import { BigNumber, constants } from 'ethers';
-import { useProvider } from 'wagmi';
-
-import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
+import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import {
   assertUnreachable,
   getErrorMessage,
   isNullOrUndefined,
   promiseObjectAll,
-} from '../lib/utils';
+} from '@/src/lib/utils';
+import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
+import { BigNumber, constants } from 'ethers';
+import { useProvider } from 'wagmi';
 
 export type SwapKind = 'Mint' | 'Burn';
 

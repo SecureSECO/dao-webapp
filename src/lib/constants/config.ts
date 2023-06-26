@@ -19,16 +19,13 @@ export const CONFIG = {
   DIAMOND_ADDRESS: import.meta.env.DEV
     ? DEV_DIAMOND_ADDRESS
     : PROD_DIAMOND_ADDRESS,
-  PREFERRED_NETWORK_ID: import.meta.env.DEV
-    ? 80001
-    : // Change to polygon (137) when ready for production
-      80001,
+  PREFERRED_NETWORK_ID: import.meta.env.DEV ? 80001 : 80001,
 } as const;
 
 export const DAO_METADATA = {
   name: 'SecureSECO DAO',
   description:
-    'Distributed Autonomous Organization for the SecureSECO project.',
+    'Decentralized Autonomous Organization for the SecureSECO project.',
   links: {
     discord: {
       label: 'Discord Server',

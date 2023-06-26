@@ -7,13 +7,12 @@
  */
 
 import Loading from '@/src/components/icons/Loading';
+import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Card } from '@/src/components/ui/Card';
 import { useDaoVariable } from '@/src/hooks/useDaoVariable';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { HiCog } from 'react-icons/hi2';
-
-import ActionWrapper from './ActionWrapper';
 
 export interface ProposalChangeParamAction extends Action {
   // param name and value type depend on the plugin and parameter being changed

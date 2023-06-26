@@ -9,14 +9,13 @@
 import { useState } from 'react';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
+import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { toast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { HiGift } from 'react-icons/hi2';
-
-import { Label } from '../ui/Label';
 
 /**
  * @returns A card that allows the users to claim their reward for verifying

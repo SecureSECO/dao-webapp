@@ -60,7 +60,7 @@ export const useVerification = () => {
   const [reward, setReward] = useState<[BigNumber, BigNumber] | null>(null);
 
   const { client } = useDiamondSDKContext();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   /**
    * Verifies the user
@@ -267,7 +267,10 @@ export const useVerification = () => {
    * Fetches all verification data from the blockchain
    */
   const refetch = async () => {
-    if (!client) return;
+    if (!client) {
+      if (!isConnected) setLoading(false);
+      return;
+    }
 
     setLoading(true);
 

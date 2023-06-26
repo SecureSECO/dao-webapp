@@ -7,9 +7,15 @@
  */
 
 import { useEffect, useState } from 'react';
+import { ProposalApproveSpendingAction } from '@/src/components/proposal/actions/ApproveSpendingAction';
 import { ProposalChangeParamAction } from '@/src/components/proposal/actions/ChangeParamAction';
+import {
+  FacetCutAction,
+  ProposalDiamondCutAction,
+} from '@/src/components/proposal/actions/DiamondCutAction';
 import { ProposalMergeAction } from '@/src/components/proposal/actions/MergeAction';
 import { ProposalMintAction } from '@/src/components/proposal/actions/MintAction';
+import { ProposalWhitelistAction } from '@/src/components/proposal/actions/WhitelistAction';
 import { ProposalWithdrawAction } from '@/src/components/proposal/actions/WithdrawAction';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { useVotingPower } from '@/src/hooks/useVotingPower';
@@ -25,12 +31,6 @@ import {
 } from '@plopmenz/diamond-governance-sdk';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { useAccount } from 'wagmi';
-
-import {
-  FacetCutAction,
-  ProposalDiamondCutAction,
-} from '../components/proposal/actions/DiamondCutAction';
-import { ProposalWhitelistAction } from '../components/proposal/actions/WhitelistAction';
 
 export type CanVote = {
   Yes: boolean;
@@ -54,6 +54,7 @@ export type UseProposalProps = {
   useDummyData?: boolean;
 };
 
+// #region Dummy data
 /**
  * Dummy mint tokens action
  */
@@ -158,7 +159,7 @@ export const dummyWhitelistMemberAction: ProposalWhitelistAction = {
  * Dummy Diamond cut action
  */
 export const dummyDiamondCutAction: ProposalDiamondCutAction = {
-  method: 'diamondCut((address,uint8,bytes4[],bytes)[])',
+  method: 'diamondCut(tuple[])',
   interface: 'IDiamondCut',
   params: {
     _diamondCut: [
@@ -181,6 +182,19 @@ export const dummyDiamondCutAction: ProposalDiamondCutAction = {
         initCalldata: null!,
       },
     ],
+  },
+};
+
+/**
+ * Dummy Approve spending action
+ */
+export const dummyApproveSpendingAction: ProposalApproveSpendingAction = {
+  interface: 'DAO',
+  method: 'ApproveERC20',
+  params: {
+    spender: '0x1eF2db73AfFdd73D4e219638b5ffB62a564f17ea',
+    amount: BigNumber.from(1000),
+    _contractAddress: '0xA5E81f58AF7ab276c1B86f12E882B2Dfe4e0b095',
   },
 };
 
@@ -247,7 +261,16 @@ export const dummyVotes: AddressVotes[] = [
     ],
   },
 ];
+// #endregion
 
+/**
+ * Hook to fetch a proposal from the DAO that the current Diamond Governance client has been instantiated with.
+ * @param props The properties to configure the hook.
+ * @param props.id The id of the proposal to fetch.
+ * @param props.address The address of the currently connected wallet.
+ * @param props.useDummyData Whether to use dummy data instead of fetching the proposal from the DAO.
+ * @returns An object containing the proposal, loading state, error state, whether the proposal can be executed, whether the user can vote on the proposal, the votes on the proposal and a method to refetch the proposal.
+ */
 export const useProposal = ({
   id,
   address,

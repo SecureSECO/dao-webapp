@@ -8,24 +8,44 @@
 
 import { useEffect, useState } from 'react';
 import DAI from '@/src/components/icons/DAI';
+import Loading from '@/src/components/icons/Loading';
 import Secoin from '@/src/components/icons/Secoin';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/src/components/ui/Accordion';
 import { Button } from '@/src/components/ui/Button';
+import CategoryList from '@/src/components/ui/CategoryList';
 import {
   ConditionalButton,
   ConnectWalletWarning,
   InsufficientGasWarning,
   Warning,
 } from '@/src/components/ui/ConditionalButton';
+import { ErrorText } from '@/src/components/ui/ErrorWrapper';
 import { Input } from '@/src/components/ui/Input';
 import { Label } from '@/src/components/ui/Label';
 import { MainCard } from '@/src/components/ui/MainCard';
+import { MaxButton } from '@/src/components/ui/MaxButton';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/src/components/ui/Popover';
+import TokenAmount from '@/src/components/ui/TokenAmount';
+import { applySlippage, useMarketMaker } from '@/src/hooks/useMarketMaker';
 import { useSecoinBalance } from '@/src/hooks/useSecoinBalance';
+import { toast } from '@/src/hooks/useToast';
+import {
+  PREFERRED_NETWORK,
+  PREFERRED_NETWORK_METADATA,
+} from '@/src/lib/constants/chains';
+import { NumberPattern } from '@/src/lib/constants/patterns';
 import { TOKENS } from '@/src/lib/constants/tokens';
+import { cn, isNullOrUndefined } from '@/src/lib/utils';
+import { parseTokenAmount } from '@/src/lib/utils/token';
 import { BigNumber, constants, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import {
@@ -48,26 +68,6 @@ import {
   useContractWrite,
   usePrepareContractWrite,
 } from 'wagmi';
-
-import Loading from '../components/icons/Loading';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '../components/ui/Accordion';
-import CategoryList from '../components/ui/CategoryList';
-import { ErrorText } from '../components/ui/ErrorWrapper';
-import TokenAmount from '../components/ui/TokenAmount';
-import { applySlippage, useMarketMaker } from '../hooks/useMarketMaker';
-import { toast } from '../hooks/useToast';
-import {
-  PREFERRED_NETWORK,
-  PREFERRED_NETWORK_METADATA,
-} from '../lib/constants/chains';
-import { NumberPattern } from '../lib/constants/patterns';
-import { cn, isNullOrUndefined } from '../lib/utils';
-import { parseTokenAmount } from '../lib/utils/token';
 
 const abcTokens = [
   {
@@ -270,7 +270,11 @@ const Swap = () => {
                 {from.name}
               </div>
               {maxFrom === undefined || (
-                <MaxButton max={maxFrom} setMaxValue={setMaxValue} />
+                <MaxButton
+                  max={maxFrom}
+                  decimals={decimals}
+                  setMaxValue={setMaxValue}
+                />
               )}
             </div>
           </div>
@@ -402,10 +406,10 @@ const Swap = () => {
                           <TokenAmount
                             amount={estimatedGas}
                             tokenDecimals={
-                              PREFERRED_NETWORK_METADATA.nativeCurrency.decimals
+                              PREFERRED_NETWORK_METADATA.nativeToken.decimals
                             }
                             symbol={
-                              PREFERRED_NETWORK_METADATA.nativeCurrency.symbol
+                              PREFERRED_NETWORK_METADATA.nativeToken.symbol
                             }
                             showSmallAmounts
                             displayDecimals={8}
@@ -458,32 +462,6 @@ const Swap = () => {
   );
 };
 export default Swap;
-
-const MaxButton = ({
-  max,
-  setMaxValue,
-}: {
-  max: BigNumber;
-  setMaxValue: () => void;
-}) => {
-  return (
-    <div className="inline-flex items-center justify-center gap-x-1">
-      <TokenAmount
-        amount={max}
-        tokenDecimals={decimals}
-        displayDecimals={6}
-        className="whitespace-nowrap"
-      />
-      <button
-        type="button"
-        onClick={setMaxValue}
-        className="w-full p-1 h-fit text-blue-500 underline underline-offset-2 active:scale-95 hover:text-blue-300"
-      >
-        Max
-      </button>
-    </div>
-  );
-};
 
 export const SwapSettings = ({
   register,

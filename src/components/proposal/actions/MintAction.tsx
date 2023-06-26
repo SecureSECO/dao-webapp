@@ -18,7 +18,10 @@ import { useMembers } from '@/src/hooks/useMembers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
 import { TOKENS } from '@/src/lib/constants/tokens';
-import { getTokenInfo, toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
+import {
+  fetchTokenInfo,
+  toAbbreviatedTokenAmount,
+} from '@/src/lib/utils/token';
 import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { BigNumber } from 'ethers';
@@ -100,10 +103,10 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
 
   useEffect(() => {
     async function fetchSummary() {
-      const tokenInfo = await getTokenInfo(
+      const tokenInfo = await fetchTokenInfo(
         CONFIG.DIAMOND_ADDRESS,
         provider,
-        PREFERRED_NETWORK_METADATA.nativeCurrency
+        PREFERRED_NETWORK_METADATA.nativeToken
       );
       const newTokens = action.params._amounts.reduce(
         (acc, curr) => acc.add(curr),
@@ -116,7 +119,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
       setSummary({
         newTokens,
         newHolders,
-        totalTokens: tokenInfo.totalSupply?.add(newTokens) ?? newTokens,
+        totalTokens: tokenInfo?.totalSupply?.add(newTokens) ?? newTokens,
         totalHolders: memberCount + newHolders,
       });
     }

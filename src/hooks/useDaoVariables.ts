@@ -9,11 +9,13 @@
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import {
+  FetchVariableResult,
+  fetchVariableValue,
+} from '@/src/hooks/useDaoVariable';
+import {
   DiamondGovernanceClient,
   InterfaceVariables,
 } from '@plopmenz/diamond-governance-sdk';
-
-import { FetchVariableResult, fetchVariableValue } from './useDaoVariable';
 
 export type UseDaoVariablesValuesData = Record<
   string,
@@ -33,6 +35,13 @@ export type UseDaoVariablesProps = {
   fetchWithValues?: boolean;
 };
 
+/**
+ * Fetches the values of all variables in an interface.
+ * @param interfaceVariables The interface and its variables to fetch the values for.
+ * @param client The DiamondGovernanceClient to use for fetching the variables.
+ * @returns The values of the variables.
+ * @see fetchVariableValue
+ */
 const fetchInterfaceVariableValues = async (
   interfaceVariables: InterfaceVariables,
   client: DiamondGovernanceClient
@@ -60,6 +69,14 @@ const defaultProps: UseDaoVariablesProps = {
   fetchWithValues: false,
 };
 
+/**
+ * Hook to fetch the DAO variables for the DAO that the current Diamond Governance client has been instantiated with.
+ * @param props The properties to configure the hook.
+ * @param props.useDummyData Whether to use dummy data instead of fetching the variables from the DAO.
+ * @param props.fetchWithValues Whether to fetch the values of the variables as well.
+ * @returns An object containing the DAO variables, loading state and error state.
+ * @see fetchInterfaceVariableValues
+ */
 export const useDaoVariables = (
   props?: UseDaoVariablesProps
 ): UseDaoVariablesData => {

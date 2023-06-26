@@ -10,13 +10,11 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
+import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { CONFIG } from '@/src/lib/constants/config';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { getErrorMessage } from '@/src/lib/utils';
-import { parseTokenAmount } from '@/src/lib/utils/token';
-import { BigNumber, ContractTransaction, ethers } from 'ethers';
-
-import { useLocalStorage } from './useLocalStorage';
+import { BigNumber, ContractTransaction, constants, ethers } from 'ethers';
 
 type QueryResponse = any;
 type CheckResponse = any;
@@ -392,20 +390,33 @@ export const useSearchSECO = (
 
     const { id, hashes } = session;
 
-    const IMonetaryTokenFacetContract = await client.pure.IMonetaryTokenFacet();
+    const addressPromise = client.pure.signer.getAddress();
+    const tokenContractAddressPromise = client.pure
+      .IMonetaryTokenFacet()
+      .then((f) => f.getTokenContractAddress());
+
     const ERC20Contract = new ethers.Contract(
-      await IMonetaryTokenFacetContract.getTokenContractAddress(),
+      await tokenContractAddressPromise,
       erc20ABI,
       client.pure.signer
     );
 
-    // Approve the dao to spend the cost of the session
-    const allowanceAmount = session.cost;
-    const tx = await ERC20Contract.approve(
-      client.pure.pluginAddress,
-      allowanceAmount
+    // Retrieve the amount that the user has allowed the plugin to spend
+    const approvedAmount: BigNumber = await ERC20Contract.allowance(
+      await addressPromise,
+      client.pure.pluginAddress
     );
-    await tx.wait();
+
+    // If the allowance is not enough, let the user increase the allowance.
+    if (approvedAmount.lt(session.cost)) {
+      // Approve the dao to spend the cost of the session
+      const allowanceAmount = constants.MaxUint256;
+      const tx = await ERC20Contract.approve(
+        client.pure.pluginAddress,
+        allowanceAmount
+      );
+      await tx.wait();
+    }
 
     // Call the actual payForHashes function
     const monetizationFacet = await client.pure.ISearchSECOMonetizationFacet();
@@ -440,7 +451,7 @@ export const useSearchSECO = (
       });
 
       if (sessionRes.fetch_status === 'success') {
-        setQueryResult(dummyQueryResult);
+        setQueryResult(sessionRes.data);
         setDoPoll(false);
       }
     } else {

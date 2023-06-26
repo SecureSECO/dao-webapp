@@ -6,6 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* eslint-disable no-unused-vars */
+
+export enum TokenType {
+  NATIVE = 'native',
+  ERC20 = 'erc20',
+  ERC721 = 'erc721',
+}
+
 /*
  * Contains the metadata about DAO tokens.
  * Similair to chains.ts.

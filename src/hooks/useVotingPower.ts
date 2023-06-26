@@ -29,6 +29,7 @@ export type UseVotingPowerData = {
 export type UseVotingPowerProps = {
   address: string | undefined;
   proposal?: Proposal;
+  watch?: boolean;
 };
 
 /**
@@ -39,6 +40,7 @@ export type UseVotingPowerProps = {
 export const useVotingPower = ({
   address,
   proposal,
+  watch = false,
 }: UseVotingPowerProps): UseVotingPowerData => {
   const [proposalVotingPower, setProposalVotingPower] =
     useState<BigNumber | null>(null);
@@ -57,6 +59,7 @@ export const useVotingPower = ({
   } = useBalance({
     address: address as `0x${string}` | undefined,
     token: CONFIG.DIAMOND_ADDRESS as `0x${string}` | undefined,
+    watch,
   });
 
   /**

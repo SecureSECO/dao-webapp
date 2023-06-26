@@ -19,7 +19,6 @@ import '@/src/index.css';
 import { DepositAssets } from '@/src/components/finance/DepositAssets';
 import { Toaster } from '@/src/components/ui/Toaster';
 import { TooltipProvider } from '@/src/components/ui/Tooltip';
-import { AragonSDKWrapper } from '@/src/context/AragonSDK';
 import { DiamondSDKWrapper } from '@/src/context/DiamondGovernanceSDK';
 import Finance from '@/src/pages/Finance';
 import { Mining } from '@/src/pages/Mining';
@@ -61,6 +60,7 @@ const { provider } = configureChains(chains, [
 const wagmiClient = createClient({
   autoConnect: true,
   connectors: w3mConnectors({ version: 1, chains, projectId }),
+  logger: { warn: import.meta.env.DEV ? (m) => console.warn(m) : null },
   provider,
 });
 
@@ -136,13 +136,11 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Toaster />
     <WagmiConfig client={wagmiClient}>
-      <AragonSDKWrapper>
-        <DiamondSDKWrapper>
-          <TooltipProvider>
-            <RouterProvider router={router} />
-          </TooltipProvider>
-        </DiamondSDKWrapper>
-      </AragonSDKWrapper>
+      <DiamondSDKWrapper>
+        <TooltipProvider>
+          <RouterProvider router={router} />
+        </TooltipProvider>
+      </DiamondSDKWrapper>
     </WagmiConfig>
 
     <Web3Modal

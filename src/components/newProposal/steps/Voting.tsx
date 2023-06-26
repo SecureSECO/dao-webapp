@@ -86,7 +86,7 @@ export const Voting = () => {
       custom_start_time: getTimeIn10Minutes(),
       custom_start_date: getTodayDateString(),
       custom_start_timezone: getUserTimezone(),
-      duration_days: 7,
+      duration_days: minDuration ? Math.ceil(minDuration / 86400) + 3 : 7,
       duration_hours: 0,
       duration_minutes: 0,
       custom_end_date: getDurationDateAhead(
@@ -346,7 +346,7 @@ export const EndTime = ({
                 type="number"
                 label="Days"
                 {...register('duration_days', { required: true })}
-                min="0"
+                min={minDuration ? Math.ceil(minDuration / 86400) : 0}
                 max="364"
                 error={errors.duration_days}
                 className="text-center"

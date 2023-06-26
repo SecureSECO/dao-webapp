@@ -13,7 +13,7 @@ import {
   NumberPattern,
   SignedIntegerPattern,
   UrlPattern,
-} from './patterns';
+} from '@/src/lib/constants/patterns';
 
 describe('Success cases for Number Pattern', () => {
   const successes = [

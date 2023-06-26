@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { TOKENS } from './tokens';
+import { TOKENS } from '@/src/lib/constants/tokens';
 
 export type InterfaceName = string;
 export type VariableName = string;
@@ -101,10 +101,6 @@ export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
     HashRepReward: {
       description: `Amount of ${TOKENS.rep.symbol} (in wei) rewarded per hash mined.`,
       type: TOKENS.rep.symbol,
-    },
-    HashCoinReward: {
-      description: `Amount of ${TOKENS.secoin.symbol} (in wei) rewarded per hash mined, also depends on the amount of ${TOKENS.secoin.symbol} in the treasury, the HashDevaluationFactor, and MiningRewardPoolPayoutRatio.`,
-      type: TOKENS.secoin.symbol,
     },
     RewardingSigner: {
       description:
