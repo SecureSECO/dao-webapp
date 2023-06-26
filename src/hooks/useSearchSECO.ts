@@ -451,7 +451,7 @@ export const useSearchSECO = (
       });
 
       if (sessionRes.fetch_status === 'success') {
-        setQueryResult(dummyQueryResult);
+        setQueryResult(sessionRes.data);
         setDoPoll(false);
       }
     } else {
