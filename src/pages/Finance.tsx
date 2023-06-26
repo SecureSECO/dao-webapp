@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import Loading from '@/src/components/icons/Loading';
 import { Address } from '@/src/components/ui/Address';
 import { Button } from '@/src/components/ui/Button';
@@ -31,12 +31,26 @@ import {
 } from '@/src/hooks/useDaoTransfers';
 import { ACTIONS } from '@/src/lib/constants/actions';
 import { format } from 'date-fns';
+import { constants } from 'ethers';
 import {
   HiArrowSmallRight,
   HiArrowsRightLeft,
   HiCircleStack,
   HiInboxArrowDown,
 } from 'react-icons/hi2';
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '../components/ui/Accordion';
+import CategoryList, { Category } from '../components/ui/CategoryList';
+import Header from '../components/ui/Header';
+import { useDiamondSDKContext } from '../context/DiamondGovernanceSDK';
+import { usePoolBalance } from '../hooks/useFacetFetch';
+import { TOKENS } from '../lib/constants/tokens';
+import { filterNullOrUndefined } from '../lib/utils';
 
 /**
  * Convert a TransferType to a sign (+ or -)
@@ -49,10 +63,14 @@ import {
 export const transfertypeToSign = (tt: TransferType) =>
   tt === TransferType.WITHDRAW ? '-' : '+';
 
+interface RichDaoBalance extends DaoBalance {
+  content?: ReactNode;
+}
+
 type DaoTokenListProps = {
   loading: boolean;
   error: string | null;
-  daoBalances: DaoBalance[] | null;
+  daoBalances: RichDaoBalance[] | null;
   limit: number;
 };
 
@@ -92,32 +110,50 @@ const DaoTokensList = ({
 
   const balances = daoBalances.slice(0, limit);
 
+  const BalanceInfo = ({ balance }: { balance: RichDaoBalance }) => (
+    <>
+      <p className="font-bold capitalize text-left">
+        {balance.token?.name ? balance.token.name : 'Unkown Token'}
+      </p>
+      <div className="flex flex-row items-center">
+        <TokenAmount
+          amount={balance.balance}
+          tokenDecimals={balance.token?.decimals}
+          symbol={balance.token?.symbol ?? undefined}
+        />
+        <span className="px-2">•</span>
+        <span className="text-popover-foreground/80">
+          <Address
+            address={balance.token?.address ?? '-'}
+            length="sm"
+            hasLink
+            replaceYou
+          />
+        </span>
+      </div>
+    </>
+  );
+
   return (
     <div className="space-y-4">
-      {balances.map((balance: DaoBalance, i) => (
-        <Card key={i} size="sm" variant="light">
-          <p className="font-bold capitalize">
-            {balance.token?.name ? balance.token.name : 'Unkown Token'}
-          </p>
-          <div className="flex flex-row items-center">
-            <TokenAmount
-              amount={balance.balance}
-              tokenDecimals={balance.token?.decimals}
-              symbol={balance.token?.symbol ?? undefined}
-            />
-            <span className="px-2">•</span>
-            <span className="text-popover-foreground/80">
-              <Address
-                address={balance.token?.address ?? '-'}
-                length="sm"
-                hasLink
-                showCopy
-                replaceYou
-              />
-            </span>
-          </div>
-        </Card>
-      ))}
+      {balances.map((balance: RichDaoBalance, i) =>
+        balance.content !== undefined ? (
+          <Accordion type="single" collapsible key={i}>
+            <AccordionItem value={i.toString()}>
+              <AccordionTrigger className="py-0">
+                <BalanceInfo balance={balance} />
+              </AccordionTrigger>
+              <AccordionContent className="mt-2">
+                {balance.content}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        ) : (
+          <Card key={i} size="sm" variant="light">
+            <BalanceInfo balance={balance} />
+          </Card>
+        )
+      )}
     </div>
   );
 };
@@ -242,7 +278,7 @@ const daoTransferAddress = (transfer: DaoTransfer): string => {
 
 const Finance = () => {
   const {
-    daoBalances,
+    daoBalances: daoBalancesRaw,
     loading: tokensLoading,
     error: tokensError,
   } = useDaoBalance();
@@ -256,6 +292,14 @@ const Finance = () => {
     error: trasnfersError,
   } = useDaoTransfers({
     limit: transferLimit,
+  });
+
+  const { secoinAddress } = useDiamondSDKContext();
+
+  const { data: secoinPools } = usePoolBalance();
+  const daoBalances = enrichDaoBalances(daoBalancesRaw, {
+    secoinPoolData: secoinPools,
+    secoinAddress,
   });
 
   return (
@@ -316,6 +360,133 @@ const Finance = () => {
       </div>
     </div>
   );
+};
+
+type EnrichDaoBalancesProps = {
+  secoinPoolData: ReturnType<typeof usePoolBalance>['data'];
+  secoinAddress?: string;
+};
+const enrichDaoBalances = (
+  daoBalancesRaw: DaoBalance[] | null,
+  props: EnrichDaoBalancesProps
+) => {
+  //=================
+  // Separate 'important' tokens from others
+  //=================
+
+  const isSecoin = (e: DaoBalance) =>
+    e.token?.address.toLowerCase() === props.secoinAddress?.toLowerCase();
+  const secoin = daoBalancesRaw?.find(isSecoin);
+
+  const withoutImportant = daoBalancesRaw?.filter((e) => !isSecoin(e)) ?? [];
+
+  //=================
+  // Calculate helper values
+  //=================
+  const poolSum =
+    props.secoinPoolData?.verificationRewardPool.add(
+      props.secoinPoolData.miningRewardPool ?? constants.Zero
+    ) ?? constants.Zero;
+
+  //=================
+  // Enrich SECOIN
+  //=================
+  const secoinPoolCategories: Category[] | null =
+    secoin === undefined
+      ? null
+      : [
+          {
+            title: 'Pool distribution',
+            items: [
+              {
+                label: 'General',
+                value: (
+                  <TokenAmount
+                    amount={secoin.balance
+                      ?.sub(
+                        props.secoinPoolData?.miningRewardPool ?? constants.Zero
+                      )
+                      .sub(
+                        props.secoinPoolData?.verificationRewardPool ??
+                          constants.Zero
+                      )}
+                    tokenDecimals={TOKENS.secoin.decimals}
+                    symbol={TOKENS.secoin.symbol}
+                  />
+                ),
+              },
+              {
+                label: 'Mining reward',
+                value: (
+                  <TokenAmount
+                    amount={props.secoinPoolData?.miningRewardPool}
+                    tokenDecimals={TOKENS.secoin.decimals}
+                    symbol={TOKENS.secoin.symbol}
+                  />
+                ),
+              },
+              {
+                label: 'Verification reward',
+                value: (
+                  <TokenAmount
+                    amount={props.secoinPoolData?.verificationRewardPool}
+                    tokenDecimals={TOKENS.secoin.decimals}
+                    symbol={TOKENS.secoin.symbol}
+                  />
+                ),
+              },
+            ],
+          },
+        ];
+  // When there is more money in the pools than in the treasury, show a warning
+  //   ? {
+  //       title: 'Warning',
+  //       items: [
+  //         {
+  //           label:
+  //           value: <HiOutlineExclamationCircle className="w-5 h-5 stroke-red-500" />,
+  //         },
+  //         {
+  //           label:
+  //           value: <></>
+  //         },
+  //         {
+  //           label:
+  //           value: <></>
+  //         },
+  //       ],
+  //     }
+  //   : null,
+  const SecoinOverdraftWarning = () => (
+    <Card variant="warning" className="gap-y-1">
+      <Header level={3}>General pool overdraft!</Header>
+      <p>
+        Therefore SECOIN has been lended from other pools. Please deposit more
+        SECOIN into the general treasury to resolve the deficit.
+      </p>
+    </Card>
+  );
+
+  const secoinRich: RichDaoBalance | null = secoin
+    ? {
+        content:
+          secoinPoolCategories !== null ? (
+            <div className="flex flex-col gap-y-2">
+              <CategoryList categories={secoinPoolCategories} />
+              {secoin !== null && secoin?.balance?.lt(poolSum) && (
+                <SecoinOverdraftWarning />
+              )}
+            </div>
+          ) : undefined,
+        ...secoin,
+      }
+    : null;
+
+  const enriched = filterNullOrUndefined([secoinRich]);
+
+  const daoBalances = enriched.concat(withoutImportant);
+
+  return daoBalances;
 };
 
 export default Finance;
