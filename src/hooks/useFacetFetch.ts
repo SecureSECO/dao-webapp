@@ -125,3 +125,18 @@ export const useTieredTimeClaimable = (tier: BigNumber | null) =>
       ),
     context: tier,
   });
+
+export const usePoolBalance = () =>
+  useFacetFetch({
+    facet: (c) =>
+      promiseObjectAll({
+        mining: c.IMiningRewardPoolFacet(),
+        verification: c.IVerificationRewardPoolFacet(),
+      }),
+    data: (f) =>
+      promiseObjectAll({
+        miningRewardPool: f.mining.getMiningRewardPool(),
+        verificationRewardPool: f.verification.getVerificationRewardPool(),
+      }),
+    useAnonymousClient: true,
+  });
