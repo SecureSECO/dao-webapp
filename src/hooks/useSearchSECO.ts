@@ -217,8 +217,6 @@ export const useSearchSECO = (
   // Total hashes claimed by the user
   const [totalClaimedHashes, setTotalClaimedHashes] =
     useState<BigNumber | null>(null);
-  // SECOIN reward per hash, in 18 decimal precision
-  const [hashReward, setHashReward] = useState<BigNumber | null>(null);
 
   const API_URL = CONFIG.SEARCHSECO_API_URL;
 
@@ -491,7 +489,6 @@ export const useSearchSECO = (
           status: 'idle',
         },
       ]);
-      setHashReward(BigNumber.from(1000000000000000)); // FIXME: remove this
       return;
     }
 
