@@ -116,7 +116,7 @@ export const Mining = () => {
 
       const [repEst, monEst] = await estimateRewardSplit(
         BigNumber.from(claimableHashes),
-        BigNumber.from(Math.round(mapRange(distribution, 0, 100, 0, 1000000)))
+        BigNumber.from(Math.round(mapRange(distribution, 0, 100, 0, 1_000_000)))
       );
       setReputation(repEst);
       setMonetary(monEst);
@@ -132,7 +132,7 @@ export const Mining = () => {
       ? data.distribution[0]
       : data.distribution;
     const repFrac = BigNumber.from(
-      Math.round(mapRange(distribution, 0, 100, 0, 100000))
+      Math.round(mapRange(distribution, 0, 100, 0, 1_000_000))
     );
 
     toast.contractTransaction(
