@@ -19,7 +19,8 @@ export const CONFIG = {
   DIAMOND_ADDRESS: import.meta.env.DEV
     ? DEV_DIAMOND_ADDRESS
     : PROD_DIAMOND_ADDRESS,
-  PREFERRED_NETWORK_ID: import.meta.env.DEV ? 80001 : 80001,
+  // Mumbai in development, Polygon Mainnet in production
+  PREFERRED_NETWORK_ID: import.meta.env.DEV ? 80001 : 137,
 } as const;
 
 export const DAO_METADATA = {

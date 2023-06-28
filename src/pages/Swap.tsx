@@ -72,7 +72,11 @@ import {
 const abcTokens = [
   {
     name: 'DAI',
-    contractAddress: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889', //on polygon mumbai
+    // Collateral token on mumbai is WMATIC (Wrapped Matic)
+    contractAddress: import.meta.env.DEV
+      ? '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889'
+      : // Collateral token on polygon mainnet is DAI
+        '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
   },
   {
     name: TOKENS.secoin.symbol,
