@@ -93,6 +93,8 @@ export type ChainData = {
   nativeToken: NativeTokenData;
   etherscanApi: string;
   alchemyName: string;
+  // Average block time in seconds
+  estimatedBlockTime: number;
 };
 
 export type ChainList = Record<SupportedNetworks, ChainData>;
@@ -113,6 +115,7 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.polygonscan.com/api',
     alchemyName: 'polygon-mainnet',
+    estimatedBlockTime: 2,
   },
   mumbai: {
     id: 80001,
@@ -130,6 +133,7 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
     alchemyName: 'polygon-mumbai',
+    estimatedBlockTime: 2,
   },
 };
 

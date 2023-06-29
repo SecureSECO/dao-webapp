@@ -35,7 +35,10 @@ import Header from '@/src/components/ui/Header';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { toast } from '@/src/hooks/useToast';
 import { StampInfo, useVerification } from '@/src/hooks/useVerification';
-import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
+import {
+  Stamp,
+  VerificationThreshold,
+} from '@secureseco-dao/diamond-governance-sdk';
 import { format } from 'date-fns';
 import { ContractTransaction } from 'ethers';
 import {
@@ -187,8 +190,8 @@ const StampCard = ({
                   <HiOutlineClock className="h-5 w-5 shrink-0" />
                 </div>
                 <p className="font-normal">
-                  {Math.max(0, timeLeftUntilExpiration / 86400).toFixed(0)} days
-                  until expiration
+                  ~{Math.max(0, timeLeftUntilExpiration / 86400).toFixed(0)}{' '}
+                  days until expiration
                 </p>
               </div>
             )}

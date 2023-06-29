@@ -28,7 +28,7 @@ import {
   Proposal,
   ProposalStatus,
   VoteOption,
-} from '@plopmenz/diamond-governance-sdk';
+} from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { useAccount } from 'wagmi';
 

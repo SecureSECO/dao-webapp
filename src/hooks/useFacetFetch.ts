@@ -13,7 +13,7 @@ import {
   promiseObjectAll,
   promiseWhenWithDefaultvalue,
 } from '@/src/lib/utils';
-import { DiamondGovernancePure } from '@plopmenz/diamond-governance-sdk';
+import { DiamondGovernancePure } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 
 /*

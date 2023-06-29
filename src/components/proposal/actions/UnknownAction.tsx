@@ -7,8 +7,8 @@
  */
 
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { Action } from '@secureseco-dao/diamond-governance-sdk';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 interface DefaultActionProps extends AccordionItemProps {

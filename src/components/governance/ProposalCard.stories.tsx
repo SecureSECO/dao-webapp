@@ -14,7 +14,10 @@ import {
   dummyProposal,
   dummyWithdrawActions,
 } from '@/src/hooks/useProposal';
-import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import {
+  Proposal,
+  ProposalStatus,
+} from '@secureseco-dao/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
 import { add, sub } from 'date-fns';
 

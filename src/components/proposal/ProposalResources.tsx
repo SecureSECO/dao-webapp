@@ -18,7 +18,7 @@ import {
   MainCardProps,
 } from '@/src/components/ui/MainCard';
 import { cn } from '@/src/lib/utils';
-import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
+import { ProposalResource } from '@secureseco-dao/diamond-governance-sdk';
 import DOMPurify from 'dompurify';
 import { HiArrowTopRightOnSquare, HiLink } from 'react-icons/hi2';
 

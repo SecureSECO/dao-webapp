@@ -31,7 +31,7 @@ import {
   AddressVotes,
   Proposal,
   ProposalStatus,
-} from '@plopmenz/diamond-governance-sdk';
+} from '@secureseco-dao/diamond-governance-sdk';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';

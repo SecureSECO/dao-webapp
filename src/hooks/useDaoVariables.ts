@@ -15,7 +15,7 @@ import {
 import {
   DiamondGovernanceClient,
   InterfaceVariables,
-} from '@plopmenz/diamond-governance-sdk';
+} from '@secureseco-dao/diamond-governance-sdk';
 
 export type UseDaoVariablesValuesData = Record<
   string,

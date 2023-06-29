@@ -18,7 +18,7 @@ import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import { ProposalResource } from '@plopmenz/diamond-governance-sdk';
+import { ProposalResource } from '@secureseco-dao/diamond-governance-sdk';
 import {
   Controller,
   FieldErrors,

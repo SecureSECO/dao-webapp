@@ -39,7 +39,7 @@ import {
   Proposal,
   ProposalStatus,
   VoteOption,
-} from '@plopmenz/diamond-governance-sdk';
+} from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';

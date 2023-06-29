@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Stamp } from '@plopmenz/diamond-governance-sdk';
+import { Stamp } from '@secureseco-dao/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
 import { addDays } from 'date-fns';
 import { BigNumber } from 'ethers';

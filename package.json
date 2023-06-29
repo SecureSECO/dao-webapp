@@ -1,7 +1,7 @@
 {
   "name": "dao-webapp",
   "private": true,
-  "version": "0.6.0",
+  "version": "1.0.0",
   "type": "module",
   "license": "MIT",
   "scripts": {
@@ -16,7 +16,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@plopmenz/diamond-governance-sdk": "^1.0.1",
+    "@secureseco-dao/diamond-governance-sdk": "^1.0.0",
     "@radix-ui/react-accordion": "^1.1.1",
     "@radix-ui/react-alert-dialog": "^1.0.3",
     "@radix-ui/react-collapsible": "^1.0.2",
@@ -40,7 +40,7 @@
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
     "@types/react-router-dom": "^5.3.3",
-    "@walletconnect/jsonrpc-types": "^1.0.2",
+    "@walletconnect/jsonrpc-types": "^1.0.3",
     "@walletconnect/types": "^2.7.2",
     "@web3modal/ethereum": "^2.3.7",
     "@web3modal/react": "^2.3.7",

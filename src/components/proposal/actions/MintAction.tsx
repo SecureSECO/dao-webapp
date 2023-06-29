@@ -22,8 +22,8 @@ import {
   fetchTokenInfo,
   toAbbreviatedTokenAmount,
 } from '@/src/lib/utils/token';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { Action } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { HiCircleStack } from 'react-icons/hi2';
 import { useProvider } from 'wagmi';

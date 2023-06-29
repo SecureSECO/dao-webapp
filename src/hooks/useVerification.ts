@@ -8,9 +8,14 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
+import {
+  Stamp,
+  VerificationThreshold,
+} from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
+
+import { PREFERRED_NETWORK_METADATA } from '../lib/constants/chains';
 
 /**
  * This type contains info about a certain verification method (GitHub, Twitter, etc.), that is not stored on-chain.
@@ -212,14 +217,24 @@ export const useVerification = () => {
   };
 
   /**
-   * Fetches the threshold history, which indicates how long
+   * Fetches the threshold history, which is a history of set verification stamp validity periods.
+   * A single "threshold" is an array of two values: [timestamp, validityPeriodInSeconds]
+   * The timestamp is converted from block number to timestamp (in seconds) in the sdk.
+   * The validity period is converted from number of blocks to seconds in this function.
    */
   const fetchThresholdHistory = async () => {
     if (!client) return;
 
     try {
       const _thresholdHistory = await client.verification.GetThresholdHistory();
-      setThresholdHistory(_thresholdHistory);
+      setThresholdHistory(
+        _thresholdHistory.map((threshold) => [
+          threshold[0],
+          threshold[1]
+            .mul(PREFERRED_NETWORK_METADATA.estimatedBlockTime)
+            .div(86400),
+        ])
+      );
     } catch (e: any) {
       console.error(e);
       setError(e.message);
@@ -234,11 +249,16 @@ export const useVerification = () => {
     if (!client) return;
 
     try {
-      const verificationContract =
-        await client.verification.GetVerificationContract();
-      const _reverifyThreshold = await verificationContract.reverifyThreshold();
+      const _reverifyThreshold =
+        await client.verification.GetReverifyThreshold();
 
-      setReverifyThreshold(_reverifyThreshold.toNumber());
+      // Convert from number of blocks to seconds
+      setReverifyThreshold(
+        _reverifyThreshold
+          .mul(PREFERRED_NETWORK_METADATA.estimatedBlockTime)
+          .div(86400)
+          .toNumber()
+      );
     } catch (e: any) {
       console.error(e);
       setError(e.message);
@@ -254,7 +274,7 @@ export const useVerification = () => {
 
     try {
       const facet = await client.pure.IERC20OneTimeVerificationRewardFacet();
-      const _reward = await facet.tokensClaimableVerificationRewardAll();
+      const _reward = (await facet.tokensClaimableVerificationRewardAll())[0];
       setReward(_reward);
     } catch (e: any) {
       console.error(e);

@@ -13,8 +13,8 @@ import { useTokenInfo } from '@/src/hooks/useTokenInfo';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { TokenType } from '@/src/lib/constants/tokens';
 import { toAbbreviatedTokenAmount } from '@/src/lib/utils/token';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { Action } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { HiArrowRight, HiBanknotes } from 'react-icons/hi2';
 

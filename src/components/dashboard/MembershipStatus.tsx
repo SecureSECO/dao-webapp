@@ -16,7 +16,7 @@ import {
 } from '@/src/hooks/useVerification';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { cn } from '@/src/lib/utils';
-import { Stamp } from '@plopmenz/diamond-governance-sdk';
+import { Stamp } from '@secureseco-dao/diamond-governance-sdk';
 import { useWeb3Modal } from '@web3modal/react';
 import { BigNumber } from 'ethers';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';

@@ -36,7 +36,7 @@ import {
   StepNavigator,
   useNewProposalFormContext,
 } from '@/src/pages/NewProposal';
-import { Action } from '@plopmenz/diamond-governance-sdk';
+import { Action } from '@secureseco-dao/diamond-governance-sdk';
 import { add, format } from 'date-fns';
 import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
