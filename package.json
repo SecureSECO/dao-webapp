@@ -40,7 +40,7 @@
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
     "@types/react-router-dom": "^5.3.3",
-    "@walletconnect/jsonrpc-types": "^1.0.2",
+    "@walletconnect/jsonrpc-types": "^1.0.3",
     "@walletconnect/types": "^2.7.2",
     "@web3modal/ethereum": "^2.3.7",
     "@web3modal/react": "^2.3.7",

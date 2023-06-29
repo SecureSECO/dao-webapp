@@ -187,8 +187,8 @@ const StampCard = ({
                   <HiOutlineClock className="h-5 w-5 shrink-0" />
                 </div>
                 <p className="font-normal">
-                  {Math.max(0, timeLeftUntilExpiration / 86400).toFixed(0)} days
-                  until expiration
+                  ~{Math.max(0, timeLeftUntilExpiration / 86400).toFixed(0)}{' '}
+                  days until expiration
                 </p>
               </div>
             )}
