@@ -227,7 +227,9 @@ export const useVerification = () => {
       setThresholdHistory(
         _thresholdHistory.map((threshold) => [
           threshold[0],
-          threshold[1].mul(PREFERRED_NETWORK_METADATA.estimatedBlockTime),
+          threshold[1]
+            .mul(PREFERRED_NETWORK_METADATA.estimatedBlockTime)
+            .div(86400),
         ])
       );
     } catch (e: any) {
@@ -251,6 +253,7 @@ export const useVerification = () => {
       setReverifyThreshold(
         _reverifyThreshold
           .mul(PREFERRED_NETWORK_METADATA.estimatedBlockTime)
+          .div(86400)
           .toNumber()
       );
     } catch (e: any) {
