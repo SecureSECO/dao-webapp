@@ -39,6 +39,20 @@ export const DAO_VARIABLES_TYPES_METADATA: DaoVariablesTypeMetadataDescriptions 
   };
 
 export const DAO_VARIABLES_METADATA: DaoVariablesMetadata = {
+  IVerificationFacet: {
+    ReverifyThreshold: {
+      description:
+        'The amount of blocks after which a verification can be reverified.',
+    },
+    VerificationContractAddress: {
+      description:
+        'The address of the contract that handles the verification process.',
+    },
+    VerifyThreshold: {
+      description:
+        'The amount of days after which a verification has to reverify.',
+    },
+  },
   IPartialVotingProposalFacet: {
     MaxSingleWalletPower: {
       description:

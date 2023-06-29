@@ -244,9 +244,8 @@ export const useVerification = () => {
     if (!client) return;
 
     try {
-      const verificationContract =
-        await client.verification.GetVerificationContract();
-      const _reverifyThreshold = await verificationContract.reverifyThreshold();
+      const _reverifyThreshold =
+        await client.verification.GetReverifyThreshold();
 
       // Convert from number of blocks to seconds
       setReverifyThreshold(
@@ -269,7 +268,7 @@ export const useVerification = () => {
 
     try {
       const facet = await client.pure.IERC20OneTimeVerificationRewardFacet();
-      const _reward = await facet.tokensClaimableVerificationRewardAll();
+      const _reward = (await facet.tokensClaimableVerificationRewardAll())[0];
       setReward(_reward);
     } catch (e: any) {
       console.error(e);

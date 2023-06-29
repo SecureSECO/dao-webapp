@@ -9,7 +9,7 @@
 /** Address of the diamond to be used in production */
 const PROD_DIAMOND_ADDRESS = '0x1eF2db73AfFdd73D4e219638b5ffB62a564f17ea';
 /** Address of the diamond to be used in development (on Mumbai) */
-const DEV_DIAMOND_ADDRESS = '0x1eF2db73AfFdd73D4e219638b5ffB62a564f17ea';
+const DEV_DIAMOND_ADDRESS = '0x0e2a39c6eD2A231baE7e781768E60ee1A62afC9F';
 
 export const CONFIG = {
   VERIFICATION_API_URL:
