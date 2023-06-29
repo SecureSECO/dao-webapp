@@ -19,7 +19,7 @@ import {
   MainCardProps,
 } from '@/src/components/ui/MainCard';
 import { ACTIONS, actionToName } from '@/src/lib/constants/actions';
-import { Action } from '@plopmenz/diamond-governance-sdk';
+import { Action } from '@secureseco-dao/diamond-governance-sdk';
 
 export interface ProposalActionsProps
   extends Omit<MainCardProps, 'icon' | 'header'> {

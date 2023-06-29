@@ -10,7 +10,10 @@ import React from 'react';
 import { ACTIONS, actionToName } from '@/src/lib/constants/actions';
 import { calcBigNumberPercentage, cn } from '@/src/lib/utils';
 import { countdownText } from '@/src/lib/utils/date';
-import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import {
+  Proposal,
+  ProposalStatus,
+} from '@secureseco-dao/diamond-governance-sdk';
 import { VariantProps, cva } from 'class-variance-authority';
 import { BigNumber } from 'ethers';
 import { IconType } from 'react-icons';

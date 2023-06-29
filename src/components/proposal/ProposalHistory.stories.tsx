@@ -8,7 +8,10 @@
 
 import ProposalHistory from '@/src/components/proposal/ProposalHistory';
 import { dummyProposal } from '@/src/hooks/useProposal';
-import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import {
+  Proposal,
+  ProposalStatus,
+} from '@secureseco-dao/diamond-governance-sdk';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {

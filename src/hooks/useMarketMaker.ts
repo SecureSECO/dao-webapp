@@ -14,7 +14,7 @@ import {
   isNullOrUndefined,
   promiseObjectAll,
 } from '@/src/lib/utils';
-import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
+import { DiamondGovernanceClient } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber, constants } from 'ethers';
 import { useProvider } from 'wagmi';
 

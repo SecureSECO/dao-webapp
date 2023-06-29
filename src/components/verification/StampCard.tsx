@@ -35,7 +35,10 @@ import Header from '@/src/components/ui/Header';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { toast } from '@/src/hooks/useToast';
 import { StampInfo, useVerification } from '@/src/hooks/useVerification';
-import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
+import {
+  Stamp,
+  VerificationThreshold,
+} from '@secureseco-dao/diamond-governance-sdk';
 import { format } from 'date-fns';
 import { ContractTransaction } from 'ethers';
 import {

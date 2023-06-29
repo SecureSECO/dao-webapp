@@ -33,7 +33,7 @@ import {
   ProposalSorting,
   ProposalStatus,
   SortingOrder,
-} from '@plopmenz/diamond-governance-sdk';
+} from '@secureseco-dao/diamond-governance-sdk';
 import { HiChevronDown } from 'react-icons/hi2';
 
 const Governance = () => {

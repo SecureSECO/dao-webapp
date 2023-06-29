@@ -10,8 +10,8 @@ import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import { ACTIONS } from '@/src/lib/constants/actions';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { Action } from '@secureseco-dao/diamond-governance-sdk';
 
 export interface ProposalWhitelistAction extends Action {
   params: {

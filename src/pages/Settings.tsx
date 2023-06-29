@@ -17,7 +17,7 @@ import {
   useDaoVariables,
 } from '@/src/hooks/useDaoVariables';
 import { DAO_VARIABLES_METADATA } from '@/src/lib/constants/DaoVariablesMetadata';
-import { InterfaceVariables } from '@plopmenz/diamond-governance-sdk';
+import { InterfaceVariables } from '@secureseco-dao/diamond-governance-sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 type DisplaySetting = {

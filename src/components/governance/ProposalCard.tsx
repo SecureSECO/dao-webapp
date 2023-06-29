@@ -17,7 +17,10 @@ import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { StatusBadge, StatusBadgeProps } from '@/src/components/ui/StatusBadge';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
-import { Proposal, ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import {
+  Proposal,
+  ProposalStatus,
+} from '@secureseco-dao/diamond-governance-sdk';
 import { HiChevronRight, HiOutlineClock, HiXMark } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
 

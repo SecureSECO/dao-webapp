@@ -16,7 +16,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { actionNames } from '@/src/lib/constants/actions';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
-import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
+import { DiamondGovernanceClient } from '@secureseco-dao/diamond-governance-sdk';
 import { ethers } from 'ethers';
 import { useSigner } from 'wagmi';
 

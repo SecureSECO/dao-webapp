@@ -11,7 +11,7 @@ import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
-import { DiamondGovernanceClient } from '@plopmenz/diamond-governance-sdk';
+import { DiamondGovernanceClient } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber, constants } from 'ethers';
 import {
   Address,

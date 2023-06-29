@@ -27,7 +27,7 @@ import { useProposal } from '@/src/hooks/useProposal';
 import { toast } from '@/src/hooks/useToast';
 import { useTotalVotingWeight } from '@/src/hooks/useTotalVotingWeight';
 import { countdownText } from '@/src/lib/utils/date';
-import { ProposalStatus } from '@plopmenz/diamond-governance-sdk';
+import { ProposalStatus } from '@secureseco-dao/diamond-governance-sdk';
 import DOMPurify from 'dompurify';
 import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
 import { useParams } from 'react-router';

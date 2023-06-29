@@ -9,8 +9,8 @@
 import ActionWrapper from '@/src/components/proposal/actions/ActionWrapper';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { Action } from '@secureseco-dao/diamond-governance-sdk';
 import { FaGithub } from 'react-icons/fa';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
 

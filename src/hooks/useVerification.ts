@@ -8,7 +8,10 @@
 
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
-import { Stamp, VerificationThreshold } from '@plopmenz/diamond-governance-sdk';
+import {
+  Stamp,
+  VerificationThreshold,
+} from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 

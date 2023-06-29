@@ -16,7 +16,7 @@ import {
   ProposalSorting,
   ProposalStatus,
   SortingOrder,
-} from '@plopmenz/diamond-governance-sdk';
+} from '@secureseco-dao/diamond-governance-sdk';
 
 export type UseProposalsData = {
   loading: boolean;

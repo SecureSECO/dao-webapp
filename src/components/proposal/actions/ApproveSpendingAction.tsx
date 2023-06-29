@@ -15,8 +15,8 @@ import { Card } from '@/src/components/ui/Card';
 import TokenAmount from '@/src/components/ui/TokenAmount';
 import { useTokenInfo } from '@/src/hooks/useTokenInfo';
 import { ACTIONS } from '@/src/lib/constants/actions';
-import { Action } from '@plopmenz/diamond-governance-sdk';
 import { AccordionItemProps } from '@radix-ui/react-accordion';
+import { Action } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber, constants } from 'ethers';
 
 export interface ProposalApproveSpendingAction extends Action {

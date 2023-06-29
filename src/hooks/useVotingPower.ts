@@ -9,7 +9,7 @@
 import { useEffect, useState } from 'react';
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import { CONFIG } from '@/src/lib/constants/config';
-import { Proposal } from '@plopmenz/diamond-governance-sdk';
+import { Proposal } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { useBalance } from 'wagmi';
 

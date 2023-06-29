@@ -30,7 +30,7 @@ import { cn } from '@/src/lib/utils';
 import {
   ProposalSorting,
   SortingOrder,
-} from '@plopmenz/diamond-governance-sdk';
+} from '@secureseco-dao/diamond-governance-sdk';
 import { HiThumbUp } from 'react-icons/hi';
 import {
   HiBarsArrowDown,
