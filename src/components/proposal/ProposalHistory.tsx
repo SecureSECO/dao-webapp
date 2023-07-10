@@ -63,7 +63,8 @@ const getProposalMilestones = (proposal: Proposal) => {
       res.push({
         label: 'Succeeded',
         variant: 'done',
-        // If the executionDate is earlier than endDate, there was an early execution, so endDate executionDate is also the end date
+        // If the executionDate is earlier than endDate, there was an early execution, so executionDate is also the end date
+        // Note that in general, the exectionDate will not be defined if the proposal status is unequal to Executed
         date:
           proposal.executionDate &&
           compareAsc(proposal.executionDate, proposal.endDate) === -1

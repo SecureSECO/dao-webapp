@@ -50,6 +50,14 @@ const ViewProposal = () => {
         return 'Starts in ' + countdownText(proposal.startDate);
       case ProposalStatus.Active:
         return 'Ends in ' + countdownText(proposal.endDate);
+      case ProposalStatus.Executed:
+        return (
+          'Executed ' +
+          (proposal.executionDate
+            ? countdownText(proposal.executionDate)
+            : '?') +
+          ' ago'
+        );
       default:
         return 'Ended ' + countdownText(proposal.endDate) + ' ago';
     }
