@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import Logo from '@/src/components/Logo';
 import { ClaimDailyRewardCard } from '@/src/components/dashboard/ClaimDailyRewardCard';
 import MembersList from '@/src/components/dashboard/MembersList';
 import Diamond from '@/src/components/icons/Diamond';
+import Logo from '@/src/components/Logo';
 import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';

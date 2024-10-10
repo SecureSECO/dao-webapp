@@ -49,6 +49,7 @@ import {
   HiOutlineExclamationCircle,
   HiXMark,
 } from 'react-icons/hi2';
+import { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 
 /**
@@ -252,14 +253,17 @@ const StampCard = ({
                 <AlertDialogAction
                   disabled={isBusy}
                   onClick={() => {
-                    toast.contractTransaction(unverify, {
-                      success: 'Verification removed',
-                      error: 'Failed to remove verification: ',
-                      onFinish() {
-                        setIsBusy(false);
-                        refetch();
-                      },
-                    });
+                    toast.contractTransaction(
+                      () => unverify().then((res) => res.hash as Hex),
+                      {
+                        success: 'Verification removed',
+                        error: 'Failed to remove verification: ',
+                        onFinish() {
+                          setIsBusy(false);
+                          refetch();
+                        },
+                      }
+                    );
                   }}
                 >
                   Continue

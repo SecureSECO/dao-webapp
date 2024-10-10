@@ -50,9 +50,9 @@ import { BigNumber, constants, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import {
   FieldErrors,
+  useForm,
   UseFormRegister,
   UseFormSetValue,
-  useForm,
   useWatch,
 } from 'react-hook-form';
 import {
@@ -60,14 +60,16 @@ import {
   HiCog6Tooth,
   HiOutlineArrowsUpDown,
 } from 'react-icons/hi2';
+import { Address, maxUint256, parseUnits } from 'viem';
 import {
-  erc20ABI,
   useAccount,
   useBalance,
-  useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
+  useReadContract,
+  useSimulateContract,
+  useWriteContract,
 } from 'wagmi';
+
+import { erc20ABI } from '../lib/constants/erc20ABI';
 
 const abcTokens = [
   {
@@ -122,7 +124,6 @@ const Swap = () => {
   const { data: daiBalance } = useBalance({
     address,
     token: abcTokens[0].contractAddress as any,
-    watch: true,
   });
 
   const [isSwapping, setIsSwapping] = useState(false);
@@ -132,7 +133,7 @@ const Swap = () => {
   const slippageWatch = useWatch({ control, name: 'slippage' });
   const slippage = parseFloat(slippageWatch);
   const fromAmountWatch = useWatch({ control, name: 'fromToken' });
-  const fromAmount = parseTokenAmount(fromAmountWatch, decimals);
+  const fromAmount = parseUnits(fromAmountWatch, decimals);
 
   const [swap, setSwap] = useState<'Mint' | 'Burn'>('Mint');
   const from = swap === 'Mint' ? abcTokens[0] : abcTokens[1];
@@ -166,40 +167,43 @@ const Swap = () => {
     enabled: fromAmount !== null && !isNaN(slippage),
   });
 
-  const { data: approvedAmount } = useContractRead({
-    address: abcTokens[0].contractAddress as any, // DAI address
+  const { data: approvedAmount } = useReadContract({
+    address: abcTokens[0].contractAddress as Address, // DAI address
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [address as any, swapContractAddress as any],
-    enabled: swap === 'Mint' && swapContractAddress !== null,
-    watch: true,
+    args: [address as Address, swapContractAddress as Address],
+    query: {
+      enabled: swap === 'Mint' && swapContractAddress !== null,
+    },
   });
 
   const isApproved =
     swap === 'Burn' ||
     (approvedAmount !== undefined &&
       fromAmount !== null &&
-      approvedAmount.gte(fromAmount)) ||
+      approvedAmount > fromAmount) ||
     (approvedAmount !== undefined && // In case the input is invalid.
       fromAmount === null &&
-      approvedAmount.gte(constants.Zero));
+      approvedAmount > BigInt(0));
 
-  const { config: approveConfig } = usePrepareContractWrite({
+  const { data: approveConfig } = useSimulateContract({
     address: abcTokens[0].contractAddress as any, //always use DAI contract for this.
     abi: erc20ABI,
     functionName: 'approve',
-    args: [swapContractAddress as any, ethers.constants.MaxUint256],
-    enabled: swap === 'Mint' && swapContractAddress !== null,
+    args: [swapContractAddress as any, maxUint256],
+    query: {
+      enabled: swap === 'Mint' && swapContractAddress !== null,
+    },
   });
   const {
-    writeAsync: writeAproveAsync,
+    writeContractAsync: writeAproveAsync,
     error: approveError,
-    isLoading: isLoadingAprove,
-  } = useContractWrite(approveConfig);
+    isPending: isLoadingAprove,
+  } = useWriteContract();
 
   const enoughGas =
     estimatedGas !== null && nativeBalance !== undefined
-      ? nativeBalance.value.gte(estimatedGas)
+      ? nativeBalance.value > estimatedGas
       : true;
 
   const onSubmit = () => {
@@ -338,10 +342,13 @@ const Swap = () => {
               type="button"
               disabled={isApproved}
               onClick={() =>
-                toast.contractTransaction(() => writeAproveAsync!(), {
-                  success: 'Approved!',
-                  error: 'Approving failed',
-                })
+                toast.contractTransaction(
+                  () => writeAproveAsync!(approveConfig!.request),
+                  {
+                    success: 'Approved!',
+                    error: 'Approving failed',
+                  }
+                )
               }
             >
               Approve
@@ -370,7 +377,7 @@ const Swap = () => {
                 content: <Loading className="w-5 h-5" />,
               },
               {
-                when: fromAmount !== null && fromAmount.eq(constants.Zero),
+                when: fromAmount !== null && fromAmount === BigInt(0),
                 content: <Warning>{from.name} amount is zero</Warning>,
               },
               {

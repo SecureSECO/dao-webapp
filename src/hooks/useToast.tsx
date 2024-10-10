@@ -10,6 +10,7 @@ import { ToastActionElement, type ToastProps } from '@/src/components/ui/Toast';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { ContractReceipt } from 'ethers';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
+import { createPublicClient, Hex, http, TransactionReceipt } from 'viem';
 
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 3000;
@@ -264,13 +265,8 @@ toast.success = (props: Toast, id?: string) =>
       })
     : toast({ ...props, variant: 'success' });
 
-interface ContractTransactionPromiseResult {
-  hash: string;
-  wait: (confirmations?: number | undefined) => Promise<ContractReceipt>;
-}
-
 export type ContractTransactionToast = Omit<
-  PromiseToast<ContractReceipt>,
+  PromiseToast<TransactionReceipt>,
   'loading'
 >;
 
@@ -284,7 +280,7 @@ export type ContractTransactionToast = Omit<
  * @returns An object containing the id of the toast
  */
 toast.contractTransaction = async (
-  promise: () => Promise<ContractTransactionPromiseResult>,
+  promise: () => Promise<Hex>,
   config: ContractTransactionToast
 ) => {
   const id = toast.loading({
@@ -301,7 +297,7 @@ toast.contractTransaction = async (
       title: 'Awaiting confirmation...',
       description: explorerURL ? (
         <a
-          href={`${explorerURL}/tx/${transaction.hash}`}
+          href={`${explorerURL}/tx/${transaction}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-row items-center gap-x-1 text-xs text-primary"
@@ -314,8 +310,13 @@ toast.contractTransaction = async (
       ),
     });
 
+    const publicClient = createPublicClient({
+      transport: http(PREFERRED_NETWORK_METADATA.rpc),
+    });
     // Await confirmation of the transaction
-    const receipt = await transaction.wait();
+    const receipt = await publicClient.waitForTransactionReceipt({
+      hash: transaction,
+    });
 
     // Call the given success callback function
     toast.success(promisePropToToast(config.success, receipt), id);

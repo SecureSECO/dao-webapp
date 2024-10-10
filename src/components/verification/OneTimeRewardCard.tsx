@@ -16,6 +16,7 @@ import { toast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { HiGift } from 'react-icons/hi2';
+import { Hex } from 'viem';
 
 /**
  * @returns A card that allows the users to claim their reward for verifying
@@ -35,14 +36,17 @@ const OneTimeRewardCard = ({
     if (isClaiming) return;
 
     setIsClaiming(true);
-    toast.contractTransaction(claimReward, {
-      success: 'Successfully claimed reward!',
-      error: 'Could not claim reward',
-      onFinish() {
-        setIsClaiming(false);
-        refetch();
-      },
-    });
+    toast.contractTransaction(
+      () => claimReward().then((res) => res.hash as Hex),
+      {
+        success: 'Successfully claimed reward!',
+        error: 'Could not claim reward',
+        onFinish() {
+          setIsClaiming(false);
+          refetch();
+        },
+      }
+    );
   };
 
   return (

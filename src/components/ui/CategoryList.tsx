@@ -13,7 +13,7 @@
 
 import React, { ReactNode } from 'react';
 import { cn } from '@/src/lib/utils';
-import { VariantProps, cva } from 'class-variance-authority';
+import { cva, VariantProps } from 'class-variance-authority';
 
 export type Category = {
   title: string;

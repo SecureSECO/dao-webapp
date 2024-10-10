@@ -322,8 +322,8 @@ const EditorWrapper: React.FC<{
         disabled
           ? 'cursor-not-allowed border-input opacity-50'
           : error
-          ? 'border border-destructive ring-destructive'
-          : 'border border-input ring-primary/50',
+            ? 'border border-destructive ring-destructive'
+            : 'border border-input ring-primary/50',
         isFocused && 'outline-none ring-2 ring-offset-2 ring-offset-background'
       )}
     >

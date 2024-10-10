@@ -34,8 +34,8 @@ const RecentVerificationCard = ({
 
   const stamp = history.stamp;
   const stampInfo: StampInfo = stamp
-    ? availableStamps.find((stampInfo) => stampInfo.id === stamp[0]) ??
-      fallBackStampInfo
+    ? (availableStamps.find((stampInfo) => stampInfo.id === stamp[0]) ??
+      fallBackStampInfo)
     : fallBackStampInfo;
 
   return (

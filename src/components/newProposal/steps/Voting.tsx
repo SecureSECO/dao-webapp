@@ -14,7 +14,7 @@ import Legend from '@/src/components/ui/Legend';
 import { RadioButtonCard, RadioGroup } from '@/src/components/ui/RadioGroup';
 import { TimezoneSelector } from '@/src/components/ui/TimeZoneSelector';
 import { usePartialVotingProposalMinDuration } from '@/src/hooks/useFacetFetch';
-import { IsEmptyOrOnlyWhitespace, cn } from '@/src/lib/utils';
+import { cn, IsEmptyOrOnlyWhitespace } from '@/src/lib/utils';
 import {
   getDurationDateAhead,
   getDurationInSeconds,
@@ -39,8 +39,8 @@ import {
   Control,
   Controller,
   FieldErrors,
-  UseFormRegister,
   useForm,
+  UseFormRegister,
   useWatch,
 } from 'react-hook-form';
 

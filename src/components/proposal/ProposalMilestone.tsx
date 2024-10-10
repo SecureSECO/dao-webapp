@@ -14,7 +14,7 @@ import {
   TooltipTrigger,
 } from '@/src/components/ui/Tooltip';
 import { cn } from '@/src/lib/utils';
-import { VariantProps, cva } from 'class-variance-authority';
+import { cva, VariantProps } from 'class-variance-authority';
 import { format } from 'date-fns';
 import { HiCheckCircle, HiCube, HiXCircle } from 'react-icons/hi2';
 

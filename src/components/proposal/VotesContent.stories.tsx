@@ -43,6 +43,7 @@ export const Active: Story = {
       No: true,
       Abstain: true,
     },
+    refetch: () => {},
   },
 };
 
@@ -59,6 +60,7 @@ export const ActiveCannotVote: Story = {
       No: false,
       Abstain: false,
     },
+    refetch: () => {},
   },
 };
 
@@ -75,6 +77,7 @@ export const Pending: Story = {
       No: true,
       Abstain: true,
     },
+    refetch: () => {},
   },
 };
 
@@ -91,6 +94,7 @@ export const Succeeded: Story = {
       No: true,
       Abstain: true,
     },
+    refetch: () => {},
   },
 };
 
@@ -107,6 +111,7 @@ export const Executed: Story = {
       No: true,
       Abstain: true,
     },
+    refetch: () => {},
   },
 };
 
@@ -123,5 +128,6 @@ export const Defeated: Story = {
       No: true,
       Abstain: true,
     },
+    refetch: () => {},
   },
 };

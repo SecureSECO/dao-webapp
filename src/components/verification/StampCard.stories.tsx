@@ -25,7 +25,7 @@ const stampInfo = {
   id: 'github',
   displayName: 'GitHub',
   url: 'https://github.com/',
-  icon: <FaGithub className="h-6 w-6 shrink-0" />,
+  icon: <FaGithub className="size-6 shrink-0" />,
 };
 
 export const Verified: Story = {
@@ -35,6 +35,7 @@ export const Verified: Story = {
     thresholdHistory: [[BigNumber.from(0), BigNumber.from(60)]],
     verify: () => {},
     isError: false,
+    refetch: () => {},
   },
 };
 
@@ -45,6 +46,7 @@ export const Expired: Story = {
     thresholdHistory: [[BigNumber.from(0), BigNumber.from(0)]],
     verify: () => {},
     isError: false,
+    refetch: () => {},
   },
 };
 
@@ -55,5 +57,6 @@ export const Unverified: Story = {
     thresholdHistory: [[BigNumber.from(0), BigNumber.from(60)]],
     verify: () => {},
     isError: false,
+    refetch: () => {},
   },
 };

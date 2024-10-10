@@ -13,8 +13,8 @@ import {
 } from '@/src/components/ui/DataTable';
 import { HeaderCard } from '@/src/components/ui/HeaderCard';
 import {
-  UseDaoVariablesValuesData,
   useDaoVariables,
+  UseDaoVariablesValuesData,
 } from '@/src/hooks/useDaoVariables';
 import { DAO_VARIABLES_METADATA } from '@/src/lib/constants/DaoVariablesMetadata';
 import { InterfaceVariables } from '@secureseco-dao/diamond-governance-sdk';

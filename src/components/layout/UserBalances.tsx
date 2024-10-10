@@ -61,7 +61,7 @@ export const UserBalance = ({
   name,
   ...props
 }: {
-  bal: BigNumber;
+  bal: bigint;
   decimals: number;
   name: string;
   icon: IconType;
