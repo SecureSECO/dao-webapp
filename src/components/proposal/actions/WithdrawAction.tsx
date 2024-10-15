@@ -69,14 +69,14 @@ const WithdrawAction = ({ action, ...props }: WithdrawActionProps) => {
           <p className="text-xl font-medium leading-9">
             {isNative
               ? PREFERRED_NETWORK_METADATA.nativeToken.name
-              : tokenInfo?.name ?? 'Unknown token'}
+              : (tokenInfo?.name ?? 'Unknown token')}
           </p>
           <p className="text-base text-popover-foreground/80">
             {isNative || tokenInfo?.decimals !== undefined
               ? toAbbreviatedTokenAmount({
                   value: isNative
                     ? action.params._value
-                    : action.params._amount ?? BigNumber.from(1),
+                    : (action.params._amount ?? BigNumber.from(1)),
                   tokenDecimals:
                     tokenInfo?.decimals ??
                     PREFERRED_NETWORK_METADATA.nativeToken.decimals,

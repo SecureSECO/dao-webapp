@@ -55,6 +55,7 @@ import {
   HiOutlineCodeBracketSquare,
   HiOutlineDocumentMagnifyingGlass,
 } from 'react-icons/hi2';
+import { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 
 interface QueryFormData {
@@ -265,17 +266,20 @@ const Query = () => {
                       return payForSession(session);
                     };
 
-                    toast.contractTransaction(startAndPaySession, {
-                      success: 'Paid for session!',
-                      error: 'Failed to pay for session',
-                      onError() {
-                        // Reset session
-                        resetQuery(false);
-                      },
-                      onFinish() {
-                        setIsPaying(false);
-                      },
-                    });
+                    toast.contractTransaction(
+                      () => startAndPaySession().then((res) => res.hash as Hex),
+                      {
+                        success: 'Paid for session!',
+                        error: 'Failed to pay for session',
+                        onError() {
+                          // Reset session
+                          resetQuery(false);
+                        },
+                        onFinish() {
+                          setIsPaying(false);
+                        },
+                      }
+                    );
                   }}
                   disabled={!isConnected || isPaying}
                   icon={isPaying ? Loading : null}

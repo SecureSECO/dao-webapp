@@ -7,10 +7,9 @@
  */
 
 import TokenAmount from '@/src/components/ui/TokenAmount';
-import { BigNumber } from 'ethers';
 
 export type MaxButtonProps = {
-  max: BigNumber;
+  max: bigint;
   decimals: number;
   setMaxValue: () => void;
 };

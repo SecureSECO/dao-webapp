@@ -14,7 +14,7 @@ import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { CONFIG } from '@/src/lib/constants/config';
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { getErrorMessage } from '@/src/lib/utils';
-import { BigNumber, ContractTransaction, constants, ethers } from 'ethers';
+import { BigNumber, constants, ContractTransaction, ethers } from 'ethers';
 
 type QueryResponse = any;
 type CheckResponse = any;

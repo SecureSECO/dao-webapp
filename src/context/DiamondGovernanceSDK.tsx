@@ -18,7 +18,8 @@ import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
 import { DiamondGovernanceClient } from '@secureseco-dao/diamond-governance-sdk';
 import { ethers } from 'ethers';
-import { useSigner } from 'wagmi';
+
+import { useEthersSigner } from '../hooks/useEthersSigner';
 
 type SDKContext = {
   /** Signed client to be used in requests that require a wallet to be connected */
@@ -63,7 +64,7 @@ export function DiamondSDKWrapper({ children }: any): JSX.Element {
     undefined
   );
 
-  const signer = useSigner().data || undefined;
+  const signer = useEthersSigner() || undefined;
 
   useEffect(() => {
     // Create client with dummy signer

@@ -31,6 +31,7 @@ import { ProposalStatus } from '@secureseco-dao/diamond-governance-sdk';
 import DOMPurify from 'dompurify';
 import { HiChevronLeft, HiOutlineClock } from 'react-icons/hi2';
 import { useParams } from 'react-router';
+import { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 
 const ViewProposal = () => {
@@ -74,12 +75,15 @@ const ViewProposal = () => {
       });
 
     setIsExecuting(true);
-    toast.contractTransaction(() => proposal.Execute(), {
-      error: 'Error executing proposal',
-      success: 'Execution successful!',
-      onSuccess: () => refetch(),
-      onFinish: () => setIsExecuting(false),
-    });
+    toast.contractTransaction(
+      () => proposal.Execute().then((res) => res.hash as Hex),
+      {
+        error: 'Error executing proposal',
+        success: 'Execution successful!',
+        onSuccess: () => refetch(),
+        onFinish: () => setIsExecuting(false),
+      }
+    );
   };
 
   return (

@@ -95,7 +95,7 @@ export const usePartialVotingProposalMinDuration = () =>
 export const useBurnVotingProposalCreationCost = () =>
   useFacetFetch({
     facet: (c) => c.IBurnVotingProposalFacet(),
-    data: (f) => f.getProposalCreationCost(),
+    data: (f) => f.getProposalCreationCost().then((res) => res.toBigInt()),
     useAnonymousClient: true,
   });
 

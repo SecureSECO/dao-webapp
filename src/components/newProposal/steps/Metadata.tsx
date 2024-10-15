@@ -22,10 +22,10 @@ import { ProposalResource } from '@secureseco-dao/diamond-governance-sdk';
 import {
   Controller,
   FieldErrors,
-  UseFormGetValues,
-  UseFormSetError,
   useFieldArray,
   useForm,
+  UseFormGetValues,
+  UseFormSetError,
 } from 'react-hook-form';
 import { HiPlus, HiXMark } from 'react-icons/hi2';
 

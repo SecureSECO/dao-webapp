@@ -39,9 +39,11 @@ import {
 import { Action } from '@secureseco-dao/diamond-governance-sdk';
 import { add, format } from 'date-fns';
 import DOMPurify from 'dompurify';
+import { ContractReceipt } from 'ethers';
 import { useForm } from 'react-hook-form';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router';
+import { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 
 /**
@@ -180,21 +182,25 @@ export const Confirmation = () => {
     setIsSubmitting(true);
     toast.contractTransaction(
       () =>
-        client.sugar.CreateProposal(
-          {
-            ...dataStep1,
-            resources: dataStep1.resources.filter((res) => res.url !== ''),
-          },
-          parsedActions,
-          start,
-          end
-        ),
+        client.sugar
+          .CreateProposal(
+            {
+              ...dataStep1,
+              resources: dataStep1.resources.filter((res) => res.url !== ''),
+            },
+            parsedActions,
+            start,
+            end
+          )
+          .then((res) => res.hash as Hex),
       {
         error: 'Error creating proposal',
         success: 'Proposal created!',
         onSuccess: async (receipt) => {
           // Fetch ID of created proposal to send user to that page
-          const id = await client.sugar.GetProposalId(receipt);
+          const id = await client.sugar.GetProposalId({
+            logs: receipt.logs,
+          } as any);
           // Send user to proposals page
           navigate(`/governance/proposals/${id}`);
         },
@@ -323,14 +329,14 @@ export const Confirmation = () => {
             {
               when:
                 proposalCreationCost !== null &&
-                votingPower.lt(proposalCreationCost),
+                votingPower < proposalCreationCost,
               content: <InsufficientRepWarning action="to create proposal" />,
             },
           ]}
         />
         {isConnected &&
           proposalCreationCost !== null &&
-          votingPower.gte(proposalCreationCost) && (
+          votingPower >= proposalCreationCost && (
             <p>
               You will pay{' '}
               <TokenAmount

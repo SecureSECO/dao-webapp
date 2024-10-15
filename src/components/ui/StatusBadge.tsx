@@ -7,7 +7,7 @@
  */
 
 import { cn } from '@/src/lib/utils';
-import { VariantProps, cva } from 'class-variance-authority';
+import { cva, VariantProps } from 'class-variance-authority';
 import { IconType } from 'react-icons';
 
 const statusVariants = cva(

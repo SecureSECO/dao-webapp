@@ -42,9 +42,8 @@ export const useTotalVotingWeight = ({
 
     try {
       const governance = await anonClient.pure.IGovernanceStructure();
-      const totalVotingWeightData = await governance.totalVotingPower(
-        blockNumber
-      );
+      const totalVotingWeightData =
+        await governance.totalVotingPower(blockNumber);
       if (totalVotingWeightData) {
         setTotalVotingWeight(totalVotingWeightData);
         setLoading(false);

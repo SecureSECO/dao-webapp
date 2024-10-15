@@ -15,13 +15,13 @@ import {
   Column,
   ColumnDef,
   ColumnFiltersState,
-  SortingState,
-  Table as TableType,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
+  Table as TableType,
   useReactTable,
 } from '@tanstack/react-table';
 import { HiArrowDown, HiArrowUp, HiChevronUpDown } from 'react-icons/hi2';

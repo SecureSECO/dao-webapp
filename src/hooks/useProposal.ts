@@ -385,7 +385,9 @@ export const useProposal = ({
     try {
       const values = [VoteOption.Abstain, VoteOption.Yes, VoteOption.No];
       const canVoteData = await Promise.all(
-        values.map((vote) => proposal.CanVote(vote, proposalVotingPower))
+        values.map((vote) =>
+          proposal.CanVote(vote, BigNumber.from(proposalVotingPower))
+        )
       );
       setCanVote({
         Yes: canVoteData[1],

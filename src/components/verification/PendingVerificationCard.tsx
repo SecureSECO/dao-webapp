@@ -36,6 +36,7 @@ import { truncateMiddle } from '@/src/lib/utils';
 import { availableStamps } from '@/src/pages/Verification';
 import { ContractTransaction } from 'ethers';
 import { HiOutlineClock, HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Hex } from 'viem';
 
 /**
  * @returns A Card element containing information about a previous verification
@@ -156,26 +157,29 @@ const PendingVerificationCard = ({
       <div className="flex items-center gap-x-2">
         <Button
           onClick={() => {
-            toast.contractTransaction(verify, {
-              success: 'Successfully verified!',
-              error: (e) => ({
-                title: 'Verification failed',
-              }),
-              onSuccess: () => {
-                setIsSuccess(true);
-                // Remove from pendingVerifications
-                setPendingVerifications(
-                  pendingVerifications.filter(
-                    (pendingVerification) => pendingVerification.hash !== hash
-                  )
-                );
-              },
-              onFinish() {
-                setIsBusy(false);
+            toast.contractTransaction(
+              () => verify().then((res) => res.hash as Hex),
+              {
+                success: 'Successfully verified!',
+                error: (e) => ({
+                  title: 'Verification failed',
+                }),
+                onSuccess: () => {
+                  setIsSuccess(true);
+                  // Remove from pendingVerifications
+                  setPendingVerifications(
+                    pendingVerifications.filter(
+                      (pendingVerification) => pendingVerification.hash !== hash
+                    )
+                  );
+                },
+                onFinish() {
+                  setIsBusy(false);
 
-                refetch();
-              },
-            });
+                  refetch();
+                },
+              }
+            );
           }}
           disabled={isBusy}
           icon={isBusy ? Loading : undefined}

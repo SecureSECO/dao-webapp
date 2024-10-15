@@ -16,7 +16,7 @@
 import * as React from 'react';
 import { cn } from '@/src/lib/utils';
 import * as ProgressPrimitive from '@radix-ui/react-progress';
-import { VariantProps, cva } from 'class-variance-authority';
+import { cva, VariantProps } from 'class-variance-authority';
 
 /**
  * `progressVariants` defines the available variants and sizes for the Progress component.

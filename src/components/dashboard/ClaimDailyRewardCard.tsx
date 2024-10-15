@@ -19,17 +19,21 @@ import { toast } from '@/src/hooks/useToast';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { BigNumber } from 'ethers';
 import { HiGift } from 'react-icons/hi2';
+import { Hex } from 'viem';
 
 export const ClaimDailyRewardCard = () => {
   const { data: timeClaimable, loading, error, refetch } = useTimeClaimable();
 
   const handleClaimReward = async () => {
     if (!timeClaimable) return;
-    toast.contractTransaction(timeClaimable.claimReward, {
-      error: 'Could not claim reward',
-      success: 'Reward claimed!',
-      onSuccess: () => refetch(),
-    });
+    toast.contractTransaction(
+      () => timeClaimable.claimReward().then((res) => res.hash as Hex),
+      {
+        error: 'Could not claim reward',
+        success: 'Reward claimed!',
+        onSuccess: () => refetch(),
+      }
+    );
   };
 
   return (

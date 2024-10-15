@@ -16,12 +16,12 @@ export const ErrorText = ({ error, name }: ErrorWrapperProps) =>
       {error?.type == 'required'
         ? `${name} is required`
         : error?.type == 'minLength'
-        ? `${name} is too short`
-        : error?.type == 'maxLength'
-        ? `${name} is too long`
-        : error?.type == 'pattern'
-        ? error?.message ?? `${name} is invalid`
-        : error?.message ?? `${name} is invalid`}
+          ? `${name} is too short`
+          : error?.type == 'maxLength'
+            ? `${name} is too long`
+            : error?.type == 'pattern'
+              ? (error?.message ?? `${name} is invalid`)
+              : (error?.message ?? `${name} is invalid`)}
     </span>
   ) : (
     <></>

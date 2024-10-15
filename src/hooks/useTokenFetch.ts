@@ -12,8 +12,9 @@ import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
 import { AddressPattern } from '@/src/lib/constants/patterns';
 import { TokenType } from '@/src/lib/constants/tokens';
-import { TokenInfo, fetchTokenInfo } from '@/src/lib/utils/token';
-import { useProvider } from 'wagmi';
+import { fetchTokenInfo, TokenInfo } from '@/src/lib/utils/token';
+
+import { useEthersProvider } from './useEthersProvider';
 
 export type TokenFetch = (
   address?: string,
@@ -26,7 +27,7 @@ export type TokenFetch = (
  * @see fetchTokenInfo
  */
 export const useTokenFetch = () => {
-  const provider = useProvider({
+  const provider = useEthersProvider({
     chainId: CONFIG.PREFERRED_NETWORK_ID,
   });
 
@@ -48,7 +49,7 @@ export const useTokenFetch = () => {
     try {
       const info = await fetchTokenInfo(
         cleanAddress,
-        provider,
+        provider!,
         PREFERRED_NETWORK_METADATA.nativeToken,
         tokenType
       );

@@ -15,7 +15,7 @@ import React, { ReactNode } from 'react';
 import { Card, CardProps } from '@/src/components/ui/Card';
 import Header from '@/src/components/ui/Header';
 import { cn } from '@/src/lib/utils';
-import { VariantProps, cva } from 'class-variance-authority';
+import { cva, VariantProps } from 'class-variance-authority';
 
 const headerCardVariants = cva('w-full h-full flex flex-col gap-y-2', {
   variants: {},

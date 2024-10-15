@@ -34,8 +34,8 @@ import {
 import { useDiamondSDKContext } from '@/src/context/DiamondGovernanceSDK';
 import {
   Pools,
-  TokenData,
   pools,
+  TokenData,
   useDepositAssets,
 } from '@/src/hooks/useDepositAssets';
 import { ContractTransactionToast, toast } from '@/src/hooks/useToast';
@@ -47,7 +47,8 @@ import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiChevronLeft } from 'react-icons/hi2';
-import { useAccount, useBalance, useNetwork, Address as wAddress } from 'wagmi';
+import { Hex, Address as wAddress } from 'viem';
+import { useAccount, useBalance, useChainId } from 'wagmi';
 
 type DepositAssetsData = {
   token: Token;
@@ -76,7 +77,7 @@ export const DepositAssets = () => {
   const { daoAddress, secoinAddress } = useDiamondSDKContext();
   const { isConnected, address } = useAccount();
   const { data: maticData } = useBalance({ address });
-  const { chain } = useNetwork();
+  const chainId = useChainId();
 
   // Creating 'tokens', the object displaying known tokens that can be deposited through this component,
   // using ERC20 contract writes or native token transaction.
@@ -116,7 +117,7 @@ export const DepositAssets = () => {
     useDepositAssets({
       token,
       pool,
-      amount: amount ?? undefined,
+      amount: amount?.toBigInt() ?? undefined,
     });
 
   // State for loading symbol during transaction
@@ -397,7 +398,7 @@ export const DepositAssets = () => {
                         content: <ConnectWalletWarning action="to deposit" />,
                       },
                       {
-                        when: chain?.id !== PREFERRED_NETWORK_METADATA.id,
+                        when: chainId !== PREFERRED_NETWORK_METADATA.id,
                         content: (
                           <Warning> Switch network to deposit assets </Warning>
                         ),

@@ -13,15 +13,15 @@ import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
 import { DiamondGovernanceClient } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber, constants } from 'ethers';
+import { Address, Hex, maxUint256 } from 'viem';
 import {
-  Address,
   useAccount,
   useBalance,
-  useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
-  usePrepareSendTransaction,
+  usePrepareTransactionRequest,
+  useReadContract,
   useSendTransaction,
+  useSimulateContract,
+  useWriteContract,
 } from 'wagmi';
 
 export const pools = [
@@ -40,7 +40,7 @@ export type TokenData = {
 export type useDepositAssetsProps = {
   token?: TokenData;
   pool?: Pools;
-  amount?: BigNumber;
+  amount?: bigint;
 };
 
 /**
@@ -70,7 +70,7 @@ export const useDepositAssets = ({
   const { address } = useAccount();
   const { client, daoAddress, secoinAddress } = useDiamondSDKContext();
   const debouncedTokenId = useDebounce(
-    [amount ?? BigNumber.from(0), token?.address],
+    [amount ?? BigInt(0), token?.address],
     1000
   );
 
@@ -80,32 +80,39 @@ export const useDepositAssets = ({
   // === Contract interactions to send tokens to a pool ===
   // ERC20 tokens to general
   const {
-    config: configERC20,
+    data: configERC20,
     isLoading: loadingERC20,
     error: errorERC20,
-  } = usePrepareContractWrite({
+  } = useSimulateContract({
     address: token?.address,
     abi: erc20ABI,
     functionName: 'transfer',
-    args: [daoAddress as Address, amount ?? BigNumber.from(0)],
-    enabled:
-      Boolean(debouncedTokenId) && !token?.isNativeToken && pool === 'General',
+    args: [daoAddress as Address, amount ?? BigInt(0)],
+    query: {
+      enabled:
+        Boolean(debouncedTokenId) &&
+        !token?.isNativeToken &&
+        pool === 'General',
+    },
   });
 
-  const { writeAsync: sendERC20 } = useContractWrite(configERC20);
+  const { writeContractAsync: sendERC20 } = useWriteContract();
 
   // Native tokens (MATIC) to general
   const {
-    config: configNative,
+    data: configNative,
     isLoading: loadingNative,
     error: errorNative,
-  } = usePrepareSendTransaction({
-    request: { to: daoAddress as string, value: amount ?? BigNumber.from(0) },
+  } = usePrepareTransactionRequest({
+    to: daoAddress as Address,
+    value: amount ?? BigInt(0),
     chainId: PREFERRED_NETWORK_METADATA.id,
-    enabled:
-      Boolean(debouncedTokenId) && token?.isNativeToken && pool === 'General',
+    query: {
+      enabled:
+        Boolean(debouncedTokenId) && token?.isNativeToken && pool === 'General',
+    },
   });
-  const { sendTransactionAsync: sendNative } = useSendTransaction(configNative);
+  const { sendTransactionAsync: sendNative } = useSendTransaction();
 
   // SECOIN to specific pool
   const sendToPool = async (
@@ -125,28 +132,28 @@ export const useDepositAssets = ({
 
   // === Contract interactions to read and set allowance (in the case of SECOIN to specific pool) ===
   // Read if the allowance is enough
-  const { data: approvedAmountU } = useContractRead({
+  const { data: approvedAmountU } = useReadContract({
     address: secoinAddress as Address,
     abi: erc20ABI,
     functionName: 'allowance',
     args: [address as Address, client?.pure.pluginAddress as Address],
-    enabled: pool !== 'General' && client !== null && address !== null,
-    watch: true,
+    query: {
+      enabled: pool !== 'General' && client !== null && address !== null,
+    },
   });
   const approvedAmount = approvedAmountU as BigNumber | undefined;
 
   // Write to contract to set allowance
-  const { config: approveConfig } = usePrepareContractWrite({
+  const { data: approveConfig } = useSimulateContract({
     address: secoinAddress as Address,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [
-      client?.pure.pluginAddress as Address,
-      amount ?? constants.MaxUint256,
-    ],
-    enabled: pool !== 'General' && client !== null && address !== null,
+    args: [client?.pure.pluginAddress as Address, amount ?? maxUint256],
+    query: {
+      enabled: pool !== 'General' && client !== null && address !== null,
+    },
   });
-  const { writeAsync: writeApproveAsync } = useContractWrite(approveConfig);
+  const { writeContractAsync: writeApproveAsync } = useWriteContract();
 
   // === Contract interactions to get user balance ===
   const { data: _balance } = useBalance({
@@ -156,8 +163,9 @@ export const useDepositAssets = ({
       ? undefined
       : (token?.address as `0x${string}` | undefined),
     chainId: PREFERRED_NETWORK_METADATA.id,
-    enabled: token !== undefined,
-    watch: true,
+    query: {
+      enabled: token !== undefined,
+    },
   });
 
   // ==================================
@@ -170,20 +178,22 @@ export const useDepositAssets = ({
     if (isNullOrUndefined(token)) throw new Error();
 
     if (pool !== 'General') {
-      return sendToPool(client, amount);
+      return sendToPool(client, BigNumber.from(amount)).then(
+        (res) => res.hash as Hex
+      );
     }
     if (token.isNativeToken && sendNative) {
-      return sendNative();
+      return sendNative(configNative!);
     }
     if (sendERC20) {
-      return sendERC20();
+      return sendERC20(configERC20?.request!);
     }
     throw new Error();
   };
 
   const approve = () => {
     if (!writeApproveAsync) throw new Error();
-    return writeApproveAsync();
+    return writeApproveAsync(approveConfig?.request!);
   };
 
   const balance = anyNullOrUndefined(pool, token) ? undefined : _balance;

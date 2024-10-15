@@ -88,44 +88,49 @@ const Verification = () => {
 
   // Sign our message to verify our address
   const { signMessage } = useSignMessage({
-    onError() {
-      toast.error({
-        title: `Failed to sign message, please try again`,
-      });
-    },
-    async onSuccess(data) {
-      try {
-        // Send the signature to the API
-        const response = await fetch(`${CONFIG.VERIFICATION_API_URL}/verify`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            address,
-            signature: data,
-            nonce: nonce.toString(),
-            providerId,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Verification failed');
-        }
-
-        // url is the callback url where we finish the verification
-        const { ok, message, url } = await response.json();
-
-        if (ok) {
-          window.location.href = url;
-        } else {
-          throw new Error('Verification failed: ' + message);
-        }
-      } catch (error: any) {
+    mutation: {
+      onError() {
         toast.error({
-          title: error.message.substring(0, 100),
+          title: `Failed to sign message, please try again`,
         });
-      }
+      },
+      async onSuccess(data) {
+        try {
+          // Send the signature to the API
+          const response = await fetch(
+            `${CONFIG.VERIFICATION_API_URL}/verify`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                address,
+                signature: data,
+                nonce: nonce.toString(),
+                providerId,
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error('Verification failed');
+          }
+
+          // url is the callback url where we finish the verification
+          const { ok, message, url } = await response.json();
+
+          if (ok) {
+            window.location.href = url;
+          } else {
+            throw new Error('Verification failed: ' + message);
+          }
+        } catch (error: any) {
+          toast.error({
+            title: error.message.substring(0, 100),
+          });
+        }
+      },
     },
   });
 
