@@ -9,7 +9,7 @@
 import { erc20ABI } from '@/src/lib/constants/erc20ABI';
 import { TokenType } from '@/src/lib/constants/tokens';
 import { anyNullOrUndefined, isNullOrUndefined } from '@/src/lib/utils';
-import { BigNumber, Contract, constants, providers } from 'ethers';
+import { BigNumber, constants, Contract, providers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
 
 export type TokenInfo = {

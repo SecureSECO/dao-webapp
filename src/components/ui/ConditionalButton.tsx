@@ -10,7 +10,7 @@ import React from 'react';
 import { Button, ButtonProps } from '@/src/components/ui/Button';
 import { TOKENS } from '@/src/lib/constants/tokens';
 import { cn } from '@/src/lib/utils';
-import { useWeb3Modal } from '@web3modal/react';
+import { useAppKit } from '@reown/appkit/react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
 
 export type ConditionalWarning = {
@@ -62,7 +62,7 @@ export const Warning = ({ children }: { children: React.ReactNode }) => {
  * @returns A div with a warning message and a subtle button to connect the wallet
  */
 export const ConnectWalletWarning = ({ action }: WarningWithActionProps) => {
-  const { open } = useWeb3Modal();
+  const { open } = useAppKit();
 
   return (
     <Warning>

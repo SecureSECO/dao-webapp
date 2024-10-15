@@ -48,17 +48,17 @@ export const Primary: Story = {
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Logo className="mr-2 h-4 w-4" />
+              <Logo className="mr-2 size-4" />
               <span>Billing</span>
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Logo className="mr-2 h-4 w-4" />
+              <Logo className="mr-2 size-4" />
               <span>Settings</span>
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Logo className="mr-2 h-4 w-4" />
+              <Logo className="mr-2 size-4" />
               <span>Keyboard shortcuts</span>
               <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
             </DropdownMenuItem>
@@ -66,12 +66,12 @@ export const Primary: Story = {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              <Logo className="mr-2 h-4 w-4" />
+              <Logo className="mr-2 size-4" />
               <span>Team</span>
             </DropdownMenuItem>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
-                <Logo className="mr-2 h-4 w-4" />
+                <Logo className="mr-2 size-4" />
                 <span>Invite users</span>
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
@@ -102,7 +102,7 @@ export const Primary: Story = {
             <span>Support</span>
           </DropdownMenuItem>
           <DropdownMenuItem disabled>
-            <Logo className="mr-2 h-4 w-4" />
+            <Logo className="mr-2 size-4" />
             <span>API</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

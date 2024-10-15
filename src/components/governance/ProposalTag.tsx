@@ -14,7 +14,7 @@ import {
   Proposal,
   ProposalStatus,
 } from '@secureseco-dao/diamond-governance-sdk';
-import { VariantProps, cva } from 'class-variance-authority';
+import { cva, VariantProps } from 'class-variance-authority';
 import { BigNumber } from 'ethers';
 import { IconType } from 'react-icons';
 import {
@@ -75,7 +75,7 @@ const ProposalTag = ({
       {props.icon ? (
         <props.icon className="h-4 w-4 shrink-0" />
       ) : (
-        proposalTagIcon[variant as keyof typeof proposalTagIcon] ?? <></>
+        (proposalTagIcon[variant as keyof typeof proposalTagIcon] ?? <></>)
       )}
       <div className="break-inside-avoid">{children}</div>
     </div>

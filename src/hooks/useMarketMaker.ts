@@ -15,8 +15,8 @@ import {
   promiseObjectAll,
 } from '@/src/lib/utils';
 import { DiamondGovernanceClient } from '@secureseco-dao/diamond-governance-sdk';
-import { BigNumber, constants } from 'ethers';
-import { useProvider } from 'wagmi';
+import { Hex } from 'viem';
+import { usePublicClient } from 'wagmi';
 
 export type SwapKind = 'Mint' | 'Burn';
 
@@ -28,7 +28,7 @@ export interface useMarketMakerProps {
   /*
    * Amount of DAI/SECOIN to be swapped, spend from the users wallet
    */
-  amount: BigNumber | undefined | null;
+  amount: bigint | undefined | null;
   /*
    * Slippage percentage to be applied to the expected return.
    * That is, when the actual return will be lower than the expected return,
@@ -56,13 +56,13 @@ class ValidationError extends Error {
  * Applies a slippage percentage to an amount.
  * @param slippage The slippage to apply, must be a between/equal 0 and 100. Only one decimal of precision will be used
  */
-export const applySlippage = (amount: BigNumber, slippage: number) => {
+export const applySlippage = (amount: bigint, slippage: number) => {
   if (slippage > 100) throw new ValidationError('Slippage is more than 100%');
   if (slippage < 0) throw new ValidationError('Slippage is less than 0%');
 
-  const slippageBN = BigNumber.from((slippage * 10).toFixed(0)); // e.g.: 12.3456% becomes 123 (essentially per mille)
-  const slippageFactor = BigNumber.from(1000).sub(slippageBN); // e.g. 123 becomes 877
-  return amount.mul(slippageFactor).div(1000); // times slippageFactor, divide by 1000 to correct for per mille
+  const slippageBN = BigInt((slippage * 10).toFixed(0)); // e.g.: 12.3456% becomes 123 (essentially per mille)
+  const slippageFactor = BigInt(1000) - slippageBN; // e.g. 123 becomes 877
+  return (amount * slippageFactor) / BigInt(1000); // times slippageFactor, divide by 1000 to correct for per mille
 };
 
 /*
@@ -83,13 +83,13 @@ export const useMarketMaker = ({
   enabled = true,
 }: useMarketMakerProps) => {
   const { client } = useDiamondSDKContext();
-  const [estimatedGas, setEstimatedGas] = useState<null | BigNumber>(null);
-  const [expectedReturn, setExpectedReturn] = useState<null | BigNumber>(null);
+  const [estimatedGas, setEstimatedGas] = useState<null | bigint>(null);
+  const [expectedReturn, setExpectedReturn] = useState<null | bigint>(null);
   const [contractAddress, setContractAddress] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   // Provider is needed for converting GAS to a gas Price.
-  const provider = useProvider();
+  const publicClient = usePublicClient();
 
   const fetchData = async (client: DiamondGovernanceClient) => {
     try {
@@ -104,13 +104,17 @@ export const useMarketMaker = ({
       const marketMaker = await client.sugar.GetABCMarketMaker();
       setContractAddress(marketMaker.address);
 
+      if (!publicClient) {
+        throw new ValidationError('Missing public client');
+      }
+
       // Start promise as soon as possible/needed
-      const gasPricePromise = provider.getGasPrice();
+      const gasPricePromise = publicClient.getGasPrice();
 
       if (isNullOrUndefined(amount))
         throw new ValidationError('Amount is not valid');
-      if (amount.isZero()) {
-        setExpectedReturn(constants.Zero);
+      if (amount === BigInt(0)) {
+        setExpectedReturn(BigInt(0));
         throw new ValidationError('Amount is zero');
       }
       if (isNullOrUndefined(slippage) || isNaN(slippage))
@@ -118,33 +122,39 @@ export const useMarketMaker = ({
 
       if (swapKind === 'Mint') {
         // Get and set expected return
-        const mintAmount = await marketMaker.calculateMint(amount);
+        const mintAmount = await marketMaker
+          .calculateMint(amount)
+          .then((a) => a.toBigInt());
         setExpectedReturn(mintAmount);
 
         // Get and set estimated gas
         const minAmount = applySlippage(mintAmount, slippage);
         const gasValues = await promiseObjectAll({
-          gas: marketMaker.estimateGas.mint(amount, minAmount),
+          gas: marketMaker.estimateGas
+            .mint(amount, minAmount)
+            .then((g) => g.toBigInt()),
           gasPrice: gasPricePromise,
         });
-        setEstimatedGas(gasValues.gas.mul(gasValues.gasPrice));
+        setEstimatedGas(gasValues.gas * gasValues.gasPrice);
       }
 
       if (swapKind === 'Burn') {
         // Get and set expected return
         const burnWithoutFee = await marketMaker.calculateBurn(amount);
         const exitFee = await marketMaker.calculateExitFee(burnWithoutFee);
-        const burnAmount = burnWithoutFee.sub(exitFee);
+        const burnAmount = burnWithoutFee.sub(exitFee).toBigInt();
         setExpectedReturn(burnAmount);
 
         // Get and set estimated gas
         const minAmount = applySlippage(burnAmount, slippage);
         const gasValues = await promiseObjectAll({
-          gas: marketMaker.estimateGas.burn(amount, minAmount),
+          gas: marketMaker.estimateGas
+            .burn(amount, minAmount)
+            .then((g) => g.toBigInt()),
           gasPrice: gasPricePromise,
         });
 
-        setEstimatedGas(gasValues.gas.mul(gasValues.gasPrice));
+        setEstimatedGas(gasValues.gas * gasValues.gasPrice);
       }
     } catch (e) {
       // Set error. If it is a ValidationError, the error message can be used to show to the user.
@@ -172,10 +182,10 @@ export const useMarketMaker = ({
     const minAmount = applySlippage(expectedReturn, slippage);
 
     if (swapKind === 'Mint') {
-      return marketMaker.mint(amount, minAmount);
+      return marketMaker.mint(amount, minAmount).then((res) => res.hash as Hex);
     }
     if (swapKind === 'Burn') {
-      return marketMaker.burn(amount, minAmount);
+      return marketMaker.burn(amount, minAmount).then((res) => res.hash as Hex);
     }
 
     assertUnreachable();
@@ -188,7 +198,7 @@ export const useMarketMaker = ({
     //Set interval such that data is fetched every 10 seconds
     const id = setInterval(() => fetchData(client), 10000);
     return () => clearInterval(id);
-  }, [client, amount?._hex, slippage, swapKind, enabled]);
+  }, [client, amount, slippage, swapKind, enabled]);
 
   return {
     isLoading,

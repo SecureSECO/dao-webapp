@@ -14,6 +14,7 @@ import { Address } from '@/src/components/ui/Address';
 import { Card } from '@/src/components/ui/Card';
 import CategoryList, { Category } from '@/src/components/ui/CategoryList';
 import TokenAmount from '@/src/components/ui/TokenAmount';
+import { useEthersProvider } from '@/src/hooks/useEthersProvider';
 import { useMembers } from '@/src/hooks/useMembers';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
@@ -26,7 +27,6 @@ import { AccordionItemProps } from '@radix-ui/react-accordion';
 import { Action } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { HiCircleStack } from 'react-icons/hi2';
-import { useProvider } from 'wagmi';
 
 /**
  * Interface for a mint action
@@ -97,7 +97,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
   const [summary, setSummary] = useState<MintActionSummary | null>(null);
   const { memberCount, isMember } = useMembers({ includeBalances: false });
 
-  const provider = useProvider({
+  const provider = useEthersProvider({
     chainId: CONFIG.PREFERRED_NETWORK_ID,
   });
 
@@ -105,7 +105,7 @@ const MintAction = ({ action, ...props }: MintActionProps) => {
     async function fetchSummary() {
       const tokenInfo = await fetchTokenInfo(
         CONFIG.DIAMOND_ADDRESS,
-        provider,
+        provider!,
         PREFERRED_NETWORK_METADATA.nativeToken
       );
       const newTokens = action.params._amounts.reduce(

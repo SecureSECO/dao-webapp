@@ -17,28 +17,28 @@
 import Diamond from '@/src/components/icons/Diamond';
 import {
   ChangeParamInput,
-  ProposalFormChangeParamData,
   emptyChangeParamData,
+  ProposalFormChangeParamData,
 } from '@/src/components/newProposal/actions/ChangeParamInput';
 import {
+  emptyMergeData,
   MergePRInput,
   ProposalFormMergeData,
-  emptyMergeData,
 } from '@/src/components/newProposal/actions/MergePRInput';
 import {
+  emptyMintData,
   MintTokensInput,
   ProposalFormMintData,
-  emptyMintData,
 } from '@/src/components/newProposal/actions/MintTokensInput';
 import {
+  emptyWhitelistData,
   ProposalFormWhitelistData,
   WhitelistMemberInput,
-  emptyWhitelistData,
 } from '@/src/components/newProposal/actions/WhitelistMemberInput';
 import {
+  emptyWithdrawData,
   ProposalFormWithdrawData,
   WithdrawAssetsInput,
-  emptyWithdrawData,
 } from '@/src/components/newProposal/actions/WithdrawAssetsInput';
 import {
   ApproveSpendingAction,

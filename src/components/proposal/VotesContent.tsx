@@ -42,6 +42,7 @@ import {
 } from '@secureseco-dao/diamond-governance-sdk';
 import { BigNumber } from 'ethers';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 
 type VoteFormData = {
@@ -135,7 +136,7 @@ const VotesContentActive = ({
     try {
       // Fetch most recent voting power, to vote with all available rep
       const votingPower = await getProposalVotingPower(proposal);
-      if (votingPower.lte(0)) {
+      if (votingPower <= 0) {
         return toast.error({
           title: 'You do not have any voting power',
         });
@@ -143,10 +144,12 @@ const VotesContentActive = ({
       setIsVoting(true);
       toast.contractTransaction(
         () =>
-          proposal.Vote(
-            VoteOption[data.vote_option as VoteOptionString],
-            votingPower
-          ),
+          proposal
+            .Vote(
+              VoteOption[data.vote_option as VoteOptionString],
+              BigNumber.from(votingPower)
+            )
+            .then((res) => res.hash as Hex),
         {
           error: 'Error submitting vote',
           success: 'Vote submitted!',
@@ -213,7 +216,7 @@ const VotesContentActive = ({
               content: <ConnectWalletWarning action="to vote" />,
             },
             {
-              when: proposalVotingPower ? proposalVotingPower.lte(0) : false,
+              when: proposalVotingPower ? proposalVotingPower <= 0 : false,
               content: (
                 <InsufficientRepWarning action="(at time of proposal creation) to vote" />
               ),
@@ -230,7 +233,7 @@ const VotesContentActive = ({
           {hasVoted &&
           isConnected &&
           proposalVotingPower &&
-          proposalVotingPower.gt(0) ? (
+          proposalVotingPower > 0 ? (
             'Vote submitted'
           ) : (
             <span className="ml-1 inline-block ">

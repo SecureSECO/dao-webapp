@@ -106,7 +106,7 @@ export const CHAIN_METADATA: ChainList = {
     logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
     explorer: 'https://polygonscan.com/',
     testnet: false,
-    rpc: 'https://rpc.ankr.com/polygon',
+    rpc: 'https://polygon-rpc.com',
     nativeToken: {
       name: 'MATIC',
       symbol: 'MATIC',

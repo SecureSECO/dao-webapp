@@ -7,10 +7,10 @@
  */
 
 import { useState } from 'react';
-import LogoFull from '@/src/components/LogoFull';
 import ConnectButton from '@/src/components/layout/ConnectButton';
 import ThemePicker from '@/src/components/layout/ThemePicker';
 import UserBalances from '@/src/components/layout/UserBalances';
+import LogoFull from '@/src/components/LogoFull';
 import { Button } from '@/src/components/ui/Button';
 import {
   DropdownMenu,

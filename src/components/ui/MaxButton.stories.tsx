@@ -7,7 +7,6 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { BigNumber } from 'ethers';
 
 import { MaxButton } from './MaxButton';
 
@@ -21,7 +20,7 @@ type Story = StoryObj<typeof MaxButton>;
 export const Primary: Story = {
   args: {
     decimals: 4,
-    max: BigNumber.from(1234567),
+    max: BigInt(1234567),
     setMaxValue: () => {},
   },
 };

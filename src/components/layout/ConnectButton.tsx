@@ -23,35 +23,32 @@ import {
 } from '@/src/components/ui/Tooltip';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { cn } from '@/src/lib/utils';
-import { useWeb3Modal } from '@web3modal/react';
+import { useAppKit } from '@reown/appkit/react';
 import { FaWallet } from 'react-icons/fa';
 import { HiExclamationCircle, HiOutlineLogout } from 'react-icons/hi';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useAccount, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useChainId, useDisconnect, useSwitchChain } from 'wagmi';
 
 const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
   const { disconnect } = useDisconnect();
-  const { open } = useWeb3Modal();
+  const { open } = useAppKit();
   const { address } = useAccount();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
 
   // Make sure the user is on the correct network
   const [attemptedSwitch, setAttemptedSwitch] = useState(false);
-  const { switchNetworkAsync, isLoading } = useSwitchNetwork({
-    chainId: PREFERRED_NETWORK_METADATA.id,
-  });
+  const { switchChainAsync, isPending: isLoading } = useSwitchChain({});
 
   useEffect(() => {
     const handleSwitchNetwork = async () => {
       if (
         !attemptedSwitch &&
         !isLoading &&
-        chain &&
-        chain?.id !== PREFERRED_NETWORK_METADATA.id &&
-        switchNetworkAsync
+        chainId !== PREFERRED_NETWORK_METADATA.id &&
+        switchChainAsync
       ) {
         try {
-          await switchNetworkAsync();
+          await switchChainAsync({ chainId: PREFERRED_NETWORK_METADATA.id });
         } catch (e) {
           // Unable to switch network (possibly because it's already in progress since another render)
           console.error(e);
@@ -61,7 +58,7 @@ const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
     };
 
     handleSwitchNetwork();
-  }, [chain, switchNetworkAsync, isLoading]);
+  }, [chainId, switchChainAsync, isLoading]);
 
   let jazznumber = address ? jsNumberForAddress(address!) : 0;
 
@@ -71,7 +68,7 @@ const ConnectButton = ({ buttonClassName }: { buttonClassName?: string }) => {
         <DropdownMenuTrigger className="relative flex rounded-full text-sm focus:outline-none ring-ring ring-offset-2 ring-offset-background focus:ring-2">
           <span className="sr-only">Open wallet menu</span>
           <Jazzicon diameter={40} seed={jazznumber} />
-          {chain?.id !== PREFERRED_NETWORK_METADATA.id && (
+          {chainId !== PREFERRED_NETWORK_METADATA.id && (
             <Tooltip>
               <TooltipTrigger asChild className="absolute -right-2 -top-2">
                 <div>

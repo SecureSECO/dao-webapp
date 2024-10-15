@@ -50,7 +50,7 @@ export const ProposalResources = ({
 
   return (
     <MainCard
-      loading={loading ?? resources ? true : false}
+      loading={(loading ?? resources) ? true : false}
       className={cn(className, 'shrink')}
       icon={HiLink}
       header={

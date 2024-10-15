@@ -11,34 +11,33 @@ import { Card, CardProps } from '@/src/components/ui/Card';
 import { Link } from '@/src/components/ui/Link';
 import { toast } from '@/src/hooks/useToast';
 import {
-  VerificationStatus,
   useVerification,
+  VerificationStatus,
 } from '@/src/hooks/useVerification';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { cn } from '@/src/lib/utils';
+import { useAppKit } from '@reown/appkit/react';
 import { Stamp } from '@secureseco-dao/diamond-governance-sdk';
-import { useWeb3Modal } from '@web3modal/react';
 import { BigNumber } from 'ethers';
 import { HiOutlineExclamationCircle } from 'react-icons/hi2';
-import { Chain, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useChainId, useSwitchChain } from 'wagmi';
+import { Chain } from 'wagmi/chains';
 
 export const MembershipStatus = () => {
-  const { open } = useWeb3Modal();
+  const { open } = useAppKit();
   const { isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const { switchNetworkAsync, isLoading } = useSwitchNetwork({
-    chainId: PREFERRED_NETWORK_METADATA.id,
-  });
+  const chainId = useChainId();
+  const { switchChainAsync, isPending } = useSwitchChain();
 
   const { stamps, isVerified, getThresholdForTimestamp } = useVerification();
 
   return (
     <MembershipStatusView
       isConnected={isConnected}
-      chainId={chain?.id}
+      chainId={chainId}
       openConnector={open}
-      switchNetwork={switchNetworkAsync}
-      switchInProgress={isLoading}
+      switchNetwork={(chainId) => switchChainAsync({ chainId })}
+      switchInProgress={isPending}
       stamps={stamps}
       isVerified={isVerified}
       getThresholdForTimestamp={getThresholdForTimestamp}
@@ -66,9 +65,7 @@ export const MembershipStatusView = ({
   stamps?: Stamp[] | null;
   isVerified: (stamp: Stamp) => VerificationStatus;
   getThresholdForTimestamp: (timestamp: number) => BigNumber;
-  switchNetwork?:
-    | ((chainId_?: number | undefined) => Promise<Chain>)
-    | undefined;
+  switchNetwork?: ((chainId: number) => Promise<Chain>) | undefined;
   switchInProgress: boolean;
 }) => {
   // If user has not connected a wallet:
@@ -96,7 +93,7 @@ export const MembershipStatusView = ({
       });
     if (switchNetwork) {
       try {
-        await switchNetwork();
+        await switchNetwork(PREFERRED_NETWORK_METADATA.id);
       } catch (e: any) {
         toast.error({
           title: 'Could not switch network',

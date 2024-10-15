@@ -30,6 +30,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { BigNumber } from 'ethers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { HiOutlineCommandLine, HiOutlineCurrencyDollar } from 'react-icons/hi2';
+import { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 
 export type ClaimRewardData = {
@@ -136,7 +137,10 @@ export const Mining = () => {
     );
 
     toast.contractTransaction(
-      () => claimReward(BigNumber.from(totalMinedHashes), repFrac),
+      () =>
+        claimReward(BigNumber.from(totalMinedHashes), repFrac).then(
+          (res) => res.hash as Hex
+        ),
       {
         success: `Successfully claimed reward!`,
         error: `Failed to claim reward`,

@@ -85,7 +85,7 @@ export const PopoverExample: PopoverStory = {
             type="button"
           >
             <span className="sr-only">Swap settings</span>
-            <HiCog6Tooth className="h-5 w-5 shrink-0" />
+            <HiCog6Tooth className="size-5 shrink-0" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80">

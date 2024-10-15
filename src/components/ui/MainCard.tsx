@@ -14,7 +14,7 @@
 import React, { ReactNode } from 'react';
 import { Card, CardProps } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
-import { VariantProps, cva } from 'class-variance-authority';
+import { cva, VariantProps } from 'class-variance-authority';
 import { IconType } from 'react-icons/lib';
 
 const mainCardVariants = cva('w-full flex flex-col gap-y-2', {

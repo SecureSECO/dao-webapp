@@ -95,7 +95,9 @@
 @layer base {
   body {
     @apply min-h-screen scroll-smooth bg-background text-foreground;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 
   ::-moz-selection {

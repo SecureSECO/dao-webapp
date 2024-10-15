@@ -17,12 +17,12 @@ export type UseVotingPowerData = {
   loading: boolean;
   error: string | null;
   // Voting power of given wallet
-  votingPower: BigNumber;
+  votingPower: bigint;
   // Voting power of given wallet at the time of proposal creation
-  proposalVotingPower: BigNumber | null;
+  proposalVotingPower: bigint | undefined;
   // Minimum voting power required to create a proposal
-  minProposalVotingPower: BigNumber;
-  getProposalVotingPower: (proposal: Proposal) => Promise<BigNumber>;
+  minProposalVotingPower: bigint;
+  getProposalVotingPower: (proposal: Proposal) => Promise<bigint>;
   refetch: () => void;
 };
 
@@ -59,7 +59,6 @@ export const useVotingPower = ({
   } = useBalance({
     address: address as `0x${string}` | undefined,
     token: CONFIG.DIAMOND_ADDRESS as `0x${string}` | undefined,
-    watch,
   });
 
   /**
@@ -124,10 +123,11 @@ export const useVotingPower = ({
   return {
     loading: repLoading,
     error: repError?.message || '',
-    votingPower: repData?.value || BigNumber.from(0),
-    proposalVotingPower,
-    minProposalVotingPower,
-    getProposalVotingPower,
+    votingPower: repData?.value || BigInt(0),
+    proposalVotingPower: proposalVotingPower?.toBigInt(),
+    minProposalVotingPower: minProposalVotingPower.toBigInt(),
+    getProposalVotingPower: (proposal) =>
+      getProposalVotingPower(proposal).then((res) => res.toBigInt()),
     refetch,
   };
 };
