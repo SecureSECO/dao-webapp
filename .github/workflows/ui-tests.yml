@@ -73,6 +73,9 @@ jobs:
       - name: Install Playwright
         run: npx --no-install playwright install --with-deps chromium
       - name: Build Storybook
+        env:
+          # Stories render without an authenticated WalletConnect session.
+          VITE_APP_PROJECT_ID: '00000000000000000000000000000000'
         run: npm run build-storybook -- --quiet
       - name: Serve Storybook and run tests
         run: |
