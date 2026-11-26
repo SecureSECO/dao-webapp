@@ -123,7 +123,7 @@ const ProposalCard = ({ proposal }: { proposal: Proposal }) => {
               level={2}
               className="relative truncate pb-1 group-hover:underline"
             >
-              {title}
+              {title || `Proposal #${proposal.id}`}
             </Header>
             <HiChevronRight className="h-5 w-5 shrink-0" />
           </Link>
