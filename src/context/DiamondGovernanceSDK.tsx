@@ -16,9 +16,13 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { actionNames } from '@/src/lib/constants/actions';
 import { PREFERRED_NETWORK_METADATA } from '@/src/lib/constants/chains';
 import { CONFIG } from '@/src/lib/constants/config';
+import { getProposalMetadata } from '@/src/lib/utils/proposalMetadata';
 import { DiamondGovernanceClient } from '@secureseco-dao/diamond-governance-sdk';
+import { customIpfsGet } from '@secureseco-dao/diamond-governance-sdk/dist/utils/ipfsHelper';
 import { ethers } from 'ethers';
 import { useSigner } from 'wagmi';
+
+customIpfsGet(getProposalMetadata);
 
 type SDKContext = {
   /** Signed client to be used in requests that require a wallet to be connected */

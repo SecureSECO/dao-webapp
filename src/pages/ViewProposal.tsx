@@ -100,7 +100,11 @@ const ViewProposal = () => {
             <HeaderCard
               loading={loading}
               className="max-h-96 overflow-y-auto"
-              title={proposal?.metadata.title ?? 'Proposal not found'}
+              title={
+                proposal
+                  ? proposal.metadata.title || `Proposal #${proposal.id}`
+                  : 'Proposal not found'
+              }
               aside={
                 <div className="flex flex-row-reverse items-center justify-between gap-y-4 sm:flex-col sm:items-end">
                   <ProposalStatusBadge
