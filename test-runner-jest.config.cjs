@@ -7,7 +7,7 @@
  */
 
 /**
- * This file is used by the Storybook Test Runner to configure Jest
+ * This file is used by the Storybook Test Runner to configure Jest.
  */
 
 const { getJestConfig } = require('@storybook/test-runner');

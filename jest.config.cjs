@@ -6,12 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Config } from 'jest';
-import { pathsToModuleNameMapper } from 'ts-jest';
+const { pathsToModuleNameMapper } = require('ts-jest');
 
-import { compilerOptions } from './tsconfig.json';
+const { compilerOptions } = require('./tsconfig.json');
 
-const config: Config = {
+/** @type {import('jest').Config} */
+module.exports = {
   //ModuleFileExtensions is a different order than the default options, to improve performance
   moduleFileExtensions: [
     'ts',
@@ -34,5 +34,3 @@ const config: Config = {
     prefix: '<rootDir>/',
   }),
 };
-
-export default config;
