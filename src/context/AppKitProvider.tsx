@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { CHAIN_METADATA } from '@/src/lib/constants/chains';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { polygon } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react';
@@ -31,7 +32,7 @@ const wagmiAdapter = new WagmiAdapter({
   networks: [...chains],
   projectId,
   transports: {
-    [polygon.id]: http('https://polygon-rpc.com'),
+    [polygon.id]: http(CHAIN_METADATA.polygon.rpc),
   },
   ssr: true,
 });

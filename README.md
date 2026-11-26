@@ -357,7 +357,7 @@ We are using some plugins for eslint to make it work for [tailwind](https://gith
 #### Jest
 
 [Documentation](https://jestjs.io/docs/getting-started)
-[Config](/jest.config.ts)
+[Config](/jest.config.cjs)
 
 Primarily used for: testing JavaScript and TypeScript code
 Jest is a testing framework for JavaScript and TypeScript code. It helps to ensure the quality and correctness of our codebase.
@@ -418,7 +418,7 @@ React Router DOM is a set of bindings to use React Router with web applications.
 
 [Documentation](https://storybook.js.org/docs/react/get-started/install/)
 [Config](.storybook/main.cjs)
-[Test Runner config](/test-runner-jest.config.js)
+[Test Runner config](/test-runner-jest.config.cjs)
 
 Storybook is a frontend workshop for building UI components and pages in isolation.
 To run the storybook, use the following command:

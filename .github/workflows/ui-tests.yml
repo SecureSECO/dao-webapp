@@ -14,30 +14,31 @@ on:
     branches: ['master', 'dev']
 
 env:
-  NODE_VERSION: 18.x
+  NODE_VERSION: 22.x
 
 jobs:
   # Install and cache npm dependencies
   install-cache:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - name: Cache node modules
         uses: actions/cache@v3
         id: npm-cache
         with:
           path: |
             **/node_modules
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build
+          key: ui-ubuntu-24.04-node-${{ env.NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies if cache invalid
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
   # Run Jest unit tests
   jest-unit-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: install-cache
     steps:
       - uses: actions/checkout@v3
@@ -50,14 +51,12 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build
+          key: ui-ubuntu-24.04-node-${{ env.NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
       - name: run tests
         run: npm run test
   # Run interaction and accessibility tests with Axe
   interaction-and-accessibility-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: install-cache
     steps:
       - uses: actions/checkout@v3
@@ -70,15 +69,24 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build
+          key: ui-ubuntu-24.04-node-${{ env.NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
       - name: Install Playwright
-        run: npx playwright install --with-deps
+        run: npx --no-install playwright install --with-deps chromium
       - name: Build Storybook
-        run: npm run build-storybook --quiet
+        env:
+          # Stories render without an authenticated WalletConnect session.
+          VITE_APP_PROJECT_ID: '00000000000000000000000000000000'
+        run: npm run build-storybook -- --quiet
       - name: Serve Storybook and run tests
-        # Sleep for 60 seconds after the storybook instance is running to give it time to set up properly
         run: |
-          npm i concurrently wait-on
-          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" "npm run storybook" "npx wait-on tcp:6006 && sleep 60 && npm run test-storybook --maxWorkers=10"
+          ./node_modules/.bin/http-server storybook-static -a 127.0.0.1 -p 6006 -s &
+          storybook_pid=$!
+          trap 'kill "$storybook_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:6006/index.json -o /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent --show-error http://127.0.0.1:6006/index.json -o /dev/null
+          npm run test-storybook -- --url http://127.0.0.1:6006 --maxWorkers=2
